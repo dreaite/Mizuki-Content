@@ -8,6 +8,7 @@ import { NotionToMarkdown } from 'notion-to-md';
 const CONFIG = {
   notionToken: requireEnv('NOTION_TOKEN'),
   databaseId: requireEnv('NOTION_DATABASE_ID'),
+  dataSourceId: process.env.NOTION_DATA_SOURCE_ID || '',
   postsDir: process.env.NOTION_POSTS_DIR || 'posts',
   deleteMissing: parseBoolean(process.env.NOTION_SYNC_DELETE_MISSING, false),
   typeProperty: process.env.NOTION_TYPE_PROPERTY || 'type',
@@ -265,16 +266,13 @@ function buildFrontMatter(meta) {
 }
 
 async function fetchAllDatabasePages(notion, databaseId) {
+  const queryTarget = await resolveQueryTarget(notion, databaseId, CONFIG.dataSourceId);
   const results = [];
   let hasMore = true;
   let startCursor = undefined;
 
   while (hasMore) {
-    const response = await notion.databases.query({
-      database_id: databaseId,
-      start_cursor: startCursor,
-      page_size: 100,
-    });
+    const response = await queryPageBatch(notion, queryTarget, startCursor);
 
     for (const item of response.results) {
       if (item.object === 'page') {
@@ -287,6 +285,95 @@ async function fetchAllDatabasePages(notion, databaseId) {
   }
 
   return results;
+}
+
+async function queryPageBatch(notion, target, startCursor) {
+  if (target.kind === 'database') {
+    return notion.databases.query({
+      database_id: target.id,
+      start_cursor: startCursor,
+      page_size: 100,
+    });
+  }
+
+  if (target.kind === 'data_source') {
+    return notion.dataSources.query({
+      data_source_id: target.id,
+      start_cursor: startCursor,
+      page_size: 100,
+    });
+  }
+
+  throw new Error(`Unsupported Notion query target kind: ${target.kind}`);
+}
+
+async function resolveQueryTarget(notion, databaseId, explicitDataSourceId) {
+  if (typeof notion?.databases?.query === 'function') {
+    return { kind: 'database', id: databaseId };
+  }
+
+  if (typeof notion?.dataSources?.query !== 'function') {
+    throw new Error(
+      'Unsupported @notionhq/client version: neither notion.databases.query nor notion.dataSources.query is available.'
+    );
+  }
+
+  if (explicitDataSourceId) {
+    return { kind: 'data_source', id: explicitDataSourceId };
+  }
+
+  const dataSourceId = await resolveDataSourceIdFromDatabaseOrFallback(notion, databaseId);
+  return { kind: 'data_source', id: dataSourceId };
+}
+
+async function resolveDataSourceIdFromDatabaseOrFallback(notion, databaseId) {
+  try {
+    if (typeof notion?.databases?.retrieve !== 'function') {
+      throw new Error(
+        'Notion SDK v5 detected but notion.databases.retrieve is unavailable. Set NOTION_DATA_SOURCE_ID explicitly.'
+      );
+    }
+
+    const database = await notion.databases.retrieve({ database_id: databaseId });
+    const dataSources = Array.isArray(database?.data_sources) ? database.data_sources : [];
+
+    if (dataSources.length === 0) {
+      throw new Error(
+        'No data_sources found under the provided NOTION_DATABASE_ID. Set NOTION_DATA_SOURCE_ID explicitly.'
+      );
+    }
+
+    if (dataSources.length > 1) {
+      const choices = dataSources
+        .map((item) => `${item.name || '(unnamed)'}:${item.id}`)
+        .join(', ');
+      throw new Error(
+        `Multiple data sources found for NOTION_DATABASE_ID. Set NOTION_DATA_SOURCE_ID explicitly. Choices: ${choices}`
+      );
+    }
+
+    const resolvedId = dataSources[0]?.id;
+    if (!resolvedId) {
+      throw new Error('Failed to resolve data source id from database response.');
+    }
+
+    console.log(`Using data source ${resolvedId} resolved from database ${databaseId}`);
+    return resolvedId;
+  } catch (databaseError) {
+    if (typeof notion?.dataSources?.retrieve === 'function') {
+      try {
+        await notion.dataSources.retrieve({ data_source_id: databaseId });
+        console.log(
+          'NOTION_DATABASE_ID appears to already be a data source id; using it directly with notion.dataSources.query'
+        );
+        return databaseId;
+      } catch {
+        // Ignore and rethrow the original database resolution error below for a clearer message.
+      }
+    }
+
+    throw databaseError;
+  }
 }
 
 function extractMetadata(page) {

@@ -20,6 +20,12 @@ Keep blog posts in `posts/` consistent with the Notion database (`type = Post`).
 - `NOTION_TOKEN`
 - `NOTION_DATABASE_ID`
 
+## Optional GitHub Variables
+
+- `NOTION_DATA_SOURCE_ID`
+  - Recommended when using newer Notion API / SDK v5 and your database contains multiple data sources.
+  - If omitted, the script will try to resolve a data source automatically from `NOTION_DATABASE_ID`.
+
 ## Notion Database Property Mapping (default names)
 
 The workflow passes these defaults. Change them in the workflow if your column names differ.
@@ -79,3 +85,4 @@ If you still have manually maintained posts under `posts/`, either:
 
 - Notion cover/file URLs may be temporary signed URLs; `image` is stored as the current Notion URL as requested.
 - The workflow auto-commits `posts/` changes back to the current branch.
+- The workflow installs `@notionhq/client@5` (major pinned) to reduce future breaking changes from automatic upgrades.
