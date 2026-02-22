@@ -1,0 +1,35 @@
+---
+title: '满载的梦想与希望，自我的宽恕与畅想——樱花摸鱼'
+published: 2022-09-18
+updated: 2022-09-18
+description: '经历了从初次尝试到最终完成的过程，作者对樱花摸鱼的游戏充满了感激，认为它在生活中带来了希望和动力。游戏中的音乐《さくら、もゆ》传达了梦想与爱的情感，角色们的牺牲与成长让作者重新燃起了对生活的热情，反思了追求梦想的重要性。希望更多人能欣赏这款优秀的游戏，并期待未来的续作。'
+permalink: 'sakura-dreams-hope'
+image: 'https://prod-files-secure.s3.us-west-2.amazonaws.com/a4ab9f0c-abe9-4690-9976-e1fc8298c749/dfa751c1-d474-43ac-829f-f2708beff144/MASHIRO_e102b.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4667P42RBA5%2F20260222%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260222T104455Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEPf%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJIMEYCIQC648mwnl1EV1eF5sjrIj89Bji2O16z7%2FRdWKkwlB82AQIhAN0H0kIJC5KrbsP%2BGEjjmNtBaLpZRWOdT8awY5%2Fi56JxKogECMD%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQABoMNjM3NDIzMTgzODA1IgycX7UqbP7LGr9KOJ0q3AOttnI%2B%2BhfoFmn6LEAqobvpTBBFgJiarN4g90p1WCv7kUS1yY0FgngbK8Q57pDRurAX6zjKeCysHlXeBEKvyoHdSYN7bsULAbN%2BlF5PXuaJadnXho5suVzsRO%2Fix0g0VgmPNghm8nU9dw3pP1IvYQKvpKa%2F9R157kEyUXpJoGgqnpN%2B4hPmoSwGpnKOy%2FU%2BqBtwqnqonT00DxI46D3paVwNGlH8rYT8yClKV5K6bAgRfffhduq%2BGrhNyaMdKBHAQ7gHNS03QNVWmkJTJNWLWrMslh3wdaUp53KtXU3qKW45lh1GCf4MHLxE34LVGhOu8d4zKFuchSxeVwqaWLHrgiKDdkH3zDJcy%2BVP%2FEMPIxbjeetUFHrbakfqB%2FMdrLBHtPq6j6kYCbKoqOXtV5gi3la6UXEJo8YMHGDroOgXl5TUMb0w0pVQocpfuDSakt16jh4SyIGQIdjjI6HRL%2B7hLjJqkyWg1vYE6DtQyXFTfEqh4Lw8tgeYAr8f6UYjZ7dkEslOjoGMNPWiTvimuQwaB2BnFWUOPDHb4jsnnv%2BmI1h9Hr9yFBiPoznnPi3iRMeuHVyIJnkV6lI6jT6CTEblSZtV2vIbSTNe863o8iY2bC84YHLAP8myota02nd9KzCHxerMBjqkAZUsuAVDJx6FVnQiy4jOFjU5qkC1zMG9x2KK4Y%2FI3W4bv1JPJBIWBygB%2FPKBUVkx6w87yO%2B%2BKEMjY8ZLaoQWuGmVmUx%2BHF4HMHaPwcu6ZyQ4rZ72mlS50zwtZ9pb%2F%2B3LabGwhk%2Bf%2BbL2KuMT4Z8IRgxohJMqdIhlU13%2BVAXaw2LSDlwBwiBKpC9myjNYjEpTY9A8XDqMfnkxkQ%2FIfCCc8H1kDo1b&X-Amz-Signature=7848ffb6dbf4cedbf32e681232d65ba87fabb4fac633a8ea431e89e6d1a9ff6a&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject'
+tags: ['recomand', 'thinking']
+category: 'gal'
+draft: false
+---
+
+今天总算把樱花摸鱼推完了~
+从2020年6月啃生肉，到21年9月放弃后的再次重推，最后现在22年的汉化补丁推出后的最终完成，可以说樱花摸鱼这部作品陪伴了我很长一段时间，跟dc系列一样，见证了我从兴趣盎然到潦草结束，再到汉化出来后重燃兴趣最终完整游玩了这部作品。
+但如果真要描述自己游玩摸鱼的经历，我觉得是体感不错的，不过在一次次现实的生活中失去了动力，最终选择了放下。但这次汉化的推出可以说是一次助燃剂，夹杂着自己想把过去未完成的漆黑再次涂成纯白的想法，于今日我完成了。在这重意义上，我对于摸鱼是感激的，让过去的残渣稍有去除总是让人心情舒畅的，同时也是在自己这个心情动荡、沉寂的时期遇上摸鱼，再次重燃一点梦想，可以说是非常幸运的。
+这次的雪人相对于之前的鸟鸟系列可以感受到不少的提升，但也能从中看到不少于鸟鸟中的构思中脱胎出来的幻想，如比夜之国为记录人生书本的图书馆，也同样也有不少崭新的设定，像是现实背面闪闪发光的夜之国，也见识到了雪人的母控xp（笑）。
+
+
+---
+
+
+![MASHIRO_e102b.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/MASHIRO_e102b.png)
+
+
+纵观摸鱼全篇，一首《さくら、もゆ》可以说是贯穿了摸鱼始终，也承载了其想要体现的情感，充满着梦想和希望，想要突破时间，向未来已经无法遇到的人传达一生只爱一人的无法传达的爱恋。如樱花般温柔，又如樱花般热烈，最终这首歌传到了遥远的未来，成为了未来与过去连接的钥匙，或许也成为了不少寂寞的人心中的英雄，或许有ハル，或许有《奏 大雅》。
+最终夜之王被拯救，每个人都迎来了happy end，想来虽然有在《奏 大雅》集结请求下对他的救援和帮助，当更多的应该是在他，他们被带到人生最充满希望时，内心中充满的希望，最终到达的he一定不是他人赋予而是自己寻求的结果，当然雪人还是虐虐クロ就是了（雪人日常ww）。
+最后夜之国中的不可思议的生物们给我带来的震撼或许更大，对千和视若己出的ナハト，牺牲自己将姫織带来世间并最后推了她一把的ナナ（姫織母亲），将男主带出选择残酷死亡阴影、最终为他们的幸福给予生命的あさひ姐和十夜，以及与男主相伴的クロ和为对男主投射了自己愿望并在伤害男主后为了偿还选择化为《夜之女王》的ましろ。于无限的生命以一瞬的绽放，他们的行动可以说是给我带来了不小的震撼，也可以说是给我不知觉中依然沉寂的内心一点期望、一点动力，重新让我有了觉得有点梦想或许也不错，或许这样的生活也可以发生在自己身上，而不是一味的追求金钱、收益，或者说“生存”。或许人总是有点冲动的，希望现在萌生的这个新的自我写下的畅想,未来一天可以唤起你的一点活下去的动力就好了。
+说到了最后，感觉与其说是在讨论摸鱼的故事，倒不如说全是自己在游玩时的妄想，或许也算是自己第一次描述游玩感受的证明？不过不管怎么说，摸鱼这款游戏确实是一款优秀的游戏，不论是对f厨的我，还是普通gal玩家的我，如果能够有更多的人能喜欢这部作品的话想必会非常美好吧（所以fd什么时候出呢ww）。
+言尽于此，最后贴上我愿称之为神曲的《輪廻》作为结束吧w。
+
+
+[embed](https://music.163.com/outchain/player?type=2&id=1367158056&auto=1&height=66)
+
+
+「愿你的以后的未来，也有幸福的魔法陪伴在身边」
