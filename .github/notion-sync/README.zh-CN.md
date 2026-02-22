@@ -49,6 +49,9 @@
   - 翻译请求使用的模型名称。
 - `NOTION_POST_TRANSLATION_API_BASE_URL`
   - 可选，API 基础地址，默认：`https://api.openai.com/v1`。
+- `NOTION_POST_TRANSLATION_TIMEOUT_MS`
+  - 可选，LLM 翻译请求超时时间（毫秒）。
+  - 默认 `600000`（10 分钟）。长文可调大，例如 `900000`（15 分钟）。
 - `NOTION_POST_TRANSLATION_SOURCE_LANG`
   - 可选，源语言提示（仅作为 prompt 上下文），例如：`zh-cn`。
 - `NOTION_POST_TRANSLATION_SYSTEM_PROMPT`
