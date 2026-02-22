@@ -4,7 +4,7 @@ published: 2022-07-01
 updated: 2022-07-01
 description: '实验旨在了解对称加密、非对称加密、散列函数、数字签名和数字证书的概念及应用，使用OpenSSL进行相关操作，包括加密解密、生成密钥对、数字签名和自签名证书的创建。实验过程中遇到问题并解决，提升了编程能力和对Linux命令的理解。'
 permalink: 'encryption-signature'
-image: 'https://r2.dreaife.tokyo//notion/covers/ead9a6ad0dad4177bebb60afc7f8009d/6d45869cbcd30156.jpg'
+image: 'https://r2.dreaife.tokyo/notion/covers/ead9a6ad0dad4177bebb60afc7f8009d/6d45869cbcd30156.jpg'
 tags: ['network', 'school']
 category: 'cs-base'
 draft: false

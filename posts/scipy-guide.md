@@ -4,7 +4,7 @@ published: 2024-01-09
 updated: 2024-01-09
 description: 'SciPy是基于NumPy的开源Python库，广泛应用于数学、科学和工程领域，提供优化、线性代数、积分、插值等功能。安装方法包括使用pip命令，且可通过模块如scipy.optimize和scipy.sparse处理优化和稀疏矩阵。SciPy还支持图结构和空间数据处理，提供多种距离计算方法，并能与Matlab交互，执行显著性检验和统计分析。'
 permalink: 'scipy-guide'
-image: 'https://r2.dreaife.tokyo//notion/covers/4237f3b649a54c4bb8893843403dc454/GCrU-yHbUAAfcqw.jpg'
+image: 'https://r2.dreaife.tokyo/notion/covers/4237f3b649a54c4bb8893843403dc454/GCrU-yHbUAAfcqw.jpg'
 tags: ['python']
 category: 'cs-base'
 draft: false

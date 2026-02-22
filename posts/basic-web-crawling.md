@@ -4,7 +4,7 @@ published: 2024-01-13
 updated: 2024-01-14
 description: '爬虫是自动化程序，用于获取网页信息。基本原理包括发送HTTP请求获取网页源代码，提取所需数据，并将其保存。网页由HTML、CSS和JavaScript构成，爬虫需处理静态和动态网页。会话和Cookies用于维持用户状态，代理服务器可隐藏真实IP以防止被封锁。常用的请求方法有GET和POST，响应状态码指示请求结果。爬虫需遵循反爬虫策略，使用代理和适当的请求头以提高抓取效率。'
 permalink: 'basic-web-crawling'
-image: 'https://r2.dreaife.tokyo//notion/covers/8f8cef85bfdc4abe842b94671f890b35/GCrf7hlbAAA-uaN.jpg'
+image: 'https://r2.dreaife.tokyo/notion/covers/8f8cef85bfdc4abe842b94671f890b35/GCrf7hlbAAA-uaN.jpg'
 tags: ['network', 'spider', 'python']
 category: 'spider'
 draft: false

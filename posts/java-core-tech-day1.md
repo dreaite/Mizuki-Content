@@ -4,7 +4,7 @@ published: 2022-07-08
 updated: 2022-07-08
 description: '本文主要介绍Java的核心技术，包括Java的概述、环境配置、基本程序结构、数据类型、变量、运算符、字符串处理、输入输出、流程控制以及数组的使用。强调了Java的简单性、面向对象特性和跨平台能力，并详细列出了Java开发工具包（JDK）、运行时环境（JRE）等专业术语及其解释。'
 permalink: 'java-core-tech-day1'
-image: 'https://r2.dreaife.tokyo//notion/covers/487668a94c7e4b98be77b6919f7e737e/300b942f9dd6e8b7.jpg'
+image: 'https://r2.dreaife.tokyo/notion/covers/487668a94c7e4b98be77b6919f7e737e/300b942f9dd6e8b7.jpg'
 tags: ['java', 'language']
 category: 'cs-base'
 draft: false

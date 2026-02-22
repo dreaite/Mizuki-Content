@@ -4,7 +4,7 @@ published: 2022-09-18
 updated: 2022-09-18
 description: '经历了从初次尝试到最终完成的过程，作者对樱花摸鱼的游戏充满了感激，认为它在生活中带来了希望和动力。游戏中的音乐《さくら、もゆ》传达了梦想与爱的情感，角色们的牺牲与成长让作者重新燃起了对生活的热情，反思了追求梦想的重要性。希望更多人能欣赏这款优秀的游戏，并期待未来的续作。'
 permalink: 'sakura-dreams-hope'
-image: 'https://r2.dreaife.tokyo//notion/covers/2e1f116038864fb8b2f212e3e2493bcc/MASHIRO_e102b.png'
+image: 'https://r2.dreaife.tokyo/notion/covers/2e1f116038864fb8b2f212e3e2493bcc/MASHIRO_e102b.png'
 tags: ['recomand', 'thinking']
 category: 'gal'
 draft: false

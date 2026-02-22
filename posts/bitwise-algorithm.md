@@ -4,7 +4,7 @@ published: 2022-07-16
 updated: 2022-07-16
 description: '介绍了位运算、离散化和区间合并的算法。位运算用于处理二进制数，离散化用于优化稀疏数据的存储和查询，区间合并则通过排序和覆盖判断快速合并多个区间。提供了相关例题和参考代码以帮助理解这些算法的应用。'
 permalink: 'bitwise-algorithm'
-image: 'https://r2.dreaife.tokyo//notion/covers/ae04b8a575694a71a8b1fb3ef5312c61/2421860-20220716210357012-2135810169.png'
+image: 'https://r2.dreaife.tokyo/notion/covers/ae04b8a575694a71a8b1fb3ef5312c61/2421860-20220716210357012-2135810169.png'
 tags: ['algorithm', 'acwing']
 category: 'algorithm'
 draft: false

@@ -4,7 +4,7 @@ published: 2024-12-15
 updated: 2024-12-15
 description: '通过修改Netplan配置、启用IP转发和配置NAT转发，实现Ubuntu将网络转发给路由器的功能。步骤包括清除现有配置、设置静态IP、安装和配置DHCP服务，并验证网络共享的有效性。'
 permalink: 'ubuntu-nat-routing'
-image: 'https://r2.dreaife.tokyo//notion/covers/15d5465cca1780bf85eac8dea673675e/IMG_1935.jpg'
+image: 'https://r2.dreaife.tokyo/notion/covers/15d5465cca1780bf85eac8dea673675e/IMG_1935.jpg'
 tags: ['network', 'linux']
 category: 'prog-side'
 draft: false

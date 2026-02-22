@@ -4,7 +4,7 @@ published: 2024-12-07
 updated: 2024-12-08
 description: '该项目是一个基于Nest.js和Angular的竞价平台，提供用户注册、项目管理和投标管理功能，使用PostgreSQL作为数据库，并通过Swagger生成API文档。后端实现了安全认证，使用AWS Cognito进行用户身份验证。前端构建了用户友好的界面，支持项目展示和投标管理。项目使用Jest进行测试，确保代码质量，并通过GitHub Actions实现持续集成和部署。'
 permalink: 'bidding-platform-nest-angular'
-image: 'https://r2.dreaife.tokyo//notion/covers/1555465cca1780f382f5f1421004b0a8/IMG_1767.jpg'
+image: 'https://r2.dreaife.tokyo/notion/covers/1555465cca1780f382f5f1421004b0a8/IMG_1767.jpg'
 tags: ['nodejs', 'ts', 'aws']
 category: 'BACKEND'
 draft: false

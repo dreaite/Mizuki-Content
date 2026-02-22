@@ -4,7 +4,7 @@ published: 2024-01-19
 updated: 2024-01-19
 description: 'Java语言的特点包括简单易学、面向对象、平台无关性、多线程支持、可靠性和安全性。Java SE是基础版，适合桌面应用，Java EE是企业版，适合复杂的企业级应用。JVM、JDK和JRE的区别在于JVM运行字节码，JDK是开发工具包，JRE是运行环境。Java使用字节码提高效率，支持编译与解释并存。异常处理分为Checked和Unchecked，使用try-catch-finally结构。泛型增强代码可读性，反射提供运行时分析能力。序列化用于对象持久化，IO流分为字节流和字符流，设计模式如装饰器和适配器在IO中应用广泛。'
 permalink: 'java-interview-basics'
-image: 'https://r2.dreaife.tokyo//notion/covers/e8c7d2c1e2e44a889fb128640d02a931/GEXWTXvbgAAOpzq.jpg'
+image: 'https://r2.dreaife.tokyo/notion/covers/e8c7d2c1e2e44a889fb128640d02a931/GEXWTXvbgAAOpzq.jpg'
 tags: ['java', 'doc', 'meeting']
 category: 'cs-base'
 draft: false
@@ -44,7 +44,7 @@ draft: false
 Java 虚拟机（JVM）是运行 Java 字节码的虚拟机。JVM 有针对不同系统的特定实现（Windows，Linux，macOS），目的是使用相同的字节码，它们都会给出相同的结果。字节码和不同系统的 JVM 实现是 Java 语言“一次编译，随处可以运行”的关键所在。
 
 
-![java-virtual-machine-program-language-os.png](https://r2.dreaife.tokyo//notion/covers/e8c7d2c1e2e44a889fb128640d02a931/inline/b19fb0a2ebccf8aa-java-virtual-machine-program-language-os.png)
+![java-virtual-machine-program-language-os.png](https://r2.dreaife.tokyo/notion/covers/e8c7d2c1e2e44a889fb128640d02a931/inline/b19fb0a2ebccf8aa-java-virtual-machine-program-language-os.png)
 
 
 JVM 并不是只有一种！只要满足 JVM 规范，每个公司、组织或者个人都可以开发自己的专属 JVM。也就是说我们平时接触到的 HotSpot VM 仅仅是是 JVM 规范的一种实现而已。
@@ -74,7 +74,7 @@ JRE（Java Runtime Environment） 是 Java 运行时环境。它是运行已编�
 在 Java 中，JVM 可以理解的代码就叫做字节码（即扩展名为 .class 的文件），它不面向任何特定的处理器，只面向虚拟机。Java 语言通过字节码的方式，在一定程度上解决了传统解释型语言执行效率低的问题，同时又保留了解释型语言可移植的特点。所以， Java 程序运行时相对来说还是高效的（不过，和 C、 C++，Rust，Go 等语言还是有一定差距的），而且，由于字节码并不针对一种特定的机器，因此，Java 程序无须重新编译便可在多种不同操作系统的计算机上运行。
 
 
-![java-code-to-machine-code.png](https://r2.dreaife.tokyo//notion/covers/e8c7d2c1e2e44a889fb128640d02a931/inline/33e120d7f05cfe60-java-code-to-machine-code.png)
+![java-code-to-machine-code.png](https://r2.dreaife.tokyo/notion/covers/e8c7d2c1e2e44a889fb128640d02a931/inline/33e120d7f05cfe60-java-code-to-machine-code.png)
 
 
 我们需要格外注意的是 .class->机器码 这一步。在这一步 JVM 类加载器首先加载字节码文件，然后通过解释器逐行解释执行，这种方式的执行速度会相对比较慢。而且，有些方法和代码块是经常需要被调用的(也就是所谓的热点代码)，所以后面引进了 JIT（Just in Time Compilation） 编译器，而 JIT 属于**运行时编译**。
@@ -83,11 +83,11 @@ JRE（Java Runtime Environment） 是 Java 运行时环境。它是运行已编�
 当 JIT 编译器完成第一次编译后，其会将字节码对应的机器码保存下来，下次可以直接使用。而我们知道，机器码的运行效率肯定是高于 Java 解释器的。这也解释了我们为什么经常会说 Java 是编译与解释共存的语言 。
 
 
-![java-code-to-machine-code-with-jit.png](https://r2.dreaife.tokyo//notion/covers/e8c7d2c1e2e44a889fb128640d02a931/inline/1e218610d2accfb2-java-code-to-machine-code-with-jit.png)
+![java-code-to-machine-code-with-jit.png](https://r2.dreaife.tokyo/notion/covers/e8c7d2c1e2e44a889fb128640d02a931/inline/1e218610d2accfb2-java-code-to-machine-code-with-jit.png)
 
 > HotSpot 采用了惰性评估(Lazy Evaluation)的做法，根据二八定律，消耗大部分系统资源的只有那一小部分的代码（热点代码），而这也就是 JIT 所需要编译的部分。JVM 会根据代码每次被执行的情况收集信息并相应地做出一些优化，因此执行的次数越多，它的速度就越快。
 
-![jdk-jre-jvm-jit.png](https://r2.dreaife.tokyo//notion/covers/e8c7d2c1e2e44a889fb128640d02a931/inline/f6b611221fb8ce9d-jdk-jre-jvm-jit.png)
+![jdk-jre-jvm-jit.png](https://r2.dreaife.tokyo/notion/covers/e8c7d2c1e2e44a889fb128640d02a931/inline/f6b611221fb8ce9d-jdk-jre-jvm-jit.png)
 
 
 # 为什么说 Java 语言“编译与解释并存”？
@@ -103,7 +103,7 @@ JRE（Java Runtime Environment） 是 Java 运行时环境。它是运行已编�
 - 解释型：
 解释型语言会通过解释器一句一句的将代码解释（interpret）为机器代码后再执行。解释型语言开发效率比较快，执行速度比较慢。常见的解释性语言有 Python、JavaScript、PHP 等等。
 
-![compiled-and-interpreted-languages.png](https://r2.dreaife.tokyo//notion/covers/e8c7d2c1e2e44a889fb128640d02a931/inline/0f1aafa87a11f30f-compiled-and-interpreted-languages.png)
+![compiled-and-interpreted-languages.png](https://r2.dreaife.tokyo/notion/covers/e8c7d2c1e2e44a889fb128640d02a931/inline/0f1aafa87a11f30f-compiled-and-interpreted-languages.png)
 
 > 为了改善编译语言的效率而发展出的即时编译技术，已经缩小了这两种语言间的差距。这种技术混合了编译语言与解释型语言的优点，它像编译语言一样，先把程序源代码编译成字节码。到执行期时，再将字节码直译，之后执行。Java与LLVM是这种技术的代表产物。
 
@@ -113,7 +113,7 @@ JRE（Java Runtime Environment） 是 Java 运行时环境。它是运行已编�
 JDK 9 引入了一种新的编译模式 AOT(Ahead of Time Compilation) 。和 JIT 不同的是，这种编译模式会在程序被执行前就将其编译成机器码，属于静态编译（C、 C++，Rust，Go 等语言就是静态编译）。AOT 避免了 JIT 预热等各方面的开销，可以提高 Java 程序的启动速度，避免预热时间长。并且，AOT 还能减少内存占用和增强 Java 程序的安全性（AOT 编译后的代码不容易被反编译和修改），特别适合云原生场景。
 
 
-![jit-vs-aot.jpg](https://r2.dreaife.tokyo//notion/covers/e8c7d2c1e2e44a889fb128640d02a931/inline/e918b9ddf6017a82-jit-vs-aot.jpg)
+![jit-vs-aot.jpg](https://r2.dreaife.tokyo/notion/covers/e8c7d2c1e2e44a889fb128640d02a931/inline/e918b9ddf6017a82-jit-vs-aot.jpg)
 
 
 可以看出，AOT 的主要优势在于启动时间、内存占用和打包体积。JIT 的主要优势在于具备更高的极限处理能力，可以降低请求的最大延迟。
@@ -356,7 +356,7 @@ Byte,Short,Integer,Long 这 4 种包装类默认创建了数值 [-128，127] 的
 记住：所有整型包装类对象之间值的比较，全部使用 equals 方法比较。
 
 
-![up-1ae0425ce8646adfb768b5374951eeb820d.png](https://r2.dreaife.tokyo//notion/covers/e8c7d2c1e2e44a889fb128640d02a931/inline/60e3ae7593241392-up-1ae0425ce8646adfb768b5374951eeb820d.png)
+![up-1ae0425ce8646adfb768b5374951eeb820d.png](https://r2.dreaife.tokyo/notion/covers/e8c7d2c1e2e44a889fb128640d02a931/inline/60e3ae7593241392-up-1ae0425ce8646adfb768b5374951eeb820d.png)
 
 
 ## 自动装箱与拆箱了解吗？原理是什么？

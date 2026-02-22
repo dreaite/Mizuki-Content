@@ -4,7 +4,7 @@ published: 2023-01-15
 updated: 2023-01-15
 description: '计算机系统由硬件和系统软件组成，通过程序的生命周期（创建、运行、输出、终止）来运行应用。信息由位和上下文构成，程序通过编译系统转化为可执行文件。处理器读取指令并执行简单操作，使用高速缓存提高性能。操作系统管理硬件，通过进程和虚拟内存提供资源的抽象，支持并发和并行执行。抽象是计算机科学的重要概念，虚拟机提供对整个计算机的抽象。'
 permalink: 'csapp-ch1-overview'
-image: 'https://r2.dreaife.tokyo//notion/covers/fbaef38b501a4cd8a8a2d1c58798cf70/2421860-20230116004313116-1139297538.png'
+image: 'https://r2.dreaife.tokyo/notion/covers/fbaef38b501a4cd8a8a2d1c58798cf70/2421860-20230116004313116-1139297538.png'
 tags: ['caapp', 'os', 'c']
 category: 'cs-base'
 draft: false

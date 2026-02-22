@@ -4,7 +4,7 @@ published: 2024-01-30
 updated: 2024-01-30
 description: '本文介绍了Java并发编程的基础知识，包括线程与进程的定义、Java线程的实现机制、线程的生命周期、并发与并行的区别、同步与异步的概念，以及多线程的优缺点。还探讨了线程安全、死锁及其避免方法，volatile关键字的使用，乐观锁与悲观锁的区别，以及如何使用线程池和Future类来提高程序的执行效率。最后，介绍了CyclicBarrier和CountDownLatch等工具的应用场景和原理。'
 permalink: 'java-concurrency-guide'
-image: 'https://r2.dreaife.tokyo//notion/covers/36ccc876cd6b43f59218f5bb7fdd21a3/56_735378_289462939fd8e89.jpg'
+image: 'https://r2.dreaife.tokyo/notion/covers/36ccc876cd6b43f59218f5bb7fdd21a3/56_735378_289462939fd8e89.jpg'
 tags: ['java', 'doc', 'meeting', 'multi-prog']
 category: 'cs-base'
 draft: false

@@ -4,7 +4,7 @@ published: 2024-01-02
 updated: 2024-01-02
 description: '在Win11中使用pyspider时遇到安装问题，可以通过Docker进行安装。提供了使用Docker命令和docker-compose的示例，成功运行后可以通过访问http://localhost:5000/确认pyspider是否正常工作。'
 permalink: 'docker-pyspider-win'
-image: 'https://r2.dreaife.tokyo//notion/covers/d0b67049d0274e6c9a4212cfb1241db0/2421860-20240102223652859-707973973.png'
+image: 'https://r2.dreaife.tokyo/notion/covers/d0b67049d0274e6c9a4212cfb1241db0/2421860-20240102223652859-707973973.png'
 tags: ['spider', 'docker', 'pyspider']
 category: 'spider'
 draft: false

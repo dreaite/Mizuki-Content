@@ -4,7 +4,7 @@ published: 2024-01-05
 updated: 2024-01-05
 description: 'NumPy是Python的一个扩展库，支持多维数组和矩阵运算，提供丰富的数学函数。其主要特点包括强大的ndarray对象、广播功能和与C/C++/Fortran的整合。NumPy常与SciPy和Matplotlib一起使用，形成强大的科学计算环境。安装可通过pip完成，支持多种数据类型，具有丰富的数组创建和操作功能，包括切片、索引和广播机制。'
 permalink: 'numpy-learning-notes'
-image: 'https://r2.dreaife.tokyo//notion/covers/8b3927e12bab461aae41199568484354/GCqi6hIbsAEIXlZ.jpg'
+image: 'https://r2.dreaife.tokyo/notion/covers/8b3927e12bab461aae41199568484354/GCqi6hIbsAEIXlZ.jpg'
 tags: ['python', 'numpy']
 category: 'cs-base'
 draft: false
