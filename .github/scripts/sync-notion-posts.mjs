@@ -1,9 +1,10 @@
 import crypto from 'node:crypto';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { HeadObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
 import {
@@ -45,6 +46,10 @@ const CONFIG = {
   notionCoverR2AccessKeyId: process.env.NOTION_COVER_R2_ACCESS_KEY_ID || '',
   notionCoverR2SecretAccessKey: process.env.NOTION_COVER_R2_SECRET_ACCESS_KEY || '',
   notionCoverR2CacheControl: String(process.env.NOTION_COVER_R2_CACHE_CONTROL || 'public, max-age=3600')
+    .trim(),
+  syncCheckpointEveryPosts: parsePositiveInt(process.env.NOTION_SYNC_CHECKPOINT_EVERY_POSTS, 0),
+  syncCheckpointPushEnabled: parseBoolean(process.env.NOTION_SYNC_CHECKPOINT_PUSH_ENABLED, false),
+  syncCheckpointMarkerPath: String(process.env.NOTION_SYNC_CHECKPOINT_MARKER_PATH || '.notion-sync-checkpoint-pushed')
     .trim(),
   typeProperty: process.env.NOTION_TYPE_PROPERTY || 'type',
   titleProperty: process.env.NOTION_TITLE_PROPERTY || 'title',
@@ -391,6 +396,11 @@ function extractFrontMatterField(markdown, fieldName) {
   if (!lineMatch) return '';
 
   return parseLooseYamlScalar(lineMatch[1]);
+}
+
+function stripMarkdownFrontMatter(markdown) {
+  const source = String(markdown || '');
+  return source.replace(/^---\n[\s\S]*?\n---(?:\n|$)/, '');
 }
 
 async function readMarkdownFrontMatterImage(filePath) {
@@ -791,27 +801,45 @@ function createNotionCoverR2Client() {
 }
 
 function createNotionR2UploadCache() {
-  return new Map();
+  return {
+    sourceUrlCache: new Map(),
+    objectHeadCache: new Map(),
+  };
 }
 
 async function uploadRemoteImageUrlToR2(s3Client, uploadCache, { sourceUrl, objectKey, suggestedFileName, logLabel }) {
   const url = String(sourceUrl || '').trim();
   if (!s3Client || !CONFIG.notionCoverR2Enabled || !url) return url;
 
+  const sourceUrlCache = getNotionR2SourceUrlCache(uploadCache);
   const cacheKey = `${objectKey}|${url}`;
-  if (uploadCache?.has(cacheKey)) {
-    return uploadCache.get(cacheKey);
+  if (sourceUrlCache?.has(cacheKey)) {
+    return sourceUrlCache.get(cacheKey);
   }
 
   const publicUrl = buildPublicUrlFromBase(CONFIG.notionCoverR2PublicBaseUrl, objectKey);
-  if (uploadCache) {
-    uploadCache.set(cacheKey, publicUrl);
+  if (sourceUrlCache) {
+    sourceUrlCache.set(cacheKey, publicUrl);
+  }
+
+  const sourceUrlSha1 = buildStableRemoteImageSourceSha1(url);
+  const existingObject = await headR2ObjectIfExists(s3Client, uploadCache, objectKey);
+  const existingSourceUrlSha1 = normalizeR2SourceSha1Metadata(existingObject?.metadata);
+
+  if (existingObject?.exists && existingSourceUrlSha1 && existingSourceUrlSha1 === sourceUrlSha1) {
+    return publicUrl;
   }
 
   const response = await fetch(url);
   if (!response.ok) {
-    if (uploadCache) uploadCache.delete(cacheKey);
+    if (sourceUrlCache) sourceUrlCache.delete(cacheKey);
     const responseText = await response.text().catch(() => '');
+    if (existingObject?.exists && isExpiredNotionAssetResponse(response.status, responseText)) {
+      console.warn(
+        `Reusing existing R2 object after expired Notion image URL${logLabel ? ` [${logLabel}]` : ''}: ${objectKey}`
+      );
+      return publicUrl;
+    }
     throw new Error(
       `Failed to download Notion image for R2 upload (${response.status} ${response.statusText})${logLabel ? ` [${logLabel}]` : ''}: ${responseText.slice(0, 300)}`
     );
@@ -828,8 +856,15 @@ async function uploadRemoteImageUrlToR2(s3Client, uploadCache, { sourceUrl, obje
       Body: bodyBuffer,
       ContentType: contentType,
       CacheControl: CONFIG.notionCoverR2CacheControl || undefined,
+      Metadata: {
+        'notion-source-sha1': sourceUrlSha1,
+      },
     })
   );
+  setHeadR2ObjectCache(uploadCache, objectKey, {
+    exists: true,
+    metadata: { 'notion-source-sha1': sourceUrlSha1 },
+  });
 
   return publicUrl;
 }
@@ -907,6 +942,94 @@ function getExpectedR2CoverPublicUrl(meta) {
   if (!coverInfo || coverInfo.type !== 'file' || !coverInfo.url) return '';
   const objectKey = buildNotionCoverR2ObjectKey(meta.pageId || '', coverInfo);
   return buildPublicUrlFromBase(CONFIG.notionCoverR2PublicBaseUrl, objectKey);
+}
+
+function getNotionR2SourceUrlCache(uploadCache) {
+  if (!uploadCache) return null;
+  if (typeof uploadCache.has === 'function' && typeof uploadCache.get === 'function') {
+    return uploadCache;
+  }
+  if (
+    typeof uploadCache === 'object' &&
+    uploadCache &&
+    uploadCache.sourceUrlCache &&
+    typeof uploadCache.sourceUrlCache.has === 'function'
+  ) {
+    return uploadCache.sourceUrlCache;
+  }
+  return null;
+}
+
+function getNotionR2ObjectHeadCache(uploadCache) {
+  if (!uploadCache || typeof uploadCache !== 'object') return null;
+  const cache = uploadCache.objectHeadCache;
+  if (!cache || typeof cache.has !== 'function' || typeof cache.get !== 'function') return null;
+  return cache;
+}
+
+function buildStableRemoteImageSourceSha1(sourceUrl) {
+  const stableSource = stripQueryAndHash(sourceUrl) || String(sourceUrl || '');
+  return sha1Hex(stableSource);
+}
+
+function normalizeR2SourceSha1Metadata(metadata) {
+  if (!metadata || typeof metadata !== 'object') return '';
+  const raw =
+    metadata['notion-source-sha1'] ||
+    metadata.notionSourceSha1 ||
+    metadata['x-amz-meta-notion-source-sha1'] ||
+    '';
+  const value = String(raw || '').trim().toLowerCase();
+  return /^[0-9a-f]{40}$/.test(value) ? value : '';
+}
+
+function isS3ObjectNotFoundError(error) {
+  const status = Number(error?.$metadata?.httpStatusCode);
+  const name = String(error?.name || error?.Code || '').toLowerCase();
+  return status === 404 || name === 'notfound' || name === 'nosuchkey';
+}
+
+async function headR2ObjectIfExists(s3Client, uploadCache, objectKey) {
+  if (!s3Client || !objectKey) return { exists: false, metadata: null };
+
+  const cache = getNotionR2ObjectHeadCache(uploadCache);
+  if (cache?.has(objectKey)) {
+    return cache.get(objectKey);
+  }
+
+  try {
+    const response = await s3Client.send(
+      new HeadObjectCommand({
+        Bucket: CONFIG.notionCoverR2Bucket,
+        Key: objectKey,
+      })
+    );
+    const entry = {
+      exists: true,
+      metadata: response?.Metadata || null,
+    };
+    if (cache) cache.set(objectKey, entry);
+    return entry;
+  } catch (error) {
+    if (isS3ObjectNotFoundError(error)) {
+      const entry = { exists: false, metadata: null };
+      if (cache) cache.set(objectKey, entry);
+      return entry;
+    }
+    throw error;
+  }
+}
+
+function setHeadR2ObjectCache(uploadCache, objectKey, entry) {
+  const cache = getNotionR2ObjectHeadCache(uploadCache);
+  if (!cache || !objectKey) return;
+  cache.set(objectKey, entry);
+}
+
+function isExpiredNotionAssetResponse(status, bodyText) {
+  if (Number(status) !== 403) return false;
+  const text = String(bodyText || '');
+  return /request has expired/i.test(text) || /<Code>AccessDenied<\/Code>/i.test(text);
 }
 
 async function shouldBackfillPostCoverToR2(filePath, meta) {
@@ -1275,6 +1398,118 @@ async function buildDiaryItems(n2m, diaryMetas, { s3Client, uploadCache } = {}) 
   return items;
 }
 
+function createSyncCheckpointState() {
+  return {
+    pendingChangedPosts: 0,
+    pushedCount: 0,
+    gitIdentityConfigured: false,
+  };
+}
+
+function shouldUseSyncCheckpointPush() {
+  return CONFIG.syncCheckpointPushEnabled && CONFIG.syncCheckpointEveryPosts > 0;
+}
+
+function getSyncTrackedPaths() {
+  return [
+    CONFIG.postsDir,
+    CONFIG.aboutPath,
+    CONFIG.friendsDataPath,
+    CONFIG.diaryDataPath,
+    CONFIG.projectsDataPath,
+  ];
+}
+
+function runGitCommand(args, { allowFailure = false } = {}) {
+  const result = spawnSync('git', args, {
+    cwd: process.cwd(),
+    encoding: 'utf8',
+  });
+
+  if (result.error) {
+    throw result.error;
+  }
+
+  if (result.status !== 0 && !allowFailure) {
+    const stderr = String(result.stderr || '').trim();
+    const stdout = String(result.stdout || '').trim();
+    throw new Error(`git ${args.join(' ')} failed (${result.status}): ${stderr || stdout || 'unknown error'}`);
+  }
+
+  return result;
+}
+
+function ensureCheckpointGitIdentity(state) {
+  if (state.gitIdentityConfigured) return;
+
+  const currentName = String(runGitCommand(['config', '--get', 'user.name'], { allowFailure: true }).stdout || '').trim();
+  const currentEmail = String(runGitCommand(['config', '--get', 'user.email'], { allowFailure: true }).stdout || '')
+    .trim();
+
+  if (!currentName) {
+    runGitCommand(['config', 'user.name', 'github-actions[bot]']);
+  }
+  if (!currentEmail) {
+    runGitCommand(['config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com']);
+  }
+
+  state.gitIdentityConfigured = true;
+}
+
+function hasTrackedContentChangesForCheckpoint() {
+  const trackedPaths = getSyncTrackedPaths();
+  const result = runGitCommand(['status', '--porcelain', '--', ...trackedPaths]);
+  return String(result.stdout || '').trim().length > 0;
+}
+
+function commitPendingContentChangesForCheckpoint(state) {
+  const trackedPaths = getSyncTrackedPaths();
+
+  ensureCheckpointGitIdentity(state);
+
+  runGitCommand(['add', '-A', '--', ...trackedPaths]);
+
+  const commitMessage = `chore(content): notion sync checkpoint (${state.pendingChangedPosts} posts)`;
+  const commitResult = runGitCommand(['commit', '-m', commitMessage], { allowFailure: true });
+  if (commitResult.status !== 0) {
+    const output = `${commitResult.stdout || ''}\n${commitResult.stderr || ''}`;
+    if (/nothing to commit/i.test(output)) {
+      return false;
+    }
+    throw new Error(`git commit failed during checkpoint: ${output.trim()}`);
+  }
+
+  runGitCommand(['push']);
+  return true;
+}
+
+async function writeSyncCheckpointMarker(pushedCount) {
+  const markerPath = String(CONFIG.syncCheckpointMarkerPath || '').trim();
+  if (!markerPath) return;
+  const fullPath = path.resolve(process.cwd(), markerPath);
+  await fs.mkdir(path.dirname(fullPath), { recursive: true });
+  await fs.writeFile(fullPath, String(pushedCount), 'utf8');
+}
+
+async function maybeRunSyncCheckpointCommit(state) {
+  if (!shouldUseSyncCheckpointPush()) return;
+  if (state.pendingChangedPosts < CONFIG.syncCheckpointEveryPosts) return;
+  if (!hasTrackedContentChangesForCheckpoint()) {
+    state.pendingChangedPosts = 0;
+    return;
+  }
+
+  console.log(
+    `Checkpoint commit: pushing intermediate sync changes after ${state.pendingChangedPosts} changed post(s).`
+  );
+  const pushed = commitPendingContentChangesForCheckpoint(state);
+  state.pendingChangedPosts = 0;
+  if (!pushed) return;
+
+  state.pushedCount += 1;
+  await writeSyncCheckpointMarker(state.pushedCount);
+}
+
 async function main() {
   validatePostTranslationConfig();
   validateNotionCoverR2Config();
@@ -1283,6 +1518,7 @@ async function main() {
   const n2m = new NotionToMarkdown({ notionClient: notion });
   const notionCoverR2Client = createNotionCoverR2Client();
   const notionR2UploadCache = createNotionR2UploadCache();
+  const syncCheckpointState = createSyncCheckpointState();
 
   const outputRoot = path.resolve(process.cwd(), CONFIG.postsDir);
   const aboutPath = path.resolve(process.cwd(), CONFIG.aboutPath);
@@ -1306,6 +1542,10 @@ async function main() {
       `Notion cover R2 sync enabled: bucket=${CONFIG.notionCoverR2Bucket}, publicBaseUrl=${CONFIG.notionCoverR2PublicBaseUrl}`
     );
   }
+  if (shouldUseSyncCheckpointPush()) {
+    console.log(`Sync checkpoint push enabled: every ${CONFIG.syncCheckpointEveryPosts} changed post(s).`);
+    await writeSyncCheckpointMarker(0);
+  }
 
   let processedPosts = 0;
   let changedFiles = 0;
@@ -1318,6 +1558,7 @@ async function main() {
   const friendPages = [];
   const diaryPages = [];
   const projectPages = [];
+  const deferredPostTranslations = [];
 
   for (const page of pages) {
     if (page.archived || page.in_trash) {
@@ -1329,6 +1570,7 @@ async function main() {
     const type = common.type.toLowerCase();
 
     if (type === 'post') {
+      let postChanged = false;
       const meta = extractPostMetadata(page);
       const relativePath = ensureMdRelativePathFromSlug(meta.permalink, meta.title);
       if (seenRelativePaths.has(relativePath)) {
@@ -1360,6 +1602,7 @@ async function main() {
         exists && !recent && CONFIG.notionCoverR2Enabled
           ? await markdownFileContainsTemporaryNotionImageUrl(fullPath)
           : false;
+      let sourceWriteResult = 'skipped';
       if (!exists || recent || coverBackfillNeeded || bodyImageBackfillNeeded) {
         if (coverBackfillNeeded || bodyImageBackfillNeeded) {
           console.log(`Backfilling R2 image URLs for ${relativePath}`);
@@ -1375,60 +1618,48 @@ async function main() {
           logLabel: 'post',
         });
         const document = buildMarkdownDocument(meta, markdownBody);
-        const sourceWriteResult = await writeIfChanged(fullPath, document);
+        sourceWriteResult = await writeIfChanged(fullPath, document);
         if (sourceWriteResult === 'unchanged') {
           unchangedFiles += 1;
         } else {
           changedFiles += 1;
+          postChanged = true;
           console.log(`${exists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), fullPath)}`);
-        }
-
-        if (CONFIG.postTranslationEnabled) {
-          for (const translationTarget of translationRelativePaths) {
-            const translatedFullPath = path.resolve(outputRoot, translationTarget.relativePath);
-            if (!(translatedFullPath === outputRoot || translatedFullPath.startsWith(`${outputRoot}${path.sep}`))) {
-              throw new Error(
-                `Resolved translated path escapes posts directory: ${translationTarget.relativePath}`
-              );
-            }
-
-            const translatedExists = await fileExists(translatedFullPath);
-            const shouldTranslateNow = sourceWriteResult !== 'unchanged' || !translatedExists;
-            if (!shouldTranslateNow) {
-              continue;
-            }
-
-            console.log(
-              `${translatedExists ? 'Updating' : 'Creating'} translation (${translationTarget.languageCode}) for ${relativePath}`
-            );
-            const translatedBody = await translatePostMarkdownBody(markdownBody, {
-              targetLanguage: translationTarget.languageCode,
-              title: meta.title,
-            });
-            const translatedDocument = buildMarkdownDocument(
-              {
-                ...meta,
-                lang: translationTarget.languageCode,
-                permalink: appendLanguageSuffixToPermalink(meta.permalink, translationTarget.languageCode),
-              },
-              translatedBody
-            );
-            const translatedWriteResult = await writeIfChanged(translatedFullPath, translatedDocument);
-            if (translatedWriteResult === 'unchanged') {
-              unchangedFiles += 1;
-            } else {
-              changedFiles += 1;
-              console.log(
-                `${translatedExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), translatedFullPath)}`
-              );
-            }
-          }
         }
       } else {
         skippedByWindow += 1;
       }
 
+      if (CONFIG.postTranslationEnabled) {
+        for (const translationTarget of translationRelativePaths) {
+          const translatedFullPath = path.resolve(outputRoot, translationTarget.relativePath);
+          if (!(translatedFullPath === outputRoot || translatedFullPath.startsWith(`${outputRoot}${path.sep}`))) {
+            throw new Error(`Resolved translated path escapes posts directory: ${translationTarget.relativePath}`);
+          }
+
+          const translatedExists = await fileExists(translatedFullPath);
+          const shouldTranslateNow = sourceWriteResult === 'written' || !translatedExists;
+          if (!shouldTranslateNow) {
+            continue;
+          }
+
+          deferredPostTranslations.push({
+            baseRelativePath: relativePath,
+            sourceFullPath: fullPath,
+            translatedFullPath,
+            translatedRelativePath: translationTarget.relativePath,
+            translatedExists,
+            languageCode: translationTarget.languageCode,
+            meta: { ...meta },
+          });
+        }
+      }
+
       processedPosts += 1;
+      if (postChanged) {
+        syncCheckpointState.pendingChangedPosts += 1;
+        await maybeRunSyncCheckpointCommit(syncCheckpointState);
+      }
       continue;
     }
 
@@ -1551,6 +1782,48 @@ async function main() {
     } else {
       changedFiles += 1;
       console.log(`${projectsFileExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), projectsDataPath)}`);
+    }
+  }
+
+  if (CONFIG.postTranslationEnabled && deferredPostTranslations.length > 0) {
+    console.log(`Processing deferred post translations: ${deferredPostTranslations.length} job(s).`);
+
+    for (const job of deferredPostTranslations) {
+      console.log(
+        `${job.translatedExists ? 'Updating' : 'Creating'} translation (${job.languageCode}) for ${job.baseRelativePath}`
+      );
+
+      const sourceDocument = await readFileUtf8IfExists(job.sourceFullPath);
+      if (!sourceDocument) {
+        throw new Error(
+          `Source post markdown is missing while generating translation: ${path.relative(process.cwd(), job.sourceFullPath)}`
+        );
+      }
+
+      const sourceBody = stripMarkdownFrontMatter(sourceDocument);
+      const sourceImage = normalizeSingleLine(extractFrontMatterField(sourceDocument, 'image'));
+      const translatedBody = await translatePostMarkdownBody(sourceBody, {
+        targetLanguage: job.languageCode,
+        title: job.meta.title,
+      });
+      const translatedDocument = buildMarkdownDocument(
+        {
+          ...job.meta,
+          image: sourceImage || job.meta.image,
+          lang: job.languageCode,
+          permalink: appendLanguageSuffixToPermalink(job.meta.permalink, job.languageCode),
+        },
+        translatedBody
+      );
+      const translatedWriteResult = await writeIfChanged(job.translatedFullPath, translatedDocument);
+      if (translatedWriteResult === 'unchanged') {
+        unchangedFiles += 1;
+      } else {
+        changedFiles += 1;
+        console.log(
+          `${job.translatedExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), job.translatedFullPath)}`
+        );
+      }
     }
   }
 
