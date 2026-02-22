@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   sync:
-    runs-on: ubuntu-latest
+    runs-on: selfN100
     timeout-minutes: 15
 
     steps:
@@ -29,12 +29,14 @@ jobs:
           node-version: '20'
 
       - name: Install sync dependencies
-        run: npm install --no-save --no-package-lock @notionhq/client notion-to-md
+        run: npm install --no-save --no-package-lock @notionhq/client@5 notion-to-md
 
       - name: Sync posts from Notion database
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          # 可选（Notion SDK v5 且一个 database 下有多个 data source 时建议显式配置）
+          NOTION_DATA_SOURCE_ID: ${{ vars.NOTION_DATA_SOURCE_ID }}
           NOTION_SYNC_DELETE_MISSING: 'true'
           # 可选：如果你的 Notion 数据库列名不同，可在仓库 Variables 中覆盖这些值
           NOTION_POSTS_DIR: posts
