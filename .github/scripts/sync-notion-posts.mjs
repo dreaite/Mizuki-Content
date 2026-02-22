@@ -185,6 +185,22 @@ function toDateOnly(value) {
   return parsed.toISOString().slice(0, 10);
 }
 
+function normalizePublishedAndUpdated(published, updated) {
+  const pub = String(published || '').trim();
+  const upd = String(updated || '').trim();
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(pub) || !/^\d{4}-\d{2}-\d{2}$/.test(upd)) {
+    return { published, updated };
+  }
+
+  // If create/published is newer than updated, use the older date for both.
+  if (pub > upd) {
+    return { published: upd, updated: upd };
+  }
+
+  return { published, updated };
+}
+
 function getPageCoverUrl(page) {
   const cover = page?.cover;
   if (!cover) return '';
@@ -387,9 +403,10 @@ function extractMetadata(page) {
   const published = toDateOnly(
     propertyToString(propertyByName(properties, CONFIG.createTimeProperty)) || page.created_time
   );
-  const updated = toDateOnly(
+  let updated = toDateOnly(
     propertyToString(propertyByName(properties, CONFIG.updatedDateProperty)) || page.last_edited_time
   );
+  const normalizedDates = normalizePublishedAndUpdated(published, updated);
   const description = normalizeSingleLine(propertyToString(propertyByName(properties, CONFIG.summaryProperty)));
   const rawSlug = normalizeSingleLine(propertyToString(propertyByName(properties, CONFIG.slugProperty)));
   const fallbackSlug = sanitizeSlug(title) || page.id.replace(/-/g, '');
@@ -412,8 +429,8 @@ function extractMetadata(page) {
     pageId: page.id,
     type,
     title,
-    published,
-    updated,
+    published: normalizedDates.published,
+    updated: normalizedDates.updated,
     description,
     permalink,
     image,
