@@ -52,9 +52,11 @@ jobs:
         run: node .github/scripts/sync-notion-posts.mjs
 
       - name: Commit and push changes
+        id: commit_push
         run: |
           if [ -z "$(git status --porcelain -- posts)" ]; then
             echo "No changes in posts/"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -64,11 +66,40 @@ jobs:
           git add -A posts
           git commit -m "chore(content): sync posts from notion"
           git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+          echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger Cloudflare Pages Deploy Hook
+        if: ${{ steps.commit_push.outputs.pushed == 'true' }}
+        env:
+          CF_DEPLOY_HOOK: ${{ secrets.CF_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$CF_DEPLOY_HOOK" ]; then
+            echo "❌ CF_DEPLOY_HOOK secret is not set"
+            exit 1
+          fi
+
+          response=$(curl -s -w "\n%{http_code}" -X POST "$CF_DEPLOY_HOOK")
+          http_code=$(echo "$response" | tail -n1)
+
+          if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ]; then
+            echo "✅ Cloudflare Pages deployment triggered successfully"
+          else
+            echo "❌ Failed to trigger deployment. HTTP code: $http_code"
+            exit 1
+          fi
 
       - name: Job summary
         if: always()
+        env:
+          POSTS_PUSHED: ${{ steps.commit_push.outputs.pushed || 'false' }}
+          SYNC_COMMIT_SHA: ${{ steps.commit_push.outputs.commit_sha || '' }}
         run: |
           echo "## Notion Sync" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "- Workflow run: \`${{ github.run_id }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- Ref: \`${{ github.ref_name }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Posts updated and pushed: \`${POSTS_PUSHED}\`" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$SYNC_COMMIT_SHA" ]; then
+            echo "- Sync commit SHA: \`${SYNC_COMMIT_SHA}\`" >> "$GITHUB_STEP_SUMMARY"
+          fi

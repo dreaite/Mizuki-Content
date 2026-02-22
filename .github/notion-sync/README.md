@@ -14,11 +14,13 @@ Keep blog posts in `posts/` consistent with the Notion database (`type = Post`).
 - Notion `Post` pages are converted to Markdown and written to `posts/`
 - Existing files are updated when content/front matter changes
 - Files missing from Notion are deleted (when `NOTION_SYNC_DELETE_MISSING=true`)
+- When posts are changed and pushed, the workflow can directly trigger Cloudflare Pages Deploy Hook (`CF_DEPLOY_HOOK`)
 
 ## Required GitHub Secrets
 
 - `NOTION_TOKEN`
 - `NOTION_DATABASE_ID`
+- `CF_DEPLOY_HOOK` (if using the built-in Cloudflare deploy hook step in `sync-notion-posts.yml`)
 
 ## Optional GitHub Variables
 
