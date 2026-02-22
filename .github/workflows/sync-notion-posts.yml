@@ -38,14 +38,26 @@ jobs:
           # 可选（Notion SDK v5 且一个 database 下有多个 data source 时建议显式配置）
           NOTION_DATA_SOURCE_ID: ${{ vars.NOTION_DATA_SOURCE_ID }}
           NOTION_SYNC_DELETE_MISSING: 'true'
+          # 同步窗口 = cron 周期 * 2（分钟）
+          NOTION_SYNC_CRON_MINUTES: '60'
+          NOTION_SYNC_LOOKBACK_MULTIPLIER: '2'
           # 可选：如果你的 Notion 数据库列名不同，可在仓库 Variables 中覆盖这些值
           NOTION_POSTS_DIR: posts
+          NOTION_ABOUT_PATH: spec/about.md
+          NOTION_FRIENDS_DATA_PATH: data/friends.ts
+          NOTION_DIARY_DATA_PATH: data/diary.ts
+          NOTION_PROJECTS_DATA_PATH: data/projects.ts
           NOTION_TYPE_PROPERTY: type
           NOTION_TITLE_PROPERTY: title
           NOTION_CREATE_TIME_PROPERTY: createTime
           NOTION_UPDATED_DATE_PROPERTY: date
+          NOTION_UPDATE_TIME_PROPERTY: updateTime
           NOTION_SUMMARY_PROPERTY: summary
           NOTION_SLUG_PROPERTY: slug
+          NOTION_URL_PROPERTY: url
+          NOTION_LIVE_DEMO_PROPERTY: liveDemo
+          NOTION_TECH_STACK_PROPERTY: techStack
+          NOTION_FEATURED_PROPERTY: featured
           NOTION_TAGS_PROPERTY: tags
           NOTION_CATEGORY_PROPERTY: category
           NOTION_STATUS_PROPERTY: status
@@ -54,8 +66,8 @@ jobs:
       - name: Commit and push changes
         id: commit_push
         run: |
-          if [ -z "$(git status --porcelain -- posts)" ]; then
-            echo "No changes in posts/"
+          if [ -z "$(git status --porcelain -- posts spec/about.md data/friends.ts data/diary.ts data/projects.ts)" ]; then
+            echo "No content changes in posts/about/data"
             echo "pushed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -63,8 +75,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add -A posts
-          git commit -m "chore(content): sync posts from notion"
+          git add -A posts spec/about.md data/friends.ts data/diary.ts data/projects.ts
+          git commit -m "chore(content): sync notion content"
           git push
           echo "pushed=true" >> "$GITHUB_OUTPUT"
           echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
@@ -99,7 +111,7 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "- Workflow run: \`${{ github.run_id }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- Ref: \`${{ github.ref_name }}\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Posts updated and pushed: \`${POSTS_PUSHED}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Content updated and pushed: \`${POSTS_PUSHED}\`" >> "$GITHUB_STEP_SUMMARY"
           if [ -n "$SYNC_COMMIT_SHA" ]; then
             echo "- Sync commit SHA: \`${SYNC_COMMIT_SHA}\`" >> "$GITHUB_STEP_SUMMARY"
           fi

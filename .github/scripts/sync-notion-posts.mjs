@@ -4,19 +4,38 @@ import process from 'node:process';
 
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
+import {
+  buildFriendItems,
+  buildProjectItems,
+  extractMarkdownImagesAndText,
+  renderDiaryDataTs,
+  renderFriendsDataTs,
+  renderProjectsDataTs,
+} from './notion-ts-data-sync.mjs';
 
 const CONFIG = {
   notionToken: requireEnv('NOTION_TOKEN'),
   databaseId: requireEnv('NOTION_DATABASE_ID'),
   dataSourceId: process.env.NOTION_DATA_SOURCE_ID || '',
   postsDir: process.env.NOTION_POSTS_DIR || 'posts',
+  aboutPath: process.env.NOTION_ABOUT_PATH || 'spec/about.md',
+  friendsDataPath: process.env.NOTION_FRIENDS_DATA_PATH || 'data/friends.ts',
+  diaryDataPath: process.env.NOTION_DIARY_DATA_PATH || 'data/diary.ts',
+  projectsDataPath: process.env.NOTION_PROJECTS_DATA_PATH || 'data/projects.ts',
   deleteMissing: parseBoolean(process.env.NOTION_SYNC_DELETE_MISSING, false),
+  syncCronMinutes: parsePositiveInt(process.env.NOTION_SYNC_CRON_MINUTES, 60),
+  syncLookbackMultiplier: parsePositiveInt(process.env.NOTION_SYNC_LOOKBACK_MULTIPLIER, 2),
   typeProperty: process.env.NOTION_TYPE_PROPERTY || 'type',
   titleProperty: process.env.NOTION_TITLE_PROPERTY || 'title',
   createTimeProperty: process.env.NOTION_CREATE_TIME_PROPERTY || 'createTime',
   updatedDateProperty: process.env.NOTION_UPDATED_DATE_PROPERTY || 'date',
+  updateTimeProperty: process.env.NOTION_UPDATE_TIME_PROPERTY || 'updateTime',
   summaryProperty: process.env.NOTION_SUMMARY_PROPERTY || 'summary',
   slugProperty: process.env.NOTION_SLUG_PROPERTY || 'slug',
+  urlProperty: process.env.NOTION_URL_PROPERTY || 'url',
+  liveDemoProperty: process.env.NOTION_LIVE_DEMO_PROPERTY || 'liveDemo',
+  techStackProperty: process.env.NOTION_TECH_STACK_PROPERTY || 'techStack',
+  featuredProperty: process.env.NOTION_FEATURED_PROPERTY || 'featured',
   tagsProperty: process.env.NOTION_TAGS_PROPERTY || 'tags',
   categoryProperty: process.env.NOTION_CATEGORY_PROPERTY || 'category',
   statusProperty: process.env.NOTION_STATUS_PROPERTY || 'status',
@@ -35,6 +54,12 @@ function parseBoolean(value, fallback = false) {
   if (value == null || value === '') return fallback;
   const normalized = String(value).trim().toLowerCase();
   return ['1', 'true', 'yes', 'on'].includes(normalized);
+}
+
+function parsePositiveInt(value, fallback) {
+  const parsed = Number.parseInt(String(value ?? ''), 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) return fallback;
+  return parsed;
 }
 
 function richTextToPlainText(items = []) {
@@ -155,6 +180,38 @@ function propertyToArray(prop) {
   return [single];
 }
 
+function propertyToDateRange(prop) {
+  if (!prop || typeof prop !== 'object') {
+    return { start: '', end: '' };
+  }
+
+  if (prop.type === 'date') {
+    return {
+      start: toDateOnly(prop.date?.start || ''),
+      end: toDateOnly(prop.date?.end || ''),
+    };
+  }
+
+  if (prop.type === 'formula' && prop.formula?.type === 'date') {
+    return {
+      start: toDateOnly(prop.formula.date?.start || ''),
+      end: toDateOnly(prop.formula.date?.end || ''),
+    };
+  }
+
+  if (prop.type === 'rollup' && prop.rollup?.type === 'date') {
+    return {
+      start: toDateOnly(prop.rollup.date?.start || ''),
+      end: toDateOnly(prop.rollup.date?.end || ''),
+    };
+  }
+
+  return {
+    start: toDateOnly(propertyToString(prop)),
+    end: '',
+  };
+}
+
 function propertyByName(properties, name) {
   return properties?.[name];
 }
@@ -199,6 +256,52 @@ function normalizePublishedAndUpdated(published, updated) {
   }
 
   return { published, updated };
+}
+
+function toIsoUtcString(value) {
+  const text = String(value || '').trim();
+  if (!text) return '';
+
+  const parsed = new Date(text);
+  if (Number.isNaN(parsed.getTime())) return '';
+
+  return parsed.toISOString();
+}
+
+function parseOptionalBooleanChoice(value) {
+  const normalized = String(value || '').trim().toLowerCase();
+  if (!normalized) return undefined;
+  if (normalized === 'true') return true;
+  if (normalized === 'false') return false;
+  return undefined;
+}
+
+function toUnixMs(value) {
+  const iso = toIsoUtcString(value);
+  if (!iso) return 0;
+  return Date.parse(iso);
+}
+
+function isRecentByWindow(value, nowMs, lookbackMinutes) {
+  const timestamp = toUnixMs(value);
+  if (!timestamp) return false;
+  return nowMs - timestamp <= lookbackMinutes * 60 * 1000;
+}
+
+async function fileExists(filePath) {
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch (error) {
+    if (error?.code === 'ENOENT') return false;
+    throw error;
+  }
+}
+
+async function notionPageToMarkdownString(n2m, pageId) {
+  const pageMdBlocks = await n2m.pageToMarkdown(pageId);
+  const mdString = n2m.toMarkdownString(pageMdBlocks);
+  return typeof mdString === 'string' ? mdString : mdString?.parent || '';
 }
 
 function getPageCoverUrl(page) {
@@ -392,7 +495,7 @@ async function resolveDataSourceIdFromDatabaseOrFallback(notion, databaseId) {
   }
 }
 
-function extractMetadata(page) {
+function extractCommonMetadata(page) {
   const properties = page.properties || {};
   const titleProp = findTitleProperty(properties, CONFIG.titleProperty);
 
@@ -400,19 +503,17 @@ function extractMetadata(page) {
   const title = rawTitle || `Untitled ${page.id}`;
 
   const type = normalizeSingleLine(propertyToString(propertyByName(properties, CONFIG.typeProperty)));
-  const published = toDateOnly(
-    propertyToString(propertyByName(properties, CONFIG.createTimeProperty)) || page.created_time
-  );
-  let updated = toDateOnly(
-    propertyToString(propertyByName(properties, CONFIG.updatedDateProperty)) || page.last_edited_time
-  );
-  const normalizedDates = normalizePublishedAndUpdated(published, updated);
   const description = normalizeSingleLine(propertyToString(propertyByName(properties, CONFIG.summaryProperty)));
   const rawSlug = normalizeSingleLine(propertyToString(propertyByName(properties, CONFIG.slugProperty)));
   const fallbackSlug = sanitizeSlug(title) || page.id.replace(/-/g, '');
   const permalink = sanitizeSlug(rawSlug) || fallbackSlug;
   const image = normalizeSingleLine(getPageCoverUrl(page));
   const tags = propertyToArray(propertyByName(properties, CONFIG.tagsProperty));
+  const siteurl = normalizeSingleLine(propertyToString(propertyByName(properties, CONFIG.urlProperty)));
+  const updateTimeIso = toIsoUtcString(
+    propertyToString(propertyByName(properties, CONFIG.updateTimeProperty)) || page.last_edited_time
+  );
+  const lastEditedIso = toIsoUtcString(page.last_edited_time);
 
   const categoryProp = propertyByName(properties, CONFIG.categoryProperty);
   let category = '';
@@ -427,17 +528,65 @@ function extractMetadata(page) {
 
   return {
     pageId: page.id,
+    properties,
     type,
     title,
-    published: normalizedDates.published,
-    updated: normalizedDates.updated,
     description,
     permalink,
     image,
     tags,
     category,
+    siteurl,
+    updateTimeIso,
+    lastEditedIso,
     draft,
   };
+}
+
+function extractPostMetadata(page) {
+  const common = extractCommonMetadata(page);
+  const properties = common.properties || {};
+
+  const published = toDateOnly(
+    propertyToString(propertyByName(properties, CONFIG.createTimeProperty)) || page.created_time
+  );
+  const updated = toDateOnly(
+    propertyToString(propertyByName(properties, CONFIG.updatedDateProperty)) || page.last_edited_time
+  );
+  const normalizedDates = normalizePublishedAndUpdated(published, updated);
+
+  return {
+    ...common,
+    published: normalizedDates.published,
+    updated: normalizedDates.updated,
+  };
+}
+
+function extractProjectMetadata(page) {
+  const common = extractCommonMetadata(page);
+  const properties = common.properties || {};
+  const dateRange = propertyToDateRange(propertyByName(properties, CONFIG.updatedDateProperty));
+
+  return {
+    ...common,
+    projectStartDate: dateRange.start,
+    projectEndDate: dateRange.end,
+    techStack: propertyToArray(propertyByName(properties, CONFIG.techStackProperty)),
+    statusValue: normalizeSingleLine(propertyToString(propertyByName(properties, CONFIG.statusProperty))),
+    liveDemo: normalizeSingleLine(propertyToString(propertyByName(properties, CONFIG.liveDemoProperty))),
+    sourceCode: normalizeSingleLine(propertyToString(propertyByName(properties, CONFIG.urlProperty))),
+    featuredValue: parseOptionalBooleanChoice(
+      propertyToString(propertyByName(properties, CONFIG.featuredProperty))
+    ),
+  };
+}
+
+function toDiaryDateIso(meta) {
+  return meta.updateTimeIso || meta.lastEditedIso || '';
+}
+
+function sortByUpdatedDesc(a, b) {
+  return toUnixMs(b.updateTimeIso || b.lastEditedIso) - toUnixMs(a.updateTimeIso || a.lastEditedIso);
 }
 
 function buildMarkdownDocument(meta, markdownBody) {
@@ -492,20 +641,83 @@ async function listMarkdownFiles(rootDir) {
   }
 }
 
+async function writeAboutFileIfNeeded(filePath, markdownBody) {
+  const content = `${String(markdownBody || '').trim()}\n`;
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
+  return writeIfChanged(filePath, content);
+}
+
+async function updateFriendsDataFile(filePath, friendItems) {
+  const fileContent = await fs.readFile(filePath, 'utf8');
+  const nextContent = renderFriendsDataTs(fileContent, friendItems);
+  return writeIfChanged(filePath, nextContent);
+}
+
+async function updateDiaryDataFile(filePath, diaryItems) {
+  const fileContent = await fs.readFile(filePath, 'utf8');
+  const nextContent = renderDiaryDataTs(fileContent, diaryItems);
+  return writeIfChanged(filePath, nextContent);
+}
+
+async function updateProjectsDataFile(filePath, projectItems) {
+  const fileContent = await fs.readFile(filePath, 'utf8');
+  const nextContent = renderProjectsDataTs(fileContent, projectItems);
+  return writeIfChanged(filePath, nextContent);
+}
+
+function isMetaRecentlyUpdated(meta, nowMs, lookbackMinutes) {
+  return isRecentByWindow(meta.updateTimeIso || meta.lastEditedIso, nowMs, lookbackMinutes);
+}
+
+async function buildDiaryItems(n2m, diaryMetas) {
+  const sorted = [...diaryMetas].sort(sortByUpdatedDesc);
+  const items = [];
+
+  for (let index = 0; index < sorted.length; index += 1) {
+    const meta = sorted[index];
+    const diaryDate = toDiaryDateIso(meta);
+    const markdown = await notionPageToMarkdownString(n2m, meta.pageId);
+    const parsed = extractMarkdownImagesAndText(markdown);
+
+    items.push({
+      id: index + 1,
+      content: parsed.text,
+      date: diaryDate,
+      images: parsed.images,
+    });
+  }
+
+  return items;
+}
+
 async function main() {
   const notion = new Client({ auth: CONFIG.notionToken });
   const n2m = new NotionToMarkdown({ notionClient: notion });
 
   const outputRoot = path.resolve(process.cwd(), CONFIG.postsDir);
+  const aboutPath = path.resolve(process.cwd(), CONFIG.aboutPath);
+  const friendsDataPath = path.resolve(process.cwd(), CONFIG.friendsDataPath);
+  const diaryDataPath = path.resolve(process.cwd(), CONFIG.diaryDataPath);
+  const projectsDataPath = path.resolve(process.cwd(), CONFIG.projectsDataPath);
   const pages = await fetchAllDatabasePages(notion, CONFIG.databaseId);
   console.log(`Fetched ${pages.length} page(s) from Notion database.`);
+  const lookbackMinutes = CONFIG.syncCronMinutes * CONFIG.syncLookbackMultiplier;
+  const nowMs = Date.now();
+  console.log(
+    `Incremental sync window: ${lookbackMinutes} minute(s) (cron=${CONFIG.syncCronMinutes}m, multiplier=${CONFIG.syncLookbackMultiplier})`
+  );
 
-  let processed = 0;
-  let createdOrUpdated = 0;
-  let unchanged = 0;
+  let processedPosts = 0;
+  let changedFiles = 0;
+  let unchangedFiles = 0;
   let skipped = 0;
+  let skippedByWindow = 0;
   let deleted = 0;
   const seenRelativePaths = new Set();
+  const aboutPages = [];
+  const friendPages = [];
+  const diaryPages = [];
+  const projectPages = [];
 
   for (const page of pages) {
     if (page.archived || page.in_trash) {
@@ -513,47 +725,63 @@ async function main() {
       continue;
     }
 
-    const meta = extractMetadata(page);
-    if (meta.type.toLowerCase() !== 'post') {
-      skipped += 1;
+    const common = extractCommonMetadata(page);
+    const type = common.type.toLowerCase();
+
+    if (type === 'post') {
+      const meta = extractPostMetadata(page);
+      const relativePath = ensureMdRelativePathFromSlug(meta.permalink, meta.title);
+      if (seenRelativePaths.has(relativePath)) {
+        throw new Error(`Duplicate slug/permalink detected for output path: ${relativePath}`);
+      }
+      seenRelativePaths.add(relativePath);
+
+      const fullPath = path.resolve(outputRoot, relativePath);
+      if (!(fullPath === outputRoot || fullPath.startsWith(`${outputRoot}${path.sep}`))) {
+        throw new Error(`Resolved path escapes posts directory: ${relativePath}`);
+      }
+
+      const exists = await fileExists(fullPath);
+      const recent = isMetaRecentlyUpdated(meta, nowMs, lookbackMinutes);
+      if (!exists || recent) {
+        const markdownBody = await notionPageToMarkdownString(n2m, page.id);
+        const document = buildMarkdownDocument(meta, markdownBody);
+        const result = await writeIfChanged(fullPath, document);
+        if (result === 'unchanged') {
+          unchangedFiles += 1;
+        } else {
+          changedFiles += 1;
+          console.log(`${exists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), fullPath)}`);
+        }
+      } else {
+        skippedByWindow += 1;
+      }
+
+      processedPosts += 1;
       continue;
     }
 
-    const relativePath = ensureMdRelativePathFromSlug(meta.permalink, meta.title);
-    if (seenRelativePaths.has(relativePath)) {
-      throw new Error(`Duplicate slug/permalink detected for output path: ${relativePath}`);
-    }
-    seenRelativePaths.add(relativePath);
-
-    const pageMdBlocks = await n2m.pageToMarkdown(page.id);
-    const mdString = n2m.toMarkdownString(pageMdBlocks);
-    const markdownBody =
-      typeof mdString === 'string' ? mdString : mdString?.parent || '';
-
-    const document = buildMarkdownDocument(meta, markdownBody);
-
-    const fullPath = path.resolve(outputRoot, relativePath);
-    if (!(fullPath === outputRoot || fullPath.startsWith(`${outputRoot}${path.sep}`))) {
-      throw new Error(`Resolved path escapes posts directory: ${relativePath}`);
+    if (type === 'about') {
+      aboutPages.push(common);
+      continue;
     }
 
-    let existedBefore = true;
-    try {
-      await fs.access(fullPath);
-    } catch (error) {
-      if (error?.code === 'ENOENT') existedBefore = false;
-      else throw error;
+    if (type === 'friend') {
+      friendPages.push(common);
+      continue;
     }
 
-    const result = await writeIfChanged(fullPath, document);
-    if (result === 'unchanged') {
-      unchanged += 1;
-    } else {
-      createdOrUpdated += 1;
-      console.log(`${existedBefore ? 'Updated' : 'Created'} ${path.relative(process.cwd(), fullPath)}`);
+    if (type === 'diary') {
+      diaryPages.push(common);
+      continue;
     }
 
-    processed += 1;
+    if (type === 'project') {
+      projectPages.push(extractProjectMetadata(page));
+      continue;
+    }
+
+    skipped += 1;
   }
 
   if (CONFIG.deleteMissing) {
@@ -574,8 +802,69 @@ async function main() {
     }
   }
 
+  if (aboutPages.length > 0) {
+    const aboutExists = await fileExists(aboutPath);
+    const anyAboutRecent = aboutPages.some((meta) => isMetaRecentlyUpdated(meta, nowMs, lookbackMinutes));
+    const selectedAbout = [...aboutPages].sort(sortByUpdatedDesc)[0];
+
+    if (aboutPages.length > 1) {
+      console.warn(
+        `Found ${aboutPages.length} About pages. Using the most recently updated one: ${selectedAbout.pageId}`
+      );
+    }
+
+    if (!aboutExists || anyAboutRecent) {
+      const aboutMarkdown = await notionPageToMarkdownString(n2m, selectedAbout.pageId);
+      const result = await writeAboutFileIfNeeded(aboutPath, aboutMarkdown);
+      if (result === 'unchanged') {
+        unchangedFiles += 1;
+      } else {
+        changedFiles += 1;
+        console.log(`${aboutExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), aboutPath)}`);
+      }
+    } else {
+      skippedByWindow += 1;
+    }
+  }
+
+  {
+    const friendsFileExists = await fileExists(friendsDataPath);
+    const friendItems = buildFriendItems(friendPages);
+    const result = await updateFriendsDataFile(friendsDataPath, friendItems);
+    if (result === 'unchanged') {
+      unchangedFiles += 1;
+    } else {
+      changedFiles += 1;
+      console.log(`${friendsFileExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), friendsDataPath)}`);
+    }
+  }
+
+  {
+    const diaryFileExists = await fileExists(diaryDataPath);
+    const diaryItems = await buildDiaryItems(n2m, diaryPages);
+    const result = await updateDiaryDataFile(diaryDataPath, diaryItems);
+    if (result === 'unchanged') {
+      unchangedFiles += 1;
+    } else {
+      changedFiles += 1;
+      console.log(`${diaryFileExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), diaryDataPath)}`);
+    }
+  }
+
+  {
+    const projectsFileExists = await fileExists(projectsDataPath);
+    const projectItems = buildProjectItems(projectPages);
+    const result = await updateProjectsDataFile(projectsDataPath, projectItems);
+    if (result === 'unchanged') {
+      unchangedFiles += 1;
+    } else {
+      changedFiles += 1;
+      console.log(`${projectsFileExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), projectsDataPath)}`);
+    }
+  }
+
   console.log(
-    `Sync complete. processed=${processed}, changed=${createdOrUpdated}, unchanged=${unchanged}, deleted=${deleted}, skipped=${skipped}, deleteMissing=${CONFIG.deleteMissing}`
+    `Sync complete. posts=${processedPosts}, about=${aboutPages.length}, friends=${friendPages.length}, diary=${diaryPages.length}, projects=${projectPages.length}, changed=${changedFiles}, unchanged=${unchangedFiles}, skippedByWindow=${skippedByWindow}, deletedPosts=${deleted}, skippedOther=${skipped}, deleteMissingPosts=${CONFIG.deleteMissing}`
   );
 }
 
