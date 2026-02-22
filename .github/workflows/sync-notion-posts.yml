@@ -29,7 +29,7 @@ jobs:
           node-version: '20'
 
       - name: Install sync dependencies
-        run: npm install --no-save --no-package-lock @notionhq/client@5 notion-to-md
+        run: npm install --no-save --no-package-lock @notionhq/client@5 notion-to-md @aws-sdk/client-s3 undici
 
       - name: Sync posts from Notion database
         env:
@@ -50,9 +50,11 @@ jobs:
           # 可选：启用 Post 正文翻译（OpenAI-compatible Chat Completions API）
           NOTION_POST_TRANSLATION_ENABLED: ${{ vars.NOTION_POST_TRANSLATION_ENABLED || 'false' }}
           # 逗号分隔语言代码，例如：en,ja
-          NOTION_POST_TRANSLATION_LANGS: ${{ vars.NOTION_POST_TRANSLATION_LANGS || '' }}
-          NOTION_POST_TRANSLATION_MODEL: ${{ vars.NOTION_POST_TRANSLATION_MODEL || '' }}
-          NOTION_POST_TRANSLATION_API_BASE_URL: ${{ vars.NOTION_POST_TRANSLATION_API_BASE_URL || 'https://api.openai.com/v1' }}
+          NOTION_POST_TRANSLATION_LANGS: ${{ secrets.NOTION_POST_TRANSLATION_LANGS || '' }}
+          NOTION_POST_TRANSLATION_MODEL: ${{ secrets.NOTION_POST_TRANSLATION_MODEL || '' }}
+          NOTION_POST_TRANSLATION_API_BASE_URL: ${{ secrets.NOTION_POST_TRANSLATION_API_BASE_URL || 'https://api.openai.com/v1' }}
+          # 可选：LLM 翻译请求超时时间（毫秒），长文可调大，例如 900000 = 15 分钟
+          NOTION_POST_TRANSLATION_TIMEOUT_MS: ${{ secrets.NOTION_POST_TRANSLATION_TIMEOUT_MS || '600000' }}
           # 可选：源语言（仅作为提示词上下文），例如 zh-cn
           NOTION_POST_TRANSLATION_SOURCE_LANG: ${{ vars.NOTION_POST_TRANSLATION_SOURCE_LANG || '' }}
           # 可选：自定义 system prompt（不填则使用脚本内默认提示词）

@@ -4,6 +4,7 @@ import process from 'node:process';
 
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
+import { Agent as UndiciAgent } from 'undici';
 import {
   buildFriendItems,
   buildProjectItems,
@@ -34,6 +35,17 @@ const CONFIG = {
   postTranslationModel: String(process.env.NOTION_POST_TRANSLATION_MODEL || '').trim(),
   postTranslationSourceLanguage: String(process.env.NOTION_POST_TRANSLATION_SOURCE_LANG || '').trim(),
   postTranslationSystemPrompt: String(process.env.NOTION_POST_TRANSLATION_SYSTEM_PROMPT || '').trim(),
+  postTranslationTimeoutMs: parsePositiveInt(process.env.NOTION_POST_TRANSLATION_TIMEOUT_MS, 10 * 60 * 1000),
+  notionCoverR2Enabled: parseBoolean(process.env.NOTION_COVER_R2_ENABLED, false),
+  notionCoverR2Endpoint: String(process.env.NOTION_COVER_R2_ENDPOINT || '').trim().replace(/\/+$/, ''),
+  notionCoverR2Region: String(process.env.NOTION_COVER_R2_REGION || 'auto').trim() || 'auto',
+  notionCoverR2Bucket: String(process.env.NOTION_COVER_R2_BUCKET || '').trim(),
+  notionCoverR2PublicBaseUrl: String(process.env.NOTION_COVER_R2_PUBLIC_BASE_URL || '').trim().replace(/\/+$/, ''),
+  notionCoverR2Prefix: String(process.env.NOTION_COVER_R2_PREFIX || 'notion/covers').trim().replace(/^\/+|\/+$/g, ''),
+  notionCoverR2AccessKeyId: process.env.NOTION_COVER_R2_ACCESS_KEY_ID || '',
+  notionCoverR2SecretAccessKey: process.env.NOTION_COVER_R2_SECRET_ACCESS_KEY || '',
+  notionCoverR2CacheControl: String(process.env.NOTION_COVER_R2_CACHE_CONTROL || 'public, max-age=3600')
+    .trim(),
   typeProperty: process.env.NOTION_TYPE_PROPERTY || 'type',
   titleProperty: process.env.NOTION_TITLE_PROPERTY || 'title',
   createTimeProperty: process.env.NOTION_CREATE_TIME_PROPERTY || 'createTime',
@@ -49,6 +61,8 @@ const CONFIG = {
   categoryProperty: process.env.NOTION_CATEGORY_PROPERTY || 'category',
   statusProperty: process.env.NOTION_STATUS_PROPERTY || 'status',
 };
+
+let postTranslationHttpAgent = null;
 
 function requireEnv(name) {
   const value = process.env[name];
@@ -451,39 +465,63 @@ function unwrapSingleFencedBlock(text) {
   return String(match[1] || '').trim();
 }
 
+function getPostTranslationHttpAgent() {
+  if (!CONFIG.postTranslationEnabled) return undefined;
+  if (postTranslationHttpAgent) return postTranslationHttpAgent;
+
+  // Raise Undici header/body timeouts for long-running LLM translations.
+  postTranslationHttpAgent = new UndiciAgent({
+    headersTimeout: CONFIG.postTranslationTimeoutMs,
+    bodyTimeout: CONFIG.postTranslationTimeoutMs,
+  });
+
+  return postTranslationHttpAgent;
+}
+
 async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }) {
   const body = String(markdownBody || '');
   if (!body.trim()) return '';
 
-  const response = await fetch(`${CONFIG.postTranslationApiBaseUrl}/chat/completions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(CONFIG.postTranslationApiKey ? { Authorization: `Bearer ${CONFIG.postTranslationApiKey}` } : {}),
-    },
-    body: JSON.stringify({
-      model: CONFIG.postTranslationModel,
-      temperature: 1,
-      messages: [
-        {
-          role: 'system',
-          content: buildPostTranslationSystemPrompt(),
-        },
-        {
-          role: 'user',
-          content: [
-            `Target language: ${targetLanguage}`,
-            `Source language: ${CONFIG.postTranslationSourceLanguage || 'auto-detect'}`,
-            `Post title (context only, do not prepend): ${title}`,
-            '',
-            'Return only the translated Markdown body.',
-            '',
-            body,
-          ].join('\n'),
-        },
-      ],
-    }),
-  });
+  let response;
+  try {
+    response = await fetch(`${CONFIG.postTranslationApiBaseUrl}/chat/completions`, {
+      method: 'POST',
+      signal: AbortSignal.timeout(CONFIG.postTranslationTimeoutMs),
+      dispatcher: getPostTranslationHttpAgent(),
+      headers: {
+        'Content-Type': 'application/json',
+        ...(CONFIG.postTranslationApiKey ? { Authorization: `Bearer ${CONFIG.postTranslationApiKey}` } : {}),
+      },
+      body: JSON.stringify({
+        model: CONFIG.postTranslationModel,
+        temperature: 1,
+        messages: [
+          {
+            role: 'system',
+            content: buildPostTranslationSystemPrompt(),
+          },
+          {
+            role: 'user',
+            content: [
+              `Target language: ${targetLanguage}`,
+              `Source language: ${CONFIG.postTranslationSourceLanguage || 'auto-detect'}`,
+              `Post title (context only, do not prepend): ${title}`,
+              '',
+              'Return only the translated Markdown body.',
+              '',
+              body,
+            ].join('\n'),
+          },
+        ],
+      }),
+    });
+  } catch (error) {
+    const causeCode = error?.cause?.code || error?.code || '';
+    throw new Error(
+      `LLM translation request failed before response (timeout=${CONFIG.postTranslationTimeoutMs}ms${causeCode ? `, code=${causeCode}` : ''}). ${error?.message || error}`,
+      { cause: error }
+    );
+  }
 
   if (!response.ok) {
     const errorText = await response.text().catch(() => '');
@@ -864,7 +902,7 @@ async function main() {
   );
   if (CONFIG.postTranslationEnabled) {
     console.log(
-      `Post translation enabled: languages=[${CONFIG.postTranslationLanguages.join(', ')}], model=${CONFIG.postTranslationModel}`
+      `Post translation enabled: languages=[${CONFIG.postTranslationLanguages.join(', ')}], model=${CONFIG.postTranslationModel}, timeoutMs=${CONFIG.postTranslationTimeoutMs}`
     );
   }
 

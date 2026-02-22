@@ -46,6 +46,9 @@ Keep local content files consistent with the Notion database by `type`.
   - Model name used for translation requests.
 - `NOTION_POST_TRANSLATION_API_BASE_URL`
   - Optional API base URL, default: `https://api.openai.com/v1`.
+- `NOTION_POST_TRANSLATION_TIMEOUT_MS`
+  - Optional LLM translation request timeout in milliseconds.
+  - Default `600000` (10 minutes). Increase for long posts (e.g. `900000` = 15 minutes).
 - `NOTION_POST_TRANSLATION_SOURCE_LANG`
   - Optional source language hint (prompt context only), e.g. `zh-cn`.
 - `NOTION_POST_TRANSLATION_SYSTEM_PROMPT`
