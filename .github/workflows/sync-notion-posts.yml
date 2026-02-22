@@ -36,7 +36,7 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
           # 可选（Notion SDK v5 且一个 database 下有多个 data source 时建议显式配置）
-          NOTION_DATA_SOURCE_ID: ${{ vars.NOTION_DATA_SOURCE_ID }}
+          NOTION_DATA_SOURCE_ID: ${{ secrets.NOTION_DATA_SOURCE_ID }}
           NOTION_SYNC_DELETE_MISSING: 'true'
           # 同步窗口 = cron 周期 * 2（分钟）
           NOTION_SYNC_CRON_MINUTES: '60'
@@ -48,25 +48,25 @@ jobs:
           NOTION_DIARY_DATA_PATH: data/diary.ts
           NOTION_PROJECTS_DATA_PATH: data/projects.ts
           # 可选：启用 Post 正文翻译（OpenAI-compatible Chat Completions API）
-          NOTION_POST_TRANSLATION_ENABLED: ${{ vars.NOTION_POST_TRANSLATION_ENABLED || 'false' }}
+          NOTION_POST_TRANSLATION_ENABLED: ${{ secrets.NOTION_POST_TRANSLATION_ENABLED || 'false' }}
           # 逗号分隔语言代码，例如：en,ja
-          NOTION_POST_TRANSLATION_LANGS: ${{ vars.NOTION_POST_TRANSLATION_LANGS || '' }}
-          NOTION_POST_TRANSLATION_MODEL: ${{ vars.NOTION_POST_TRANSLATION_MODEL || '' }}
-          NOTION_POST_TRANSLATION_API_BASE_URL: ${{ vars.NOTION_POST_TRANSLATION_API_BASE_URL || 'https://api.openai.com/v1' }}
+          NOTION_POST_TRANSLATION_LANGS: ${{ secrets.NOTION_POST_TRANSLATION_LANGS || '' }}
+          NOTION_POST_TRANSLATION_MODEL: ${{ secrets.NOTION_POST_TRANSLATION_MODEL || '' }}
+          NOTION_POST_TRANSLATION_API_BASE_URL: ${{ secrets.NOTION_POST_TRANSLATION_API_BASE_URL || 'https://api.openai.com/v1' }}
           # 可选：源语言（仅作为提示词上下文），例如 zh-cn
-          NOTION_POST_TRANSLATION_SOURCE_LANG: ${{ vars.NOTION_POST_TRANSLATION_SOURCE_LANG || '' }}
+          NOTION_POST_TRANSLATION_SOURCE_LANG: ${{ secrets.NOTION_POST_TRANSLATION_SOURCE_LANG || '' }}
           # 可选：自定义 system prompt（不填则使用脚本内默认提示词）
-          NOTION_POST_TRANSLATION_SYSTEM_PROMPT: ${{ vars.NOTION_POST_TRANSLATION_SYSTEM_PROMPT || '' }}
+          NOTION_POST_TRANSLATION_SYSTEM_PROMPT: ${{ secrets.NOTION_POST_TRANSLATION_SYSTEM_PROMPT || '' }}
           NOTION_POST_TRANSLATION_API_KEY: ${{ secrets.NOTION_POST_TRANSLATION_API_KEY }}
           # 可选：将 Notion 图片资产（Post/Project 封面 + Post/About/Diary 正文图片）上传到 Cloudflare R2，并写入稳定公网 URL
-          NOTION_COVER_R2_ENABLED: ${{ vars.NOTION_COVER_R2_ENABLED || 'false' }}
-          NOTION_COVER_R2_ENDPOINT: ${{ vars.NOTION_COVER_R2_ENDPOINT || '' }}
-          NOTION_COVER_R2_REGION: ${{ vars.NOTION_COVER_R2_REGION || 'auto' }}
-          NOTION_COVER_R2_BUCKET: ${{ vars.NOTION_COVER_R2_BUCKET || '' }}
+          NOTION_COVER_R2_ENABLED: ${{ secrets.NOTION_COVER_R2_ENABLED || 'false' }}
+          NOTION_COVER_R2_ENDPOINT: ${{ secrets.NOTION_COVER_R2_ENDPOINT || '' }}
+          NOTION_COVER_R2_REGION: ${{ secrets.NOTION_COVER_R2_REGION || 'auto' }}
+          NOTION_COVER_R2_BUCKET: ${{ secrets.NOTION_COVER_R2_BUCKET || '' }}
           # 公开访问域名（例如自定义域名或 r2.dev 域名），脚本会在其后拼接对象 key
-          NOTION_COVER_R2_PUBLIC_BASE_URL: ${{ vars.NOTION_COVER_R2_PUBLIC_BASE_URL || '' }}
-          NOTION_COVER_R2_PREFIX: ${{ vars.NOTION_COVER_R2_PREFIX || 'notion/covers' }}
-          NOTION_COVER_R2_CACHE_CONTROL: ${{ vars.NOTION_COVER_R2_CACHE_CONTROL || 'public, max-age=3600' }}
+          NOTION_COVER_R2_PUBLIC_BASE_URL: ${{ secrets.NOTION_COVER_R2_PUBLIC_BASE_URL || '' }}
+          NOTION_COVER_R2_PREFIX: ${{ secrets.NOTION_COVER_R2_PREFIX || 'notion/covers' }}
+          NOTION_COVER_R2_CACHE_CONTROL: ${{ secrets.NOTION_COVER_R2_CACHE_CONTROL || 'public, max-age=3600' }}
           NOTION_COVER_R2_ACCESS_KEY_ID: ${{ secrets.NOTION_COVER_R2_ACCESS_KEY_ID }}
           NOTION_COVER_R2_SECRET_ACCESS_KEY: ${{ secrets.NOTION_COVER_R2_SECRET_ACCESS_KEY }}
           NOTION_TYPE_PROPERTY: type
