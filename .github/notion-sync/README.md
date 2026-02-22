@@ -1,5 +1,7 @@
 # Notion Sync (Posts)
 
+[中文说明（简体）](./README.zh-CN.md)
+
 This repository includes a GitHub Action that syncs content from a Notion database into:
 
 - `posts/` (blog posts)
