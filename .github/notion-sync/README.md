@@ -32,6 +32,7 @@ Keep local content files consistent with the Notion database by `type`.
 - `NOTION_DATABASE_ID`
 - `CF_DEPLOY_HOOK` (if using the built-in Cloudflare deploy hook step in `sync-notion-posts.yml`)
 - `NOTION_POST_TRANSLATION_API_KEY` (only when enabling LLM translation)
+- `NOTION_COVER_R2_ACCESS_KEY_ID` / `NOTION_COVER_R2_SECRET_ACCESS_KEY` (only when enabling R2 cover sync)
 
 ## Optional GitHub Variables
 
@@ -50,6 +51,24 @@ Keep local content files consistent with the Notion database by `type`.
   - Optional source language hint (prompt context only), e.g. `zh-cn`.
 - `NOTION_POST_TRANSLATION_SYSTEM_PROMPT`
   - Optional custom system prompt for translation behavior.
+- `NOTION_COVER_R2_ENABLED`
+  - Set to `true` to upload Notion image assets to Cloudflare R2 and write stable public URLs.
+  - Covers:
+    - `Post` cover image (`frontmatter.image`)
+    - `Project` cover image fields in generated TS data
+    - Markdown body images in `Post`, `About`, and `Diary` content (including diary extracted `images`)
+- `NOTION_COVER_R2_ENDPOINT`
+  - R2 S3 API endpoint, e.g. `https://<accountid>.r2.cloudflarestorage.com`.
+- `NOTION_COVER_R2_REGION`
+  - Usually `auto` for R2.
+- `NOTION_COVER_R2_BUCKET`
+  - R2 bucket name used to store cover images.
+- `NOTION_COVER_R2_PUBLIC_BASE_URL`
+  - Public URL base for the bucket (custom domain or `*.r2.dev`), e.g. `https://static.example.com`.
+- `NOTION_COVER_R2_PREFIX`
+  - Optional object key prefix (default `notion/covers`).
+- `NOTION_COVER_R2_CACHE_CONTROL`
+  - Optional uploaded object cache header (default `public, max-age=3600`).
 
 ## Notion Database Property Mapping (default names)
 
@@ -152,7 +171,9 @@ If you still have manually maintained posts under `posts/`, either:
 
 ## Notes
 
-- Notion cover/file URLs may be temporary signed URLs; `image` is stored as the current Notion URL as requested.
+- Notion cover/file URLs are often temporary signed URLs and may expire.
+- When `NOTION_COVER_R2_ENABLED=true`, the sync script uploads Notion image assets to R2 and stores R2 public URLs instead of temporary signed Notion URLs.
+- Existing `Post` / `About` markdown files with expired Notion image URLs are backfilled to R2 URLs during later sync runs (even if the body did not change).
 - The workflow auto-commits `posts/` changes back to the current branch.
 - `Friend` / `Diary` data files are regenerated from current Notion rows each run (then `writeIfChanged` avoids no-op writes) so ordering-based IDs stay consistent.
 - `Project` data file (`data/projects.ts`) is also regenerated each run to keep the local dataset aligned with current Notion rows.

@@ -1,7 +1,9 @@
+import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
 import {
@@ -34,6 +36,16 @@ const CONFIG = {
   postTranslationModel: String(process.env.NOTION_POST_TRANSLATION_MODEL || '').trim(),
   postTranslationSourceLanguage: String(process.env.NOTION_POST_TRANSLATION_SOURCE_LANG || '').trim(),
   postTranslationSystemPrompt: String(process.env.NOTION_POST_TRANSLATION_SYSTEM_PROMPT || '').trim(),
+  notionCoverR2Enabled: parseBoolean(process.env.NOTION_COVER_R2_ENABLED, false),
+  notionCoverR2Endpoint: String(process.env.NOTION_COVER_R2_ENDPOINT || '').trim().replace(/\/+$/, ''),
+  notionCoverR2Region: String(process.env.NOTION_COVER_R2_REGION || 'auto').trim() || 'auto',
+  notionCoverR2Bucket: String(process.env.NOTION_COVER_R2_BUCKET || '').trim(),
+  notionCoverR2PublicBaseUrl: String(process.env.NOTION_COVER_R2_PUBLIC_BASE_URL || '').trim().replace(/\/+$/, ''),
+  notionCoverR2Prefix: String(process.env.NOTION_COVER_R2_PREFIX || 'notion/covers').trim().replace(/^\/+|\/+$/g, ''),
+  notionCoverR2AccessKeyId: process.env.NOTION_COVER_R2_ACCESS_KEY_ID || '',
+  notionCoverR2SecretAccessKey: process.env.NOTION_COVER_R2_SECRET_ACCESS_KEY || '',
+  notionCoverR2CacheControl: String(process.env.NOTION_COVER_R2_CACHE_CONTROL || 'public, max-age=3600')
+    .trim(),
   typeProperty: process.env.NOTION_TYPE_PROPERTY || 'type',
   titleProperty: process.env.NOTION_TITLE_PROPERTY || 'title',
   createTimeProperty: process.env.NOTION_CREATE_TIME_PROPERTY || 'createTime',
@@ -93,6 +105,16 @@ function parseLanguageList(value) {
   }
 
   return languages;
+}
+
+function parseUrlOrEmpty(value) {
+  const text = String(value || '').trim();
+  if (!text) return '';
+  try {
+    return new URL(text).toString();
+  } catch {
+    throw new Error(`Invalid URL: ${value}`);
+  }
 }
 
 function richTextToPlainText(items = []) {
@@ -331,18 +353,249 @@ async function fileExists(filePath) {
   }
 }
 
+async function readFileUtf8IfExists(filePath) {
+  try {
+    return await fs.readFile(filePath, 'utf8');
+  } catch (error) {
+    if (error?.code === 'ENOENT') return '';
+    throw error;
+  }
+}
+
+function parseLooseYamlScalar(value) {
+  const text = String(value || '').trim();
+  if (!text) return '';
+
+  if ((text.startsWith("'") && text.endsWith("'")) || (text.startsWith('"') && text.endsWith('"'))) {
+    const quote = text[0];
+    let inner = text.slice(1, -1);
+    if (quote === "'") {
+      inner = inner.replace(/''/g, "'");
+    } else {
+      inner = inner.replace(/\\"/g, '"');
+    }
+    return inner;
+  }
+
+  return text;
+}
+
+function extractFrontMatterField(markdown, fieldName) {
+  const source = String(markdown || '');
+  const frontMatterMatch = source.match(/^---\n([\s\S]*?)\n---(?:\n|$)/);
+  if (!frontMatterMatch) return '';
+
+  const body = frontMatterMatch[1];
+  const escapedField = String(fieldName || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const lineMatch = body.match(new RegExp(`^${escapedField}:\\s*(.+?)\\s*$`, 'm'));
+  if (!lineMatch) return '';
+
+  return parseLooseYamlScalar(lineMatch[1]);
+}
+
+async function readMarkdownFrontMatterImage(filePath) {
+  const content = await readFileUtf8IfExists(filePath);
+  if (!content) return '';
+  return extractFrontMatterField(content, 'image');
+}
+
+async function markdownFileContainsTemporaryNotionImageUrl(filePath) {
+  const content = await readFileUtf8IfExists(filePath);
+  if (!content) return false;
+  return /notionusercontent\.com|prod-files-secure\.s3\./i.test(content);
+}
+
 async function notionPageToMarkdownString(n2m, pageId) {
   const pageMdBlocks = await n2m.pageToMarkdown(pageId);
   const mdString = n2m.toMarkdownString(pageMdBlocks);
   return typeof mdString === 'string' ? mdString : mdString?.parent || '';
 }
 
-function getPageCoverUrl(page) {
+function getPageCoverInfo(page) {
   const cover = page?.cover;
-  if (!cover) return '';
-  if (cover.type === 'external') return cover.external?.url || '';
-  if (cover.type === 'file') return cover.file?.url || '';
-  return '';
+  if (!cover) {
+    return {
+      type: '',
+      url: '',
+      expiryTime: '',
+      filename: '',
+    };
+  }
+
+  if (cover.type === 'external') {
+    return {
+      type: 'external',
+      url: cover.external?.url || '',
+      expiryTime: '',
+      filename: '',
+    };
+  }
+
+  if (cover.type === 'file') {
+    const fileUrl = cover.file?.url || '';
+    return {
+      type: 'file',
+      url: fileUrl,
+      expiryTime: String(cover.file?.expiry_time || '').trim(),
+      filename: extractFilenameFromUrl(fileUrl),
+    };
+  }
+
+  return {
+    type: String(cover.type || ''),
+    url: '',
+    expiryTime: '',
+    filename: '',
+  };
+}
+
+function getPageCoverUrl(page) {
+  return getPageCoverInfo(page).url;
+}
+
+function extractFilenameFromUrl(value) {
+  const text = String(value || '').trim();
+  if (!text) return '';
+
+  try {
+    const parsed = new URL(text);
+    const segments = parsed.pathname.split('/').filter(Boolean);
+    return decodeURIComponent(segments[segments.length - 1] || '');
+  } catch {
+    return '';
+  }
+}
+
+function sanitizeFileName(value, fallback = 'cover') {
+  const fileName = String(value || '').trim();
+  const normalized = fileName
+    .replace(/[\\/:*?"<>|]/g, '-')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  return normalized || fallback;
+}
+
+function stripQueryAndHash(value) {
+  return String(value || '').replace(/[?#].*$/, '');
+}
+
+function fileExtensionFromName(value) {
+  const source = stripQueryAndHash(String(value || ''));
+  const match = source.match(/\.([a-zA-Z0-9]+)$/);
+  return match ? match[1].toLowerCase() : '';
+}
+
+function guessImageContentType(fileName) {
+  const ext = fileExtensionFromName(fileName);
+  switch (ext) {
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'png':
+      return 'image/png';
+    case 'webp':
+      return 'image/webp';
+    case 'gif':
+      return 'image/gif';
+    case 'avif':
+      return 'image/avif';
+    case 'svg':
+      return 'image/svg+xml';
+    default:
+      return 'application/octet-stream';
+  }
+}
+
+function normalizeNotionCoverR2Prefix() {
+  return CONFIG.notionCoverR2Prefix || 'notion/covers';
+}
+
+function toStablePageKey(pageId) {
+  return String(pageId || '')
+    .replace(/-/g, '')
+    .toLowerCase();
+}
+
+function buildNotionCoverR2ObjectKey(pageId, coverInfo) {
+  const pageKey = toStablePageKey(pageId);
+  const rawFileName = sanitizeFileName(coverInfo?.filename || 'cover');
+  const ext = fileExtensionFromName(rawFileName);
+  const fileName = ext ? rawFileName : `${rawFileName}.bin`;
+  return `${normalizeNotionCoverR2Prefix()}/${pageKey}/${fileName}`;
+}
+
+function sha1Hex(value) {
+  return crypto.createHash('sha1').update(String(value || '')).digest('hex');
+}
+
+function buildNotionInlineImageR2ObjectKey(pageId, sourceUrl) {
+  const pageKey = toStablePageKey(pageId) || 'unknown-page';
+  const hashSource = stripQueryAndHash(sourceUrl) || String(sourceUrl || '');
+  const hash = sha1Hex(hashSource).slice(0, 16);
+  const rawFileName = sanitizeFileName(extractFilenameFromUrl(sourceUrl) || `image-${hash}`);
+  const ext = fileExtensionFromName(rawFileName);
+  const fileName = ext ? rawFileName : `${rawFileName}.bin`;
+  return `${normalizeNotionCoverR2Prefix()}/${pageKey}/inline/${hash}-${fileName}`;
+}
+
+function buildPublicUrlFromBase(baseUrl, objectKey) {
+  const normalizedBase = parseUrlOrEmpty(baseUrl);
+  const encodedKey = String(objectKey || '')
+    .split('/')
+    .filter((segment) => segment.length > 0)
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+  return `${normalizedBase}/${encodedKey}`;
+}
+
+function isTemporaryNotionAssetUrl(url) {
+  const text = String(url || '').trim();
+  if (!text) return false;
+  return (
+    /notionusercontent\.com/i.test(text) ||
+    /prod-files-secure\.s3\./i.test(text) ||
+    /[?&]X-Amz-Expires=/i.test(text) ||
+    /[?&]exp=/i.test(text)
+  );
+}
+
+function extractUrlsFromMarkdownImages(markdown) {
+  const source = String(markdown || '');
+  const urls = new Set();
+
+  const markdownImagePattern = /!\[[^\]]*?\]\((.*?)\)/g;
+  source.replace(markdownImagePattern, (_, rawUrl) => {
+    let candidate = String(rawUrl || '').trim();
+    if (!candidate) return '';
+
+    if (candidate.startsWith('<')) {
+      const end = candidate.indexOf('>');
+      if (end > 0) {
+        candidate = candidate.slice(1, end);
+      }
+    } else if (/\s/.test(candidate)) {
+      candidate = candidate.split(/\s+/)[0];
+    }
+
+    candidate = candidate.trim();
+    if (candidate) {
+      urls.add(candidate);
+    }
+    return '';
+  });
+
+  const htmlImagePattern = /<img\b[^>]*?\bsrc=["']([^"']+)["'][^>]*>/gi;
+  source.replace(htmlImagePattern, (_, rawUrl) => {
+    const candidate = String(rawUrl || '').trim();
+    if (candidate) {
+      urls.add(candidate);
+    }
+    return '';
+  });
+
+  return [...urls];
 }
 
 function sanitizeSlug(value) {
@@ -501,6 +754,176 @@ async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }
   return unwrapSingleFencedBlock(content);
 }
 
+function validateNotionCoverR2Config() {
+  if (!CONFIG.notionCoverR2Enabled) return;
+
+  if (!CONFIG.notionCoverR2Endpoint) {
+    throw new Error('NOTION_COVER_R2_ENABLED=true but NOTION_COVER_R2_ENDPOINT is empty.');
+  }
+  if (!CONFIG.notionCoverR2Bucket) {
+    throw new Error('NOTION_COVER_R2_ENABLED=true but NOTION_COVER_R2_BUCKET is empty.');
+  }
+  if (!CONFIG.notionCoverR2PublicBaseUrl) {
+    throw new Error('NOTION_COVER_R2_ENABLED=true but NOTION_COVER_R2_PUBLIC_BASE_URL is empty.');
+  }
+  if (!CONFIG.notionCoverR2AccessKeyId || !CONFIG.notionCoverR2SecretAccessKey) {
+    throw new Error(
+      'NOTION_COVER_R2_ENABLED=true but NOTION_COVER_R2_ACCESS_KEY_ID / NOTION_COVER_R2_SECRET_ACCESS_KEY is missing.'
+    );
+  }
+
+  parseUrlOrEmpty(CONFIG.notionCoverR2Endpoint);
+  parseUrlOrEmpty(CONFIG.notionCoverR2PublicBaseUrl);
+}
+
+function createNotionCoverR2Client() {
+  if (!CONFIG.notionCoverR2Enabled) return null;
+
+  return new S3Client({
+    region: CONFIG.notionCoverR2Region || 'auto',
+    endpoint: CONFIG.notionCoverR2Endpoint,
+    forcePathStyle: true,
+    credentials: {
+      accessKeyId: CONFIG.notionCoverR2AccessKeyId,
+      secretAccessKey: CONFIG.notionCoverR2SecretAccessKey,
+    },
+  });
+}
+
+function createNotionR2UploadCache() {
+  return new Map();
+}
+
+async function uploadRemoteImageUrlToR2(s3Client, uploadCache, { sourceUrl, objectKey, suggestedFileName, logLabel }) {
+  const url = String(sourceUrl || '').trim();
+  if (!s3Client || !CONFIG.notionCoverR2Enabled || !url) return url;
+
+  const cacheKey = `${objectKey}|${url}`;
+  if (uploadCache?.has(cacheKey)) {
+    return uploadCache.get(cacheKey);
+  }
+
+  const publicUrl = buildPublicUrlFromBase(CONFIG.notionCoverR2PublicBaseUrl, objectKey);
+  if (uploadCache) {
+    uploadCache.set(cacheKey, publicUrl);
+  }
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    if (uploadCache) uploadCache.delete(cacheKey);
+    const responseText = await response.text().catch(() => '');
+    throw new Error(
+      `Failed to download Notion image for R2 upload (${response.status} ${response.statusText})${logLabel ? ` [${logLabel}]` : ''}: ${responseText.slice(0, 300)}`
+    );
+  }
+
+  const arrayBuffer = await response.arrayBuffer();
+  const bodyBuffer = Buffer.from(arrayBuffer);
+  const contentType = response.headers.get('content-type') || guessImageContentType(suggestedFileName);
+
+  await s3Client.send(
+    new PutObjectCommand({
+      Bucket: CONFIG.notionCoverR2Bucket,
+      Key: objectKey,
+      Body: bodyBuffer,
+      ContentType: contentType,
+      CacheControl: CONFIG.notionCoverR2CacheControl || undefined,
+    })
+  );
+
+  return publicUrl;
+}
+
+async function uploadNotionCoverToR2(s3Client, uploadCache, { pageId, coverInfo }) {
+  if (!s3Client || !coverInfo || coverInfo.type !== 'file' || !coverInfo.url) {
+    return coverInfo?.url || '';
+  }
+
+  const objectKey = buildNotionCoverR2ObjectKey(pageId, coverInfo);
+  return uploadRemoteImageUrlToR2(s3Client, uploadCache, {
+    sourceUrl: coverInfo.url,
+    objectKey,
+    suggestedFileName: coverInfo.filename,
+    logLabel: `cover:${pageId}`,
+  });
+}
+
+async function resolveCoverImageUrlForMeta(page, meta, s3Client, uploadCache) {
+  if (!meta || typeof meta !== 'object') return '';
+  const coverInfo = meta.coverInfo || getPageCoverInfo(page);
+  const sourceUrl = normalizeSingleLine(coverInfo?.url || meta.image || '');
+
+  if (!CONFIG.notionCoverR2Enabled) {
+    return sourceUrl;
+  }
+
+  if (coverInfo?.type !== 'file' || !sourceUrl) {
+    return sourceUrl;
+  }
+
+  return uploadNotionCoverToR2(s3Client, uploadCache, {
+    pageId: meta.pageId || page?.id || '',
+    coverInfo,
+  });
+}
+
+async function rewriteNotionMarkdownImageUrlsToR2(markdown, { pageId, s3Client, uploadCache, logLabel } = {}) {
+  const source = String(markdown || '');
+  if (!source || !CONFIG.notionCoverR2Enabled || !s3Client) {
+    return source;
+  }
+
+  const notionImageUrls = extractUrlsFromMarkdownImages(source).filter(isTemporaryNotionAssetUrl);
+  if (notionImageUrls.length === 0) {
+    return source;
+  }
+
+  let output = source;
+  const replacements = new Map();
+
+  for (const imageUrl of notionImageUrls) {
+    if (replacements.has(imageUrl)) continue;
+
+    const objectKey = buildNotionInlineImageR2ObjectKey(pageId, imageUrl);
+    const replacementUrl = await uploadRemoteImageUrlToR2(s3Client, uploadCache, {
+      sourceUrl: imageUrl,
+      objectKey,
+      suggestedFileName: extractFilenameFromUrl(imageUrl) || 'image',
+      logLabel: `${logLabel || 'markdown'}:${pageId}`,
+    });
+    replacements.set(imageUrl, replacementUrl);
+  }
+
+  for (const [fromUrl, toUrl] of replacements) {
+    output = output.split(fromUrl).join(toUrl);
+  }
+
+  return output;
+}
+
+function getExpectedR2CoverPublicUrl(meta) {
+  if (!CONFIG.notionCoverR2Enabled) return '';
+  const coverInfo = meta?.coverInfo;
+  if (!coverInfo || coverInfo.type !== 'file' || !coverInfo.url) return '';
+  const objectKey = buildNotionCoverR2ObjectKey(meta.pageId || '', coverInfo);
+  return buildPublicUrlFromBase(CONFIG.notionCoverR2PublicBaseUrl, objectKey);
+}
+
+async function shouldBackfillPostCoverToR2(filePath, meta) {
+  if (!CONFIG.notionCoverR2Enabled) return false;
+  if (!meta?.coverInfo || meta.coverInfo.type !== 'file' || !meta.coverInfo.url) return false;
+
+  const expectedR2Url = getExpectedR2CoverPublicUrl(meta);
+  if (!expectedR2Url) return false;
+
+  const existingImage = normalizeSingleLine(await readMarkdownFrontMatterImage(filePath));
+  if (!existingImage) return true;
+  if (existingImage === expectedR2Url) return false;
+
+  // Migrate expired/signed Notion URLs to the configured R2 public URL.
+  return isTemporaryNotionAssetUrl(existingImage);
+}
+
 function yamlQuote(value) {
   const text = String(value ?? '');
   return `'${text.replace(/'/g, "''")}'`;
@@ -652,6 +1075,7 @@ async function resolveDataSourceIdFromDatabaseOrFallback(notion, databaseId) {
 function extractCommonMetadata(page) {
   const properties = page.properties || {};
   const titleProp = findTitleProperty(properties, CONFIG.titleProperty);
+  const coverInfo = getPageCoverInfo(page);
 
   const rawTitle = normalizeSingleLine(propertyToString(titleProp));
   const title = rawTitle || `Untitled ${page.id}`;
@@ -661,7 +1085,7 @@ function extractCommonMetadata(page) {
   const rawSlug = normalizeSingleLine(propertyToString(propertyByName(properties, CONFIG.slugProperty)));
   const fallbackSlug = sanitizeSlug(title) || page.id.replace(/-/g, '');
   const permalink = sanitizeSlug(rawSlug) || fallbackSlug;
-  const image = normalizeSingleLine(getPageCoverUrl(page));
+  const image = normalizeSingleLine(coverInfo.url);
   const tags = propertyToArray(propertyByName(properties, CONFIG.tagsProperty));
   const siteurl = normalizeSingleLine(propertyToString(propertyByName(properties, CONFIG.urlProperty)));
   const updateTimeIso = toIsoUtcString(
@@ -687,6 +1111,7 @@ function extractCommonMetadata(page) {
     title,
     description,
     permalink,
+    coverInfo,
     image,
     tags,
     category,
@@ -823,14 +1248,20 @@ function isMetaRecentlyUpdated(meta, nowMs, lookbackMinutes) {
   return isRecentByWindow(meta.updateTimeIso || meta.lastEditedIso, nowMs, lookbackMinutes);
 }
 
-async function buildDiaryItems(n2m, diaryMetas) {
+async function buildDiaryItems(n2m, diaryMetas, { s3Client, uploadCache } = {}) {
   const sorted = [...diaryMetas].sort(sortByUpdatedDesc);
   const items = [];
 
   for (let index = 0; index < sorted.length; index += 1) {
     const meta = sorted[index];
     const diaryDate = toDiaryDateIso(meta);
-    const markdown = await notionPageToMarkdownString(n2m, meta.pageId);
+    const rawMarkdown = await notionPageToMarkdownString(n2m, meta.pageId);
+    const markdown = await rewriteNotionMarkdownImageUrlsToR2(rawMarkdown, {
+      pageId: meta.pageId,
+      s3Client,
+      uploadCache,
+      logLabel: 'diary',
+    });
     const parsed = extractMarkdownImagesAndText(markdown);
 
     items.push({
@@ -846,9 +1277,12 @@ async function buildDiaryItems(n2m, diaryMetas) {
 
 async function main() {
   validatePostTranslationConfig();
+  validateNotionCoverR2Config();
 
   const notion = new Client({ auth: CONFIG.notionToken });
   const n2m = new NotionToMarkdown({ notionClient: notion });
+  const notionCoverR2Client = createNotionCoverR2Client();
+  const notionR2UploadCache = createNotionR2UploadCache();
 
   const outputRoot = path.resolve(process.cwd(), CONFIG.postsDir);
   const aboutPath = path.resolve(process.cwd(), CONFIG.aboutPath);
@@ -865,6 +1299,11 @@ async function main() {
   if (CONFIG.postTranslationEnabled) {
     console.log(
       `Post translation enabled: languages=[${CONFIG.postTranslationLanguages.join(', ')}], model=${CONFIG.postTranslationModel}`
+    );
+  }
+  if (CONFIG.notionCoverR2Enabled) {
+    console.log(
+      `Notion cover R2 sync enabled: bucket=${CONFIG.notionCoverR2Bucket}, publicBaseUrl=${CONFIG.notionCoverR2PublicBaseUrl}`
     );
   }
 
@@ -916,8 +1355,25 @@ async function main() {
 
       const exists = await fileExists(fullPath);
       const recent = isMetaRecentlyUpdated(meta, nowMs, lookbackMinutes);
-      if (!exists || recent) {
-        const markdownBody = await notionPageToMarkdownString(n2m, page.id);
+      const coverBackfillNeeded = exists && !recent ? await shouldBackfillPostCoverToR2(fullPath, meta) : false;
+      const bodyImageBackfillNeeded =
+        exists && !recent && CONFIG.notionCoverR2Enabled
+          ? await markdownFileContainsTemporaryNotionImageUrl(fullPath)
+          : false;
+      if (!exists || recent || coverBackfillNeeded || bodyImageBackfillNeeded) {
+        if (coverBackfillNeeded || bodyImageBackfillNeeded) {
+          console.log(`Backfilling R2 image URLs for ${relativePath}`);
+        }
+        meta.image = normalizeSingleLine(
+          await resolveCoverImageUrlForMeta(page, meta, notionCoverR2Client, notionR2UploadCache)
+        );
+        const rawMarkdownBody = await notionPageToMarkdownString(n2m, page.id);
+        const markdownBody = await rewriteNotionMarkdownImageUrlsToR2(rawMarkdownBody, {
+          pageId: meta.pageId,
+          s3Client: notionCoverR2Client,
+          uploadCache: notionR2UploadCache,
+          logLabel: 'post',
+        });
         const document = buildMarkdownDocument(meta, markdownBody);
         const sourceWriteResult = await writeIfChanged(fullPath, document);
         if (sourceWriteResult === 'unchanged') {
@@ -992,7 +1448,11 @@ async function main() {
     }
 
     if (type === 'project') {
-      projectPages.push(extractProjectMetadata(page));
+      const projectMeta = extractProjectMetadata(page);
+      projectMeta.image = normalizeSingleLine(
+        await resolveCoverImageUrlForMeta(page, projectMeta, notionCoverR2Client, notionR2UploadCache)
+      );
+      projectPages.push(projectMeta);
       continue;
     }
 
@@ -1020,6 +1480,10 @@ async function main() {
   if (aboutPages.length > 0) {
     const aboutExists = await fileExists(aboutPath);
     const anyAboutRecent = aboutPages.some((meta) => isMetaRecentlyUpdated(meta, nowMs, lookbackMinutes));
+    const aboutImageBackfillNeeded =
+      aboutExists && !anyAboutRecent && CONFIG.notionCoverR2Enabled
+        ? await markdownFileContainsTemporaryNotionImageUrl(aboutPath)
+        : false;
     const selectedAbout = [...aboutPages].sort(sortByUpdatedDesc)[0];
 
     if (aboutPages.length > 1) {
@@ -1028,8 +1492,17 @@ async function main() {
       );
     }
 
-    if (!aboutExists || anyAboutRecent) {
-      const aboutMarkdown = await notionPageToMarkdownString(n2m, selectedAbout.pageId);
+    if (!aboutExists || anyAboutRecent || aboutImageBackfillNeeded) {
+      if (aboutImageBackfillNeeded) {
+        console.log(`Backfilling R2 image URLs for ${path.relative(process.cwd(), aboutPath)}`);
+      }
+      const rawAboutMarkdown = await notionPageToMarkdownString(n2m, selectedAbout.pageId);
+      const aboutMarkdown = await rewriteNotionMarkdownImageUrlsToR2(rawAboutMarkdown, {
+        pageId: selectedAbout.pageId,
+        s3Client: notionCoverR2Client,
+        uploadCache: notionR2UploadCache,
+        logLabel: 'about',
+      });
       const result = await writeAboutFileIfNeeded(aboutPath, aboutMarkdown);
       if (result === 'unchanged') {
         unchangedFiles += 1;
@@ -1056,7 +1529,10 @@ async function main() {
 
   {
     const diaryFileExists = await fileExists(diaryDataPath);
-    const diaryItems = await buildDiaryItems(n2m, diaryPages);
+    const diaryItems = await buildDiaryItems(n2m, diaryPages, {
+      s3Client: notionCoverR2Client,
+      uploadCache: notionR2UploadCache,
+    });
     const result = await updateDiaryDataFile(diaryDataPath, diaryItems);
     if (result === 'unchanged') {
       unchangedFiles += 1;
