@@ -1,0 +1,72 @@
+name: Sync Notion Posts
+
+on:
+  workflow_dispatch:
+  # schedule:
+  #   - cron: '0 * * * *' # 可选：每小时同步一次
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-notion-posts
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install sync dependencies
+        run: npm install --no-save --no-package-lock @notionhq/client notion-to-md
+
+      - name: Sync posts from Notion database
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          NOTION_SYNC_DELETE_MISSING: 'true'
+          # 可选：如果你的 Notion 数据库列名不同，可在仓库 Variables 中覆盖这些值
+          NOTION_POSTS_DIR: posts
+          NOTION_TYPE_PROPERTY: type
+          NOTION_TITLE_PROPERTY: title
+          NOTION_CREATE_TIME_PROPERTY: createTime
+          NOTION_UPDATED_DATE_PROPERTY: date
+          NOTION_SUMMARY_PROPERTY: summary
+          NOTION_SLUG_PROPERTY: slug
+          NOTION_TAGS_PROPERTY: tags
+          NOTION_CATEGORY_PROPERTY: category
+          NOTION_STATUS_PROPERTY: status
+        run: node .github/scripts/sync-notion-posts.mjs
+
+      - name: Commit and push changes
+        run: |
+          if [ -z "$(git status --porcelain -- posts)" ]; then
+            echo "No changes in posts/"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A posts
+          git commit -m "chore(content): sync posts from notion"
+          git push
+
+      - name: Job summary
+        if: always()
+        run: |
+          echo "## Notion Sync" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Workflow run: \`${{ github.run_id }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Ref: \`${{ github.ref_name }}\`" >> "$GITHUB_STEP_SUMMARY"
