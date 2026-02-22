@@ -463,7 +463,7 @@ async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }
     },
     body: JSON.stringify({
       model: CONFIG.postTranslationModel,
-      temperature: 0.2,
+      temperature: 1,
       messages: [
         {
           role: 'system',
