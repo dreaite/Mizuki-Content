@@ -31,7 +31,17 @@ jobs:
       - name: Install sync dependencies
         run: npm install --no-save --no-package-lock @notionhq/client@5 notion-to-md @aws-sdk/client-s3 undici
 
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Reset sync checkpoint marker
+        run: rm -f .notion-sync-checkpoint-pushed
+
       - name: Sync posts from Notion database
+        id: sync_run
+        continue-on-error: true
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
@@ -71,6 +81,10 @@ jobs:
           NOTION_COVER_R2_CACHE_CONTROL: ${{ secrets.NOTION_COVER_R2_CACHE_CONTROL || 'public, max-age=3600' }}
           NOTION_COVER_R2_ACCESS_KEY_ID: ${{ secrets.NOTION_COVER_R2_ACCESS_KEY_ID }}
           NOTION_COVER_R2_SECRET_ACCESS_KEY: ${{ secrets.NOTION_COVER_R2_SECRET_ACCESS_KEY }}
+          # 每处理 10 个发生内容变更的 Post，自动 checkpoint commit+push 一次，降低中断后的重试成本
+          NOTION_SYNC_CHECKPOINT_EVERY_POSTS: ${{ vars.NOTION_SYNC_CHECKPOINT_EVERY_POSTS || '10' }}
+          NOTION_SYNC_CHECKPOINT_PUSH_ENABLED: ${{ vars.NOTION_SYNC_CHECKPOINT_PUSH_ENABLED || 'true' }}
+          NOTION_SYNC_CHECKPOINT_MARKER_PATH: .notion-sync-checkpoint-pushed
           NOTION_TYPE_PROPERTY: type
           NOTION_TITLE_PROPERTY: title
           NOTION_CREATE_TIME_PROPERTY: createTime
@@ -89,15 +103,32 @@ jobs:
 
       - name: Commit and push changes
         id: commit_push
+        if: always()
         run: |
-          if [ -z "$(git status --porcelain -- posts spec/about.md data/friends.ts data/diary.ts data/projects.ts)" ]; then
-            echo "No content changes in posts/about/data"
-            echo "pushed=false" >> "$GITHUB_OUTPUT"
-            exit 0
+          CHECKPOINT_MARKER=".notion-sync-checkpoint-pushed"
+          checkpoint_pushed="false"
+          checkpoint_push_count="0"
+          if [ -f "$CHECKPOINT_MARKER" ]; then
+            checkpoint_push_count="$(tr -cd '0-9' < "$CHECKPOINT_MARKER")"
+            if [ -z "$checkpoint_push_count" ]; then
+              checkpoint_push_count="0"
+            fi
+            if [ "$checkpoint_push_count" -gt 0 ]; then
+              checkpoint_pushed="true"
+              echo "Checkpoint marker detected: ${checkpoint_push_count} intermediate push(es)"
+            fi
           fi
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -z "$(git status --porcelain -- posts spec/about.md data/friends.ts data/diary.ts data/projects.ts)" ]; then
+            echo "No content changes in posts/about/data"
+            if [ "$checkpoint_pushed" = "true" ]; then
+              echo "pushed=true" >> "$GITHUB_OUTPUT"
+              echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+            else
+              echo "pushed=false" >> "$GITHUB_OUTPUT"
+            fi
+            exit 0
+          fi
 
           git add -A posts spec/about.md data/friends.ts data/diary.ts data/projects.ts
           git commit -m "chore(content): sync notion content"
@@ -106,7 +137,7 @@ jobs:
           echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Trigger Cloudflare Pages Deploy Hook
-        if: ${{ steps.commit_push.outputs.pushed == 'true' }}
+        if: ${{ always() && steps.commit_push.outputs.pushed == 'true' }}
         env:
           CF_DEPLOY_HOOK: ${{ secrets.CF_DEPLOY_HOOK }}
         run: |
@@ -125,16 +156,24 @@ jobs:
             exit 1
           fi
 
+      - name: Fail workflow if sync step failed
+        if: ${{ steps.sync_run.outcome == 'failure' }}
+        run: |
+          echo "❌ Sync script failed (partial changes may have been checkpoint-pushed)."
+          exit 1
+
       - name: Job summary
         if: always()
         env:
           POSTS_PUSHED: ${{ steps.commit_push.outputs.pushed || 'false' }}
           SYNC_COMMIT_SHA: ${{ steps.commit_push.outputs.commit_sha || '' }}
+          SYNC_OUTCOME: ${{ steps.sync_run.outcome || 'unknown' }}
         run: |
           echo "## Notion Sync" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "- Workflow run: \`${{ github.run_id }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- Ref: \`${{ github.ref_name }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Sync step outcome: \`${SYNC_OUTCOME}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- Content updated and pushed: \`${POSTS_PUSHED}\`" >> "$GITHUB_STEP_SUMMARY"
           if [ -n "$SYNC_COMMIT_SHA" ]; then
             echo "- Sync commit SHA: \`${SYNC_COMMIT_SHA}\`" >> "$GITHUB_STEP_SUMMARY"
