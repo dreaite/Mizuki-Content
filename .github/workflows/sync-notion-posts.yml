@@ -47,6 +47,17 @@ jobs:
           NOTION_FRIENDS_DATA_PATH: data/friends.ts
           NOTION_DIARY_DATA_PATH: data/diary.ts
           NOTION_PROJECTS_DATA_PATH: data/projects.ts
+          # 可选：启用 Post 正文翻译（OpenAI-compatible Chat Completions API）
+          NOTION_POST_TRANSLATION_ENABLED: ${{ vars.NOTION_POST_TRANSLATION_ENABLED || 'false' }}
+          # 逗号分隔语言代码，例如：en,ja
+          NOTION_POST_TRANSLATION_LANGS: ${{ vars.NOTION_POST_TRANSLATION_LANGS || '' }}
+          NOTION_POST_TRANSLATION_MODEL: ${{ vars.NOTION_POST_TRANSLATION_MODEL || '' }}
+          NOTION_POST_TRANSLATION_API_BASE_URL: ${{ vars.NOTION_POST_TRANSLATION_API_BASE_URL || 'https://api.openai.com/v1' }}
+          # 可选：源语言（仅作为提示词上下文），例如 zh-cn
+          NOTION_POST_TRANSLATION_SOURCE_LANG: ${{ vars.NOTION_POST_TRANSLATION_SOURCE_LANG || '' }}
+          # 可选：自定义 system prompt（不填则使用脚本内默认提示词）
+          NOTION_POST_TRANSLATION_SYSTEM_PROMPT: ${{ vars.NOTION_POST_TRANSLATION_SYSTEM_PROMPT || '' }}
+          NOTION_POST_TRANSLATION_API_KEY: ${{ secrets.NOTION_POST_TRANSLATION_API_KEY }}
           NOTION_TYPE_PROPERTY: type
           NOTION_TITLE_PROPERTY: title
           NOTION_CREATE_TIME_PROPERTY: createTime

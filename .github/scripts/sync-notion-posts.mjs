@@ -25,6 +25,15 @@ const CONFIG = {
   deleteMissing: parseBoolean(process.env.NOTION_SYNC_DELETE_MISSING, false),
   syncCronMinutes: parsePositiveInt(process.env.NOTION_SYNC_CRON_MINUTES, 60),
   syncLookbackMultiplier: parsePositiveInt(process.env.NOTION_SYNC_LOOKBACK_MULTIPLIER, 2),
+  postTranslationEnabled: parseBoolean(process.env.NOTION_POST_TRANSLATION_ENABLED, false),
+  postTranslationLanguages: parseLanguageList(process.env.NOTION_POST_TRANSLATION_LANGS || ''),
+  postTranslationApiBaseUrl: String(
+    process.env.NOTION_POST_TRANSLATION_API_BASE_URL || 'https://api.openai.com/v1'
+  ).replace(/\/+$/, ''),
+  postTranslationApiKey: process.env.NOTION_POST_TRANSLATION_API_KEY || '',
+  postTranslationModel: String(process.env.NOTION_POST_TRANSLATION_MODEL || '').trim(),
+  postTranslationSourceLanguage: String(process.env.NOTION_POST_TRANSLATION_SOURCE_LANG || '').trim(),
+  postTranslationSystemPrompt: String(process.env.NOTION_POST_TRANSLATION_SYSTEM_PROMPT || '').trim(),
   typeProperty: process.env.NOTION_TYPE_PROPERTY || 'type',
   titleProperty: process.env.NOTION_TITLE_PROPERTY || 'title',
   createTimeProperty: process.env.NOTION_CREATE_TIME_PROPERTY || 'createTime',
@@ -60,6 +69,30 @@ function parsePositiveInt(value, fallback) {
   const parsed = Number.parseInt(String(value ?? ''), 10);
   if (!Number.isFinite(parsed) || parsed <= 0) return fallback;
   return parsed;
+}
+
+function parseCsvList(value) {
+  return String(value || '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function parseLanguageList(value) {
+  const seen = new Set();
+  const languages = [];
+
+  for (const item of parseCsvList(value)) {
+    const normalized = item.toLowerCase().replace(/_/g, '-');
+    if (!/^[a-z0-9-]+$/.test(normalized)) {
+      throw new Error(`Invalid language code in NOTION_POST_TRANSLATION_LANGS: ${item}`);
+    }
+    if (seen.has(normalized)) continue;
+    seen.add(normalized);
+    languages.push(normalized);
+  }
+
+  return languages;
 }
 
 function richTextToPlainText(items = []) {
@@ -348,6 +381,126 @@ function ensureMdRelativePathFromSlug(slug, fallbackBaseName) {
   return relativePath;
 }
 
+function appendLanguageSuffixToMarkdownPath(relativePath, languageCode) {
+  const normalizedPath = String(relativePath || '').replace(/\\/g, '/');
+  const normalizedLanguage = String(languageCode || '')
+    .trim()
+    .toLowerCase()
+    .replace(/_/g, '-');
+
+  if (!normalizedPath.toLowerCase().endsWith('.md')) {
+    throw new Error(`Expected a markdown relative path, received: ${relativePath}`);
+  }
+
+  if (!/^[a-z0-9-]+$/.test(normalizedLanguage)) {
+    throw new Error(`Invalid translation language code: ${languageCode}`);
+  }
+
+  return normalizedPath.replace(/\.md$/i, `.${normalizedLanguage}.md`);
+}
+
+function appendLanguageSuffixToPermalink(permalink, languageCode) {
+  const normalizedPermalink = sanitizeSlug(permalink);
+  if (!normalizedPermalink) return '';
+
+  const normalizedLanguage = String(languageCode || '')
+    .trim()
+    .toLowerCase()
+    .replace(/_/g, '-');
+  if (!/^[a-z0-9-]+$/.test(normalizedLanguage)) {
+    throw new Error(`Invalid translation language code: ${languageCode}`);
+  }
+
+  return `${normalizedPermalink}.${normalizedLanguage}`;
+}
+
+function validatePostTranslationConfig() {
+  if (!CONFIG.postTranslationEnabled) return;
+
+  if (CONFIG.postTranslationLanguages.length === 0) {
+    throw new Error(
+      'NOTION_POST_TRANSLATION_ENABLED=true but NOTION_POST_TRANSLATION_LANGS is empty. Example: en,ja'
+    );
+  }
+
+  if (!CONFIG.postTranslationModel) {
+    throw new Error(
+      'NOTION_POST_TRANSLATION_ENABLED=true but NOTION_POST_TRANSLATION_MODEL is empty.'
+    );
+  }
+}
+
+function buildPostTranslationSystemPrompt() {
+  if (CONFIG.postTranslationSystemPrompt) {
+    return CONFIG.postTranslationSystemPrompt;
+  }
+
+  return [
+    'You are a professional technical translator.',
+    'Translate only the natural-language text in the provided Markdown body.',
+    'Preserve Markdown structure, headings, lists, links, HTML tags, and whitespace semantics.',
+    'Do not add explanations, notes, or code fences around the result.',
+    'Do not translate code blocks, inline code, URLs, file paths, commands, or frontmatter.',
+  ].join(' ');
+}
+
+function unwrapSingleFencedBlock(text) {
+  const value = String(text || '').trim();
+  const match = value.match(/^```(?:markdown|md)?\s*\n([\s\S]*?)\n```$/i);
+  if (!match) return value;
+  return String(match[1] || '').trim();
+}
+
+async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }) {
+  const body = String(markdownBody || '');
+  if (!body.trim()) return '';
+
+  const response = await fetch(`${CONFIG.postTranslationApiBaseUrl}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(CONFIG.postTranslationApiKey ? { Authorization: `Bearer ${CONFIG.postTranslationApiKey}` } : {}),
+    },
+    body: JSON.stringify({
+      model: CONFIG.postTranslationModel,
+      temperature: 0.2,
+      messages: [
+        {
+          role: 'system',
+          content: buildPostTranslationSystemPrompt(),
+        },
+        {
+          role: 'user',
+          content: [
+            `Target language: ${targetLanguage}`,
+            `Source language: ${CONFIG.postTranslationSourceLanguage || 'auto-detect'}`,
+            `Post title (context only, do not prepend): ${title}`,
+            '',
+            'Return only the translated Markdown body.',
+            '',
+            body,
+          ].join('\n'),
+        },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => '');
+    throw new Error(
+      `LLM translation request failed (${response.status} ${response.statusText}): ${errorText.slice(0, 500)}`
+    );
+  }
+
+  const payload = await response.json();
+  const content = payload?.choices?.[0]?.message?.content;
+  if (typeof content !== 'string' || !content.trim()) {
+    throw new Error('LLM translation response did not include a non-empty choices[0].message.content string.');
+  }
+
+  return unwrapSingleFencedBlock(content);
+}
+
 function yamlQuote(value) {
   const text = String(value ?? '');
   return `'${text.replace(/'/g, "''")}'`;
@@ -377,6 +530,7 @@ function buildFrontMatter(meta) {
     `tags: ${yamlArray(meta.tags)}`,
     `category: ${yamlQuote(meta.category)}`,
     `draft: ${meta.draft ? 'true' : 'false'}`,
+    ...(meta.lang ? [`lang: ${yamlQuote(meta.lang)}`] : []),
     '---',
     '',
   ];
@@ -691,6 +845,8 @@ async function buildDiaryItems(n2m, diaryMetas) {
 }
 
 async function main() {
+  validatePostTranslationConfig();
+
   const notion = new Client({ auth: CONFIG.notionToken });
   const n2m = new NotionToMarkdown({ notionClient: notion });
 
@@ -706,6 +862,11 @@ async function main() {
   console.log(
     `Incremental sync window: ${lookbackMinutes} minute(s) (cron=${CONFIG.syncCronMinutes}m, multiplier=${CONFIG.syncLookbackMultiplier})`
   );
+  if (CONFIG.postTranslationEnabled) {
+    console.log(
+      `Post translation enabled: languages=[${CONFIG.postTranslationLanguages.join(', ')}], model=${CONFIG.postTranslationModel}`
+    );
+  }
 
   let processedPosts = 0;
   let changedFiles = 0;
@@ -736,6 +897,18 @@ async function main() {
       }
       seenRelativePaths.add(relativePath);
 
+      const translationRelativePaths = [];
+      if (CONFIG.postTranslationEnabled) {
+        for (const languageCode of CONFIG.postTranslationLanguages) {
+          const translatedRelativePath = appendLanguageSuffixToMarkdownPath(relativePath, languageCode);
+          if (seenRelativePaths.has(translatedRelativePath)) {
+            throw new Error(`Duplicate translated output path detected: ${translatedRelativePath}`);
+          }
+          seenRelativePaths.add(translatedRelativePath);
+          translationRelativePaths.push({ languageCode, relativePath: translatedRelativePath });
+        }
+      }
+
       const fullPath = path.resolve(outputRoot, relativePath);
       if (!(fullPath === outputRoot || fullPath.startsWith(`${outputRoot}${path.sep}`))) {
         throw new Error(`Resolved path escapes posts directory: ${relativePath}`);
@@ -746,12 +919,54 @@ async function main() {
       if (!exists || recent) {
         const markdownBody = await notionPageToMarkdownString(n2m, page.id);
         const document = buildMarkdownDocument(meta, markdownBody);
-        const result = await writeIfChanged(fullPath, document);
-        if (result === 'unchanged') {
+        const sourceWriteResult = await writeIfChanged(fullPath, document);
+        if (sourceWriteResult === 'unchanged') {
           unchangedFiles += 1;
         } else {
           changedFiles += 1;
           console.log(`${exists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), fullPath)}`);
+        }
+
+        if (CONFIG.postTranslationEnabled) {
+          for (const translationTarget of translationRelativePaths) {
+            const translatedFullPath = path.resolve(outputRoot, translationTarget.relativePath);
+            if (!(translatedFullPath === outputRoot || translatedFullPath.startsWith(`${outputRoot}${path.sep}`))) {
+              throw new Error(
+                `Resolved translated path escapes posts directory: ${translationTarget.relativePath}`
+              );
+            }
+
+            const translatedExists = await fileExists(translatedFullPath);
+            const shouldTranslateNow = sourceWriteResult !== 'unchanged' || !translatedExists;
+            if (!shouldTranslateNow) {
+              continue;
+            }
+
+            console.log(
+              `${translatedExists ? 'Updating' : 'Creating'} translation (${translationTarget.languageCode}) for ${relativePath}`
+            );
+            const translatedBody = await translatePostMarkdownBody(markdownBody, {
+              targetLanguage: translationTarget.languageCode,
+              title: meta.title,
+            });
+            const translatedDocument = buildMarkdownDocument(
+              {
+                ...meta,
+                lang: translationTarget.languageCode,
+                permalink: appendLanguageSuffixToPermalink(meta.permalink, translationTarget.languageCode),
+              },
+              translatedBody
+            );
+            const translatedWriteResult = await writeIfChanged(translatedFullPath, translatedDocument);
+            if (translatedWriteResult === 'unchanged') {
+              unchangedFiles += 1;
+            } else {
+              changedFiles += 1;
+              console.log(
+                `${translatedExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), translatedFullPath)}`
+              );
+            }
+          }
         }
       } else {
         skippedByWindow += 1;

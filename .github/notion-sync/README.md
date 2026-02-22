@@ -31,12 +31,25 @@ Keep local content files consistent with the Notion database by `type`.
 - `NOTION_TOKEN`
 - `NOTION_DATABASE_ID`
 - `CF_DEPLOY_HOOK` (if using the built-in Cloudflare deploy hook step in `sync-notion-posts.yml`)
+- `NOTION_POST_TRANSLATION_API_KEY` (only when enabling LLM translation)
 
 ## Optional GitHub Variables
 
 - `NOTION_DATA_SOURCE_ID`
   - Recommended when using newer Notion API / SDK v5 and your database contains multiple data sources.
   - If omitted, the script will try to resolve a data source automatically from `NOTION_DATABASE_ID`.
+- `NOTION_POST_TRANSLATION_ENABLED`
+  - Set to `true` to enable translating `Post` markdown body via an OpenAI-compatible Chat Completions API.
+- `NOTION_POST_TRANSLATION_LANGS`
+  - Comma-separated target language codes, e.g. `en,ja`.
+- `NOTION_POST_TRANSLATION_MODEL`
+  - Model name used for translation requests.
+- `NOTION_POST_TRANSLATION_API_BASE_URL`
+  - Optional API base URL, default: `https://api.openai.com/v1`.
+- `NOTION_POST_TRANSLATION_SOURCE_LANG`
+  - Optional source language hint (prompt context only), e.g. `zh-cn`.
+- `NOTION_POST_TRANSLATION_SYSTEM_PROMPT`
+  - Optional custom system prompt for translation behavior.
 
 ## Notion Database Property Mapping (default names)
 
@@ -119,6 +132,18 @@ If you still have manually maintained posts under `posts/`, either:
 - Output path is derived from `slug`
 - `slug` supports nested paths (example: `guide/intro` -> `posts/guide/intro.md`)
 - `.md` is appended automatically if missing
+- When translation is enabled, translated posts are written next to the source file using `${filename}.${lang}.md`
+  - Example: `posts/guide/intro.md` -> `posts/guide/intro.en.md`
+  - The translated file frontmatter adds `lang: '<lang>'`
+  - The translated file `permalink` is suffixed as `${slug}.${lang}` to avoid route collisions
+
+## Post Translation Behavior (LLM)
+
+- Only translates `type = Post`
+- Only translates the Markdown **body** (frontmatter metadata is preserved from the source post)
+- Translation runs when the source post is created/updated by the normal Notion sync flow
+- If a translated file for a configured language is missing, it will be created the next time that post is processed by sync
+- If `NOTION_SYNC_DELETE_MISSING=true`, stale translated `*.{lang}.md` files are also deleted when they are no longer produced (for example, source post removed or language removed from config)
 
 ## Running
 
