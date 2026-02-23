@@ -3,7 +3,7 @@ name: Sync Notion Posts
 on:
   workflow_dispatch:
   schedule:
-   - cron: '*/15 * * * *' # 可选：每15min同步一次
+   - cron: '0 * * * *' # 可选：每1h同步一次
 
 permissions:
   contents: write
@@ -50,7 +50,7 @@ jobs:
           NOTION_SYNC_DELETE_MISSING: 'true'
           # 同步窗口 = cron 周期 * 2（分钟）
           NOTION_SYNC_CRON_MINUTES: '60'
-          NOTION_SYNC_LOOKBACK_MULTIPLIER: '2'
+          NOTION_SYNC_LOOKBACK_MULTIPLIER: '8'
           # 可选：如果你的 Notion 数据库列名不同，可在仓库 Variables 中覆盖这些值
           NOTION_POSTS_DIR: posts
           NOTION_ABOUT_PATH: spec/about.md
