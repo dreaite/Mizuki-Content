@@ -1,9 +1,8 @@
 ---
-title: 'pandas基础使用'
+title: 'Pandas Basics'
 published: 2024-01-02
 updated: 2024-01-02
-description: 'Pandas是一个基于Python的开源数据分析库，提供了DataFrame和Series两种主要数据结构，适用于处理结构化数据。它支持数据清洗、转换、分析和可视化。安装Pandas后，可以通过简单的代码创建和操作Series和DataFrame，包括基本操作、数据过滤和属性获取。此外，Pandas还支持CSV和JSON文件的读取与处理，并提供数据清洗功能，如处理空值和重复数据。'
-permalink: 'pandas-basics'
+description: 'Pandas is an open-source data analysis library for Python that provides two main data structures, DataFrame and Series, for handling structured data. It supports data cleaning, transformation, analysis, and visualization. After installing Pandas, you can create and operate on Series and DataFrame with simple code, including basic operations, data filtering, and attribute access. Pandas also supports reading and processing CSV and JSON files and provides data cleaning features such as handling missing values and duplicate data.'
 image: 'https://r2.dreaife.tokyo/notion/covers/4fccc57129ed4ce8812262081fac64b9/2421860-20240102223126087-1212672509.png'
 tags: ['pandas', 'python']
 category: 'cs-base'

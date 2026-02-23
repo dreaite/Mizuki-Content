@@ -1,9 +1,8 @@
 ---
-title: 'ts初步学习'
+title: 'TypeScript入門'
 published: 2024-11-04
 updated: 2024-11-04
-description: 'TypeScript基础包括类型系统、接口、类、装饰器等。支持多种基础类型如number、string、boolean等，并允许类型注解、泛型、联合类型和类型别名等特性。装饰器用于在类和方法上应用元数据，模块和命名空间帮助组织代码。'
-permalink: 'ts-basics-learn'
+description: 'TypeScriptの基礎には、型システム、インターフェース、クラス、デコレータなどが含まれます。number、string、boolean などの基本型をサポートし、型注釈、ジェネリクス、ユニオン型、型エイリアスなどの機能も利用できます。デコレータはクラスやメソッドにメタデータを付与するために使われ、モジュールや名前空間はコード整理に役立ちます。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca178025a684d438f265c6a0/IMG_1461.jpg'
 tags: ['ts', 'doc']
 category: 'FRONTEND'

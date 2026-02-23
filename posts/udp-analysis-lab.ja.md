@@ -1,9 +1,8 @@
 ---
-title: '实验3 UDP协议分析'
+title: '実験3 UDPプロトコル分析'
 published: 2022-07-01
 updated: 2022-07-01
-description: '实验旨在掌握UDP协议的内容及其工作原理，分析DNS查询和QQ通信的UDP数据包。实验包括使用tcpdump和wireshark进行数据抓取与分析，结果显示UDP报文由源端口、目的端口、长度和校验和组成。通过实验，解决了traceroute命令和Xftp连接问题，并提高了对IP协议分析的理解和编程能力。'
-permalink: 'udp-analysis-lab'
+description: '本実験は、UDPプロトコルの内容と動作原理を把握し、DNSクエリおよびQQ通信のUDPパケットを解析することを目的としています。tcpdumpとWiresharkを用いたパケット取得・解析を行い、結果としてUDPパケットが送信元ポート、宛先ポート、長さ、チェックサムで構成されることを確認しました。実験を通じてtracerouteコマンドやXftp接続の問題を解決し、IPプロトコル解析への理解とプログラミング能力を高めました。'
 image: 'https://r2.dreaife.tokyo/notion/covers/074fdbbb200c49e5a660aef27e65adff/9E0F191710C320C89F71ACDEA51B80B6.jpg'
 tags: ['network', 'school']
 category: 'cs-base'

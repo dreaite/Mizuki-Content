@@ -1,9 +1,8 @@
 ---
-title: '实验8 WEB服务器的部署与应用'
+title: '実験8 WEBサーバーのデプロイと応用'
 published: 2022-07-01
 updated: 2022-07-01
-description: '实验旨在理解电子邮件系统结构、客户端与服务器通信及SMTP、POP3协议。通过在阿里云上安装和部署Nginx与Apache，实验展示了静态和动态网页的访问，解决了依赖包安装问题，并提高了对Linux配置软件的掌握与编程能力。'
-permalink: 'web-server-deploy'
+description: '本実験は、電子メールシステムの構造、クライアントとサーバーの通信、SMTP/POP3プロトコルを理解することを目的としています。Alibaba Cloud上でNginxとApacheをインストール・デプロイし、静的/動的Webページへのアクセスを実演し、依存パッケージのインストール問題を解決しました。これにより、Linuxでのソフトウェア設定に関する理解とプログラミング能力が向上しました。'
 image: 'https://r2.dreaife.tokyo/notion/covers/092e2f9199ad4baf8703ae177d13fba1/4668a3eb0510cf37.jpg'
 tags: ['network', 'school']
 category: 'cs-base'

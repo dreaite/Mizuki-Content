@@ -1,9 +1,8 @@
 ---
-title: '个人开发环境构筑'
+title: 'Building a Personal Development Environment'
 published: 2025-10-19
 updated: 2025-10-20
-description: '计划将开发环境迁移到Linux子主机，所需环境包括Java、Node.js、Python、C++、Go语言，MySQL、PostgreSQL、Redis、ElasticSearch数据库，以及RabbitMQ和Nginx微服务，基础工具为Git和Docker，并通过Cloudflare映射80端口以实现外网访问。'
-permalink: 'personal-dev-env'
+description: 'The plan is to migrate the development environment to a Linux secondary host. Required components include Java, Node.js, Python, C++, Go, databases such as MySQL, PostgreSQL, Redis, and Elasticsearch, middleware and services such as RabbitMQ and Nginx, and foundational tools such as Git and Docker. Cloudflare will be used to map port 80 for external network access.'
 image: 'https://source.unsplash.com/random'
 tags: []
 category: ''

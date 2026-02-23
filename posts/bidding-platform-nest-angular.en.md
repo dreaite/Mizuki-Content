@@ -1,9 +1,8 @@
 ---
-title: '基于 Nest.js 和 Angular 的竞价平台-以及Jest测试和CICD'
+title: 'Bidding Platform Based on Nest.js and Angular, with Jest Tests and CI/CD'
 published: 2024-12-07
 updated: 2024-12-08
-description: '该项目是一个基于Nest.js和Angular的竞价平台，提供用户注册、项目管理和投标管理功能，使用PostgreSQL作为数据库，并通过Swagger生成API文档。后端实现了安全认证，使用AWS Cognito进行用户身份验证。前端构建了用户友好的界面，支持项目展示和投标管理。项目使用Jest进行测试，确保代码质量，并通过GitHub Actions实现持续集成和部署。'
-permalink: 'bidding-platform-nest-angular'
+description: 'This project is a bidding platform built with Nest.js and Angular, providing features such as user registration, project management, and bid management. It uses PostgreSQL as the database and Swagger to generate API documentation. The backend implements secure authentication with AWS Cognito, while the frontend provides a user-friendly interface for project display and bid management. The project uses Jest for testing to ensure code quality and GitHub Actions for continuous integration and deployment.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1555465cca1780f382f5f1421004b0a8/IMG_1767.jpg'
 tags: ['nodejs', 'ts', 'aws']
 category: 'BACKEND'

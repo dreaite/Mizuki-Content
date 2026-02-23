@@ -1,9 +1,8 @@
 ---
-title: '实验7 HTTP协议分析与测量'
+title: 'Experiment 7: HTTP Protocol Analysis and Measurement'
 published: 2022-07-01
 updated: 2022-07-01
-description: '实验旨在了解HTTP协议及其报文结构，掌握使用tcpdump和wireshark进行HTTP数据包抓取与分析。通过下载新疆大学主页，分析HTTP版本、IP地址、状态码、内容字节数及头部字段。实验中解决了连接错误的问题，并提高了编程能力和对HTTP协议的理解。'
-permalink: 'http-http-analysis'
+description: 'This experiment aims to understand the HTTP protocol and its message structure, and to master HTTP packet capture and analysis using tcpdump and Wireshark. By downloading the Xinjiang University homepage, it analyzes the HTTP version, IP addresses, status code, content length, and header fields. A connection error encountered during the experiment was resolved, improving programming skills and understanding of HTTP.'
 image: 'https://r2.dreaife.tokyo/notion/covers/70ae8f6e946948d7839c6e2b781e11aa/165371EE8BB9E99C4121DDB4A9C0DE46.jpg'
 tags: ['network', 'school']
 category: 'cs-base'

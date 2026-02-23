@@ -1,9 +1,8 @@
 ---
-title: '排序 二分学习'
+title: 'Sorting and Binary Search Study Notes'
 published: 2022-07-08
 updated: 2022-07-08
-description: '介绍了快速排序和归并排序的原理及实现，包括时间复杂度和相关题目。快速排序通过选取中点将数列分为两部分进行排序，归并排序则将已排序的子段合并。还讨论了整数和浮点数的二分查找算法及其实现方法。'
-permalink: 'sorting-binary-search'
+description: 'This article introduces the principles and implementations of quicksort and merge sort, including time complexity and related problems. Quicksort partitions the sequence into two parts around a midpoint, while merge sort merges sorted subarrays. It also discusses binary search algorithms for integers and floating-point numbers and their implementations.'
 image: 'https://r2.dreaife.tokyo/notion/covers/4b474fbfaee24827aeb7eab319feed6b/440016BF77F4742DE9C878230F9C813E.jpg'
 tags: ['algorithm', 'acwing']
 category: 'algorithm'

@@ -1,9 +1,8 @@
 ---
-title: 'rabbitMQ初识'
+title: 'RabbitMQ入門'
 published: 2023-08-12
 updated: 2023-08-12
-description: 'RabbitMQ是一个消息队列，支持同步和异步通讯，异步通讯通过中间人Broker解耦合，提升吞吐量和故障隔离。RabbitMQ的安装可通过Docker完成，支持多种消息模型，包括工作队列、发布/订阅和路由。SpringAMQP简化了RabbitMQ的使用，提供自动声明队列和异步接收消息的功能。消息转换器可使用JSON格式以提高可读性和效率。'
-permalink: 'rabbitmq-intro'
+description: 'RabbitMQは同期通信と非同期通信をサポートするメッセージキューです。非同期通信では仲介役のBrokerを介して疎結合化し、スループット向上と障害分離を実現します。RabbitMQはDockerで導入でき、ワークキュー、Publish/Subscribe、ルーティングなど複数のメッセージモデルをサポートします。Spring AMQPはキューの自動宣言や非同期受信機能を提供し、RabbitMQ利用を簡素化します。メッセージコンバータにはJSON形式を使うことで可読性と効率を高められます。'
 image: 'https://r2.dreaife.tokyo/notion/covers/3f6c59309d7d440ca8a9aa5ab567ebc0/2421860-20230812233849958-1924148470.png'
 tags: ['rabbitMQ', 'java', 'springAMQP']
 category: 'middle-side'

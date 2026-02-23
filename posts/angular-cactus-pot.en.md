@@ -1,9 +1,8 @@
 ---
-title: '基于Angular的动画展示网站+登录注册（cognito）'
+title: 'Angular-based Anime Showcase Website + Login/Registration (Cognito)'
 published: 2024-11-12
 updated: 2024-11-12
-description: '该项目是基于Angular的Web应用，用于展示和搜索Bangumi上的动画，使用Cognito进行用户认证。项目包含自动部署到GitHub Pages的功能，使用GitHub Actions进行自动化构建和部署。主要技术栈包括Angular 16、TypeScript、HTML和CSS，项目结构清晰，包含用户登录、注册、搜索和动画日历等功能。'
-permalink: 'angular-cactus-pot'
+description: 'This project is an Angular-based web application for displaying and searching anime on Bangumi, with Cognito for user authentication. It supports automatic deployment to GitHub Pages using GitHub Actions for automated build and deployment. The main tech stack includes Angular 16, TypeScript, HTML, and CSS, and the project includes features such as login, registration, search, and an anime calendar.'
 image: 'https://r2.dreaife.tokyo/notion/covers/13c5465cca178004ad54d1f3b101d56a/IMG_1506.jpg'
 tags: ['ts', 'angular', 'github-action', 'doc']
 category: 'FRONTEND'

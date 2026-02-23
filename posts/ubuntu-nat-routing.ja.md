@@ -1,9 +1,8 @@
 ---
-title: 'Ubuntu通过nat将网络转发给路由器'
+title: 'UbuntuでNATを使ってルーターへネットワークを転送する'
 published: 2024-12-15
 updated: 2024-12-15
-description: '通过修改Netplan配置、启用IP转发和配置NAT转发，实现Ubuntu将网络转发给路由器的功能。步骤包括清除现有配置、设置静态IP、安装和配置DHCP服务，并验证网络共享的有效性。'
-permalink: 'ubuntu-nat-routing'
+description: 'Netplan設定の変更、IPフォワーディングの有効化、NAT転送設定を行うことで、Ubuntuからルーターへネットワークを転送できます。手順には既存設定のクリア、静的IP設定、DHCPサービスの導入と設定、ネットワーク共有が正常に機能するかの確認が含まれます。'
 image: 'https://r2.dreaife.tokyo/notion/covers/15d5465cca1780bf85eac8dea673675e/IMG_1935.jpg'
 tags: ['network', 'linux']
 category: 'prog-side'

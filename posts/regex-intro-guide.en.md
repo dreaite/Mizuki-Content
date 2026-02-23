@@ -1,9 +1,8 @@
 ---
-title: '初涉正则表达式'
+title: 'Getting Started with Regular Expressions'
 published: 2024-01-12
 updated: 2024-01-12
-description: '正则表达式是一种强大的文本模式匹配工具，能够描述和匹配字符串的特定模式。它包括字面值字符、特殊字符、字符类和元字符等元素，广泛应用于多种编程语言和文本处理工具中。正则表达式可以用于验证数据、替换文本和提取子字符串，具有灵活性和强大功能。常见的元字符和特性包括字符匹配、量词、边界匹配和分组等，能够帮助用户高效处理文本数据。'
-permalink: 'regex-intro-guide'
+description: 'Regular expressions are powerful text pattern-matching tools used to describe and match specific string patterns. They include literal characters, special characters, character classes, and metacharacters, and are widely used in many programming languages and text processing tools. Regular expressions can be used for data validation, text replacement, and substring extraction, offering strong flexibility and functionality. Common metacharacters and features include character matching, quantifiers, boundary matching, and grouping, which help users process text efficiently.'
 image: 'https://r2.dreaife.tokyo/notion/covers/5e918ab0ac6d4f36bf379d4fb01083e6/20240111_131534.jpg'
 tags: ['regex']
 category: 'prog-side'

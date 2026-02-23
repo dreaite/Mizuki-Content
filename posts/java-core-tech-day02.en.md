@@ -1,9 +1,8 @@
 ---
-title: 'Java核心技术卷 学习Day02'
+title: 'Core Java Study Day 02'
 published: 2022-07-14
 updated: 2022-07-14
-description: '本文主要讨论Java的核心技术，包括面向对象编程的基本概念、类的定义与使用、预定义类如LocalDate的操作、自定义类的构造与封装、静态方法与字段、包的管理、JAR文件的创建与使用，以及文档注释的编写技巧。强调了数据私有化、初始化、类设计原则等重要设计技巧。'
-permalink: 'java-core-tech-day02'
+description: 'This article mainly discusses core Java topics including the basic concepts of object-oriented programming, class definition and usage, operations on predefined classes such as LocalDate, construction and encapsulation of custom classes, static methods and fields, package management, creation and use of JAR files, and techniques for writing documentation comments. It emphasizes important design practices such as data encapsulation, initialization, and class design principles.'
 image: 'https://r2.dreaife.tokyo/notion/covers/428960ac595548c5ac010e340f6790da/2421860-20220714045451784-444838695.png'
 tags: ['java', 'language']
 category: 'cs-base'

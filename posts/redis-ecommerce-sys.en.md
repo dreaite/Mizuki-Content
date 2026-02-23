@@ -1,9 +1,8 @@
 ---
-title: 'redis实战-商城系统'
+title: 'Redis in Practice: E-commerce System'
 published: 2023-08-08
 updated: 2023-08-08
-description: '本文介绍了基于Redis的商城系统实战，包括短信登录、商户查询缓存、优惠券秒杀、用户签到、UV统计等功能。通过Redis实现高并发处理，解决缓存穿透、缓存雪崩和缓存击穿问题，并使用分布式锁和消息队列优化系统性能。具体实现涉及Redis的多种数据结构和操作，如GEO、BitMap和HyperLogLog等。'
-permalink: 'redis-ecommerce-sys'
+description: 'This article introduces a practical e-commerce system built with Redis, including features such as SMS login, merchant query caching, coupon flash sales, user sign-in, and UV statistics. Redis is used for high-concurrency processing to solve cache penetration, cache avalanche, and cache breakdown issues, and distributed locks and message queues are used to optimize system performance. The implementation involves multiple Redis data structures and operations, such as GEO, BitMap, and HyperLogLog.'
 image: 'https://r2.dreaife.tokyo/notion/covers/2cdeb9305e794f9c948e5b9b95b249fe/2421860-20230808195137520-1053550038.png'
 tags: ['redis', 'java', 'inHand']
 category: 'middle-side'

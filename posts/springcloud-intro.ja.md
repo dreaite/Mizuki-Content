@@ -1,9 +1,8 @@
 ---
-title: 'SpringCloud初识'
+title: 'Spring Cloud入門'
 published: 2023-08-10
 updated: 2023-08-10
-description: '微服务架构通过将系统拆分为独立服务，降低了耦合度，提升了灵活性。SpringCloud是流行的微服务框架，集成了服务注册、远程调用、监控和配置管理等功能。Eureka和Nacos是主要的服务注册中心，提供服务发现和负载均衡。Feign简化了远程调用的实现，而Spring Cloud Gateway提供了统一的API路由管理，具备权限控制和限流等功能。配置管理和跨域问题的解决方案也被详细讨论。'
-permalink: 'springcloud-intro'
+description: 'マイクロサービスアーキテクチャは、システムを独立したサービスに分割することで結合度を下げ、柔軟性を高めます。Spring Cloudは、サービス登録、リモート呼び出し、監視、設定管理などを統合した人気のマイクロサービスフレームワークです。EurekaとNacosは主要なサービスレジストリで、サービスディスカバリと負荷分散を提供します。Feignはリモート呼び出し実装を簡素化し、Spring Cloud Gatewayは権限管理やレート制限を備えた統一的なAPIルーティング管理を提供します。設定管理やCORS問題への対応策についても詳しく説明しています。'
 image: 'https://r2.dreaife.tokyo/notion/covers/fdcaec31a36849ac9965095964a23724/2421860-20230810154224677-1233062441.png'
 tags: ['springCloud', 'java']
 category: 'middle-side'

@@ -1,9 +1,8 @@
 ---
-title: 'docker初识'
+title: 'Docker入門'
 published: 2023-08-10
 updated: 2023-08-10
-description: 'Docker是一种解决微服务部署问题的技术，通过将应用及其依赖打包到隔离的容器中，避免了环境不一致和依赖冲突。Docker与虚拟机的主要区别在于性能和资源占用，Docker启动速度快且占用空间小。Docker架构包括镜像和容器，用户可以通过DockerHub共享和获取镜像。基本操作包括镜像和容器的创建、管理以及数据卷的使用，以实现数据的持久化和容器与宿主机的解耦。Docker Compose可以简化分布式应用的部署过程。'
-permalink: 'docker-intro-guide'
+description: 'Dockerは、アプリケーションと依存関係を分離されたコンテナにパッケージ化することで、環境差異や依存関係の衝突を避け、マイクロサービスのデプロイ問題を解決する技術です。仮想マシンと比べて起動が速く、リソース使用量も少ないのが特徴です。Dockerのアーキテクチャはイメージとコンテナで構成され、Docker Hubでイメージを共有・取得できます。基本操作にはイメージ/コンテナの作成・管理や、データ永続化とホスト分離のためのボリューム利用が含まれます。Docker Composeを使うと分散アプリケーションのデプロイを簡素化できます。'
 image: 'https://r2.dreaife.tokyo/notion/covers/093263234b9d454390c0f01ed1b0909d/2421860-20230810182019038-697482712.png'
 tags: ['docker', 'deploy']
 category: 'infra'

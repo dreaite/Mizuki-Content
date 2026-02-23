@@ -1,9 +1,8 @@
 ---
-title: 'java反射&代理面试知识'
+title: 'Java Reflection & Proxy Interview Notes'
 published: 2024-01-24
 updated: 2024-01-24
-description: '反射是框架的核心，允许在运行时分析类和调用方法，广泛应用于Spring等框架。反射的优点是灵活性高，但可能带来安全问题和性能损失。代理模式通过代理对象扩展目标对象功能，分为静态代理和动态代理，后者更为灵活且常用于框架中。JDK动态代理只能代理实现接口的类，而CGLIB可以代理未实现接口的类。动态代理在运行时生成字节码，提供更高的灵活性和效率。'
-permalink: 'java-reflection-proxy'
+description: 'Reflection is a core mechanism used by frameworks, allowing runtime class analysis and method invocation, and is widely used in frameworks such as Spring. Its advantage is flexibility, but it can also introduce security risks and performance overhead. The proxy pattern extends target object functionality through proxy objects and is divided into static and dynamic proxies, with dynamic proxies being more flexible and commonly used in frameworks. JDK dynamic proxies can only proxy classes that implement interfaces, while CGLIB can proxy classes without interfaces. Dynamic proxies generate bytecode at runtime and provide higher flexibility and efficiency.'
 image: 'https://r2.dreaife.tokyo/notion/covers/3af5ee50a878452480834882821fda23/GEeyA1saEAAZXiT.jpg'
 tags: ['java', 'doc', 'meeting']
 category: 'cs-base'

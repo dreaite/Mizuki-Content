@@ -1,9 +1,8 @@
 ---
-title: 'Java JMM内存模型'
+title: 'Java JMM Memory Model'
 published: 2024-02-01
 updated: 2024-02-01
-description: 'Java内存模型（JMM）定义了共享变量在多线程环境中的可见性，涉及CPU缓存模型和指令重排序。JMM通过规范线程与主内存的关系，确保共享变量的可见性和一致性，解决了多线程编程中的问题。关键概念包括happens-before原则、原子性、可见性和有序性，确保在并发环境中程序的正确执行。'
-permalink: 'java-jmm-memory'
+description: 'The Java Memory Model (JMM) defines the visibility of shared variables in multithreaded environments and involves the CPU cache model and instruction reordering. By specifying the relationship between threads and main memory, JMM ensures the visibility and consistency of shared variables and addresses key problems in multithreaded programming. Key concepts include the happens-before principle, atomicity, visibility, and ordering, which help ensure correct program execution in concurrent environments.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1457cd9aa9e84f8e94f72b9ceaa720be/GE1MmaUaoAAIsgg.jpg'
 tags: ['java', 'doc', 'meeting', 'multi-prog']
 category: 'cs-base'

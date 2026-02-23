@@ -1,9 +1,8 @@
 ---
-title: 'csapp 第一章 计算机系统漫游'
+title: 'CSAPP Chapter 1: A Tour of Computer Systems'
 published: 2023-01-15
 updated: 2023-01-15
-description: '计算机系统由硬件和系统软件组成，通过程序的生命周期（创建、运行、输出、终止）来运行应用。信息由位和上下文构成，程序通过编译系统转化为可执行文件。处理器读取指令并执行简单操作，使用高速缓存提高性能。操作系统管理硬件，通过进程和虚拟内存提供资源的抽象，支持并发和并行执行。抽象是计算机科学的重要概念，虚拟机提供对整个计算机的抽象。'
-permalink: 'csapp-ch1-overview'
+description: 'A computer system consists of hardware and system software and runs applications through a program life cycle of creation, execution, output, and termination. Information is made of bits and context, and programs are transformed into executables by the compilation system. The processor reads and executes instructions, using caches to improve performance. The operating system manages hardware and provides abstractions such as processes and virtual memory to support concurrency and parallelism. Abstraction is a core concept in computer science, and virtual machines provide an abstraction of an entire computer.'
 image: 'https://r2.dreaife.tokyo/notion/covers/fbaef38b501a4cd8a8a2d1c58798cf70/2421860-20230116004313116-1139297538.png'
 tags: ['caapp', 'os', 'c']
 category: 'cs-base'

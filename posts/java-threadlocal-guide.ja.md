@@ -2,8 +2,7 @@
 title: 'Java threadLocal'
 published: 2024-02-04
 updated: 2024-02-04
-description: 'ThreadLocal 提供线程局部变量，允许每个线程拥有独立的副本，避免互相干扰。关键点包括 ThreadLocalMap 的数据结构、哈希算法、冲突解决、过期键的清理机制，以及 set 和 get 方法的实现原理。使用 InheritableThreadLocal 可以在子线程中共享父线程的局部变量，解决异步场景中的数据传递问题。实际应用中，ThreadLocal 可用于日志记录和分布式系统中的 traceId 传递。'
-permalink: 'java-threadlocal-guide'
+description: 'ThreadLocalはスレッドローカル変数を提供し、各スレッドが独立したコピーを持てるようにすることで相互干渉を防ぎます。重要なポイントには、ThreadLocalMapのデータ構造、ハッシュアルゴリズム、衝突解決、期限切れキーのクリーンアップ機構、set/getメソッドの実装原理が含まれます。InheritableThreadLocalを使うと、親スレッドのローカル変数を子スレッドに引き継げるため、非同期シナリオでのデータ伝播問題を解決できます。実運用では、ログ記録や分散システムにおけるtraceId伝播などに活用できます。'
 image: 'https://r2.dreaife.tokyo/notion/covers/3cbfc0618c3e476daad050d5197ab09f/20240204_054736.jpg'
 tags: ['java', 'doc', 'multi-prog', 'meeting']
 category: 'cs-base'

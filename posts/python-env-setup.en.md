@@ -1,9 +1,8 @@
 ---
-title: 'python爬虫环境配置'
+title: 'Python Web Crawler Environment Setup'
 published: 2024-01-01
 updated: 2024-01-01
-description: '配置Python爬虫环境包括安装Python3、请求库（如requests和selenium）、解析库（如lxml和beautifulsoup4）、数据库（如MySQL和MongoDB）、存储库（如PyMySQL和PyMongo）、web库（如Flask和Tornado）、app爬取库（如mitmproxy和appium）以及爬虫框架（如pyspider和scrapy）。每个库的安装命令和注意事项均有详细说明。'
-permalink: 'python-env-setup'
+description: 'Setting up a Python web crawler environment includes installing Python 3, request libraries (such as requests and selenium), parsing libraries (such as lxml and beautifulsoup4), databases (such as MySQL and MongoDB), storage libraries (such as PyMySQL and PyMongo), web libraries (such as Flask and Tornado), app crawling tools (such as mitmproxy and appium), and crawler frameworks (such as pyspider and scrapy). Installation commands and notes for each library are provided in detail.'
 image: 'https://r2.dreaife.tokyo/notion/covers/45f564fe06e843e1a166f39b3e93ed2d/2421860-20240101202740011-1464779186.png'
 tags: ['spider', '环境', 'python']
 category: 'spider'

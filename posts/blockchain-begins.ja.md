@@ -1,9 +1,8 @@
 ---
-title: '区块链再开始'
+title: 'ブロックチェーンをもう一度始める'
 published: 2026-02-18
 updated: 2026-02-18
-description: '无内容'
-permalink: 'blockchain-begins'
+description: '内容なし。'
 image: 'https://source.unsplash.com/random'
 tags: []
 category: ''

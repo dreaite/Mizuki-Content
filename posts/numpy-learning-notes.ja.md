@@ -1,9 +1,8 @@
 ---
-title: 'numpy学习笔记1'
+title: 'NumPy学習ノート1'
 published: 2024-01-05
 updated: 2024-01-05
-description: 'NumPy是Python的一个扩展库，支持多维数组和矩阵运算，提供丰富的数学函数。其主要特点包括强大的ndarray对象、广播功能和与C/C++/Fortran的整合。NumPy常与SciPy和Matplotlib一起使用，形成强大的科学计算环境。安装可通过pip完成，支持多种数据类型，具有丰富的数组创建和操作功能，包括切片、索引和广播机制。'
-permalink: 'numpy-learning-notes'
+description: 'NumPyは、多次元配列や行列演算をサポートし、豊富な数学関数を提供するPython拡張ライブラリです。主な特徴には、強力なndarrayオブジェクト、ブロードキャスト機能、C/C++/Fortranとの統合があります。NumPyはSciPyやMatplotlibと併用されることが多く、強力な科学計算環境を構成します。pipでインストール可能で、多様なデータ型に対応し、スライス、インデックス、ブロードキャストを含む豊富な配列生成・操作機能を備えています。'
 image: 'https://r2.dreaife.tokyo/notion/covers/8b3927e12bab461aae41199568484354/GCqi6hIbsAEIXlZ.jpg'
 tags: ['python', 'numpy']
 category: 'cs-base'

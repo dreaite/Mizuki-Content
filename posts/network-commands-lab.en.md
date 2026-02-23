@@ -1,9 +1,8 @@
 ---
-title: '实验1 常用网络命令'
+title: 'Experiment 1: Common Network Commands'
 published: 2022-07-01
 updated: 2022-07-01
-description: '实验旨在了解Linux和Windows命令行的使用，熟悉常用网络命令如ping、ifconfig、traceroute、arp和netstat的基本用法。实验包括测试网络连通性、显示TCP/IP配置、测量数据包路径、查看ARP缓存和活动TCP连接。通过实验，掌握了命令行的使用，认识到不同操作系统中相同功能命令的参数差异，并提高了编程能力。'
-permalink: 'network-commands-lab'
+description: 'This experiment aims to understand the use of Linux and Windows command lines and become familiar with common network commands such as ping, ifconfig, traceroute, arp, and netstat. It includes testing network connectivity, displaying TCP/IP configuration, measuring packet paths, viewing the ARP cache, and checking active TCP connections. Through the experiment, command-line usage was mastered, differences in parameters of equivalent commands across operating systems were recognized, and programming ability was improved.'
 image: 'https://r2.dreaife.tokyo/notion/covers/4bc2401a79a84e83a627abb60bf6034e/8C68EB45EE291520ABAA7A26C10251D0.jpg'
 tags: ['network', 'school']
 category: 'cs-base'

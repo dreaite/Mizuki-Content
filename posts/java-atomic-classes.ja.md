@@ -1,9 +1,8 @@
 ---
-title: 'java Atomic原子类&&常见并发容器'
+title: 'Java Atomic原子クラスと代表的な並行コンテナ'
 published: 2024-02-04
 updated: 2024-02-04
-description: '介绍了Java中的原子类及常见并发容器，包括基本类型的原子类（如AtomicInteger、AtomicLong、AtomicBoolean）、数组类型的原子类、引用类型的原子类以及对象属性修改类型的原子类。还详细讲解了ConcurrentHashMap、CopyOnWriteArrayList、ConcurrentLinkedQueue、BlockingQueue和ConcurrentSkipListMap等并发容器的特性和使用场景。'
-permalink: 'java-atomic-classes'
+description: 'Javaの原子クラスと代表的な並行コンテナを紹介します。内容には、基本型向け原子クラス（AtomicInteger、AtomicLong、AtomicBooleanなど）、配列向け原子クラス、参照型向け原子クラス、オブジェクトフィールド更新用原子クラスが含まれます。さらに、ConcurrentHashMap、CopyOnWriteArrayList、ConcurrentLinkedQueue、BlockingQueue、ConcurrentSkipListMapなどの並行コンテナの特性と利用シーンも詳しく解説します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/dedc5c0018d0466f9c9db27d02d5c771/20240203_041836.jpg'
 tags: ['meeting', 'multi-prog', 'doc', 'java']
 category: 'cs-base'

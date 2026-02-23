@@ -1,9 +1,8 @@
 ---
-title: 'ubuntu安装ohMyZsh及其组件'
+title: 'Install oh-my-zsh and Its Components on Ubuntu'
 published: 2024-12-03
 updated: 2024-12-03
-description: '在Ubuntu上安装ohMyZsh及其组件的步骤包括：首先安装zsh和git，然后通过wget安装ohMyZsh。接着，克隆powerlevel10k主题和所需插件，并更新.zshrc文件以应用主题和插件。最后，安装额外的插件如zsh-bat和you-should-use，并更新系统以确保一切正常工作。'
-permalink: 'ubuntu-ohmyzsh-setup'
+description: 'Installing oh-my-zsh and its components on Ubuntu includes first installing zsh and git, then installing oh-my-zsh via wget. Next, clone the powerlevel10k theme and required plugins, and update the .zshrc file to apply the theme and plugins. Finally, install additional plugins such as zsh-bat and you-should-use, and update the system to ensure everything works properly.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1515465cca178073b194f4ade9c3a703/IMG_1723.jpg'
 tags: ['bash', 'linux']
 category: 'prog-side'

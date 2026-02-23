@@ -1,9 +1,8 @@
 ---
-title: '区块链认识'
+title: 'Understanding Blockchain'
 published: 2024-12-09
 updated: 2024-12-09
-description: '区块链是一种由时间顺序链接的区块组成的结构，具有去中心化、不可篡改性、透明性和安全性等核心特性。其工作原理包括交易生成、验证、打包和添加到链上。应用场景涵盖加密货币、供应链管理、金融服务等。面临的挑战包括扩展性、能耗问题和用户教育。区块链的底层逻辑基于分布式账本和共识机制，确保数据的安全与一致性。'
-permalink: 'blockchain-intro-2024'
+description: 'Blockchain is a structure composed of blocks linked in chronological order, with core characteristics such as decentralization, immutability, transparency, and security. Its workflow includes transaction creation, validation, packaging, and adding blocks to the chain. Application scenarios include cryptocurrencies, supply chain management, and financial services. Challenges include scalability, energy consumption, and user education. The underlying logic is based on distributed ledgers and consensus mechanisms to ensure data security and consistency.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1575465cca1780ecb51bc75146cb9231/IMG_1823(1).jpg'
 tags: ['web3', 'theory']
 category: 'WEB3'

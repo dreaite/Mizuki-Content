@@ -1,9 +1,8 @@
 ---
-title: 'nodejs初学'
+title: 'Node.js入門'
 published: 2024-11-16
 updated: 2024-11-16
-description: 'Node.js 是基于 Chrome V8 引擎的 JavaScript 运行时，具有单线程、非阻塞 I/O、模块化和跨平台特性。常用模块包括文件系统、HTTP 服务、路径操作和操作系统信息。npm 是包管理工具，用于安装和管理库。异步编程模式包括回调、Promise 和 async/await，适合构建 Web 服务和实时应用程序。'
-permalink: 'nodejs-basics'
+description: 'Node.jsはChrome V8エンジンを基盤としたJavaScriptランタイムで、シングルスレッド、ノンブロッキングI/O、モジュール化、クロスプラットフォーム対応といった特徴を持ちます。代表的なモジュールには、ファイルシステム、HTTPサービス、パス操作、OS情報取得があります。npmはライブラリの導入・管理に使うパッケージマネージャです。非同期プログラミングパターンにはコールバック、Promise、async/awaitがあり、Webサービスやリアルタイムアプリの構築に適しています。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1405465cca1780368801d04ad9f98fcc/IMG_1607.jpg'
 tags: ['nodejs']
 category: 'BACKEND'

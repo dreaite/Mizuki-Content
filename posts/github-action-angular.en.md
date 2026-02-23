@@ -1,9 +1,8 @@
 ---
-title: 'github action自动部署angular页面'
+title: 'Automatically Deploy Angular Pages with GitHub Actions'
 published: 2024-11-04
 updated: 2024-11-04
-description: '配置angular项目以自动部署到GitHub Pages，包括修改angular.json文件的outputPath，安装angular-cli-ghpages，创建GitHub Actions工作流以在推送到指定分支时构建并部署项目，并生成访问repo所需的token。最后，设置GitHub Pages的分支为gh-pages。'
-permalink: 'github-action-angular'
+description: 'This post explains how to configure an Angular project for automatic deployment to GitHub Pages, including modifying the outputPath in angular.json, installing angular-cli-ghpages, creating a GitHub Actions workflow to build and deploy on pushes to a specific branch, and generating the token required to access the repository. Finally, it sets the GitHub Pages branch to gh-pages.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca1780709669dd1e198f2678/Gal1mvpbQAA_8s_.jpg'
 tags: ['github-action']
 category: 'infra'

@@ -1,9 +1,8 @@
 ---
-title: '实验6 DNS协议分析与测量'
+title: 'Experiment 6: DNS Protocol Analysis and Measurement'
 published: 2022-07-01
 updated: 2022-07-01
-description: '实验旨在了解DNS协议及其基本概念，包括域名结构、DNS服务器和域名解析原理。实验内容涵盖DNS系统配置、使用dig工具进行DNS信息测量，以及通过tcpdump和wireshark分析DNS查询数据包。实验结果显示了DNS查询的各个字段及其含义，最后总结了在实验过程中遇到的问题及解决方案，提升了对DNS协议的理解和编程能力。'
-permalink: 'dns-analysis-lab'
+description: 'This experiment aims to understand the DNS protocol and its basic concepts, including domain name structure, DNS servers, and the principles of domain name resolution. It covers DNS system configuration, DNS information measurement with the dig tool, and DNS query packet analysis using tcpdump and Wireshark. The results show the fields in DNS queries and their meanings, and the experiment concludes with issues encountered and solutions, improving understanding of DNS and programming skills.'
 image: 'https://r2.dreaife.tokyo/notion/covers/40cdf76fbbbc44cb93d9578eb25a3a4b/3df8494814797e70.jpg'
 tags: ['network', 'school']
 category: 'cs-base'

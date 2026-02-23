@@ -2,8 +2,7 @@
 title: 'Java AQS'
 published: 2024-02-03
 updated: 2024-02-04
-description: 'AQS（抽象队列同步器）是Java中的一个抽象类，主要用于构建锁和同步器。其核心原理是通过CLH锁实现线程的阻塞等待和唤醒机制。AQS支持独占和共享两种资源共享方式，常见的同步工具类包括Semaphore和CountDownLatch，分别用于控制线程访问资源的数量和等待多个线程完成任务。CyclicBarrier则允许一组线程在到达同步点时被阻塞，直到最后一个线程到达。'
-permalink: 'java-aqs-intro'
+description: 'AQS（AbstractQueuedSynchronizer、抽象キュー同期器）は、主にロックや同期器を構築するためのJavaの抽象クラスです。中核原理はCLHロックに基づく待機キューにより、スレッドのブロック待機と起床を実現する点にあります。AQSは排他モードと共有モードという2つのリソース共有方式をサポートします。代表的な同期ユーティリティにはSemaphoreとCountDownLatchがあり、それぞれリソースへの同時アクセス数の制御や複数スレッドの完了待ちに用いられます。CyclicBarrierは、最後のスレッドが到着するまで複数スレッドを同期点で待機させることができます。'
 image: 'https://r2.dreaife.tokyo/notion/covers/d4c9fe2ac69c466bae31d027d7c36398/20240204_060715.jpg'
 tags: ['meeting', 'doc', 'multi-prog', 'java']
 category: 'cs-base'

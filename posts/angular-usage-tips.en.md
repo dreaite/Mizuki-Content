@@ -1,9 +1,8 @@
 ---
-title: 'angular初步使用'
+title: 'Getting Started with Angular'
 published: 2024-11-04
 updated: 2024-11-04
-description: 'Angular初步使用指南包括项目创建、Angular CLI命令、组件与模块的结构、数据绑定、指令、服务与依赖注入、路由与导航、表单处理、HTTP客户端、RxJS、状态管理、性能优化、PWA和国际化等内容，提供了详细的命令示例和代码结构，帮助开发者快速上手Angular开发。'
-permalink: 'angular-usage-tips'
+description: 'This beginner guide to Angular covers project creation, Angular CLI commands, component and module structure, data binding, directives, services and dependency injection, routing and navigation, form handling, the HTTP client, RxJS, state management, performance optimization, PWA support, and internationalization. It includes detailed command examples and code structure references to help developers get started quickly.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca1780ff89b2c4ed749863f6/IMG_1381.jpg'
 tags: ['angular']
 category: 'FRONTEND'

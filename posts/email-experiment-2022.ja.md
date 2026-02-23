@@ -1,9 +1,8 @@
 ---
-title: '实验5 电子邮件'
+title: '実験5 電子メール'
 published: 2022-07-01
 updated: 2022-07-01
-description: '实验旨在理解电子邮件系统的基本结构和通信协议，包括SMTP和POP3。通过使用邮件代理、客户端、Web邮件和telnet命令进行邮件收发，分析其通信过程和协议。实验结果表明，掌握了邮件发送的具体流程和SMTP协议的分析，提高了编程能力和对协议的理解。'
-permalink: 'email-experiment-2022'
+description: '本実験は、SMTPやPOP3を含む電子メールシステムの基本構造と通信プロトコルを理解することを目的としています。メールエージェント、クライアント、Webメール、telnetコマンドを用いて送受信を行い、その通信過程とプロトコルを解析しました。実験結果として、メール送信の具体的な流れとSMTPプロトコル解析への理解が深まり、プログラミング能力とプロトコル理解の向上につながりました。'
 image: 'https://r2.dreaife.tokyo/notion/covers/04494c67f6c14b5d8a184b32d9acc165/663438ca13025ac9.jpg'
 tags: ['network', 'school']
 category: 'cs-base'

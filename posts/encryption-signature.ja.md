@@ -1,9 +1,8 @@
 ---
-title: '实验9 加密、数字签名与证书'
+title: '実験9 暗号化・デジタル署名・証明書'
 published: 2022-07-01
 updated: 2022-07-01
-description: '实验旨在了解对称加密、非对称加密、散列函数、数字签名和数字证书的概念及应用，使用OpenSSL进行相关操作，包括加密解密、生成密钥对、数字签名和自签名证书的创建。实验过程中遇到问题并解决，提升了编程能力和对Linux命令的理解。'
-permalink: 'encryption-signature'
+description: '本実験は、共通鍵暗号、公開鍵暗号、ハッシュ関数、デジタル署名、デジタル証明書の概念と応用を理解することを目的としています。OpenSSLを用いて、暗号化/復号、鍵ペア生成、デジタル署名、自己署名証明書の作成などを行います。実験中に発生した問題を解決することで、プログラミング能力とLinuxコマンドへの理解を高めました。'
 image: 'https://r2.dreaife.tokyo/notion/covers/ead9a6ad0dad4177bebb60afc7f8009d/6d45869cbcd30156.jpg'
 tags: ['network', 'school']
 category: 'cs-base'

@@ -1,9 +1,8 @@
 ---
-title: '交易记录'
+title: 'Trading Journal'
 published: 2025-02-14
 updated: 2025-02-15
-description: '最近的交易经历显示出较高的胜率，尤其是在2月3日的做空中实现了显著盈利。尽管有错误判断导致部分收益损失，但整体收益仍为正。当前市场震荡，短期内可能面临二次测试，需谨慎应对。交易策略主要基于K线和交易量，仓位分配为80%低杠杆大趋势交易，10%高杠杆高频交易，剩余资金用于链上操作。为避免情绪化交易，建议在不明判断时选择空仓，稳定现金流后再进行高风险操作。'
-permalink: 'trading-insights-2025'
+description: 'Recent trading experience shows a relatively high win rate, especially with a short position on February 3 that produced significant profit. Although some gains were lost due to judgment errors, overall returns remain positive. The market is currently range-bound and may face a second test in the short term, so caution is needed. The trading strategy is mainly based on candlesticks and volume, with position allocation of 80% low-leverage trend trading, 10% high-leverage high-frequency trading, and the remaining funds used for on-chain operations. To avoid emotional trading, staying in cash is recommended when judgment is unclear, and high-risk operations should be considered after cash flow becomes stable.'
 image: 'https://r2.dreaife.tokyo/notion/covers/19a5465cca178011a14beaac4312e5b0/IMG_2580.jpg'
 tags: ['life', 'web3', 'thinking']
 category: 'WEB3'

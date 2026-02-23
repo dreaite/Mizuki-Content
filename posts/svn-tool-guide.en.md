@@ -1,9 +1,8 @@
 ---
-title: 'svn使用'
+title: 'Using SVN'
 published: 2024-11-04
 updated: 2024-11-04
-description: 'svn是一种集中式文件管理工具，支持细粒度的文件安全管理。使用前需建立仓库，推荐使用图形化客户端如tortoiseSVN。常用命令包括checkout、commit、update、add、delete、log、diff、revert和ignore，此外还涉及分支管理和帮助命令。具体命令用法详尽列出，适合用户快速上手。'
-permalink: 'svn-tool-guide'
+description: 'SVN is a centralized file management/version control tool that supports fine-grained file access management. Before use, a repository must be created, and graphical clients such as TortoiseSVN are recommended. Common commands include checkout, commit, update, add, delete, log, diff, revert, and ignore, and the article also covers branch management and help commands. Detailed command usage is listed to help users get started quickly.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca178060a708e1b3428bd22e/IMG_1451.jpg'
 tags: ['SVN']
 category: 'infra'

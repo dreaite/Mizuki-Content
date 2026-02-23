@@ -1,9 +1,8 @@
 ---
-title: 'HTML学习'
+title: 'Learning HTML'
 published: 2022-07-15
 updated: 2022-07-15
-description: 'HTML学习涵盖了文档结构、文本标签、图片、音频和视频、超链接、表单、列表、表格、语义标签和特殊符号等基本概念。重要元素包括<html>、<head>、<body>、<div>、<span>、<img>、<audio>、<video>、<form>等，提供了创建网页所需的基础知识和示例代码。'
-permalink: 'html-learning-guide'
+description: 'Learning HTML covers basic concepts such as document structure, text tags, images, audio and video, hyperlinks, forms, lists, tables, semantic tags, and special symbols. Important elements include <html>, <head>, <body>, <div>, <span>, <img>, <audio>, <video>, and <form>, providing foundational knowledge and example code for building web pages.'
 image: 'https://r2.dreaife.tokyo/notion/covers/be99704a6a9d4bcc89d4fef3e02b15fd/20220818_230852.jpg'
 tags: ['web', 'html', 'language']
 category: 'FRONTEND'

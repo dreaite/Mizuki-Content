@@ -1,9 +1,8 @@
 ---
-title: '个人危机管理和未来收入规划'
+title: 'Personal Crisis Management and Future Income Planning'
 published: 2025-01-23
 updated: 2025-01-23
-description: '面对未来可能的经济危机和自然灾害，首先需要确保生命安全并选择相对安全的居住地。其次，维持工签和提高收入是应对金融危机的关键，期望通过稳定的工资和被动收入来维持生活。工作提供稳定现金流，而产品销售则能带来长期收益，需做好市场调研。最后，资产积累后应考虑理财，以实现财富增值。'
-permalink: 'personal-crisis-plan'
+description: 'In the face of possible future economic crises and natural disasters, the first priority is ensuring personal safety and choosing a relatively safe place to live. Next, maintaining a work visa and increasing income are key to dealing with financial crises, with the goal of sustaining life through stable wages and passive income. A job provides stable cash flow, while product sales can bring long-term returns and require market research. Finally, after accumulating assets, financial management should be considered to achieve wealth growth.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1845465cca1780b28400ef19d8886705/IMG_2349.jpg'
 tags: ['thinking', 'life']
 category: 'life'

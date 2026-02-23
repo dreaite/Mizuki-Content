@@ -1,9 +1,8 @@
 ---
-title: '前缀和、差分和双指针 算法学习'
+title: 'Algorithm Study: Prefix Sum, Difference Array, and Two Pointers'
 published: 2022-07-16
 updated: 2022-07-16
-description: '介绍了前缀和、差分和双指针算法的原理和应用。前缀和用于快速计算数组区间和，差分用于高效处理区间更新，双指针法通过维护指针来优化查询效率。提供了相关例题及参考代码以帮助理解和应用这些算法。'
-permalink: 'prefix-sum-difference'
+description: 'This article introduces the principles and applications of prefix sums, difference arrays, and the two-pointer technique. Prefix sums are used to quickly compute subarray sums, difference arrays are used to efficiently handle range updates, and the two-pointer method optimizes query efficiency by maintaining pointers. Related examples and reference code are provided to help understand and apply these algorithms.'
 image: 'https://r2.dreaife.tokyo/notion/covers/c019ca737cef4889b7134b143022cb7a/2421860-20220716154134976-1182892165.png'
 tags: ['algorithm', 'acwing']
 category: 'algorithm'

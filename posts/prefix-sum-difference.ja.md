@@ -1,9 +1,8 @@
 ---
-title: '前缀和、差分和双指针 算法学习'
+title: 'アルゴリズム学習：前計算和・差分・双方向ポインタ'
 published: 2022-07-16
 updated: 2022-07-16
-description: '介绍了前缀和、差分和双指针算法的原理和应用。前缀和用于快速计算数组区间和，差分用于高效处理区间更新，双指针法通过维护指针来优化查询效率。提供了相关例题及参考代码以帮助理解和应用这些算法。'
-permalink: 'prefix-sum-difference'
+description: '前計算和（prefix sum）、差分配列、双方向ポインタ法（two pointers）の原理と応用を紹介します。前計算和は配列区間和を高速に計算し、差分配列は区間更新を効率化し、双方向ポインタ法はポインタを維持することでクエリ効率を最適化します。理解と応用を助けるため、関連例題と参考コードも掲載しています。'
 image: 'https://r2.dreaife.tokyo/notion/covers/c019ca737cef4889b7134b143022cb7a/2421860-20220716154134976-1182892165.png'
 tags: ['algorithm', 'acwing']
 category: 'algorithm'

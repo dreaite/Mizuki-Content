@@ -2,8 +2,7 @@
 title: 'Java IO'
 published: 2024-02-05
 updated: 2024-02-05
-description: 'Java IO 涉及输入输出流的基本概念，包括字节流和字符流的分类及其常用类，如 InputStream、OutputStream、Reader 和 Writer。字节流用于处理原始字节数据，而字符流则用于处理字符数据。缓冲流通过减少 IO 操作次数提高性能，适配器模式和装饰器模式在 IO 流中广泛应用，以增强功能和协调不同接口。Java 的 IO 模型包括同步阻塞 IO、非阻塞 IO 和异步 IO，各自适用于不同的应用场景。'
-permalink: 'java-io-basics'
+description: 'Java IO covers the basic concepts of input and output streams, including the classification of byte streams and character streams and their common classes such as InputStream, OutputStream, Reader, and Writer. Byte streams are used for raw byte data, while character streams are used for character data. Buffered streams improve performance by reducing the number of IO operations. Adapter and decorator patterns are widely used in Java IO streams to enhance functionality and coordinate different interfaces. Java IO models include synchronous blocking IO, non-blocking IO, and asynchronous IO, each suited to different scenarios.'
 image: 'https://r2.dreaife.tokyo/notion/covers/7ee1b1967f1444fe89348df8d5be5471/20240205_154729.jpg'
 tags: ['java', 'doc', 'meeting', 'IO']
 category: 'cs-base'

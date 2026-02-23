@@ -1,9 +1,8 @@
 ---
-title: '阿里云配置docker+code-server实现线上编译器'
+title: 'Configure Docker + code-server on Alibaba Cloud to Build an Online Compiler'
 published: 2022-07-06
 updated: 2022-07-06
-description: '通过安装Docker和code-server，实现线上编译器的配置。步骤包括安装Docker、配置阿里云镜像、运行Nginx、安装和配置code-server，以及设置C/C++编译环境，最终成功运行测试代码。'
-permalink: 'alicloud-docker-coder'
+description: 'Set up an online compiler by installing Docker and code-server. The process includes installing Docker, configuring an Alibaba Cloud mirror, running Nginx, installing and configuring code-server, and setting up a C/C++ build environment, then successfully running test code.'
 image: 'https://r2.dreaife.tokyo/notion/covers/ae4b0038e910408cadb36f3651ee3fc2/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE_2022-09-18_025217.png'
 tags: ['network', 'school']
 category: 'cs-base'

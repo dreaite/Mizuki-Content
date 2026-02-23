@@ -1,9 +1,8 @@
 ---
-title: 'java集合知识'
+title: 'Java Collections Overview'
 published: 2024-01-26
 updated: 2024-01-26
-description: 'Java集合主要由Collection和Map接口派生，包含List、Set、Queue等子接口。List用于存储有序可重复元素，Set用于存储唯一元素，Queue用于特定顺序存储元素，Map用于存储键值对。选择集合时应根据需求，如线程安全、排序等。Java集合提供灵活的数据存储方式，优于数组，支持多种操作。ArrayList和LinkedList在插入删除性能上有所不同，HashMap与Hashtable在线程安全和效率上存在差异，ConcurrentHashMap提供更好的并发支持。'
-permalink: 'java-collections-overview'
+description: 'Java collections are mainly derived from the Collection and Map interfaces and include subinterfaces such as List, Set, and Queue. List stores ordered duplicate elements, Set stores unique elements, Queue stores elements in a specific order, and Map stores key-value pairs. Collection choices should match requirements such as thread safety and sorting. Java collections provide flexible data storage methods and multiple operations, often more suitable than arrays. The article also compares ArrayList vs. LinkedList for insertion and deletion performance, and HashMap vs. Hashtable for thread safety and efficiency, while noting that ConcurrentHashMap provides better concurrency support.'
 image: 'https://r2.dreaife.tokyo/notion/covers/23303d72ae1a4802b122826206325672/20240124_023951028_iOS.png'
 tags: ['java', 'meeting', 'doc']
 category: 'cs-base'

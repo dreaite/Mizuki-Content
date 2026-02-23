@@ -1,9 +1,8 @@
 ---
-title: '实验4 TCP协议分析'
+title: '実験4 TCPプロトコル分析'
 published: 2022-07-01
 updated: 2022-07-01
-description: '实验旨在了解TCP协议的基本概念和报文结构，分析连接建立和释放过程，掌握使用tcpdump和wireshark进行TCP协议分析的技术。实验通过wget下载网页并抓取数据包，分析TCP报文头部及其字段，探讨三次握手和四次挥手的过程，最后总结了实验中的问题及解决方法，并提高了对IP协议和TCP报文结构的理解。'
-permalink: 'tcp-protocol-analysis'
+description: '本実験は、TCPプロトコルの基本概念とパケット構造を理解し、接続確立と切断の過程を分析し、tcpdumpとWiresharkを用いたTCPプロトコル解析技術を習得することを目的としています。wgetでWebページを取得してパケットをキャプチャし、TCPヘッダおよび各フィールドを解析し、3ウェイハンドシェイクと4ウェイハンドシェイク（切断）の過程を検討します。最後に実験中の問題と解決方法をまとめ、IPプロトコルとTCPパケット構造への理解を深めました。'
 image: 'https://r2.dreaife.tokyo/notion/covers/a9889b8836ad49a39c4f9bec4325b5fa/3ba609c40d7ab32a.jpg'
 tags: ['network', 'school']
 category: 'cs-base'

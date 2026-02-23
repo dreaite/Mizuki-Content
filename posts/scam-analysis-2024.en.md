@@ -1,9 +1,8 @@
 ---
-title: '个人网上受骗01-骗局分析'
+title: 'Personal Online Scam 01: Scam Analysis'
 published: 2024-08-19
 updated: 2024-08-20
-description: '分析了一个网络骗局的运作方式，包括通过社交软件引流、诱导用户付款以及利用用户的贪欲。尽管发现了多个漏洞，最终还是因对金钱的渴望而上当受骗。强调了理性投资的重要性，提醒人们在面对诱惑时要保持冷静，评估投资的风险和收益。'
-permalink: 'scam-analysis-2024'
+description: 'This post analyzes how an online scam operated, including attracting traffic through social platforms, inducing users to pay, and exploiting human greed. Although multiple loopholes were noticed, the author still fell for the scam due to the desire for money. It emphasizes the importance of rational investing and reminds readers to stay calm when facing temptation and to evaluate investment risks and returns.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1774c94989624c98953feedabade9c8e/20240802_040855728_iOS.jpg'
 tags: ['thinking']
 category: 'life'

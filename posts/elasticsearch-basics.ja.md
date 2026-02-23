@@ -1,9 +1,8 @@
 ---
-title: 'elasticsearch初识'
+title: 'Elasticsearch入門'
 published: 2023-08-13
 updated: 2023-08-13
-description: 'elasticsearch是一款强大的开源搜索引擎，基于Lucene实现，常用于数据存储、搜索和分析。其核心概念包括倒排索引、文档和字段、索引与映射。elasticsearch与MySQL的对比显示了两者在数据处理上的不同优势。安装和使用elasticsearch涉及创建索引、文档操作以及使用REST API进行查询。聚合功能允许对数据进行统计分析，而自动补全和数据同步功能则提升了用户体验和数据一致性。集群管理确保高可用性和数据安全。'
-permalink: 'elasticsearch-basics'
+description: 'ElasticsearchはLuceneを基盤とした強力なオープンソース検索エンジンで、データ保存、検索、分析によく利用されます。中核概念には、転置インデックス、ドキュメントとフィールド、インデックスとマッピングが含まれます。MySQLとの比較では、データ処理におけるそれぞれの強みの違いが示されます。導入と利用では、インデックス作成、ドキュメント操作、REST APIによる検索を扱います。集計機能は統計分析を可能にし、自動補完やデータ同期はユーザー体験と整合性を向上させます。クラスタ管理は高可用性とデータ安全性を支えます。'
 image: 'https://r2.dreaife.tokyo/notion/covers/06857fefb59140378966d89e7a3f8914/2421860-20230813210602593-194327638.png'
 tags: ['elasticSearch', 'java']
 category: 'middle-side'

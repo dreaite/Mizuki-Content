@@ -1,9 +1,8 @@
 ---
-title: '实验2 IP协议分析'
+title: 'Experiment 2: IP Protocol Analysis'
 published: 2022-07-01
 updated: 2022-07-01
-description: '实验旨在了解IP报文格式及字段含义，掌握tcpdump和Wireshark的使用。实验环境包括阿里云主机和操作系统。通过tcpdump抓包和Wireshark分析，学习IP协议结构及相关命令的应用，解决了traceroute命令和Xftp连接问题，提升了编程能力和对IP协议的理解。'
-permalink: 'ip-protocol-analysis'
+description: 'This experiment aims to understand the IP packet format and the meaning of its fields, and to master the use of tcpdump and Wireshark. The environment includes an Alibaba Cloud host and operating systems. Through packet capture with tcpdump and analysis with Wireshark, it studies the IP protocol structure and related commands, resolves traceroute and Xftp connection issues, and improves programming ability and understanding of IP.'
 image: 'https://r2.dreaife.tokyo/notion/covers/74d05503541048198288c21511f5a2ee/B5C598D57D9DEEA398003F8C3664D184.jpg'
 tags: ['network', 'school']
 category: 'cs-base'

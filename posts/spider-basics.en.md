@@ -1,9 +1,8 @@
 ---
-title: 'spider基础库学习'
+title: 'Learning Basic Spider Libraries'
 published: 2024-01-18
 updated: 2024-01-19
-description: '学习爬虫基础库，包括Python的urllib和requests库的使用。介绍了HTTP请求的构造、异常处理、URL解析、正则表达式的应用，以及如何提取猫眼电影排行榜的信息。强调了请求头、Cookies、代理设置和会话维持等高级用法。'
-permalink: 'spider-basics'
+description: 'This article studies basic web scraping libraries, including Python urllib and requests. It introduces HTTP request construction, exception handling, URL parsing, regular expression usage, and how to extract information from the Maoyan movie ranking page. It also emphasizes advanced usage such as request headers, cookies, proxy settings, and session persistence.'
 image: 'https://r2.dreaife.tokyo/notion/covers/b672eece915b4f3cb2fef5ac4001a49b/20240116_182154923_iOS.png'
 tags: ['spider', 'python', 'regex', 'inHand']
 category: 'spider'

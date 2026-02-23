@@ -1,9 +1,8 @@
 ---
-title: 'numpy学习笔记2'
+title: 'NumPy Study Notes 2'
 published: 2024-01-05
 updated: 2024-01-05
-description: '本文介绍了NumPy的多种功能，包括位运算、字符串操作、数学函数、统计函数、排序和条件筛选、字节交换、数组的副本与视图、矩阵库、线性代数、文件输入输出，以及如何与Matplotlib结合使用。提供了详细的函数说明和示例代码，帮助用户理解和应用NumPy的各种功能。'
-permalink: 'numpy-bitwise-ops'
+description: 'This article introduces many NumPy features, including bitwise operations, string operations, mathematical functions, statistical functions, sorting and conditional filtering, byte swapping, array copies and views, the matrix library, linear algebra, file input/output, and integration with Matplotlib. It provides detailed function descriptions and sample code to help readers understand and apply various NumPy capabilities.'
 image: 'https://r2.dreaife.tokyo/notion/covers/8f8d39bb1fb14003b5157b7cd6360426/GCn5JKCaAAALIni.jpg'
 tags: ['python', 'numpy']
 category: 'cs-base'

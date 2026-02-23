@@ -1,9 +1,8 @@
 ---
-title: '排序 二分学习'
+title: 'ソートと二分探索の学習'
 published: 2022-07-08
 updated: 2022-07-08
-description: '介绍了快速排序和归并排序的原理及实现，包括时间复杂度和相关题目。快速排序通过选取中点将数列分为两部分进行排序，归并排序则将已排序的子段合并。还讨论了整数和浮点数的二分查找算法及其实现方法。'
-permalink: 'sorting-binary-search'
+description: 'クイックソートとマージソートの原理と実装を、時間計算量や関連問題とあわせて紹介します。クイックソートは中間値を基準に数列を2つに分割して整列し、マージソートは整列済み部分列を統合していきます。整数・浮動小数点数に対する二分探索アルゴリズムとその実装方法についても解説します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/4b474fbfaee24827aeb7eab319feed6b/440016BF77F4742DE9C878230F9C813E.jpg'
 tags: ['algorithm', 'acwing']
 category: 'algorithm'

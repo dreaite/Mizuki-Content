@@ -1,9 +1,8 @@
 ---
-title: 'Ubuntu通过nat将网络转发给路由器'
+title: 'Use NAT on Ubuntu to Forward Network Access to a Router'
 published: 2024-12-15
 updated: 2024-12-15
-description: '通过修改Netplan配置、启用IP转发和配置NAT转发，实现Ubuntu将网络转发给路由器的功能。步骤包括清除现有配置、设置静态IP、安装和配置DHCP服务，并验证网络共享的有效性。'
-permalink: 'ubuntu-nat-routing'
+description: 'By modifying Netplan configuration, enabling IP forwarding, and configuring NAT forwarding, Ubuntu can be used to forward network access to a router. The steps include clearing existing configuration, setting a static IP, installing and configuring DHCP services, and verifying that network sharing works correctly.'
 image: 'https://r2.dreaife.tokyo/notion/covers/15d5465cca1780bf85eac8dea673675e/IMG_1935.jpg'
 tags: ['network', 'linux']
 category: 'prog-side'

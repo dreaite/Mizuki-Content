@@ -1,9 +1,8 @@
 ---
-title: 'JavaScript学习'
+title: 'Learning JavaScript'
 published: 2024-11-16
 updated: 2024-11-16
-description: 'JavaScript是一种动态、弱类型的解释型语言，具有轻量级、跨平台和事件驱动的特点。核心概念包括变量与数据类型、控制流、函数及异步编程。JavaScript可在浏览器和Node.js环境中运行，支持多种数据类型和操作，如对象、数组、解构赋值和模块化。异步编程使用回调函数、Promise和async/await来处理任务。'
-permalink: 'javascript-basics'
+description: 'JavaScript is a dynamic, weakly typed interpreted language with characteristics such as being lightweight, cross-platform, and event-driven. Core concepts include variables and data types, control flow, functions, and asynchronous programming. JavaScript can run in browsers and Node.js, and supports many data types and operations such as objects, arrays, destructuring assignment, and modularization. Asynchronous programming uses callbacks, Promise, and async/await to handle tasks.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1405465cca178007b423cb34358c1fa9/IMG_1614.jpg'
 tags: ['javaScript']
 category: 'FRONTEND'

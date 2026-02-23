@@ -2,8 +2,7 @@
 title: 'Java NIO'
 published: 2024-02-05
 updated: 2024-02-05
-description: 'NIO（新I/O）是Java 1.4引入的非阻塞I/O模型，解决了传统BIO的性能瓶颈。其核心组件包括缓冲区（Buffer）、通道（Channel）和选择器（Selector），允许使用少量线程处理多个连接。NIO支持零拷贝技术，提高I/O效率，推荐使用基于NIO的框架如Netty以简化网络编程。'
-permalink: 'java-nio-intro'
+description: 'NIO (New I/O) is the non-blocking I/O model introduced in Java 1.4 to solve performance bottlenecks of traditional BIO. Its core components include Buffer, Channel, and Selector, allowing a small number of threads to handle multiple connections. NIO also supports zero-copy techniques to improve I/O efficiency, and NIO-based frameworks such as Netty are recommended to simplify network programming.'
 image: 'https://r2.dreaife.tokyo/notion/covers/f69a5fdaa2c04d268d0673f6063e9909/20240205_155308.jpg'
 tags: ['java', 'meeting', 'doc', 'IO']
 category: 'cs-base'

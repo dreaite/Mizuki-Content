@@ -1,9 +1,8 @@
 ---
-title: '高精度 学习记录'
+title: 'High-Precision Arithmetic Study Notes'
 published: 2022-07-08
 updated: 2022-07-08
-description: '高精度运算包括加法、减法、乘法和除法，适用于处理超出常规数据类型范围的大数。加法和减法通过模拟手动计算实现，乘法和除法则依次处理每位数字，注意前导零的去除。提供了相关的例题和参考代码以帮助理解和实现这些运算。'
-permalink: 'high-precision-calcs'
+description: 'High-precision arithmetic includes addition, subtraction, multiplication, and division for large numbers that exceed the range of ordinary data types. Addition and subtraction are implemented by simulating manual calculation, while multiplication and division process digits step by step and pay attention to removing leading zeros. Related examples and reference code are provided to help understand and implement these operations.'
 image: 'https://r2.dreaife.tokyo/notion/covers/d815ba777b54406bbf59e6a4bf6fd14a/2421860-20220712031131300-1134503314.png'
 tags: ['algorithm', 'acwing']
 category: 'algorithm'
