@@ -3,7 +3,7 @@ title: 'java面试基础'
 published: 2024-01-19
 updated: 2024-01-19
 description: 'Java语言的特点包括简单易学、面向对象、平台无关性、多线程支持、可靠性和安全性。Java SE是基础版，适合桌面应用，Java EE是企业版，适合复杂的企业级应用。JVM、JDK和JRE的区别在于JVM运行字节码，JDK是开发工具包，JRE是运行环境。Java使用字节码提高效率，支持编译与解释并存。异常处理分为Checked和Unchecked，使用try-catch-finally结构。泛型增强代码可读性，反射提供运行时分析能力。序列化用于对象持久化，IO流分为字节流和字符流，设计模式如装饰器和适配器在IO中应用广泛。'
-permalink: 'java-interview-basics.ja'
+permalink: 'java-interview-basics'
 image: 'https://r2.dreaife.tokyo/notion/covers/e8c7d2c1e2e44a889fb128640d02a931/GEXWTXvbgAAOpzq.jpg'
 tags: ['java', 'doc', 'meeting']
 category: 'cs-base'

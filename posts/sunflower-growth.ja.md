@@ -3,7 +3,7 @@ title: '向日葵——从孩子到大人的成长物语'
 published: 2024-07-04
 updated: 2024-07-04
 description: '故事探讨了从孩子成长为大人的过程，强调了对未来的渴望和珍贵事物的重视。角色们在面对脆弱与成长的挑战中相互影响，涉及到病毒、记忆继承和人类的命运交织。最终，角色们在复杂的情感和命运中寻找希望与救赎。'
-permalink: 'sunflower-growth.ja'
+permalink: 'sunflower-growth'
 image: 'https://r2.dreaife.tokyo/notion/covers/48ae26ddba2f483c87e74706f78aa658/s_17_2.jpg'
 tags: ['recomand', 'thinking']
 category: 'gal'

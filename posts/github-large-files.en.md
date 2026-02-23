@@ -3,7 +3,7 @@ title: 'github上传大文件'
 published: 2022-07-07
 updated: 2022-07-07
 description: '要在GitHub上上传大文件，需要安装Git Large File Storage（LFS），并在本地Git仓库中进行配置。具体步骤包括安装LFS、配置跟踪大文件的指针，并通过相应的命令上传文件。完成这些步骤后，即可成功上传大文件至GitHub。'
-permalink: 'github-large-files.en'
+permalink: 'github-large-files'
 image: 'https://r2.dreaife.tokyo/notion/covers/6bf781e8f3ef4da79c4dabda7a6c3103/20220922_201845.jpg'
 tags: ['github', 'lfs']
 category: 'infra'

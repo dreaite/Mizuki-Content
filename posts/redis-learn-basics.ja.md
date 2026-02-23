@@ -3,7 +3,7 @@ title: 'redis初学习'
 published: 2023-08-08
 updated: 2023-08-08
 description: 'Redis是一种基于内存的键值型NoSQL数据库，具有低延迟和丰富的数据结构支持。与传统关系型数据库相比，Redis不严格约束数据格式，支持水平扩展。常见命令包括键值操作、哈希操作、列表操作和集合操作。Jedis和SpringDataRedis是与Redis交互的主要Java客户端，提供了便捷的API和连接池管理。数据序列化可以通过自定义方式优化内存使用。'
-permalink: 'redis-learn-basics.ja'
+permalink: 'redis-learn-basics'
 image: 'https://r2.dreaife.tokyo/notion/covers/4cd4ee81b13646179fba3c8960c51c74/2421860-20230808193216739-391757919.png'
 tags: ['redis', 'java']
 category: 'middle-side'

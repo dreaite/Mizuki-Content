@@ -4,7 +4,7 @@ published: 2026-02-22
 updated: 2026-02-22
 description: '记录了从notionNext迁移到Mizuki的过程，主要原因是希望获得更多自由度。Mizuki是基于Astro的博客框架，支持日记和项目展示。配置过程中注意到内容控制通过md和ts文件，且可以连接bangumi API。计划通过CI实时同步notion内容，并实现多语言适配，使用llm进行翻译。整体配置思路旨在提升内容输出的流畅性。'
 permalink: 'blog-migration-mizuki'
-image: 'https://r2.dreaife.tokyo//notion/covers/30f5465cca1780cc8df8e7c367a16f3d/IMG_4450.jpg'
+image: 'https://r2.dreaife.tokyo/notion/covers/30f5465cca1780cc8df8e7c367a16f3d/IMG_4450.jpg'
 tags: ['blog', 'llm', 'deploy', 'notion']
 category: 'infra'
 draft: false
@@ -74,7 +74,7 @@ Mizuki是一个基于Astro开发的博客框架。有一说一，虽然之前搞
 [NotionSyncAction](https://github.com/dreaite/Mizuki-Content/blob/notionUpdateSync/.github/notion-sync/README.md)(正好试一下mizuki-GitHub的repo可以怎么用（
 
 
-::github{repo=”[/dreaite/Mizuki-Content/blob/notionUpdateSync/.github/notion-sync/README.md](https://github.com/dreaite/Mizuki-Content/blob/notionUpdateSync/.github/notion-sync/README.md)”}
+::github{repo="dreaite/Mizuki-Content/blob/notionUpdateSync/.github/notion-sync/README.md"}
 
 
 ### 通过llm来进行多语言适配
@@ -83,7 +83,7 @@ Mizuki是一个基于Astro开发的博客框架。有一说一，虽然之前搞
 其实在在notion同步ci之前，对于mizuki的框架部分也得进行一下修改。毕竟目前还是没有去做跟随浏览器语言来进行显示语言切换的，所以就稍微小改了一番（指把对于.en.md/.ja.md这种后缀类型的文件给收入到多语言适配中，本身框架用的因为是静态站，所以如果要多ui显示那就得大改了）。毕竟这种多语言切换什么的在各种项目上的实现应该都挺多的了，大致说明一下vibe一下就好了。
 
 
-::github{repo=”dreaifekks/Mizuki”}
+::github{repo="dreaifekks/Mizuki"}
 
 
 然后再就是给ci中加入llm的翻译模块。
@@ -95,7 +95,7 @@ Mizuki是一个基于Astro开发的博客框架。有一说一，虽然之前搞
 [llm部分实现](https://github.com/dreaite/Mizuki-Content/blob/feat(i18n)/llm-translate/.github/notion-sync/README.md)
 
 
-::github{repo=”dreaite/Mizuki-Content”}
+::github{repo="dreaite/Mizuki-Content"}
 
 
 # 结语

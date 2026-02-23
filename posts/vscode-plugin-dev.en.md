@@ -3,7 +3,7 @@ title: 'vscode插件开发初涉'
 published: 2025-03-13
 updated: 2025-03-13
 description: '开发VSCode插件需准备Node.js、VSCode及Yeoman与generator-code。使用Yeoman生成插件基础结构，理解项目结构中的package.json和入口文件src/extension.ts。通过调试面板运行和测试插件，完成后可使用vsce工具打包并发布到VSCode Marketplace。插件激活通过package.json中的activationEvents定义，支持多种激活事件类型。'
-permalink: 'vscode-plugin-dev.en'
+permalink: 'vscode-plugin-dev'
 image: 'https://r2.dreaife.tokyo/notion/covers/1b55465cca17808d8be3e99dd76eae9f/IMG_2747.jpg'
 tags: ['vscode', 'plugin']
 category: 'plugin'

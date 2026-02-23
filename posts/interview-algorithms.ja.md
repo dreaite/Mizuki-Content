@@ -3,7 +3,7 @@ title: '面试算法学习1'
 published: 2023-08-11
 updated: 2023-08-11
 description: '包含多个算法面试题及其解法，包括蛇形矩阵填充、单链表快速排序、寻找峰值、极小值、鸡蛋硬度问题、支持最小值检索的栈以及链表中环的入口节点的查找。每个题目附有详细描述、输入输出格式和示例代码。'
-permalink: 'interview-algorithms.ja'
+permalink: 'interview-algorithms'
 image: 'https://r2.dreaife.tokyo/notion/covers/1670090a8eaf4eab9ccd3f1332d4e916/2421860-20230811144113268-1519746820.png'
 tags: ['meeting', 'algorithm']
 category: 'algorithm'

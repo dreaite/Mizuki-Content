@@ -3,7 +3,7 @@ title: 'Java线程池使用'
 published: 2024-02-03
 updated: 2024-02-03
 description: '使用ThreadPoolExecutor手动声明线程池以避免OOM风险，监测线程池状态并建议不同业务使用不同线程池。合理配置线程池参数，避免重复创建和耗时任务，确保线程池命名以便于问题定位。注意线程池与ThreadLocal的共用问题，推荐使用TransmittableThreadLocal解决上下文传递问题。'
-permalink: 'java-thread-pool.ja'
+permalink: 'java-thread-pool'
 image: 'https://r2.dreaife.tokyo/notion/covers/f4dfdddbb27549ca85712443e7117799/20240203_042710.jpg'
 tags: ['java', 'multi-prog', 'meeting', 'doc']
 category: 'cs-base'
