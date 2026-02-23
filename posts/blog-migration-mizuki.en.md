@@ -1,8 +1,8 @@
 ---
-title: '博客迁移-Mizuki配置记录'
+title: 'Blog Migration: Mizuki Setup Notes'
 published: 2026-02-22
 updated: 2026-02-23
-description: '记录了从notionNext迁移到mizuki的过程，主要原因是notionNext的限制。mizuki是基于Astro的博客框架，支持轻量级的日记和项目展示。配置相对简单，内容通过md和ts文件控制，并可以连接bangumi的API。计划通过CI实现notion内容的实时同步，并进行多语言适配，使用llm进行翻译。整体配置思路旨在优化输出流程。'
+description: 'This post records my migration from NotionNext to Mizuki, mainly due to the limitations of NotionNext. Mizuki is an Astro-based blog framework that supports lightweight diary entries and project showcases. The configuration is relatively simple: content is managed through Markdown and TypeScript files, and it can connect to the Bangumi API. I plan to use CI for real-time Notion content sync, multilingual support, and LLM-based translation. The overall setup is designed to optimize my publishing workflow.'
 permalink: 'blog-migration-mizuki.en'
 image: 'https://r2.dreaife.tokyo/notion/covers/30f5465cca1780cc8df8e7c367a16f3d/IMG_4450.jpg'
 tags: ['blog', 'llm', 'deploy', 'notion']
