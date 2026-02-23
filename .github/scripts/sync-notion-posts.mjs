@@ -1813,8 +1813,8 @@ async function main() {
           }
 
           const translatedExists = await fileExists(translatedFullPath);
-          const shouldTranslateNow = sourceWriteResult === 'written' || !translatedExists;
-          if (!shouldTranslateNow) {
+          const shouldDeferTranslation = sourceWriteResult === 'skipped' && !translatedExists;
+          if (!shouldDeferTranslation) {
             continue;
           }
 
@@ -1983,12 +1983,17 @@ async function main() {
         targetLanguage: job.languageCode,
         title: job.meta.title,
       });
+      const translatedMeta = await translatePostMetadataFields(job.meta, {
+        targetLanguage: job.languageCode,
+      });
       const translatedDocument = buildMarkdownDocument(
         {
           ...job.meta,
+          title: translatedMeta.title,
+          description: translatedMeta.description,
           image: sourceImage || job.meta.image,
+          omitPermalink: true,
           lang: job.languageCode,
-          permalink: appendLanguageSuffixToPermalink(job.meta.permalink, job.languageCode),
         },
         translatedBody
       );
