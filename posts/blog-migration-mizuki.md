@@ -1,10 +1,10 @@
 ---
 title: '博客迁移-Mizuki配置记录'
 published: 2026-02-22
-updated: 2026-02-22
+updated: 2026-02-23
 description: '记录了从notionNext迁移到Mizuki的过程，选择Mizuki是因为其灵活性和轻量化。配置过程中注意到内容管理的方式，利用API获取用户数据，并通过CI实现notion内容的实时同步，支持多语言适配。整体配置思路旨在提高内容输出的流畅性。'
 permalink: 'blog-migration-mizuki'
-image: 'https://r2.dreaife.tokyo//notion/covers/30f5465cca1780cc8df8e7c367a16f3d/IMG_4450.jpg'
+image: 'https://r2.dreaife.tokyo/notion/covers/30f5465cca1780cc8df8e7c367a16f3d/IMG_4450.jpg'
 tags: ['blog', 'llm', 'deploy', 'notion']
 category: 'infra'
 draft: false
