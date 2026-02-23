@@ -1212,6 +1212,31 @@ async function main() {
         skippedByWindow += 1;
       }
 
+      if (CONFIG.postTranslationEnabled) {
+        for (const translationTarget of translationRelativePaths) {
+          const translatedFullPath = path.resolve(outputRoot, translationTarget.relativePath);
+          if (!(translatedFullPath === outputRoot || translatedFullPath.startsWith(`${outputRoot}${path.sep}`))) {
+            throw new Error(`Resolved translated path escapes posts directory: ${translationTarget.relativePath}`);
+          }
+
+          const translatedExists = await fileExists(translatedFullPath);
+          const shouldDeferTranslation = sourceWriteResult === 'skipped' && !translatedExists;
+          if (!shouldDeferTranslation) {
+            continue;
+          }
+
+          deferredPostTranslations.push({
+            baseRelativePath: relativePath,
+            sourceFullPath: fullPath,
+            translatedFullPath,
+            translatedRelativePath: translationTarget.relativePath,
+            translatedExists,
+            languageCode: translationTarget.languageCode,
+            meta: { ...meta },
+          });
+        }
+      }
+
       processedPosts += 1;
       continue;
     }
@@ -1317,6 +1342,53 @@ async function main() {
     } else {
       changedFiles += 1;
       console.log(`${projectsFileExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), projectsDataPath)}`);
+    }
+  }
+
+  if (CONFIG.postTranslationEnabled && deferredPostTranslations.length > 0) {
+    console.log(`Processing deferred post translations: ${deferredPostTranslations.length} job(s).`);
+
+    for (const job of deferredPostTranslations) {
+      console.log(
+        `${job.translatedExists ? 'Updating' : 'Creating'} translation (${job.languageCode}) for ${job.baseRelativePath}`
+      );
+
+      const sourceDocument = await readFileUtf8IfExists(job.sourceFullPath);
+      if (!sourceDocument) {
+        throw new Error(
+          `Source post markdown is missing while generating translation: ${path.relative(process.cwd(), job.sourceFullPath)}`
+        );
+      }
+
+      const sourceBody = stripMarkdownFrontMatter(sourceDocument);
+      const sourceImage = normalizeSingleLine(extractFrontMatterField(sourceDocument, 'image'));
+      const translatedBody = await translatePostMarkdownBody(sourceBody, {
+        targetLanguage: job.languageCode,
+        title: job.meta.title,
+      });
+      const translatedMeta = await translatePostMetadataFields(job.meta, {
+        targetLanguage: job.languageCode,
+      });
+      const translatedDocument = buildMarkdownDocument(
+        {
+          ...job.meta,
+          title: translatedMeta.title,
+          description: translatedMeta.description,
+          image: sourceImage || job.meta.image,
+          omitPermalink: true,
+          lang: job.languageCode,
+        },
+        translatedBody
+      );
+      const translatedWriteResult = await writeIfChanged(job.translatedFullPath, translatedDocument);
+      if (translatedWriteResult === 'unchanged') {
+        unchangedFiles += 1;
+      } else {
+        changedFiles += 1;
+        console.log(
+          `${job.translatedExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), job.translatedFullPath)}`
+        );
+      }
     }
   }
 
