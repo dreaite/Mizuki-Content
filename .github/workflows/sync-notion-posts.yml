@@ -131,7 +131,8 @@ jobs:
           fi
 
           git add -A posts spec/about.md data/friends.ts data/diary.ts data/projects.ts
-          git commit -m "chore(content): sync notion content"
+          git commit -m "chore(content): sync notion content [skip ci]"
+          git pull --rebase
           git push
           echo "pushed=true" >> "$GITHUB_OUTPUT"
           echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"

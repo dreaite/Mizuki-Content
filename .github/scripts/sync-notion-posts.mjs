@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import { execFileSync } from 'node:child_process';
 
 import { HeadObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Client } from '@notionhq/client';
@@ -39,6 +40,19 @@ const CONFIG = {
   postTranslationSourceLanguage: String(process.env.NOTION_POST_TRANSLATION_SOURCE_LANG || '').trim(),
   postTranslationSystemPrompt: String(process.env.NOTION_POST_TRANSLATION_SYSTEM_PROMPT || '').trim(),
   postTranslationTimeoutMs: parsePositiveInt(process.env.NOTION_POST_TRANSLATION_TIMEOUT_MS, 10 * 60 * 1000),
+  postTranslationCheckpointEvery: parsePositiveInt(process.env.NOTION_POST_TRANSLATION_CHECKPOINT_EVERY, 10),
+  postTranslationCheckpointGitEnabled: parseBoolean(
+    process.env.NOTION_POST_TRANSLATION_CHECKPOINT_GIT_ENABLED,
+    parseBoolean(process.env.GITHUB_ACTIONS, false)
+  ),
+  postTranslationCheckpointPush: parseBoolean(
+    process.env.NOTION_POST_TRANSLATION_CHECKPOINT_PUSH,
+    parseBoolean(process.env.GITHUB_ACTIONS, false)
+  ),
+  postTranslationCheckpointPullRebase: parseBoolean(
+    process.env.NOTION_POST_TRANSLATION_CHECKPOINT_PULL_REBASE,
+    true
+  ),
   notionCoverR2Enabled: parseBoolean(process.env.NOTION_COVER_R2_ENABLED, false),
   notionCoverR2Endpoint: String(process.env.NOTION_COVER_R2_ENDPOINT || '').trim().replace(/\/+$/, ''),
   notionCoverR2Region: String(process.env.NOTION_COVER_R2_REGION || 'auto').trim() || 'auto',
@@ -70,6 +84,7 @@ const CONFIG = {
 };
 
 let postTranslationHttpAgent = null;
+const GIT_CONTENT_PATHS = ['posts', 'spec/about.md', 'data/friends.ts', 'data/diary.ts', 'data/projects.ts'];
 
 function requireEnv(name) {
   const value = process.env[name];
@@ -1203,6 +1218,112 @@ async function buildDiaryItems(n2m, diaryMetas, { s3Client, uploadCache } = {}) 
   return items;
 }
 
+function runGit(args, options = {}) {
+  const { captureOutput = false } = options;
+  return execFileSync('git', args, {
+    cwd: process.cwd(),
+    encoding: captureOutput ? 'utf8' : undefined,
+    stdio: captureOutput ? ['ignore', 'pipe', 'pipe'] : 'inherit',
+  });
+}
+
+function hasTrackedContentChanges() {
+  const status = runGit(['status', '--porcelain', '--', ...GIT_CONTENT_PATHS], { captureOutput: true });
+  return Boolean(String(status || '').trim());
+}
+
+function ensureGitIdentityForAutomation() {
+  if (!parseBoolean(process.env.GITHUB_ACTIONS, false)) {
+    return;
+  }
+
+  runGit(['config', 'user.name', 'github-actions[bot]']);
+  runGit(['config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com']);
+}
+
+function buildTranslationCheckpointManager() {
+  const enabled =
+    CONFIG.postTranslationEnabled &&
+    CONFIG.postTranslationLanguages.length > 0 &&
+    CONFIG.postTranslationCheckpointGitEnabled &&
+    CONFIG.postTranslationCheckpointEvery > 0;
+
+  let translatedPostsTotal = 0;
+  let translatedPostsPending = 0;
+  let gitIdentityConfigured = false;
+
+  function noteTranslatedPost() {
+    if (!enabled) return;
+    translatedPostsTotal += 1;
+    translatedPostsPending += 1;
+  }
+
+  function shouldFlush() {
+    return enabled && translatedPostsPending >= CONFIG.postTranslationCheckpointEvery;
+  }
+
+  async function flush({ force = false, reason = 'checkpoint' } = {}) {
+    if (!enabled) return false;
+    if (!force && translatedPostsPending < CONFIG.postTranslationCheckpointEvery) {
+      return false;
+    }
+    if (translatedPostsPending <= 0) {
+      return false;
+    }
+
+    const batchEnd = translatedPostsTotal;
+    const batchStart = batchEnd - translatedPostsPending + 1;
+
+    if (!hasTrackedContentChanges()) {
+      console.log(
+        `Skipping translation ${reason} git checkpoint (${batchStart}-${batchEnd}): no content changes to commit.`
+      );
+      translatedPostsPending = 0;
+      return false;
+    }
+
+    if (!gitIdentityConfigured) {
+      ensureGitIdentityForAutomation();
+      gitIdentityConfigured = true;
+    }
+
+    console.log(
+      `Creating translation ${reason} git checkpoint (${batchStart}-${batchEnd})${CONFIG.postTranslationCheckpointPush ? ' and pushing' : ''}...`
+    );
+
+    runGit(['add', '-A', '--', ...GIT_CONTENT_PATHS]);
+    runGit([
+      'commit',
+      '-m',
+      `chore(content): llm translation checkpoint ${batchStart}-${batchEnd} [skip ci]`,
+    ]);
+
+    if (CONFIG.postTranslationCheckpointPush) {
+      if (CONFIG.postTranslationCheckpointPullRebase) {
+        runGit(['pull', '--rebase']);
+      }
+      runGit(['push']);
+      const sha = String(runGit(['rev-parse', 'HEAD'], { captureOutput: true }) || '').trim();
+      if (sha) {
+        console.log(`Pushed translation checkpoint commit ${sha}`);
+      }
+    }
+
+    translatedPostsPending = 0;
+    return true;
+  }
+
+  return {
+    enabled,
+    noteTranslatedPost,
+    shouldFlush,
+    flush,
+    getStats() {
+      return { translatedPostsTotal, translatedPostsPending };
+    },
+  };
+}
+
 function createSyncCheckpointState() {
   return {
     pendingChangedPosts: 0,
@@ -1341,6 +1462,11 @@ async function main() {
     console.log(
       `Post translation enabled: languages=[${CONFIG.postTranslationLanguages.join(', ')}], model=${CONFIG.postTranslationModel}, timeoutMs=${CONFIG.postTranslationTimeoutMs}`
     );
+    if (CONFIG.postTranslationCheckpointGitEnabled) {
+      console.log(
+        `Translation git checkpoint enabled: every=${CONFIG.postTranslationCheckpointEvery} post(s), push=${CONFIG.postTranslationCheckpointPush}, pullRebase=${CONFIG.postTranslationCheckpointPullRebase}`
+      );
+    }
   }
   if (CONFIG.notionCoverR2Enabled) {
     console.log(
@@ -1434,6 +1560,7 @@ async function main() {
         }
 
         if (translationEnabledForPost) {
+          let translatedAnyTarget = false;
           for (const translationTarget of translationRelativePaths) {
             const translatedFullPath = path.resolve(outputRoot, translationTarget.relativePath);
             if (!(translatedFullPath === outputRoot || translatedFullPath.startsWith(`${outputRoot}${path.sep}`))) {
@@ -1451,6 +1578,7 @@ async function main() {
             console.log(
               `${translatedExists ? 'Updating' : 'Creating'} translation (${translationTarget.languageCode}) for ${relativePath}`
             );
+            translatedAnyTarget = true;
             const translatedBody = await translatePostMarkdownBody(markdownBody, {
               targetLanguage: translationTarget.languageCode,
               title: meta.title,
@@ -1476,6 +1604,13 @@ async function main() {
               console.log(
                 `${translatedExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), translatedFullPath)}`
               );
+            }
+          }
+
+          if (translatedAnyTarget) {
+            translationCheckpointManager.noteTranslatedPost();
+            if (translationCheckpointManager.shouldFlush()) {
+              await translationCheckpointManager.flush({ reason: 'checkpoint' });
             }
           }
         }
@@ -1542,6 +1677,8 @@ async function main() {
 
     skipped += 1;
   }
+
+  await translationCheckpointManager.flush({ force: true, reason: 'final-flush' });
 
   if (CONFIG.deleteMissing) {
     const existingMarkdownFiles = await listMarkdownFiles(outputRoot);
@@ -1683,6 +1820,10 @@ async function main() {
   console.log(
     `Sync complete. posts=${processedPosts}, about=${aboutPages.length}, friends=${friendPages.length}, diary=${diaryPages.length}, projects=${projectPages.length}, changed=${changedFiles}, unchanged=${unchangedFiles}, skippedByWindow=${skippedByWindow}, deletedPosts=${deleted}, skippedOther=${skipped}, deleteMissingPosts=${CONFIG.deleteMissing}`
   );
+  if (translationCheckpointManager.enabled) {
+    const { translatedPostsTotal } = translationCheckpointManager.getStats();
+    console.log(`Translation checkpoint stats: translatedPosts=${translatedPostsTotal}`);
+  }
 }
 
 main().catch((error) => {
