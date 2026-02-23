@@ -570,7 +570,8 @@ function buildNotionInlineImageR2ObjectKey(pageId, sourceUrl) {
 }
 
 function buildPublicUrlFromBase(baseUrl, objectKey) {
-  const normalizedBase = parseUrlOrEmpty(baseUrl);
+  // `URL#toString()` normalizes origin-only URLs with a trailing slash.
+  const normalizedBase = parseUrlOrEmpty(baseUrl).replace(/\/+$/, '');
   const encodedKey = String(objectKey || '')
     .split('/')
     .filter((segment) => segment.length > 0)
@@ -853,7 +854,7 @@ async function translatePostMetadataFieldText(value, { targetLanguage, fieldName
       sourceText,
     ].join('\n'),
     responseKind: `${fieldName} field response`,
-    temperature: 0.2,
+    temperature: 1,
   });
 
   return normalizeSingleLine(unwrapAnySingleFencedBlock(content));
