@@ -1,8 +1,8 @@
 ---
-title: 'Dreams and Hope Overflowing, Self-Forgiveness and Imagination: Sakura Moyu'
+title: 'Brimming dreams and hopes, self-forgiveness and daydreams — Cherry Blossom Slacking Off'
 published: 2022-09-18
 updated: 2022-09-18
-description: 'After going through the process from first trying the game to finally completing it, the author feels deeply grateful to Sakura Moyu, believing it brought hope and motivation to life. The song "さくら、もゆ" conveys emotions of dreams and love, and the sacrifices and growth of the characters reignited the author''s passion for life and prompted reflection on the importance of pursuing dreams. The author hopes more people can appreciate this excellent game and looks forward to a future sequel.'
+description: 'The playing experience of Sakura Moyu unfolds from initial interest to giving up and then rekindling. The release of the Chinese localization patch lets players rediscover their passion for the game. The game''s music "Sakura, Moyu" conveys dreams and hope, and the characters'' sacrifices and growth bring emotional impact and motivation, sparking contemplation and pursuit in life. Ultimately, the game is regarded as an excellent work, worthy of being loved by more people.'
 image: 'https://r2.dreaife.tokyo/notion/covers/2e1f116038864fb8b2f212e3e2493bcc/MASHIRO_e102b.png'
 tags: ['recomand', 'thinking']
 category: 'gal'
@@ -10,28 +10,28 @@ draft: false
 lang: 'en'
 ---
 
-Today I finally finished Sakura Moyu~
+I've finally finished releasing Sakura Moyu today~
 
-From June 2020, when I was hacking through the raw files, to September 2021 after giving up and pushing again, and finally now, after the 2022 localization patch was released, Sakura Moyu has accompanied me for a long time. Like the DC series, it witnessed my journey from keen interest to a rushed ending, then to renewed interest after the localization came out and a full playthrough of this work.
+From June 2020, when I was gnawing through the raw text, to September 2021 when I gave up and started over, and now with the 2022 localization patch released, the final completion of Sakura Moyu has accompanied me for a long time. Like the DC series, it witnessed my move from keen interest to a rushed ending, and after the localization came out, my interest was rekindled and I finally played through the whole work.
 
-But if I were to describe my Moyu-playing experience, I would say the gameplay feel is good, but in real life I kept losing motivation, and ultimately chose to let go. But this localization release can be described as a catalyst, mingled with the desire to repaint the past's unfinished darkness back to white; today I completed it. In this sense, I am grateful to Moyu: erasing a little of the past debris always lifts the mood, and encountering Moyu during a period of emotional turmoil and dormancy rekindled a small dream, which is very lucky indeed.
+But if I had to describe my experience of playing Moyu, I’d say the sensation was pretty good, yet life kept interrupting and I eventually lost motivation and chose to let go.
 
-This time, the Snowman shows noticeable improvements relative to the previous Bird Bird series, yet one can also see fantasies that have been derived from the Bird Bird concepts. For instance, a Night Realm library that serves to record the book of life; there are also many new settings, like the Night Realm shining on the reverse side of reality, and we witness the snowman's mom-obsessed XP (lol).
+Yet this time, the localization release can be seen as a catalyst, mixed with the idea of repainting the past unfinished darkness back to pure white, and today I’ve completed it. In this sense, I am grateful for Moyu; shedding a little of the past junk always lifts my spirits. It happened during a period of emotional turbulence and quietude, and Moyu rekindled a small dream, which feels very lucky.
+
+This Snow Man, compared to the previous Bird Bird series, shows noticeable improvements, but you can also see many ideas that branched out from the Bird Bird concepts into new fantasies, such as “The Night Country” as a library that records a life, and there are many fresh, new settings as well, like the Night Country shimmering behind reality, and I also witnessed the Snow Man’s mother-figure XP (laugh).
 
 ---
 
-![MASHIRO_e102b.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/MASHIRO_e102b.png)
+Looking at Moyu as a whole, a single song, “Sakura, Moyu,” can be said to run through Moyu from start to finish, carrying the emotions it aims to convey—dreams and hope, a desire to transcend time, to express to someone in the future a love that can only ever love one person for a lifetime. As gentle as a cherry blossom, and as passionate as a cherry blossom, this song eventually travels to a distant future, becoming the key that connects the future and the past, perhaps also becoming a hero in the hearts of many lonely people; perhaps Haru, perhaps Kanade Taiga.
 
-Looking at Moyu as a whole, a single song “Sakura, Moyu” traverses Moyu from start to finish and carries the emotions it aims to express, filled with dreams and hope, wanting to transcend time to convey to a person in the future, a lifelong love that cannot be conveyed. Gentle as cherry blossoms, yet as passionate as cherry blossoms, this song ultimately reached the distant future, becoming the key that connects the future and the past; perhaps it also became a hero in the hearts of many lonely people, perhaps there is Haru, perhaps Kanade Taiga.
+Ultimately the Night King is saved, and everyone greets a happy end. Although there is aid and rescue under the Kanade Taiga rally, what matters more is that when they are brought to the moment in life filled with hope, the hope in their hearts is not something given by others but something they themselves sought. Of course, the Snow Man still teases Kuro (Snow Man daily, lol).
 
-In the end, the Night King is saved, and everyone enjoys a happy ending. It seems that although there was aid and rescue at the call of Kanade Taiga, what mattered more was when they were brought to the moment in life filled with hope; the hope in their hearts that finally arrived was not something given by others but something they sought themselves. Of course, the snowman still torments Kuro (the snowman's daily life, lol).
+The unbelievable beings in the Night Realm leave an even greater impact on me: to Chi and Nacht who treat him as their own; Nana (Himeori’s mother) sacrificing herself to bring Himeori into the world and finally pushing her away; Asahi-nee and Toya who gave their lives to lead the male lead away from the cruel death shadow, ultimately for their happiness; and Kuro who accompanies the male lead, projecting her own wishes onto him, and after hurting him choosing to become Mashiro, the Night Queen, to repay him. In that瞬間 of infinite life, their actions give me a substantial shock and also a glimmer of hope and motivation in my still-silent heart, rekindling the sense that perhaps having a dream might be possible for me too, and that such a life could happen to me, rather than just chasing money, gains, or mere survival. Perhaps people are inherently impulsive; I hope this newly formed self’s daydreams will someday awaken a little motivation for you to keep living as well.
 
-The astonishing beings in the Night Realm perhaps delivered me an even greater shock: to Chi and Nacht, who treat Nacht as their own; Nana (Himeori's mother), who sacrificed herself to bring Himeori into the world and finally pushed her away; the male lead being brought out of the cruel death shadow by Asahi-nee and Toya who gave their lives for their happiness; and with Kuro, who accompanied the male lead, and Mashiro, who projected her own wishes onto the male lead and after harming him chose to become the Night Queen Mashiro. In a moment of infinite life blossoming in an instant, their actions gave me a substantial shock, and also gave a glimmer of hope and a bit of motivation to my still-dormant inner heart, rekindling the idea that perhaps I could have a dream too, perhaps such a life could happen to me, rather than endlessly pursuing money, profit, or simply “surviving.” Perhaps people are a little impulsive; I hope this newly formed future-self's imagining can someday evoke some motivation for you to go on.
+Finally, it feels less like discussing a Moyu story and more like my own fantasies while playing; perhaps this is also my first attempt to describe my playing feelings. Anyway, Moyu is indeed an excellent game, both for me as an F-fan and for ordinary galge players. If more people could come to love this work, that would be wonderful (so when will the FD come out, lol).
 
-Towards the end, it feels less like discussing the Moyu story and more like my own daydreams while playing; perhaps it's also my first attempt at describing my gaming feelings? In any case, Moyu is indeed an excellent game, whether I'm a fan of F-fan or just an ordinary gal-game player. It would be wonderful if more people could like this work (so when will the FD come out, lol).
+That’s all. I’ll end by sharing what I would call a divine song, “Rinne.” 
 
-That said, I'll end by posting what I would call a divine piece, “Rinne.”w
+Embed
 
-[embed](https://music.163.com/outchain/player?type=2&id=1367158056&auto=1&height=66)
-
-“May your future ahead be accompanied by happiness and magic.”
+“May your future ahead be accompanied by the magic of happiness.”
