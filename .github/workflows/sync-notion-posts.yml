@@ -2,8 +2,8 @@ name: Sync Notion Posts
 
 on:
   workflow_dispatch:
-  #schedule:
-  #  - cron: '*/15 * * * *' # 可选：每小时同步一次
+  schedule:
+   - cron: '*/15 * * * *' # 可选：每15min同步一次
 
 permissions:
   contents: write
