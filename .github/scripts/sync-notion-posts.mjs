@@ -413,21 +413,6 @@ function appendLanguageSuffixToMarkdownPath(relativePath, languageCode) {
   return normalizedPath.replace(/\.md$/i, `.${normalizedLanguage}.md`);
 }
 
-function appendLanguageSuffixToPermalink(permalink, languageCode) {
-  const normalizedPermalink = sanitizeSlug(permalink);
-  if (!normalizedPermalink) return '';
-
-  const normalizedLanguage = String(languageCode || '')
-    .trim()
-    .toLowerCase()
-    .replace(/_/g, '-');
-  if (!/^[a-z0-9-]+$/.test(normalizedLanguage)) {
-    throw new Error(`Invalid translation language code: ${languageCode}`);
-  }
-
-  return `${normalizedPermalink}.${normalizedLanguage}`;
-}
-
 function validatePostTranslationConfig() {
   if (!CONFIG.postTranslationEnabled) return;
 
@@ -465,6 +450,13 @@ function unwrapSingleFencedBlock(text) {
   return String(match[1] || '').trim();
 }
 
+function unwrapAnySingleFencedBlock(text) {
+  const value = String(text || '').trim();
+  const match = value.match(/^```(?:[a-z0-9_-]+)?\s*\n([\s\S]*?)\n```$/i);
+  if (!match) return value;
+  return String(match[1] || '').trim();
+}
+
 function getPostTranslationHttpAgent() {
   if (!CONFIG.postTranslationEnabled) return undefined;
   if (postTranslationHttpAgent) return postTranslationHttpAgent;
@@ -478,10 +470,7 @@ function getPostTranslationHttpAgent() {
   return postTranslationHttpAgent;
 }
 
-async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }) {
-  const body = String(markdownBody || '');
-  if (!body.trim()) return '';
-
+async function requestPostTranslationCompletion({ systemPrompt, userPrompt, responseKind, temperature = 1 }) {
   let response;
   try {
     response = await fetch(`${CONFIG.postTranslationApiBaseUrl}/chat/completions`, {
@@ -494,23 +483,15 @@ async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }
       },
       body: JSON.stringify({
         model: CONFIG.postTranslationModel,
-        temperature: 1,
+        temperature,
         messages: [
           {
             role: 'system',
-            content: buildPostTranslationSystemPrompt(),
+            content: systemPrompt,
           },
           {
             role: 'user',
-            content: [
-              `Target language: ${targetLanguage}`,
-              `Source language: ${CONFIG.postTranslationSourceLanguage || 'auto-detect'}`,
-              `Post title (context only, do not prepend): ${title}`,
-              '',
-              'Return only the translated Markdown body.',
-              '',
-              body,
-            ].join('\n'),
+            content: userPrompt,
           },
         ],
       }),
@@ -533,10 +514,89 @@ async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }
   const payload = await response.json();
   const content = payload?.choices?.[0]?.message?.content;
   if (typeof content !== 'string' || !content.trim()) {
-    throw new Error('LLM translation response did not include a non-empty choices[0].message.content string.');
+    throw new Error(
+      `LLM translation ${responseKind || 'response'} did not include a non-empty choices[0].message.content string.`
+    );
   }
 
+  return content;
+}
+
+async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }) {
+  const body = String(markdownBody || '');
+  if (!body.trim()) return '';
+
+  const content = await requestPostTranslationCompletion({
+    systemPrompt: buildPostTranslationSystemPrompt(),
+    userPrompt: [
+      `Target language: ${targetLanguage}`,
+      `Source language: ${CONFIG.postTranslationSourceLanguage || 'auto-detect'}`,
+      `Post title (context only, do not prepend): ${title}`,
+      '',
+      'Return only the translated Markdown body.',
+      '',
+      body,
+    ].join('\n'),
+    responseKind: 'body response',
+  });
+
   return unwrapSingleFencedBlock(content);
+}
+
+function buildPostMetadataFieldTranslationSystemPrompt() {
+  return [
+    'You are a professional technical translator.',
+    'Translate only the provided short post metadata field value.',
+    'Return only the translated field value text.',
+    'Do not add quotes, labels, explanations, or markdown.',
+    'Preserve proper nouns, product names, acronyms, and technical terms when appropriate.',
+  ].join(' ');
+}
+
+async function translatePostMetadataFieldText(value, { targetLanguage, fieldName, title }) {
+  const sourceText = normalizeSingleLine(value);
+  if (!sourceText) return '';
+
+  const content = await requestPostTranslationCompletion({
+    systemPrompt: buildPostMetadataFieldTranslationSystemPrompt(),
+    userPrompt: [
+      `Target language: ${targetLanguage}`,
+      `Source language: ${CONFIG.postTranslationSourceLanguage || 'auto-detect'}`,
+      `Field: ${fieldName}`,
+      `Post title (context only): ${normalizeSingleLine(title) || '(empty)'}`,
+      '',
+      'Return only the translated field value.',
+      '',
+      sourceText,
+    ].join('\n'),
+    responseKind: `${fieldName} field response`,
+    temperature: 0.2,
+  });
+
+  return normalizeSingleLine(unwrapAnySingleFencedBlock(content));
+}
+
+async function translatePostMetadataFields(meta, { targetLanguage }) {
+  const sourceTitle = normalizeSingleLine(meta?.title);
+  const sourceDescription = normalizeSingleLine(meta?.description);
+
+  const [translatedTitle, translatedDescription] = await Promise.all([
+    translatePostMetadataFieldText(sourceTitle, {
+      targetLanguage,
+      fieldName: 'title',
+      title: sourceTitle,
+    }),
+    translatePostMetadataFieldText(sourceDescription, {
+      targetLanguage,
+      fieldName: 'description',
+      title: sourceTitle,
+    }),
+  ]);
+
+  return {
+    title: translatedTitle || sourceTitle,
+    description: translatedDescription || sourceDescription,
+  };
 }
 
 function yamlQuote(value) {
@@ -563,7 +623,7 @@ function buildFrontMatter(meta) {
     `published: ${yamlDateOrEmpty(meta.published)}`,
     `updated: ${yamlDateOrEmpty(meta.updated)}`,
     `description: ${yamlQuote(meta.description)}`,
-    `permalink: ${yamlQuote(meta.permalink)}`,
+    ...(meta.omitPermalink ? [] : [`permalink: ${yamlQuote(meta.permalink)}`]),
     `image: ${yamlQuote(meta.image)}`,
     `tags: ${yamlArray(meta.tags)}`,
     `category: ${yamlQuote(meta.category)}`,
@@ -936,7 +996,8 @@ async function main() {
       seenRelativePaths.add(relativePath);
 
       const translationRelativePaths = [];
-      if (CONFIG.postTranslationEnabled) {
+      const translationEnabledForPost = CONFIG.postTranslationEnabled && !meta.draft;
+      if (translationEnabledForPost) {
         for (const languageCode of CONFIG.postTranslationLanguages) {
           const translatedRelativePath = appendLanguageSuffixToMarkdownPath(relativePath, languageCode);
           if (seenRelativePaths.has(translatedRelativePath)) {
@@ -965,7 +1026,7 @@ async function main() {
           console.log(`${exists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), fullPath)}`);
         }
 
-        if (CONFIG.postTranslationEnabled) {
+        if (translationEnabledForPost) {
           for (const translationTarget of translationRelativePaths) {
             const translatedFullPath = path.resolve(outputRoot, translationTarget.relativePath);
             if (!(translatedFullPath === outputRoot || translatedFullPath.startsWith(`${outputRoot}${path.sep}`))) {
@@ -987,11 +1048,16 @@ async function main() {
               targetLanguage: translationTarget.languageCode,
               title: meta.title,
             });
+            const translatedMeta = await translatePostMetadataFields(meta, {
+              targetLanguage: translationTarget.languageCode,
+            });
             const translatedDocument = buildMarkdownDocument(
               {
                 ...meta,
+                title: translatedMeta.title,
+                description: translatedMeta.description,
+                omitPermalink: true,
                 lang: translationTarget.languageCode,
-                permalink: appendLanguageSuffixToPermalink(meta.permalink, translationTarget.languageCode),
               },
               translatedBody
             );
