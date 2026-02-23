@@ -159,12 +159,13 @@ Workflow 会传入以下默认值。如果你的 Notion 列名不同，请在 wo
 - 启用翻译后，翻译文件会按 `${filename}.${lang}.md` 写在原文件旁边
   - 示例：`posts/guide/intro.md` -> `posts/guide/intro.en.md`
   - 翻译文件 front matter 会增加 `lang: '<lang>'`
-  - 翻译文件的 `permalink` 会追加 `${slug}.${lang}`，避免路由冲突
+  - 翻译文件不会写 front matter 的 `permalink`（路由由翻译后的文件名决定）
 
 ## Post 翻译行为（LLM）
 
 - 只翻译 `type = Post`
-- 只翻译 Markdown **正文**（front matter 元数据沿用原文）
+- 草稿文章（`draft: true`）会跳过翻译，等非草稿后再翻译
+- 翻译 Markdown **正文**，以及 front matter 中的 `title` / `description`
 - 翻译在原文章按正常 Notion sync 逻辑被创建/更新时触发
 - 如果某个配置语言的翻译文件缺失，会在该文章下次被 sync 处理时自动创建
 - 当 `NOTION_SYNC_DELETE_MISSING=true` 时，已失效的翻译文件 `*.{lang}.md` 也会被删除（例如源文章删除或语言配置被移除）

@@ -666,21 +666,6 @@ function appendLanguageSuffixToMarkdownPath(relativePath, languageCode) {
   return normalizedPath.replace(/\.md$/i, `.${normalizedLanguage}.md`);
 }
 
-function appendLanguageSuffixToPermalink(permalink, languageCode) {
-  const normalizedPermalink = sanitizeSlug(permalink);
-  if (!normalizedPermalink) return '';
-
-  const normalizedLanguage = String(languageCode || '')
-    .trim()
-    .toLowerCase()
-    .replace(/_/g, '-');
-  if (!/^[a-z0-9-]+$/.test(normalizedLanguage)) {
-    throw new Error(`Invalid translation language code: ${languageCode}`);
-  }
-
-  return `${normalizedPermalink}.${normalizedLanguage}`;
-}
-
 function validatePostTranslationConfig() {
   if (!CONFIG.postTranslationEnabled) return;
 
@@ -718,6 +703,13 @@ function unwrapSingleFencedBlock(text) {
   return String(match[1] || '').trim();
 }
 
+function unwrapAnySingleFencedBlock(text) {
+  const value = String(text || '').trim();
+  const match = value.match(/^```(?:[a-z0-9_-]+)?\s*\n([\s\S]*?)\n```$/i);
+  if (!match) return value;
+  return String(match[1] || '').trim();
+}
+
 function getPostTranslationHttpAgent() {
   if (!CONFIG.postTranslationEnabled) return undefined;
   if (postTranslationHttpAgent) return postTranslationHttpAgent;
@@ -731,10 +723,7 @@ function getPostTranslationHttpAgent() {
   return postTranslationHttpAgent;
 }
 
-async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }) {
-  const body = String(markdownBody || '');
-  if (!body.trim()) return '';
-
+async function requestPostTranslationCompletion({ systemPrompt, userPrompt, responseKind, temperature = 1 }) {
   let response;
   try {
     response = await fetch(`${CONFIG.postTranslationApiBaseUrl}/chat/completions`, {
@@ -747,23 +736,15 @@ async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }
       },
       body: JSON.stringify({
         model: CONFIG.postTranslationModel,
-        temperature: 1,
+        temperature,
         messages: [
           {
             role: 'system',
-            content: buildPostTranslationSystemPrompt(),
+            content: systemPrompt,
           },
           {
             role: 'user',
-            content: [
-              `Target language: ${targetLanguage}`,
-              `Source language: ${CONFIG.postTranslationSourceLanguage || 'auto-detect'}`,
-              `Post title (context only, do not prepend): ${title}`,
-              '',
-              'Return only the translated Markdown body.',
-              '',
-              body,
-            ].join('\n'),
+            content: userPrompt,
           },
         ],
       }),
@@ -786,293 +767,89 @@ async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }
   const payload = await response.json();
   const content = payload?.choices?.[0]?.message?.content;
   if (typeof content !== 'string' || !content.trim()) {
-    throw new Error('LLM translation response did not include a non-empty choices[0].message.content string.');
+    throw new Error(
+      `LLM translation ${responseKind || 'response'} did not include a non-empty choices[0].message.content string.`
+    );
   }
+
+  return content;
+}
+
+async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }) {
+  const body = String(markdownBody || '');
+  if (!body.trim()) return '';
+
+  const content = await requestPostTranslationCompletion({
+    systemPrompt: buildPostTranslationSystemPrompt(),
+    userPrompt: [
+      `Target language: ${targetLanguage}`,
+      `Source language: ${CONFIG.postTranslationSourceLanguage || 'auto-detect'}`,
+      `Post title (context only, do not prepend): ${title}`,
+      '',
+      'Return only the translated Markdown body.',
+      '',
+      body,
+    ].join('\n'),
+    responseKind: 'body response',
+  });
 
   return unwrapSingleFencedBlock(content);
 }
 
-function validateNotionCoverR2Config() {
-  if (!CONFIG.notionCoverR2Enabled) return;
-
-  if (!CONFIG.notionCoverR2Endpoint) {
-    throw new Error('NOTION_COVER_R2_ENABLED=true but NOTION_COVER_R2_ENDPOINT is empty.');
-  }
-  if (!CONFIG.notionCoverR2Bucket) {
-    throw new Error('NOTION_COVER_R2_ENABLED=true but NOTION_COVER_R2_BUCKET is empty.');
-  }
-  if (!CONFIG.notionCoverR2PublicBaseUrl) {
-    throw new Error('NOTION_COVER_R2_ENABLED=true but NOTION_COVER_R2_PUBLIC_BASE_URL is empty.');
-  }
-  if (!CONFIG.notionCoverR2AccessKeyId || !CONFIG.notionCoverR2SecretAccessKey) {
-    throw new Error(
-      'NOTION_COVER_R2_ENABLED=true but NOTION_COVER_R2_ACCESS_KEY_ID / NOTION_COVER_R2_SECRET_ACCESS_KEY is missing.'
-    );
-  }
-
-  parseUrlOrEmpty(CONFIG.notionCoverR2Endpoint);
-  parseUrlOrEmpty(CONFIG.notionCoverR2PublicBaseUrl);
+function buildPostMetadataFieldTranslationSystemPrompt() {
+  return [
+    'You are a professional technical translator.',
+    'Translate only the provided short post metadata field value.',
+    'Return only the translated field value text.',
+    'Do not add quotes, labels, explanations, or markdown.',
+    'Preserve proper nouns, product names, acronyms, and technical terms when appropriate.',
+  ].join(' ');
 }
 
-function createNotionCoverR2Client() {
-  if (!CONFIG.notionCoverR2Enabled) return null;
+async function translatePostMetadataFieldText(value, { targetLanguage, fieldName, title }) {
+  const sourceText = normalizeSingleLine(value);
+  if (!sourceText) return '';
 
-  return new S3Client({
-    region: CONFIG.notionCoverR2Region || 'auto',
-    endpoint: CONFIG.notionCoverR2Endpoint,
-    forcePathStyle: true,
-    credentials: {
-      accessKeyId: CONFIG.notionCoverR2AccessKeyId,
-      secretAccessKey: CONFIG.notionCoverR2SecretAccessKey,
-    },
+  const content = await requestPostTranslationCompletion({
+    systemPrompt: buildPostMetadataFieldTranslationSystemPrompt(),
+    userPrompt: [
+      `Target language: ${targetLanguage}`,
+      `Source language: ${CONFIG.postTranslationSourceLanguage || 'auto-detect'}`,
+      `Field: ${fieldName}`,
+      `Post title (context only): ${normalizeSingleLine(title) || '(empty)'}`,
+      '',
+      'Return only the translated field value.',
+      '',
+      sourceText,
+    ].join('\n'),
+    responseKind: `${fieldName} field response`,
+    temperature: 0.2,
   });
+
+  return normalizeSingleLine(unwrapAnySingleFencedBlock(content));
 }
 
-function createNotionR2UploadCache() {
+async function translatePostMetadataFields(meta, { targetLanguage }) {
+  const sourceTitle = normalizeSingleLine(meta?.title);
+  const sourceDescription = normalizeSingleLine(meta?.description);
+
+  const [translatedTitle, translatedDescription] = await Promise.all([
+    translatePostMetadataFieldText(sourceTitle, {
+      targetLanguage,
+      fieldName: 'title',
+      title: sourceTitle,
+    }),
+    translatePostMetadataFieldText(sourceDescription, {
+      targetLanguage,
+      fieldName: 'description',
+      title: sourceTitle,
+    }),
+  ]);
+
   return {
-    sourceUrlCache: new Map(),
-    objectHeadCache: new Map(),
+    title: translatedTitle || sourceTitle,
+    description: translatedDescription || sourceDescription,
   };
-}
-
-async function uploadRemoteImageUrlToR2(s3Client, uploadCache, { sourceUrl, objectKey, suggestedFileName, logLabel }) {
-  const url = String(sourceUrl || '').trim();
-  if (!s3Client || !CONFIG.notionCoverR2Enabled || !url) return url;
-
-  const sourceUrlCache = getNotionR2SourceUrlCache(uploadCache);
-  const cacheKey = `${objectKey}|${url}`;
-  if (sourceUrlCache?.has(cacheKey)) {
-    return sourceUrlCache.get(cacheKey);
-  }
-
-  const publicUrl = buildPublicUrlFromBase(CONFIG.notionCoverR2PublicBaseUrl, objectKey);
-  if (sourceUrlCache) {
-    sourceUrlCache.set(cacheKey, publicUrl);
-  }
-
-  const sourceUrlSha1 = buildStableRemoteImageSourceSha1(url);
-  const existingObject = await headR2ObjectIfExists(s3Client, uploadCache, objectKey);
-  const existingSourceUrlSha1 = normalizeR2SourceSha1Metadata(existingObject?.metadata);
-
-  if (existingObject?.exists && existingSourceUrlSha1 && existingSourceUrlSha1 === sourceUrlSha1) {
-    return publicUrl;
-  }
-
-  const response = await fetch(url);
-  if (!response.ok) {
-    if (sourceUrlCache) sourceUrlCache.delete(cacheKey);
-    const responseText = await response.text().catch(() => '');
-    if (existingObject?.exists && isExpiredNotionAssetResponse(response.status, responseText)) {
-      console.warn(
-        `Reusing existing R2 object after expired Notion image URL${logLabel ? ` [${logLabel}]` : ''}: ${objectKey}`
-      );
-      return publicUrl;
-    }
-    throw new Error(
-      `Failed to download Notion image for R2 upload (${response.status} ${response.statusText})${logLabel ? ` [${logLabel}]` : ''}: ${responseText.slice(0, 300)}`
-    );
-  }
-
-  const arrayBuffer = await response.arrayBuffer();
-  const bodyBuffer = Buffer.from(arrayBuffer);
-  const contentType = response.headers.get('content-type') || guessImageContentType(suggestedFileName);
-
-  await s3Client.send(
-    new PutObjectCommand({
-      Bucket: CONFIG.notionCoverR2Bucket,
-      Key: objectKey,
-      Body: bodyBuffer,
-      ContentType: contentType,
-      CacheControl: CONFIG.notionCoverR2CacheControl || undefined,
-      Metadata: {
-        'notion-source-sha1': sourceUrlSha1,
-      },
-    })
-  );
-  setHeadR2ObjectCache(uploadCache, objectKey, {
-    exists: true,
-    metadata: { 'notion-source-sha1': sourceUrlSha1 },
-  });
-
-  return publicUrl;
-}
-
-async function uploadNotionCoverToR2(s3Client, uploadCache, { pageId, coverInfo }) {
-  if (!s3Client || !coverInfo || coverInfo.type !== 'file' || !coverInfo.url) {
-    return coverInfo?.url || '';
-  }
-
-  const objectKey = buildNotionCoverR2ObjectKey(pageId, coverInfo);
-  return uploadRemoteImageUrlToR2(s3Client, uploadCache, {
-    sourceUrl: coverInfo.url,
-    objectKey,
-    suggestedFileName: coverInfo.filename,
-    logLabel: `cover:${pageId}`,
-  });
-}
-
-async function resolveCoverImageUrlForMeta(page, meta, s3Client, uploadCache) {
-  if (!meta || typeof meta !== 'object') return '';
-  const coverInfo = meta.coverInfo || getPageCoverInfo(page);
-  const sourceUrl = normalizeSingleLine(coverInfo?.url || meta.image || '');
-
-  if (!CONFIG.notionCoverR2Enabled) {
-    return sourceUrl;
-  }
-
-  if (coverInfo?.type !== 'file' || !sourceUrl) {
-    return sourceUrl;
-  }
-
-  return uploadNotionCoverToR2(s3Client, uploadCache, {
-    pageId: meta.pageId || page?.id || '',
-    coverInfo,
-  });
-}
-
-async function rewriteNotionMarkdownImageUrlsToR2(markdown, { pageId, s3Client, uploadCache, logLabel } = {}) {
-  const source = String(markdown || '');
-  if (!source || !CONFIG.notionCoverR2Enabled || !s3Client) {
-    return source;
-  }
-
-  const notionImageUrls = extractUrlsFromMarkdownImages(source).filter(isTemporaryNotionAssetUrl);
-  if (notionImageUrls.length === 0) {
-    return source;
-  }
-
-  let output = source;
-  const replacements = new Map();
-
-  for (const imageUrl of notionImageUrls) {
-    if (replacements.has(imageUrl)) continue;
-
-    const objectKey = buildNotionInlineImageR2ObjectKey(pageId, imageUrl);
-    const replacementUrl = await uploadRemoteImageUrlToR2(s3Client, uploadCache, {
-      sourceUrl: imageUrl,
-      objectKey,
-      suggestedFileName: extractFilenameFromUrl(imageUrl) || 'image',
-      logLabel: `${logLabel || 'markdown'}:${pageId}`,
-    });
-    replacements.set(imageUrl, replacementUrl);
-  }
-
-  for (const [fromUrl, toUrl] of replacements) {
-    output = output.split(fromUrl).join(toUrl);
-  }
-
-  return output;
-}
-
-function getExpectedR2CoverPublicUrl(meta) {
-  if (!CONFIG.notionCoverR2Enabled) return '';
-  const coverInfo = meta?.coverInfo;
-  if (!coverInfo || coverInfo.type !== 'file' || !coverInfo.url) return '';
-  const objectKey = buildNotionCoverR2ObjectKey(meta.pageId || '', coverInfo);
-  return buildPublicUrlFromBase(CONFIG.notionCoverR2PublicBaseUrl, objectKey);
-}
-
-function getNotionR2SourceUrlCache(uploadCache) {
-  if (!uploadCache) return null;
-  if (typeof uploadCache.has === 'function' && typeof uploadCache.get === 'function') {
-    return uploadCache;
-  }
-  if (
-    typeof uploadCache === 'object' &&
-    uploadCache &&
-    uploadCache.sourceUrlCache &&
-    typeof uploadCache.sourceUrlCache.has === 'function'
-  ) {
-    return uploadCache.sourceUrlCache;
-  }
-  return null;
-}
-
-function getNotionR2ObjectHeadCache(uploadCache) {
-  if (!uploadCache || typeof uploadCache !== 'object') return null;
-  const cache = uploadCache.objectHeadCache;
-  if (!cache || typeof cache.has !== 'function' || typeof cache.get !== 'function') return null;
-  return cache;
-}
-
-function buildStableRemoteImageSourceSha1(sourceUrl) {
-  const stableSource = stripQueryAndHash(sourceUrl) || String(sourceUrl || '');
-  return sha1Hex(stableSource);
-}
-
-function normalizeR2SourceSha1Metadata(metadata) {
-  if (!metadata || typeof metadata !== 'object') return '';
-  const raw =
-    metadata['notion-source-sha1'] ||
-    metadata.notionSourceSha1 ||
-    metadata['x-amz-meta-notion-source-sha1'] ||
-    '';
-  const value = String(raw || '').trim().toLowerCase();
-  return /^[0-9a-f]{40}$/.test(value) ? value : '';
-}
-
-function isS3ObjectNotFoundError(error) {
-  const status = Number(error?.$metadata?.httpStatusCode);
-  const name = String(error?.name || error?.Code || '').toLowerCase();
-  return status === 404 || name === 'notfound' || name === 'nosuchkey';
-}
-
-async function headR2ObjectIfExists(s3Client, uploadCache, objectKey) {
-  if (!s3Client || !objectKey) return { exists: false, metadata: null };
-
-  const cache = getNotionR2ObjectHeadCache(uploadCache);
-  if (cache?.has(objectKey)) {
-    return cache.get(objectKey);
-  }
-
-  try {
-    const response = await s3Client.send(
-      new HeadObjectCommand({
-        Bucket: CONFIG.notionCoverR2Bucket,
-        Key: objectKey,
-      })
-    );
-    const entry = {
-      exists: true,
-      metadata: response?.Metadata || null,
-    };
-    if (cache) cache.set(objectKey, entry);
-    return entry;
-  } catch (error) {
-    if (isS3ObjectNotFoundError(error)) {
-      const entry = { exists: false, metadata: null };
-      if (cache) cache.set(objectKey, entry);
-      return entry;
-    }
-    throw error;
-  }
-}
-
-function setHeadR2ObjectCache(uploadCache, objectKey, entry) {
-  const cache = getNotionR2ObjectHeadCache(uploadCache);
-  if (!cache || !objectKey) return;
-  cache.set(objectKey, entry);
-}
-
-function isExpiredNotionAssetResponse(status, bodyText) {
-  if (Number(status) !== 403) return false;
-  const text = String(bodyText || '');
-  return /request has expired/i.test(text) || /<Code>AccessDenied<\/Code>/i.test(text);
-}
-
-async function shouldBackfillPostCoverToR2(filePath, meta) {
-  if (!CONFIG.notionCoverR2Enabled) return false;
-  if (!meta?.coverInfo || meta.coverInfo.type !== 'file' || !meta.coverInfo.url) return false;
-
-  const expectedR2Url = getExpectedR2CoverPublicUrl(meta);
-  if (!expectedR2Url) return false;
-
-  const existingImage = normalizeSingleLine(await readMarkdownFrontMatterImage(filePath));
-  if (!existingImage) return true;
-  if (existingImage === expectedR2Url) return false;
-
-  // Migrate expired/signed Notion URLs to the configured R2 public URL.
-  return isTemporaryNotionAssetUrl(existingImage);
 }
 
 function yamlQuote(value) {
@@ -1099,7 +876,7 @@ function buildFrontMatter(meta) {
     `published: ${yamlDateOrEmpty(meta.published)}`,
     `updated: ${yamlDateOrEmpty(meta.updated)}`,
     `description: ${yamlQuote(meta.description)}`,
-    `permalink: ${yamlQuote(meta.permalink)}`,
+    ...(meta.omitPermalink ? [] : [`permalink: ${yamlQuote(meta.permalink)}`]),
     `image: ${yamlQuote(meta.image)}`,
     `tags: ${yamlArray(meta.tags)}`,
     `category: ${yamlQuote(meta.category)}`,
@@ -1607,7 +1384,8 @@ async function main() {
       seenRelativePaths.add(relativePath);
 
       const translationRelativePaths = [];
-      if (CONFIG.postTranslationEnabled) {
+      const translationEnabledForPost = CONFIG.postTranslationEnabled && !meta.draft;
+      if (translationEnabledForPost) {
         for (const languageCode of CONFIG.postTranslationLanguages) {
           const translatedRelativePath = appendLanguageSuffixToMarkdownPath(relativePath, languageCode);
           if (seenRelativePaths.has(translatedRelativePath)) {
@@ -1653,6 +1431,53 @@ async function main() {
           changedFiles += 1;
           postChanged = true;
           console.log(`${exists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), fullPath)}`);
+        }
+
+        if (translationEnabledForPost) {
+          for (const translationTarget of translationRelativePaths) {
+            const translatedFullPath = path.resolve(outputRoot, translationTarget.relativePath);
+            if (!(translatedFullPath === outputRoot || translatedFullPath.startsWith(`${outputRoot}${path.sep}`))) {
+              throw new Error(
+                `Resolved translated path escapes posts directory: ${translationTarget.relativePath}`
+              );
+            }
+
+            const translatedExists = await fileExists(translatedFullPath);
+            const shouldTranslateNow = sourceWriteResult !== 'unchanged' || !translatedExists;
+            if (!shouldTranslateNow) {
+              continue;
+            }
+
+            console.log(
+              `${translatedExists ? 'Updating' : 'Creating'} translation (${translationTarget.languageCode}) for ${relativePath}`
+            );
+            const translatedBody = await translatePostMarkdownBody(markdownBody, {
+              targetLanguage: translationTarget.languageCode,
+              title: meta.title,
+            });
+            const translatedMeta = await translatePostMetadataFields(meta, {
+              targetLanguage: translationTarget.languageCode,
+            });
+            const translatedDocument = buildMarkdownDocument(
+              {
+                ...meta,
+                title: translatedMeta.title,
+                description: translatedMeta.description,
+                omitPermalink: true,
+                lang: translationTarget.languageCode,
+              },
+              translatedBody
+            );
+            const translatedWriteResult = await writeIfChanged(translatedFullPath, translatedDocument);
+            if (translatedWriteResult === 'unchanged') {
+              unchangedFiles += 1;
+            } else {
+              changedFiles += 1;
+              console.log(
+                `${translatedExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), translatedFullPath)}`
+              );
+            }
+          }
         }
       } else {
         skippedByWindow += 1;

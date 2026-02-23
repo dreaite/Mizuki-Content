@@ -159,12 +159,13 @@ If you still have manually maintained posts under `posts/`, either:
 - When translation is enabled, translated posts are written next to the source file using `${filename}.${lang}.md`
   - Example: `posts/guide/intro.md` -> `posts/guide/intro.en.md`
   - The translated file frontmatter adds `lang: '<lang>'`
-  - The translated file `permalink` is suffixed as `${slug}.${lang}` to avoid route collisions
+  - The translated file does not write a frontmatter `permalink` (route comes from the translated filename)
 
 ## Post Translation Behavior (LLM)
 
 - Only translates `type = Post`
-- Only translates the Markdown **body** (frontmatter metadata is preserved from the source post)
+- Skips translation when the post is a draft (`draft: true`)
+- Translates the Markdown **body** and frontmatter `title` / `description`
 - Translation runs when the source post is created/updated by the normal Notion sync flow
 - If a translated file for a configured language is missing, it will be created the next time that post is processed by sync
 - If `NOTION_SYNC_DELETE_MISSING=true`, stale translated `*.{lang}.md` files are also deleted when they are no longer produced (for example, source post removed or language removed from config)
