@@ -1630,6 +1630,7 @@ async function main() {
   const n2m = new NotionToMarkdown({ notionClient: notion });
   const notionCoverR2Client = createNotionCoverR2Client();
   const notionR2UploadCache = createNotionR2UploadCache();
+  const translationCheckpointManager = buildTranslationCheckpointManager();
   const syncCheckpointState = createSyncCheckpointState();
 
   const outputRoot = path.resolve(process.cwd(), CONFIG.postsDir);
