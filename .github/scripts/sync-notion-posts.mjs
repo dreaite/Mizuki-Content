@@ -681,6 +681,21 @@ function appendLanguageSuffixToMarkdownPath(relativePath, languageCode) {
   return normalizedPath.replace(/\.md$/i, `.${normalizedLanguage}.md`);
 }
 
+function appendLanguageSuffixToPermalink(permalink, languageCode) {
+  const normalizedPermalink = sanitizeSlug(permalink);
+  if (!normalizedPermalink) return '';
+
+  const normalizedLanguage = String(languageCode || '')
+    .trim()
+    .toLowerCase()
+    .replace(/_/g, '-');
+  if (!/^[a-z0-9-]+$/.test(normalizedLanguage)) {
+    throw new Error(`Invalid translation language code: ${languageCode}`);
+  }
+
+  return `${normalizedPermalink}.${normalizedLanguage}`;
+}
+
 function validatePostTranslationConfig() {
   if (!CONFIG.postTranslationEnabled) return;
 
@@ -865,6 +880,176 @@ async function translatePostMetadataFields(meta, { targetLanguage }) {
     title: translatedTitle || sourceTitle,
     description: translatedDescription || sourceDescription,
   };
+}
+
+function validateNotionCoverR2Config() {
+  if (!CONFIG.notionCoverR2Enabled) return;
+
+  if (!CONFIG.notionCoverR2Endpoint) {
+    throw new Error('NOTION_COVER_R2_ENABLED=true but NOTION_COVER_R2_ENDPOINT is empty.');
+  }
+  if (!CONFIG.notionCoverR2Bucket) {
+    throw new Error('NOTION_COVER_R2_ENABLED=true but NOTION_COVER_R2_BUCKET is empty.');
+  }
+  if (!CONFIG.notionCoverR2PublicBaseUrl) {
+    throw new Error('NOTION_COVER_R2_ENABLED=true but NOTION_COVER_R2_PUBLIC_BASE_URL is empty.');
+  }
+  if (!CONFIG.notionCoverR2AccessKeyId || !CONFIG.notionCoverR2SecretAccessKey) {
+    throw new Error(
+      'NOTION_COVER_R2_ENABLED=true but NOTION_COVER_R2_ACCESS_KEY_ID / NOTION_COVER_R2_SECRET_ACCESS_KEY is missing.'
+    );
+  }
+
+  parseUrlOrEmpty(CONFIG.notionCoverR2Endpoint);
+  parseUrlOrEmpty(CONFIG.notionCoverR2PublicBaseUrl);
+}
+
+function createNotionCoverR2Client() {
+  if (!CONFIG.notionCoverR2Enabled) return null;
+
+  return new S3Client({
+    region: CONFIG.notionCoverR2Region || 'auto',
+    endpoint: CONFIG.notionCoverR2Endpoint,
+    forcePathStyle: true,
+    credentials: {
+      accessKeyId: CONFIG.notionCoverR2AccessKeyId,
+      secretAccessKey: CONFIG.notionCoverR2SecretAccessKey,
+    },
+  });
+}
+
+function createNotionR2UploadCache() {
+  return new Map();
+}
+
+async function uploadRemoteImageUrlToR2(s3Client, uploadCache, { sourceUrl, objectKey, suggestedFileName, logLabel }) {
+  const url = String(sourceUrl || '').trim();
+  if (!s3Client || !CONFIG.notionCoverR2Enabled || !url) return url;
+
+  const cacheKey = `${objectKey}|${url}`;
+  if (uploadCache?.has(cacheKey)) {
+    return uploadCache.get(cacheKey);
+  }
+
+  const publicUrl = buildPublicUrlFromBase(CONFIG.notionCoverR2PublicBaseUrl, objectKey);
+  if (uploadCache) {
+    uploadCache.set(cacheKey, publicUrl);
+  }
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    if (uploadCache) uploadCache.delete(cacheKey);
+    const responseText = await response.text().catch(() => '');
+    throw new Error(
+      `Failed to download Notion image for R2 upload (${response.status} ${response.statusText})${logLabel ? ` [${logLabel}]` : ''}: ${responseText.slice(0, 300)}`
+    );
+  }
+
+  const arrayBuffer = await response.arrayBuffer();
+  const bodyBuffer = Buffer.from(arrayBuffer);
+  const contentType = response.headers.get('content-type') || guessImageContentType(suggestedFileName);
+
+  await s3Client.send(
+    new PutObjectCommand({
+      Bucket: CONFIG.notionCoverR2Bucket,
+      Key: objectKey,
+      Body: bodyBuffer,
+      ContentType: contentType,
+      CacheControl: CONFIG.notionCoverR2CacheControl || undefined,
+    })
+  );
+
+  return publicUrl;
+}
+
+async function uploadNotionCoverToR2(s3Client, uploadCache, { pageId, coverInfo }) {
+  if (!s3Client || !coverInfo || coverInfo.type !== 'file' || !coverInfo.url) {
+    return coverInfo?.url || '';
+  }
+
+  const objectKey = buildNotionCoverR2ObjectKey(pageId, coverInfo);
+  return uploadRemoteImageUrlToR2(s3Client, uploadCache, {
+    sourceUrl: coverInfo.url,
+    objectKey,
+    suggestedFileName: coverInfo.filename,
+    logLabel: `cover:${pageId}`,
+  });
+}
+
+async function resolveCoverImageUrlForMeta(page, meta, s3Client, uploadCache) {
+  if (!meta || typeof meta !== 'object') return '';
+  const coverInfo = meta.coverInfo || getPageCoverInfo(page);
+  const sourceUrl = normalizeSingleLine(coverInfo?.url || meta.image || '');
+
+  if (!CONFIG.notionCoverR2Enabled) {
+    return sourceUrl;
+  }
+
+  if (coverInfo?.type !== 'file' || !sourceUrl) {
+    return sourceUrl;
+  }
+
+  return uploadNotionCoverToR2(s3Client, uploadCache, {
+    pageId: meta.pageId || page?.id || '',
+    coverInfo,
+  });
+}
+
+async function rewriteNotionMarkdownImageUrlsToR2(markdown, { pageId, s3Client, uploadCache, logLabel } = {}) {
+  const source = String(markdown || '');
+  if (!source || !CONFIG.notionCoverR2Enabled || !s3Client) {
+    return source;
+  }
+
+  const notionImageUrls = extractUrlsFromMarkdownImages(source).filter(isTemporaryNotionAssetUrl);
+  if (notionImageUrls.length === 0) {
+    return source;
+  }
+
+  let output = source;
+  const replacements = new Map();
+
+  for (const imageUrl of notionImageUrls) {
+    if (replacements.has(imageUrl)) continue;
+
+    const objectKey = buildNotionInlineImageR2ObjectKey(pageId, imageUrl);
+    const replacementUrl = await uploadRemoteImageUrlToR2(s3Client, uploadCache, {
+      sourceUrl: imageUrl,
+      objectKey,
+      suggestedFileName: extractFilenameFromUrl(imageUrl) || 'image',
+      logLabel: `${logLabel || 'markdown'}:${pageId}`,
+    });
+    replacements.set(imageUrl, replacementUrl);
+  }
+
+  for (const [fromUrl, toUrl] of replacements) {
+    output = output.split(fromUrl).join(toUrl);
+  }
+
+  return output;
+}
+
+function getExpectedR2CoverPublicUrl(meta) {
+  if (!CONFIG.notionCoverR2Enabled) return '';
+  const coverInfo = meta?.coverInfo;
+  if (!coverInfo || coverInfo.type !== 'file' || !coverInfo.url) return '';
+  const objectKey = buildNotionCoverR2ObjectKey(meta.pageId || '', coverInfo);
+  return buildPublicUrlFromBase(CONFIG.notionCoverR2PublicBaseUrl, objectKey);
+}
+
+async function shouldBackfillPostCoverToR2(filePath, meta) {
+  if (!CONFIG.notionCoverR2Enabled) return false;
+  if (!meta?.coverInfo || meta.coverInfo.type !== 'file' || !meta.coverInfo.url) return false;
+
+  const expectedR2Url = getExpectedR2CoverPublicUrl(meta);
+  if (!expectedR2Url) return false;
+
+  const existingImage = normalizeSingleLine(await readMarkdownFrontMatterImage(filePath));
+  if (!existingImage) return true;
+  if (existingImage === expectedR2Url) return false;
+
+  // Migrate expired/signed Notion URLs to the configured R2 public URL.
+  return isTemporaryNotionAssetUrl(existingImage);
 }
 
 function yamlQuote(value) {
