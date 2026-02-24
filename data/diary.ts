@@ -16,7 +16,7 @@ const diaryData: DiaryItem[] = [
 	{
 		id: 1,
 		content: "正式搬到mizuki来了😊",
-		date: "2026-02-24T06:19:00.000Z",
+		date: "2026-02-24T08:48:00.000Z",
 		images: [
 			"https://r2.dreaife.tokyo/notion/covers/30f5465cca17802bbd27fbcc5d9068a4/inline/5a79f9ca47c65d7f-MASHIRO_e102b.png",
 			"https://r2.dreaife.tokyo/notion/covers/30f5465cca17802bbd27fbcc5d9068a4/inline/a38d26f4aaef1f93-SHINKU_AS_e01a1.png",
