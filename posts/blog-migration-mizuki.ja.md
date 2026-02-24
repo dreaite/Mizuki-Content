@@ -52,13 +52,13 @@ MizukiはAstroをベースに開発されたブログフレームワークです
 
 具体的な実装はおおよそここを参考にできます： [NotionSyncAction](https://github.com/dreaite/Mizuki-Content/blob/notionUpdateSync/.github/notion-sync/README.md)（ Mizuki-GitHub のリポジトリをどう使うか試してみるにはちょうどよいです）
 
-:::github{repo="dreaite/Mizuki-Content/blob/notionUpdateSync/.github/notion-sync/README.md"}
+::github{repo="dreaite/Mizuki-Content/blob/notionUpdateSync/.github/notion-sync/README.md"}
 
 ### LLMを用いた多言語対応
 
 実は Notion同期CI の前に、Mizuki のフレームワーク部分にも少し修正が必要でした。現状はブラウザ言語に追従して表示言語を切り替える機能がまだ実装されていないため、少しだけ変更しました（.en.md/.ja.md のような拡張子を持つファイルを多言語対応へ取り込む形です。元々静的サイトを前提にしたフレームワークなので、多言語UIを追加するには大幅な改修が必要になるかもしれません）。この種の多言語切替の実装は様々なプロジェクトでかなり見かけるので、雰囲気だけ説明しておけば十分です。
 
-:::github{repo="dreaifekks/Mizuki"}
+::github{repo="dreaifekks/Mizuki"}
 
 そしてCIにLLM翻訳モジュールを追加します。
 
@@ -66,7 +66,7 @@ MizukiはAstroをベースに開発されたブログフレームワークです
 
 [llm部分実装](https://github.com/dreaite/Mizuki-Content/blob/feat(i18n)/llm-translate/.github/notion-sync/README.md)
 
-:::github{repo="dreaite/Mizuki-Content"}
+::github{repo="dreaite/Mizuki-Content"}
 
 # 結び
 
