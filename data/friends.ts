@@ -15,7 +15,7 @@ export const friendsData: FriendItem[] = [
 	{
 		id: 1,
 		title: "二叉树树",
-		imgurl: "https://source.unsplash.com/random",
+		imgurl: "https://q2.qlogo.cn/headimg_dl?dst_uin=2726730791&spec=0",
 		desc: "保护你所爱的事物。",
 		siteurl: "https://2x.nz",
 		tags: ["INFRA"],
