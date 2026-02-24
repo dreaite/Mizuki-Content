@@ -24,7 +24,7 @@ export const friendsData: FriendItem[] = [
 		id: 2,
 		title: "Mizuki Docs",
 		imgurl: "http://q.qlogo.cn/headimg_dl?dst_uin=3231515355&spec=640&img_type=jpg",
-		desc: "User manual for Mizuki, currently in draft status, created and updated on February 22, 2026.",
+		desc: "Mizuki User Manual is published with a status of \"Published\" and is tagged under \"Docs.\" It was created on February 22, 2026, and last updated on February 24, 2026.",
 		siteurl: "https://docs.mizuki.mysqil.com",
 		tags: ["Docs"],
 	},
