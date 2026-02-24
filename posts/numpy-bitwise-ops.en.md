@@ -321,7 +321,7 @@ print (np.divide(a,b))
 
 - numpy.reciprocal()
 
-    numpy.reciprocal() 返回参数逐元素的倒数。如 1/4 倒数为 4/1。
+    numpy.reciprocal() returns the reciprocal of each element in the input array. For example, the reciprocal of 1/4 is 4/1.
 
     ```python
     import numpy as np
@@ -336,7 +336,7 @@ print (np.divide(a,b))
 
 - numpy.power()
 
-    numpy.power() 函数将第一个输入数组中的元素作为底数，计算它与第二个输入数组中相应元素的幂。
+    numpy.power() takes the elements in the first input array as bases and raises them to the powers of the corresponding elements in the second input array.
 
     ```python
     import numpy as np
@@ -358,7 +358,7 @@ print (np.divide(a,b))
 
 - numpy.mod()
 
-    numpy.mod() 计算输入数组中相应元素的相除后的余数。 函数 numpy.remainder() 也产生相同的结果。
+    numpy.mod() computes the remainder after division for corresponding elements in the input arrays. The `numpy.remainder()` function produces the same result.
 
     ```python
     import numpy as np
@@ -437,7 +437,7 @@ print (np.amax(a, axis =  0))
 
 - numpy.ptp()
 
-    numpy.ptp() 函数计算数组中元素最大值与最小值的差（最大值 - 最小值）。
+    numpy.ptp() computes the difference between the maximum and minimum values in the array (max - min).
 
     ```python
     numpy.ptp(a,axis=None,out=None,keepdims=<no value>,initial=<no value>,where=<no value>)
@@ -505,7 +505,7 @@ print (np.percentile(a, 50, axis=1, keepdims=True))
 
 - numpy.median()
 
-    numpy.median() 函数用于计算数组 a 中元素的中位数（中值）
+    numpy.median() is used to compute the median of the elements in array `a`.
 
 
     ```python
@@ -536,9 +536,9 @@ print (np.percentile(a, 50, axis=1, keepdims=True))
 
 - numpy.mean()
 
-    numpy.mean() 函数返回数组中元素的算术平均值，如果提供了轴，则沿其计算。
+    numpy.mean() returns the arithmetic mean of the elements in the array. If an axis is provided, it computes along that axis.
 
-    算术平均值是沿轴的元素的总和除以元素的数量。
+    The arithmetic mean is the sum of the elements along the axis divided by the number of elements.
 
 
     ```python
@@ -555,11 +555,11 @@ print (np.percentile(a, 50, axis=1, keepdims=True))
 
 - numpy.average()
 
-    numpy.average() 函数根据在另一个数组中给出的各自的权重计算数组中元素的加权平均值。
+    numpy.average() computes the weighted average of array elements using the corresponding weights provided in another array.
 
-    该函数可以接受一个轴参数。 如果没有指定轴，则数组会被展开。
+    This function can accept an `axis` parameter. If no axis is specified, the array is flattened.
 
-    加权平均值即将各数值乘以相应的权数，然后加总求和得到总体值，再除以总的单位数。
+    A weighted average is obtained by multiplying each value by its corresponding weight, summing them, and dividing by the total weight.
 
 
     ```python
@@ -702,7 +702,7 @@ print ([nm[i]  +  ", "  + dv[i]  for i in ind])
 | partition(a, kth[, axis, kind, order])    | Partitions the array around a given index kth                                            |
 | argpartition(a, kth[, axis, kind, order]) | Partitions the array along the specified axis using the given kth index with optional algorithm |
 
-- numpy.argmax() 和 numpy.argmin()
+- numpy.argmax() and numpy.argmin()
 
     numpy.argmax() and numpy.argmin() return the indices of the maximum and minimum elements along the given axis, respectively.
 

@@ -148,7 +148,7 @@ Person person = new Person("dreaife", "eroger");
 output.writeObject(person);
 ```
 
-## 字符流
+## Character Streams
 
 No matter whether reading/writing files or sending/receiving over the network, the smallest storage unit of information is bytes. Why do IO operations distinguish between byte streams and character streams?
 
@@ -389,12 +389,12 @@ class BufferedInputStream extends FilterInputStream {
 }
 ```
 
-缓冲区的大小默认为 **8192** 字节，当然了，你也可以通过 `BufferedInputStream(InputStream in, int size)` 这个构造方法来指定缓冲区的大小。
+The default buffer size is **8192** bytes. You can also specify the buffer size through the `BufferedInputStream(InputStream in, int size)` constructor.
 
 
 ### BufferedOutputStream (Byte Buffered Output Stream)
 
-`BufferedOutputStream` 将数据（字节信息）写入到目的地（通常是文件）的过程中不会一个字节一个字节的写入，而是会先将要写入的字节存放在缓存区，并从内部缓冲区中单独写入字节。这样大幅减少了 IO 次数，提高了读取效率
+`BufferedOutputStream` does not write data (byte information) to the destination (usually a file) one byte at a time. Instead, it first stores bytes in an internal buffer and writes from that buffer in batches. This greatly reduces the number of IO operations and improves efficiency.
 
 ```java
 try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("output.txt"))) {
@@ -405,7 +405,7 @@ try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("o
 }
 ```
 
-类似于 `BufferedInputStream` ，`BufferedOutputStream` 内部也维护了一个缓冲区，并且，这个缓存区的大小也是 **8192** 字节。
+Similar to `BufferedInputStream`, `BufferedOutputStream` also maintains an internal buffer, and the buffer size is also **8192** bytes.
 
 
 ## Character Buffered Streams
@@ -481,19 +481,19 @@ System.out.println("读取之前的偏移量：" + randomAccessFile.getFilePoint
 ```
 
 
-`RandomAccessFile` 的 `write` 方法在写入对象的时候如果对应的位置已经有数据的话，会将其覆盖掉。
+If the target position already contains data, the `write` method of `RandomAccessFile` will overwrite it.
 
 ```java
 RandomAccessFile randomAccessFile = new RandomAccessFile(new File("input.txt"), "rw");
 randomAccessFile.write(new byte[]{'H', 'I', 'J', 'K'});
 ```
 
-假设运行上面这段程序之前 `input.txt` 文件内容变为 `ABCD` ，运行之后则变为 `HIJK`。
+Suppose the contents of `input.txt` are `ABCD` before running the program above; after running it, the file becomes `HIJK`.
 
 
-`RandomAccessFile` 一个较常见的应用就是实现大型文件的 **断点续传**。断点续传是什么？简单来说，就是在上传文件过程中的暂停或失败（例如遇到网络问题）后，不需要重新上传，只需上传尚未成功上传的文件分片。分片（先将文件切分成多个文件分片）上传是断点续传的基础。
+A common use case of `RandomAccessFile` is implementing **resumable uploads** for large files. In short, after an upload is paused or fails (for example, due to network issues), you do not need to re-upload the entire file; you only upload the chunks that were not successfully uploaded. Chunked upload (splitting a file into multiple chunks first) is the foundation of resumable uploads.
 
-`RandomAccessFile` 的实现依赖于 `FileDescriptor`（文件描述符）和 `FileChannel`（内存映射文件）。
+`RandomAccessFile` is implemented based on `FileDescriptor` (file descriptor) and `FileChannel` (file channel).
 
 
 # Java IO Design Patterns

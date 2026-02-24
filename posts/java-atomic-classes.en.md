@@ -126,10 +126,10 @@ Let's look at the advantages of primitive type atomic classes with a simple exam
     ```
 
 
-### AtomicInteger 线程安全原理简单分析
+### A Brief Analysis of AtomicInteger Thread-Safety Principles
 
 
-`AtomicInteger` 类的部分源码：
+`AtomicInteger` source code excerpt:
 
 
 ```java
@@ -148,10 +148,10 @@ Let's look at the advantages of primitive type atomic classes with a simple exam
 ```
 
 
-`AtomicInteger` 类主要利用 CAS (compare and swap) + volatile 和 native 方法来保证原子操作，从而避免 synchronized 的高开销，执行效率大为提升。
+`AtomicInteger` mainly relies on CAS (compare and swap), `volatile`, and native methods to guarantee atomic operations, thereby avoiding the high overhead of `synchronized` and significantly improving execution efficiency.
 
 
-CAS 的原理是拿期望的值和原本的一个值作比较，如果相同则更新成新的值。Unsafe 类的 `objectFieldOffset()` 方法是一个本地方法，这个方法是用来拿到“原来的值”的内存地址。另外 value 是一个 volatile 变量，在内存中可见，因此 JVM 可以保证任何时刻任何线程总能拿到该变量的最新值。
+CAS works by comparing an expected value with the current value, and updating it to a new value only if they match. The `Unsafe` class's `objectFieldOffset()` method is a native method used to obtain the memory address of the original value. In addition, `value` is a `volatile` variable and is visible in memory, so the JVM can ensure that any thread can obtain the latest value of this variable at any time.
 
 
 ## Array-Type Atomic Classes
@@ -315,7 +315,7 @@ public class AtomicStampedReferenceDemo {
 ```
 
 
-输出结果如下：
+The output is as follows:
 
 
 ```plain text
@@ -377,7 +377,7 @@ public class AtomicMarkableReferenceDemo {
 ```
 
 
-输出结果如下：
+The output is as follows:
 
 
 ```plain text

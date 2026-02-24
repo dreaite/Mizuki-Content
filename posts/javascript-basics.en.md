@@ -107,7 +107,7 @@ JavaScript is a dynamic, weakly-typed, interpreted language, originally designed
         ```
 
 
-# JavaScript基础
+# JavaScript Basics
 
 
 ## **Chapter 1: JavaScript Basics**

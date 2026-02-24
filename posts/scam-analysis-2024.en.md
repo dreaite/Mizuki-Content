@@ -25,7 +25,7 @@ Specific operations：
     2. Buy an old US WS account; it must be an old account newly registered—no one should waste money. An account used normally for more than ten days won't die, so no worries about dead accounts. If you don't have an account vendor, ask customer service to push one to you
     （We mainly generate US-based WhatsApp followers; the numbers must be US-based, not from other countries）
     3. Set up the name and avatar, ask customer service for them; you must change the avatar and name, otherwise it doesn't count
-    4. Strictly follow our script and the designated data; if you encounter fake orders, you can try forging them—everything will be扣
+    4. Strictly follow our script and the designated data; if you encounter fake orders, you can try forging them, but all earnings will be deducted
     5. The data are all scraped from local job advertisement websites; they’re all part-time followers; we just do a simple follow-up; the order success rate about 3 out of 10
     6. Add as a friend; after sending the script, the order is 3 yuan; then publish the form for the client to fill; if the client fills it, send you one 90
     7. The completion format is a single screenshot of the chat with the client; that counts as completing one order for 3 yuan; publish the form for the client to fill; if filled you get 90 per order; if not filled you only get 3; with one account the minimum daily profit is at least 800+

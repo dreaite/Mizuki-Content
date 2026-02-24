@@ -59,15 +59,15 @@ OpenSSL> rsautl -in plain.txt -out enc.txt -inkey RSAPublicKey.pem -pubin -encry
 OpenSSL> rsautl -in enc.txt -out replain.txt -inkey RSAPrivateKey.pem -decrypt
 ```
 
-密匙创建完成
+Key pair generated
 
 ![KlN3SMRq8dEXZQ5.png](https://s2.loli.net/2022/06/12/KlN3SMRq8dEXZQ5.png)
 
-生成公匙
+Public key generated
 
 ![HzujWoMiJ2grXlV.png](https://s2.loli.net/2022/06/12/HzujWoMiJ2grXlV.png)
 
-加密于解密后文件
+Files before and after encryption/decryption
 
 ### **4.4 Digital Signature**
 

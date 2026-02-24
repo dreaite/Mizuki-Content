@@ -66,7 +66,7 @@ If you create an index on the id in a table, queries based on id will go through
 
 But if you want to perform fuzzy searches on the title, you can only scan row by row, with the following process:
 
-1. The user searches data with the condition that the title matches "%手机%"
+1. The user searches data with the condition that the title matches "%phone%"
 2. Retrieve data row by row, for example data with id = 1
 3. Check whether the title in the data matches the user's search condition
 4. If it matches, add it to the result set; otherwise discard. Go back to step 1

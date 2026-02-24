@@ -25,9 +25,9 @@ To address this problem, a new I/O model was introduced in Java 1.4 — **NIO** 
 
 NIO mainly includes the following three core components:
 
-- **Buffer (缓冲区)**: NIO reads and writes data through buffers. When reading, data from the Channel is filled into the Buffer; when writing, data from the Buffer is written to the Channel.
-- **Channel（通道）**: A Channel is a bidirectional, readable/writable data transfer conduit. NIO uses Channels to perform input and output. A Channel is an abstract concept that can represent connections between files, sockets, or other data sources.
-- **Selector（选择器）**: Allows a single thread to handle multiple Channels, based on an event-driven I/O multiplexing model. All Channels can be registered to a Selector, which allocates threads to handle events.
+- **Buffer**: NIO reads and writes data through buffers. When reading, data from the Channel is filled into the Buffer; when writing, data from the Buffer is written to the Channel.
+- **Channel**: A Channel is a bidirectional, readable/writable data transfer conduit. NIO uses Channels to perform input and output. A Channel is an abstract concept that can represent connections between files, sockets, or other data sources.
+- **Selector**: Allows a single thread to handle multiple Channels, based on an event-driven I/O multiplexing model. All Channels can be registered to a Selector, which allocates threads to handle events.
 
 The relationship among the three is depicted in the following diagram:
 
@@ -37,7 +37,7 @@ The relationship among the three is depicted in the following diagram:
 ![20240205222443.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/20240205222443.png)
 
 
-## Buffer（缓冲区）
+## Buffer
 
 In traditional BIO, data I/O is stream-oriented, divided into byte streams and character streams.
 
@@ -163,12 +163,12 @@ capacity: 8, limit: 3, position: 0
 capacity: 8, limit: 8, position: 0
 ```
 
-为了帮助理解，我绘制了一张图片展示 `capacity`、`limit`和`position`每一阶段的变化。
+To make this easier to understand, I drew a diagram showing how `capacity`, `limit`, and `position` change at each stage.
 
 ![20240205222512.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/20240205222512.png)
 
 
-## Channel（通道）
+## Channel
 
 A Channel is a conduit that establishes a connection with a data source (such as a file, network socket, etc.). We can use it to read and write data, as if opening a water pipe through which data flows freely in the Channel.
 
@@ -202,7 +202,7 @@ channel.read(buffer);
 ```
 
 
-## Selector（选择器）
+## Selector
 
 Selector is a key component in NIO that allows a single thread to handle multiple Channels. Selector is based on an event-driven I/O multiplexing model, with the main operating principle: **by registering channel events with the Selector, the Selector will continuously poll the Channels registered on it**.
 
@@ -250,7 +250,7 @@ while (keyIterator.hasNext()) {
 ```
 
 
-Selector 还提供了一系列和 `select()` 相关的方法：
+Selector also provides a series of methods related to `select()`:
 
 - `int select()`: Monitors all registered `Channel`s; when any require IO processing, this method returns and the corresponding `SelectionKey`s are added to the selected set; this method returns the number of Channels.
 - `int select(long timeout)`: A `select()` operation with a timeout.

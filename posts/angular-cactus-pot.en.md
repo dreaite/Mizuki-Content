@@ -99,7 +99,7 @@ my-angular-project-test/
 │   ├── ...
 ```
 
-其中：
+Among them:
 
 - `src/app` directory is the main directory of the project, containing all components, services, interceptors, guards, etc.
 - `src/environments` directory contains environment configuration files, including development and production configurations.

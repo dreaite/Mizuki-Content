@@ -202,13 +202,13 @@ The DNS message contains mainly the following fields:
 > | TC (1bit)            | 0                                | .... ..0. .... .... = Truncated: Message is not truncated     |
 > | RD (1bit)            | 1                                | .... ...1 .... .... = Recursion desired: Do query recursively |
 > | ZERO (1bit)          | 0                                | .... .... .0.. .... = Z: reserved (0)                         |
-> | Questions (2字节)      | 1                                | Questions: 1                                                  |
-> | Answer RRs (2字节)     | 0                                | Answer RRs: 0                                                 |
-> | Authority RRs (2字节)  | 0                                | Authority RRs: 0                                              |
-> | Additional RRs (2字节) | 0                                | Additional RRs: 0                                             |
-> | Name (34字节)          | metrichub-cn-shanghai.aliyun.com | Name: metrichub-cn-shanghai.aliyun.com                        |
-> | Type (2字节)           | 1                                | Type: A (Host Address) (1)                                    |
-> | Class (2字节)          | 1                                | Class: IN (0x0001)                                            |
+> | Questions (2 bytes)      | 1                                | Questions: 1                                                  |
+> | Answer RRs (2 bytes)     | 0                                | Answer RRs: 0                                                 |
+> | Authority RRs (2 bytes)  | 0                                | Authority RRs: 0                                              |
+> | Additional RRs (2 bytes) | 0                                | Additional RRs: 0                                             |
+> | Name (34 bytes)          | metrichub-cn-shanghai.aliyun.com | Name: metrichub-cn-shanghai.aliyun.com                        |
+> | Type (2 bytes)           | 1                                | Type: A (Host Address) (1)                                    |
+> | Class (2 bytes)          | 1                                | Class: IN (0x0001)                                            |
 >
 > 1. Analysis of the response packet
 >

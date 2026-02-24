@@ -21,122 +21,122 @@ Microservices, while offering many advantages, bring deployment headaches due to
 
 ### Environment issues for application deployment
 
-大型项目组件较多，运行环境也较为复杂，部署时会碰到一些问题：
+Large projects have many components and complex runtime environments, so deployment often runs into issues:
 
-- 依赖关系复杂，容易出现兼容性问题
-- 开发、测试、生产环境有差异
+- Complex dependencies can easily lead to compatibility problems
+- Development, testing, and production environments differ from each other
 
-例如一个项目中，部署时需要依赖于node.js、Redis、RabbitMQ、MySQL等，这些服务部署时所需要的函数库、依赖项各不相同，甚至会有冲突。给部署带来了极大的困难。
+For example, a project may depend on Node.js, Redis, RabbitMQ, MySQL, and more. The libraries and dependencies required by these services differ from each other and may even conflict, which makes deployment very difficult.
 
-### Docker解决依赖兼容问题
+### How Docker Solves Dependency Compatibility Issues
 
-而Docker确巧的解决了这些问题，Docker是如何实现的呢？
+Docker happens to solve these problems very well. How does it do that?
 
-Docker为了解决依赖的兼容问题的，采用了两个手段：
+Docker uses two methods to solve dependency compatibility issues:
 
-- 将应用的Libs（函数库）、Deps（依赖）、配置与应用一起打包
-- 将每个应用放到一个隔离**容器**去运行，避免互相干扰
+- Package the application's Libs (libraries), Deps (dependencies), and configuration together with the application
+- Run each application in an isolated **container** to avoid interference
 
-这样打包好的应用包中，既包含应用本身，也保护应用所需要的Libs、Deps，无需再操作系统上安装这些，自然就不存在不同应用之间的兼容问题了。
+This packaged application bundle includes both the application itself and the Libs/Deps it requires, so you no longer need to install them separately on the operating system. Naturally, compatibility conflicts between applications are avoided.
 
-### Docker解决操作系统环境差异
+### How Docker Solves OS Environment Differences
 
-要解决不同操作系统环境差异问题，必须先了解操作系统结构。以一个Ubuntu操作系统为例，结构包括：
+To solve differences between operating system environments, we first need to understand the OS structure. Taking Ubuntu as an example, it consists of:
 
-- 计算机硬件：例如CPU、内存、磁盘等
-- 系统内核：所有Linux发行版的内核都是Linux，例如CentOS、Ubuntu、Fedora等。内核可以与计算机硬件交互，对外提供**内核指令**，用于操作计算机硬件。
-- 系统应用：操作系统本身提供的应用、函数库。这些函数库是对内核指令的封装，使用更加方便。
+- Computer hardware: CPU, memory, disk, etc.
+- System kernel: All Linux distributions use the Linux kernel (e.g. CentOS, Ubuntu, Fedora). The kernel interacts with hardware and exposes **kernel instructions** for operating hardware.
+- System applications: Applications and libraries provided by the OS itself. These libraries wrap kernel instructions to make them easier to use.
 
-应用于计算机交互的流程如下：
-
-
-1）应用调用操作系统应用（函数库），实现各种功能
+The interaction flow between applications and the computer is as follows:
 
 
-2）系统函数库是对内核指令集的封装，会调用内核指令
+1) Applications call OS-provided applications (libraries) to implement various functions
 
 
-3）内核指令操作计算机硬件
+2) System libraries wrap the kernel instruction set and invoke kernel instructions
 
 
-Docker如何解决不同系统环境的问题？
+3) Kernel instructions operate the computer hardware
 
-- Docker将用户程序与所需要调用的系统(比如Ubuntu)函数库一起打包
-- Docker运行到不同操作系统时，直接基于打包的函数库，借助于操作系统的Linux内核来运行
 
-Docker是一个快速交付应用、运行应用的技术，具备下列优势：
+How does Docker solve cross-system environment issues?
 
-- 可以将程序及其依赖、运行环境一起打包为一个镜像，可以迁移到任意Linux操作系统
-- 运行时利用沙箱机制形成隔离容器，各个应用互不干扰
-- 启动、移除都可以通过一行命令完成，方便快捷
+- Docker packages the user program together with the required system libraries (for example, Ubuntu libraries)
+- When Docker runs on different operating systems, it uses the packaged libraries while relying on the host OS's Linux kernel
 
-## Docker和虚拟机的区别
+Docker is a technology for quickly delivering and running applications, with the following advantages:
 
-Docker可以让一个应用在任何操作系统中非常方便的运行。而虚拟机也能在一个操作系统中，运行另外一个操作系统，保护系统中的任何应用。
+- It can package a program, its dependencies, and runtime environment into an image that can be migrated to any Linux operating system
+- At runtime it uses sandboxing to create isolated containers so applications do not interfere with each other
+- Startup and removal can both be done with a single command, which is convenient and efficient
 
-- **虚拟机**（virtual machine）是在操作系统中**模拟**硬件设备，然后运行另一个操作系统，比如在 Windows 系统里面运行 Ubuntu 系统，这样就可以运行任意的Ubuntu应用了。
-- **Docker**仅仅是封装函数库，并没有模拟完整的操作系统
+## Differences Between Docker and Virtual Machines
 
-| 特性   | Docker | 虚拟机   |
+Docker allows an application to run very conveniently across operating systems. Virtual machines can also run another operating system on top of a host OS and run applications inside it.
+
+- **Virtual machine** (`virtual machine`) simulates hardware devices inside an operating system and then runs another operating system, e.g. running Ubuntu inside Windows, so you can run arbitrary Ubuntu applications.
+- **Docker** only packages libraries and dependencies; it does not simulate a complete operating system.
+
+| Feature | Docker | Virtual Machine |
 | ---- | ------ | ----- |
-| 性能   | 接近原生   | 性能较差  |
-| 硬盘占用 | 一般为MB  | 一般为GB |
-| 启动   | 秒级     | 分钟级   |
+| Performance | Near-native | Lower |
+| Disk usage | Usually MB | Usually GB |
+| Startup time | Seconds | Minutes |
 
-Docker和虚拟机的差异：
+Differences between Docker and virtual machines:
 
-- docker是一个系统进程；虚拟机是在操作系统中的操作系统
-- docker体积小、启动速度快、性能好；虚拟机体积大、启动速度慢、性能一般
+- Docker is a system process; a virtual machine is effectively another OS running inside the host OS
+- Docker is smaller, starts faster, and performs better; VMs are larger, start slower, and generally perform worse
 
-## Docker架构
+## Docker Architecture
 
-### 镜像和容器
+### Images and Containers
 
-Docker中有几个重要的概念：
+There are several important concepts in Docker:
 
-- **镜像（Image）**：Docker将应用程序及其所需的依赖、函数库、环境、配置等文件打包在一起，称为镜像。
-- **容器（Container）**：镜像中的应用程序运行后形成的进程就是**容器**，只是Docker会给容器进程做隔离，对外不可见。
+- **Image**: Docker packages an application together with its dependencies, libraries, environment, configuration, and related files into an image.
+- **Container**: The process formed when an application in an image runs is a **container**. Docker isolates the container process so it is not directly visible externally.
 
-一切应用最终都是代码组成，都是硬盘中的一个个的字节形成的**文件**。只有运行时，才会加载到内存，形成进程。
+At the end of the day, applications are made of code, and code is stored as **files** (bytes on disk). Only when running are they loaded into memory and become processes.
 
-而**镜像**，就是把一个应用在硬盘上的文件、及其运行环境、部分系统函数库文件一起打包形成的文件包。这个文件包是只读的。
+An **image** is a read-only package formed by bundling an application's files on disk, its runtime environment, and some system library files.
 
-**容器**呢，就是将这些文件中编写的程序、函数加载到内存中允许，形成进程，只不过要隔离起来。因此一个镜像可以启动多次，形成多个容器进程。
+A **container** loads the programs/functions in those files into memory and runs them as processes, while isolating them. Therefore, one image can be started multiple times to form multiple container processes.
 
 ### DockerHub
 
-开源应用程序非常多，打包这些应用往往是重复的劳动。为了避免这些重复劳动，人们就会将自己打包的应用镜像，例如Redis、MySQL镜像放到网络上，共享使用，就像GitHub的代码共享一样。
+There are many open-source applications, and packaging them repeatedly is wasted effort. To avoid this, people publish the application images they package (such as Redis and MySQL images) online for sharing, similar to code sharing on GitHub.
 
-- DockerHub：DockerHub是一个官方的Docker镜像的托管平台。这样的平台称为Docker Registry。
-- 国内也有类似于DockerHub 的公开服务，比如 [NetEase Cloud Image Service](https://c.163yun.com/hub)、[Alibaba Cloud Image Repository](https://cr.console.aliyun.com/)等。
+- DockerHub: DockerHub is the official hosting platform for Docker images. Platforms like this are called Docker Registries.
+- There are also public services similar to DockerHub, such as [NetEase Cloud Image Service](https://c.163yun.com/hub) and [Alibaba Cloud Image Repository](https://cr.console.aliyun.com/).
 
-我们一方面可以将自己的镜像共享到DockerHub，另一方面也可以从DockerHub拉取镜像
+We can both publish our own images to DockerHub and pull images from DockerHub.
 
-### Docker架构
+### Docker Architecture
 
-我们要使用Docker来操作镜像、容器，就必须要安装Docker。
+To use Docker to manage images and containers, we must first install Docker.
 
-Docker是一个CS架构的程序，由两部分组成：
+Docker follows a client-server architecture and consists of two parts:
 
-- 服务端(server)：Docker守护进程，负责处理Docker指令，管理镜像、容器等
-- 客户端(client)：通过命令或RestAPI向Docker服务端发送指令。可以在本地或远程向服务端发送指令。
+- Server: the Docker daemon, responsible for handling Docker commands and managing images/containers
+- Client: sends commands to the Docker server through CLI commands or REST API. It can send commands locally or remotely.
 
 ![image-20230810161802874.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/image-20230810161802874.png)
 
-# Docker的基本操作
+# Basic Docker Operations
 
-## 镜像操作
+## Image Operations
 
-### 镜像名称
+### Image Names
 
-首先来看下镜像的名称组成：
+Let's first look at how image names are composed:
 
-- 镜名称一般分两部分组成：[repository]:[tag]。
-- 在没有指定tag时，默认是latest，代表最新版本的镜像
+- Image names are generally made of two parts: `[repository]:[tag]`.
+- If no `tag` is specified, the default is `latest`, representing the latest version of the image.
 
-### 镜像命令
+### Image Commands
 
-常见的镜像操作命令如图
+Common image operations are shown below.
 
 ![image-20230810162617340.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/image-20230810162617340.png)
 
@@ -150,85 +150,85 @@ docker rmi nginx:latest					# 删除镜像
 docker load -i nginx.tar				# 加载镜像
 ```
 
-## 容器操作
+## Container Operations
 
-容器保护三个状态：
+Containers generally have three states:
 
-- 运行：进程正常运行
-- 暂停：进程暂停，CPU不再运行，并不释放内存
-- 停止：进程终止，回收进程占用的内存、CPU等资源
+- Running: the process is running normally
+- Paused: the process is paused, CPU execution stops, but memory is not released
+- Stopped: the process is terminated, and memory/CPU resources are reclaimed
 
-### 容器相关命令
+### Container-Related Commands
 
-- docker run：创建并运行一个容器，处于运行状态
+- `docker run`: Create and run a container, entering the running state
 
     ```shell
     docker run --name containerName -p 80:80 -d nginx
     ```
 
-    - docker run ：创建并运行一个容器
-    - -name : 给容器起一个名字，比如叫做mn
-    - p ：将宿主机端口与容器端口映射，冒号左侧是宿主机端口，右侧是容器端口
-    - d：后台运行容器
-    - nginx：镜像名称，例如nginx
-- docker pause：让一个运行的容器暂停
-- docker unpause：让一个容器从暂停状态恢复运行
-- docker stop：停止一个运行的容器
-- docker start：让一个停止的容器再次运行
-- docker rm：删除一个容器
-- docker exec:进入容器
+    - `docker run`: Create and run a container
+    - `--name`: Give the container a name, e.g. `mn`
+    - `-p`: Map host port to container port; left side is host port, right side is container port
+    - `-d`: Run the container in the background
+    - `nginx`: Image name, e.g. `nginx`
+- `docker pause`: Pause a running container
+- `docker unpause`: Resume a paused container
+- `docker stop`: Stop a running container
+- `docker start`: Start a stopped container again
+- `docker rm`: Delete a container
+- `docker exec`: Enter a container
 
     ```plain text
     docker exec -it mn bash
     ```
 
-    - docker exec ：进入容器内部，执行一个命令
-    - it : 给当前进入的容器创建一个标准输入、输出终端，允许我们与容器交互
-    - mn ：要进入的容器的名称
-    - bash：进入容器后执行的命令，bash是一个linux终端交互命令
+    - `docker exec`: Enter the container and execute a command
+    - `-it`: Create a stdin/stdout terminal for interaction
+    - `mn`: The name of the container to enter
+    - `bash`: The command executed after entering the container; `bash` is a Linux shell command
 
-    容器内部会模拟一个独立的Linux文件系统，看起来如同一个linux服务器一样
+    Inside the container, Docker presents an isolated Linux filesystem that looks like a standalone Linux server.
 
 
-docker run命令的常见参数
+Common parameters of the `docker run` command
 
-- -name：指定容器名称
-- p：指定端口映射
-- d：让容器后台运行
+- `--name`: Specify the container name
+- `-p`: Specify port mapping
+- `-d`: Run the container in the background
 
-查看容器日志的命令：
+Command for viewing container logs:
 
 - docker logs
-- 添加 -f 参数可以持续查看日志
+- Add the `-f` parameter to continuously follow logs
 
-查看容器状态：
+Commands for checking container status:
 
 - docker ps
-- docker ps -a 查看所有容器，包括已经停止的
+- `docker ps -a` to view all containers, including stopped ones
 
-## 数据卷（容器数据管理）
+## Volumes (Container Data Management)
 
-在之前的nginx案例中，修改nginx的html页面时，需要进入nginx内部。并且因为没有编辑器，修改文件也很麻烦。
+In the earlier nginx example, to modify nginx's HTML page, we had to enter the nginx container. And since there was no editor inside, modifying files was inconvenient.
 
-这就是因为容器与数据（容器内文件）耦合带来的后果。
+This is a consequence of coupling the container with the data (files inside the container).
 
-要解决这个问题，必须将数据与容器解耦，这就要用到数据卷了。
+To solve this problem, we must decouple data from containers, and for that we use volumes.
 
-### 什么是数据卷
+### What Is a Volume
 
-- *数据卷（volume）**是一个虚拟目录，指向宿主机文件系统中的某个目录。
+- **Data volume (volume)**: A virtual directory that points to some directory on the host filesystem.
 
 ![image-20230810164051404.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/image-20230810164051404.png)
 
 
-一旦完成数据卷挂载，对容器的一切操作都会作用在数据卷对应的宿主机目录了。
+Once volume mounting is complete, all operations on the container path affect the corresponding host directory behind the volume.
 
-这样，我们操作宿主机的/var/lib/docker/volumes/html目录，就等于操作容器内的/usr/share/nginx/html目录了
+In this way, operating on `/var/lib/docker/volumes/html` on the host is equivalent to operating on `/usr/share/nginx/html` inside the container.
 
 
-### 数据集操作命令
+### Volume Operation Commands
 
-数据卷操作的基本语法如下：
+The basic syntax for volume operations is as follows:
 
 
 ```plain text
@@ -236,41 +236,41 @@ docker volume [COMMAND]
 ```
 
 
-docker volume命令是数据卷操作，根据命令后跟随的command来确定下一步的操作：
+the `docker volume` command is used for volume operations, and the action depends on the `command` that follows:
 
-- create 创建一个volume
-- inspect 显示一个或多个volume的信息
-- ls 列出所有的volume
-- prune 删除未使用的volume
-- rm 删除一个或多个指定的volume
+- `create`: create a volume
+- `inspect`: show information about one or more volumes
+- `ls`: list all volumes
+- `prune`: remove unused volumes
+- `rm`: remove one or more specified volumes
 
-### 创建和查看数据卷
+### Create and Inspect Volumes
 
-**需求**：创建一个数据卷，并查看数据卷在宿主机的目录位置
+**Goal**: Create a volume and check its directory location on the host machine.
 
-1. 创建数据卷
+1. Create a volume
 
 ```plain text
 docker volume create html
 ```
 
-1. 查看所有数据
+1. View all volumes
 
 ```plain text
 docker volume ls
 ```
 
-1. 查看数据卷详细信息卷
+1. View detailed information for a volume
 
 ```shell
 docker volume inspect html
 ```
 
-创建的html这个数据卷关联的宿主机目录为`/var/lib/docker/volumes/html/_data`目录。
+The host directory corresponding to the created `html` volume is `/var/lib/docker/volumes/html/_data`.
 
-### 挂载数据卷
+### Mounting Volumes
 
-我们在创建容器时，可以通过 -v 参数来挂载一个数据卷到某个容器内目录，命令格式如下：
+When creating a container, we can use the `-v` parameter to mount a volume to a directory inside the container, using the following format:
 
 
 ```plain text
@@ -282,16 +282,16 @@ docker run \\
 ```
 
 
-这里的-v就是挂载数据卷的命令：
+Here, `-v` is the volume-mount option:
 
-- `v html:/root/htm` ：把html数据卷挂载到容器内的/root/html这个目录中
+- `-v html:/root/html`: mount the `html` volume to `/root/html` inside the container
 
-容器不仅仅可以挂载数据卷，也可以直接挂载到宿主机目录上。关联关系如下：
+A container can mount not only volumes, but also host directories directly. The relationships are:
 
-- 带数据卷模式：宿主机目录 --> 数据卷 ---> 容器内目录
-- 直接挂载模式：宿主机目录 --> 容器内目录
+- Volume mode: host directory --> volume ---> container directory
+- Direct bind mount mode: host directory --> container directory
 
-docker安装MySQL5.7：
+Install MySQL 5.7 with Docker:
 
 
 ```shell
@@ -305,61 +305,61 @@ mysql:5.7
 ```
 
 
-docker run的命令中通过 -v 参数挂载文件或目录到容器中：
+In the `docker run` command, the `-v` parameter can mount files or directories into the container:
 
-- v volume名称:容器内目录
-- v 宿主机文件:容器内文
-- v 宿主机目录:容器内目录
+- `-v <volume-name>:<container-dir>`
+- `-v <host-file>:<container-file>`
+- `-v <host-dir>:<container-dir>`
 
-数据卷挂载与目录直接挂载的
+Volume mounts vs direct directory mounts:
 
-- 数据卷挂载耦合度低，由docker来管理目录，但是目录较深，不好找
-- 目录挂载耦合度高，需要我们自己管理目录，不过目录容易寻找查看
+- Volume mounts have lower coupling. Docker manages the directories, but the paths are deeper and harder to find.
+- Directory mounts have higher coupling because we manage the directories ourselves, but the paths are easier to locate and inspect.
 
-# Dockerfile自定义镜像
+# Custom Images with Dockerfile
 
-常见的镜像在DockerHub就能找到，但是我们自己写的项目就必须自己构建镜像了。
+Common images can be found on DockerHub, but for our own projects we usually need to build images ourselves.
 
-而要自定义镜像，就必须先了解镜像的结构才行。
+To customize an image, we first need to understand image structure.
 
-## 镜像结构
+## Image Structure
 
-镜像是将应用程序及其需要的系统函数库、环境、配置、依赖打包而成。
+An image packages an application together with the system libraries, environment, configuration, and dependencies it needs.
 
-简单来说，镜像就是在系统函数库、运行环境基础上，添加应用程序文件、配置文件、依赖文件等组合，然后编写好启动脚本打包在一起形成的文件。
+In simple terms, an image is built by combining system libraries and runtime environment with application files, configuration files, dependency files, and a startup script, then packaging them together.
 
-我们要构建镜像，其实就是实现上述打包的过程。
+Building an image is essentially implementing this packaging process.
 
-## Dockerfile语法
+## Dockerfile Syntax
 
-构建自定义的镜像时，并不需要一个个文件去拷贝，打包。
+When building a custom image, we do not need to manually copy and package files one by one.
 
-我们只需要告诉Docker，我们的镜像的组成，需要哪些BaseImage、需要拷贝什么文件、需要安装什么依赖、启动脚本是什么，将来Docker会帮助我们构建镜像。
+We only need to tell Docker what the image consists of, which BaseImage to use, what files to copy, what dependencies to install, and what the startup script is. Docker will build the image for us.
 
-而描述上述信息的文件就是Dockerfile文件。
+The file that describes this information is the Dockerfile.
 
-**Dockerfile**就是一个文本文件，其中包含一个个的**指令(Instruction)**，用指令来说明要执行什么操作来构建镜像。每一个指令都会形成一层Layer。
+A **Dockerfile** is a text file containing **instructions**, which describe what operations to execute in order to build the image. Each instruction forms one layer.
 
-| 指令         | 说明                 | 示例                          |
+| Instruction | Description | Example |
 | ---------- | ------------------ | --------------------------- |
-| FROM       | 指定基础镜像             | FROM centos:6               |
-| ENV        | 设置环境变量             | ENV key value               |
-| COPY       | 拷贝本地文件到镜像指定目录      | COPY ./mysql-5.7.rpm /tmp   |
-| RUN        | 执行Liunx shell命令    | RUN yum install gcc         |
-| EXPOSE     | 指定运行监听端口，给使用者看     | EXPOSE 8080                 |
-| ENTRYPOINT | 镜像中应用的启动命令，容器运行时调用 | ENTRYPOINT java -jar xx.jar |
+| FROM       | Specify base image | FROM centos:6               |
+| ENV        | Set environment variables | ENV key value               |
+| COPY       | Copy local files to a target directory in the image | COPY ./mysql-5.7.rpm /tmp   |
+| RUN        | Execute Linux shell commands | RUN yum install gcc         |
+| EXPOSE     | Declare listening port for users/reference | EXPOSE 8080                 |
+| ENTRYPOINT | Application startup command called when the container runs | ENTRYPOINT java -jar xx.jar |
 
-## 构建Java项目
+## Building a Java Project
 
-基于java8构建Java项目
+Build a Java project based on Java 8.
 
-构建java项目的镜像，可以在已经准备了JDK的基础镜像基础上构建。
+To build a Java project image, we can build on top of a base image that already contains the JDK.
 
-- 编写Dockerfile文件：
-    - 基于java:8-alpine作为基础镜像
-    - 将app.jar拷贝到镜像中
-    - 暴露端口
-    - 编写入口ENTRYPOINT
+- Write a Dockerfile:
+    - Use `java:8-alpine` as the base image
+    - Copy `app.jar` into the image
+    - Expose the port
+    - Write the `ENTRYPOINT`
 
     ```plain text
     FROM java:8-alpine
@@ -368,16 +368,16 @@ docker run的命令中通过 -v 参数挂载文件或目录到容器中：
     ENTRYPOINT java -jar /tmp/app.jar
     ```
 
-- 使用docker build命令构建镜像
-- 使用docker run创建容器并运行
+- Use `docker build` to build the image
+- Use `docker run` to create and run the container
 
 # Docker-Compose
 
-Docker Compose可以基于Compose文件帮我们快速的部署分布式应用，而无需手动一个个创建和运行容器！
+Docker Compose can help us quickly deploy distributed applications based on a Compose file, without manually creating and running containers one by one.
 
-## 初识DockerCompose
+## Docker Compose Basics
 
-Compose文件是一个文本文件，通过指令定义集群中的每个容器如何运行。格式如下：
+A Compose file is a text file that defines how each container in the cluster runs. The format is as follows:
 
 
 ```json
@@ -397,20 +397,20 @@ version: "3.8"
 ```
 
 
-上面的Compose文件就描述一个项目，其中包含两个容器：
+The Compose file above describes a project that contains two containers:
 
-- mysql：一个基于`mysql:5.7.25`镜像构建的容器，并且挂载了两个目录
-- web：一个基于`docker build`临时构建的镜像容器，映射端口时8090
+- `mysql`: a container built from the `mysql:5.7.25` image and mounted with two directories
+- `web`: a container image built temporarily via `docker build`, with port `8090` mapped
 
-其实DockerCompose文件可以看做是将多个docker run命令写到一个文件，只是语法稍有差异。
+A Docker Compose file can be viewed as multiple `docker run` commands written into one file, with only slight syntax differences.
 
-## 部署微服务集群
+## Deploy a Microservice Cluster
 
-**需求**：将之前学习的cloud-demo微服务集群利用DockerCompose部署
+**Goal**: Deploy the previously learned `cloud-demo` microservice cluster using Docker Compose.
 
-**实现思路**：
+**Implementation approach**:
 
-1. 编写docker-compose文件
+1. Write a `docker-compose` file
 
     ```yaml
     version: "3.2"
@@ -440,22 +440,22 @@ version: "3.8"
     ```
 
 
-    其中包含5个service服务：
+    It contains 5 services:
 
-    - `nacos`：作为注册中心和配置中心
-        - `image: nacos/nacos-server`： 基于nacos/nacos-server镜像构建
-        - `environment`：环境变量
-            - `MODE: standalone`：单点模式启动
-        - `ports`：端口映射，这里暴露了8848端口
-    - `mysql`：数据库
-        - `image: mysql:5.7.25`：镜像版本是mysql:5.7.25
-        - `environment`：环境变量
-            - `MYSQL_ROOT_PASSWORD: 123`：设置数据库root账户的密码为123
-        - `volumes`：数据卷挂载，这里挂载了mysql的data、conf目录，其中有我提前准备好的数据
-    - `userservice`、`orderservice`、`gateway`：都是基于Dockerfile临时构建的
-2. 修改自己的cloud-demo项目，将数据库、nacos地址都命名为docker-compose中的服务名
+    - `nacos`: works as the registry and configuration center
+        - `image: nacos/nacos-server`: based on the `nacos/nacos-server` image
+        - `environment`: environment variables
+            - `MODE: standalone`: start in standalone mode
+        - `ports`: port mapping, exposing port `8848`
+    - `mysql`: database
+        - `image: mysql:5.7.25`: image version `mysql:5.7.25`
+        - `environment`: environment variables
+            - `MYSQL_ROOT_PASSWORD: 123`: sets the MySQL root password to `123`
+        - `volumes`: data volume mounts for mysql `data` and `conf`, including prepared data
+    - `userservice`, `orderservice`, `gateway`: all are built temporarily from Dockerfiles
+2. Modify your `cloud-demo` project so that database and nacos addresses use the service names defined in `docker-compose`
 
-    因为微服务将来要部署为docker容器，而容器之间互联不是通过IP地址，而是通过容器名。这里我们将order-service、user-service、gateway服务的mysql、nacos地址都修改为基于容器名的访问。
+    Because the microservices will be deployed as Docker containers, inter-container communication uses container names rather than IP addresses. Here we change the `mysql` and `nacos` addresses in `order-service`, `user-service`, and `gateway` to container-name-based addresses.
 
 
     ```yaml
@@ -472,12 +472,11 @@ version: "3.8"
           server-addr: nacos:8848 # nacos服务地址
     ```
 
-3. 使用maven打包工具，将项目中的每个微服务都打包为app.jar
+3. Use Maven to package each microservice in the project as `app.jar`
 
-    接下来需要将我们的每个微服务都打包。因为之前查看到Dockerfile中的jar包名称都是app.jar，因此我们的每个微服务都需要用这个名称。
+    Next we need to package each microservice. Since the jar name expected by the Dockerfile is `app.jar`, each microservice needs to use this name.
 
-
-    可以通过修改pom.xml中的打包名称来实现，每个微服务都需要修改：
+    This can be done by changing the package final name in `pom.xml`; each microservice needs this modification:
 
 
     ```xml
@@ -493,28 +492,28 @@ version: "3.8"
     </build>
     ```
 
-4. 将打包好的app.jar拷贝到cloud-demo中的每一个对应的子目录中
-5. 将cloud-demo上传至虚拟机，利用 `docker-compose up -d` 来部署
+4. Copy the packaged `app.jar` into each corresponding subdirectory in `cloud-demo`
+5. Upload `cloud-demo` to the VM and deploy with `docker-compose up -d`
 
-# Docker镜像仓库
+# Docker Image Registry
 
-## 推送拉取镜像
+## Push and Pull Images
 
-推送镜像到私有镜像服务必须先tag，步骤如下：
+To push an image to a private image registry, you must tag it first. The steps are:
 
-- 重新tag本地镜像，名称前缀为私有仓库的地址：192.168.150.101:8080/
+- Retag the local image, prefixing the name with the private registry address: `192.168.150.101:8080/`
 
 ```plain text
 docker tag nginx:latest 192.168.150.101:8080/nginx:1.0
 ```
 
-- 推送镜像
+- Push the image
 
 ```plain text
 docker push 192.168.150.101:8080/nginx:1.0
 ```
 
-- 拉取镜像
+- Pull the image
 
 ```plain text
 docker pull 192.168.150.101:8080/nginx:1.0

@@ -991,7 +991,7 @@ For example, Path=/user/** matches by path, and this rule is handled by the clas
 | Host       | Request must be for a particular host (domain) | -  Host=**.somehost.org,**.anotherhost.org                                                               |
 | Method     | Request method must be a specific one       | - Method=GET,POST                                                                                        |
 | Path       | Request path must match specified rules      | - Path=/red/{segment},/blue/**                                                                           |
-| Query      | Request parameters must include specified parameters      | - Query=name, Jack或者-  Query=name                                                                        |
+| Query      | Request parameters must include specified parameters      | - Query=name, Jack or - Query=name                                                                         |
 | RemoteAddr | Requester's IP must fall within a specified range     | - RemoteAddr=192.168.1.1/24                                                                              |
 | Weight     | Weight handling              |                                                                                                          |
 

@@ -61,7 +61,7 @@ Represents metadata information that cannot be represented by other HTML meta-re
 >
 > ```html
 > <meta name="viewport" content="width=device-width,initial-scale=1.0">
-> <meta name="description" content="练习页面">
+> <meta name="description" content="Practice page">
 > <meta name="keywords" content="test">
 > ```
 >
@@ -177,7 +177,7 @@ Width, in CSS pixels
 > <audio
 >     controls
 >     src="/audios/bgm.mp3">
->         播放失败
+>         Playback failed
 > </audio>
 > ```
 >

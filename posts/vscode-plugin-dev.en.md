@@ -91,7 +91,7 @@ Open the generated project, you will see some important files and directories:
     }
     ```
 
-- **`src/extension.ts`**（或 **`extension.js`**）
+- **`src/extension.ts`** (or **`extension.js`**)
 
     This is the entry point of the extension; this code runs when the extension is activated.
 

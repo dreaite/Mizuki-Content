@@ -12,7 +12,7 @@ lang: 'en'
 
 # numpy
 
-## 介绍
+## Introduction
 
 [NumPy(Numerical Python)](http://www.numpy.org/) is an extension library for the Python language that supports extensive multi-dimensional array and matrix operations, and also provides a large collection of mathematical functions for array operations.
 
@@ -23,7 +23,7 @@ NumPy is a fast mathematical library, primarily used for array computations, and
 - Tools for integrating C/C++/Fortran code
 - Functions for linear algebra, Fourier transforms, random number generation, and more
 
-## 应用
+## Applications
 
 NumPy is typically used together with SciPy (Scientific Python) and Matplotlib (the plotting library)
 
@@ -37,42 +37,42 @@ Matplotlib is the visualization interface for Python programming language and it
 
 It provides an API for embedding plots into applications using common GUI toolkits such as Tkinter, wxPython, Qt, or GTK+.
 
-## 安装
+## Installation
 
-- 安装发行版
-- pip安装`pip3 install numpy scipy matplotlib`
+- Install from a distribution package
+- Install via pip: `pip3 install numpy scipy matplotlib`
 
-安装验证
+Installation verification
 
 ```python
 from numpy import *
 eye(4)
 ```
 
-# Numpy数据
+# NumPy Data
 
-## Numpy Ndarray对象
+## NumPy `ndarray` Object
 
-NumPy 最重要的一个特点是其 N 维数组对象 ndarray，它是一系列同类型数据的集合，以 0 下标为开始进行集合中元素的索引。
+One of NumPy's most important features is its N-dimensional array object, `ndarray`. It is a collection of elements of the same type, indexed from 0.
 
-ndarray 对象是用于存放同类型元素的多维数组。
+An `ndarray` object is a multidimensional array used to store elements of the same type.
 
-ndarray 中的每个元素在内存中都有相同存储大小的区域。
+Each element in an `ndarray` occupies a memory region of the same size.
 
-ndarray 内部由以下内容组成：
+An `ndarray` internally consists of the following parts:
 
-- 一个指向数据（内存或内存映射文件中的一块数据）的指针。
-- 数据类型或 dtype，描述在数组中的固定大小值的格子。
-- 一个表示数组形状（shape）的元组，表示各维度大小的元组。
-- 一个跨度元组（stride），其中的整数指的是为了前进到当前维度下一个元素需要"跨过"的字节数。
+- A pointer to the data (a block in memory or in a memory-mapped file).
+- A data type (`dtype`) that describes the fixed-size element slots in the array.
+- A tuple representing the array shape, i.e., the size of each dimension.
+- A stride tuple, whose integers indicate how many bytes to skip to move to the next element along each dimension.
 
 ![20240105220154.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/20240105220154.png)
 
-ndarray 对象由计算机内存的连续一维部分组成，并结合索引模式，将每个元素映射到内存块中的一个位置。内存块以行顺序(C风格)或列顺序(FORTRAN或MatLab风格，即前述的F样式)来保存元素。
+An `ndarray` consists of a contiguous one-dimensional memory block plus an indexing scheme that maps each element to a position in that block. Elements are stored in row-major order (C-style) or column-major order (FORTRAN/MatLab-style, i.e. F-order).
 
-### 创建Ndarray
+### Create `ndarray`
 
-创建一个 ndarray 只需调用 NumPy 的 array 函数即可：
+To create an `ndarray`, simply call NumPy's `array` function:
 
 
 ```python
@@ -87,7 +87,7 @@ numpy.array(object,dtype = None,copy = True,order = None,subok = False,ndmin = 0
 ```
 
 
-### 实例
+### Example
 
 
 ```python
@@ -108,24 +108,24 @@ print (a)
 ```
 
 
-## 数据类型
+## Data Types
 
-numpy 支持的数据类型比 Python 内置的类型要多很多，基本上可以和 C 语言的数据类型对应上，其中部分类型对应为 Python 内置的类型。
+NumPy supports many more data types than Python built-ins, and most of them correspond to C language data types. Some of them also map to Python built-in types.
 
 > bool,int,intc,intp,int8,int16,int32,int64,uint8,uint16,uint32,uint64,float,float16,float32,float64,complex_,complex128,complex64,complex128
 
-数据类型对象（numpy.dtype 类的实例）用来描述与数组对应的内存区域是如何使用，它描述了数据的以下几个方面：：
+A data type object (an instance of `numpy.dtype`) describes how the memory area corresponding to an array is used. It describes the following aspects of the data:
 
-- 数据的类型（整数，浮点数或者 Python 对象）
-- 数据的大小（例如， 整数使用多少个字节存储）
-- 数据的字节顺序（小端法或大端法）
-- 在结构化类型的情况下，字段的名称、每个字段的数据类型和每个字段所取的内存块的部分
-- 如果数据类型是子数组，那么它的形状和数据类型是什么。
+- The data type (integer, floating point, or Python object)
+- The size of the data (for example, how many bytes an integer uses)
+- The byte order of the data (little-endian or big-endian)
+- For structured types, the field names, each field's data type, and the portion of memory occupied by each field
+- If the data type is a sub-array, its shape and data type
 
-字节顺序是通过对数据类型预先设定 < 或 > 来决定的。 < 意味着小端法(最小值存储在最小的地址，即低位组放在最前面)。> 意味着大端法(最重要的字节存储在最小的地址，即高位组放在最前面)。
+Byte order is determined by prefixing the data type with `<` or `>`. `<` means little-endian (least significant bytes at lower addresses), and `>` means big-endian (most significant bytes at lower addresses).
 
 
-dtype 对象是使用以下语法构造的：
+A `dtype` object is constructed using the following syntax:
 
 
 ```python
@@ -137,7 +137,7 @@ numpy.dtype(object, align, copy)
 ```
 
 
-使用：
+Usage:
 
 
 ```python
@@ -154,44 +154,44 @@ print(a)
 ```
 
 
-每个内建类型都有一个唯一定义它的字符代码，如下：
+Each built-in type has a unique character code, as shown below:
 
 
-| 字符   | 对应类型            |
+| Character | Corresponding Type |
 | ---- | --------------- |
-| b    | 布尔型             |
-| i    | (有符号) 整型        |
-| u    | 无符号整型 integer   |
-| f    | 浮点型             |
-| c    | 复数浮点型           |
-| m    | timedelta（时间间隔） |
-| M    | datetime（日期时间）  |
-| O    | (Python) 对象     |
-| S, a | (byte-)字符串      |
+| b | Boolean |
+| i | (Signed) integer |
+| u | Unsigned integer |
+| f | Floating-point |
+| c | Complex floating-point |
+| m | `timedelta` (time interval) |
+| M | `datetime` (date-time) |
+| O | (Python) object |
+| S, a | (byte-)string |
 | U    | Unicode         |
-| V    | 原始数据 (void)     |
+| V | Raw data (`void`) |
 
 
-# Numpy数组
+# NumPy Arrays
 
-## Numpy数组属性
+## NumPy Array Attributes
 
-NumPy 数组的维数称为秩（rank），秩就是轴的数量，即数组的维度，一维数组的秩为 1，二维数组的秩为 2，以此类推。
-
-
-在 NumPy中，每一个线性的数组称为是一个轴（axis），也就是维度（dimensions）。比如说，二维数组相当于是两个一维数组，其中第一个一维数组中每个元素又是一个一维数组。
+The number of dimensions in a NumPy array is called its rank, which is the number of axes. A 1D array has rank 1, a 2D array has rank 2, and so on.
 
 
-所以一维数组就是 NumPy 中的轴（axis），第一个轴相当于是底层数组，第二个轴是底层数组里的数组。而轴的数量——秩，就是数组的维数。
+In NumPy, each linear array is called an axis, i.e., a dimension. For example, a 2D array can be seen as an array of 1D arrays.
 
 
-很多时候可以声明 axis。axis=0，表示沿着第 0 轴进行操作，即对每一列进行操作；axis=1，表示沿着第1轴进行操作，即对每一行进行操作。
+So in NumPy, a one-dimensional direction is an axis. The first axis corresponds to the outer array, and the second axis corresponds to arrays inside it. The number of axes (rank) is the number of dimensions.
 
 
-NumPy 的数组中比较重要 ndarray 对象属性有：
+In many operations you can specify `axis`. `axis=0` means operating along axis 0 (typically column-wise), while `axis=1` means operating along axis 1 (typically row-wise).
+
+
+Important `ndarray` attributes in NumPy arrays include:
 
 - ndarray.ndim
-秩，即轴的数量或维度的数量
+Rank, i.e., the number of axes or dimensions
 
     ```python
     import numpy as np
@@ -204,12 +204,12 @@ NumPy 的数组中比较重要 ndarray 对象属性有：
     ```
 
 - ndarray.shape
-数组的维度，对于矩阵，n 行 m 列
+Array dimensions; for a matrix, `n` rows by `m` columns
 
-    ndarray.shape 也可以用于调整数组大小。
+    `ndarray.shape` can also be used to reshape an array.
 
 
-    NumPy 也提供了 reshape 函数来调整数组大小。
+    NumPy also provides the `reshape` function to resize/reshape arrays.
 
 
     ```python
@@ -227,11 +227,11 @@ NumPy 的数组中比较重要 ndarray 对象属性有：
     ```
 
 - ndarray.size
-数组元素的总个数，相当于 .shape 中 n*m 的值
+The total number of array elements, equivalent to `n*m` in `.shape` (for matrices)
 - ndarray.dtype
-ndarray 对象的元素类型
+Element type of the `ndarray` object
 - ndarray.itemsize
-ndarray 对象中每个元素的大小，以字节为单位
+Size of each element in the `ndarray`, in bytes
 
     ```python
     import numpy as np
@@ -246,16 +246,16 @@ ndarray 对象中每个元素的大小，以字节为单位
     ```
 
 - ndarray.flags
-ndarray 对象的内存信息
+Memory information of the `ndarray` object
 
-    | 属性               | 描述                                  |
+    | Property | Description |
     | ---------------- | ----------------------------------- |
-    | C_CONTIGUOUS (C) | 数据是在一个单一的C风格的连续段中                   |
-    | F_CONTIGUOUS (F) | 数据是在一个单一的Fortran风格的连续段中             |
-    | OWNDATA (O)      | 数组拥有它所使用的内存或从另一个对象中借用它              |
-    | WRITEABLE (W)    | 数据区域可以被写入，将该值设置为 False，则数据为只读       |
-    | ALIGNED (A)      | 数据和所有元素都适当地对齐到硬件上                   |
-    | UPDATEIFCOPY (U) | 这个数组是其它数组的一个副本，当这个数组被释放时，原数组的内容将被更新 |
+    | C_CONTIGUOUS (C) | Data is stored in a single C-style contiguous segment |
+    | F_CONTIGUOUS (F) | Data is stored in a single Fortran-style contiguous segment |
+    | OWNDATA (O) | The array owns the memory it uses, or borrows it from another object |
+    | WRITEABLE (W) | The data area is writable; if set to `False`, the data becomes read-only |
+    | ALIGNED (A) | The data and all elements are properly aligned for hardware |
+    | UPDATEIFCOPY (U) | This array is a copy of another array; when released, the original array content is updated |
 
 
     ```python
@@ -266,19 +266,19 @@ ndarray 对象的内存信息
     ```
 
 - ndarray.real
-ndarray元素的实部
+Real part of `ndarray` elements
 - ndarray.imag
-ndarray 元素的虚部
+Imaginary part of `ndarray` elements
 - ndarray.data
-包含实际数组元素的缓冲区，由于一般通过数组的索引获取元素，所以通常不需要使用这个属性
+Buffer containing the actual array elements. Since elements are usually accessed via indexing, this attribute is not often used directly.
 
-## 创建Numpy数组
+## Creating NumPy Arrays
 
-ndarray 数组除了可以使用底层 ndarray 构造器来创建外，也可以通过以下几种方式来创建。
+Besides using the underlying `ndarray` constructor, NumPy arrays can also be created in the following ways.
 
 - numpy.empty
 
-    numpy.empty 方法用来创建一个指定形状（shape）、数据类型（dtype）且未初始化的数组：
+    The `numpy.empty` method creates an uninitialized array with a specified shape and data type:
 
 
     ```python
@@ -290,7 +290,7 @@ ndarray 数组除了可以使用底层 ndarray 构造器来创建外，也可以
     ```
 
 
-    使用：
+    Usage:
 
 
     ```python
@@ -301,7 +301,7 @@ ndarray 数组除了可以使用底层 ndarray 构造器来创建外，也可以
 
 - numpy.zeros
 
-    创建指定大小的数组，数组元素以 0 来填充：
+    Create an array of the specified size, filled with `0`s:
 
 
     ```python
@@ -313,7 +313,7 @@ ndarray 数组除了可以使用底层 ndarray 构造器来创建外，也可以
     ```
 
 
-    使用：
+    Usage:
 
 
     ```python
@@ -334,7 +334,7 @@ ndarray 数组除了可以使用底层 ndarray 构造器来创建外，也可以
 
 - numpy.ones
 
-    创建指定形状的数组，数组元素以 1 来填充：
+    Create an array of the specified shape, filled with `1`s:
 
 
     ```python
@@ -346,7 +346,7 @@ ndarray 数组除了可以使用底层 ndarray 构造器来创建外，也可以
     ```
 
 
-    使用：
+    Usage:
 
 
     ```python
@@ -363,13 +363,13 @@ ndarray 数组除了可以使用底层 ndarray 构造器来创建外，也可以
 
 - numpy.zeros_like/ones_like
 
-    numpy.zeros_like 用于创建一个与给定数组具有相同形状的数组，数组元素以 0 来填充。
+    `numpy.zeros_like` creates an array with the same shape as a given array, filled with `0`s.
 
 
-    numpy.zeros 和 numpy.zeros_like 都是用于创建一个指定形状的数组，其中所有元素都是 0。
+    Both `numpy.zeros` and `numpy.zeros_like` are used to create arrays whose elements are all `0`.
 
 
-    它们之间的区别在于：numpy.zeros 可以直接指定要创建的数组的形状，而 numpy.zeros_like 则是创建一个与给定数组具有相同形状的数组。
+    The difference is that `numpy.zeros` directly specifies the shape to create, while `numpy.zeros_like` creates an array with the same shape as an existing array.
 
 
     ```python
@@ -383,7 +383,7 @@ ndarray 数组除了可以使用底层 ndarray 构造器来创建外，也可以
     ```
 
 
-    使用：
+    Usage:
 
 
     ```python
@@ -398,11 +398,11 @@ ndarray 数组除了可以使用底层 ndarray 构造器来创建外，也可以
     ```
 
 
-### 从已有数组创建
+### Create from Existing Arrays
 
 - numpy.asarray
 
-    numpy.asarray 类似 numpy.array，但 numpy.asarray 参数只有三个，比 numpy.array 少两个。
+    `numpy.asarray` is similar to `numpy.array`, but `numpy.asarray` only has three parameters, two fewer than `numpy.array`.
 
 
     ```python
@@ -439,12 +439,12 @@ ndarray 数组除了可以使用底层 ndarray 构造器来创建外，也可以
 
 - numpy.frombuffer
 
-    numpy.frombuffer 用于实现动态数组。
+    `numpy.frombuffer` is used to create arrays from buffer-like objects.
 
 
-    numpy.frombuffer 接受 buffer 输入参数，以流的形式读入转化成 ndarray 对象。
+    `numpy.frombuffer` accepts a buffer input and reads it as a stream, converting it into an `ndarray` object.
 
-    > 注意：buffer 是字符串的时候，Python3 默认 str 是 Unicode 类型，所以要转成 bytestring 在原 str 前加上 b。
+    > Note: When the buffer is a string, Python 3 uses Unicode `str` by default, so convert it to a bytestring by adding `b` before the original string.
 
     ```python
     numpy.frombuffer(buffer, dtype = float, count = -1, offset = 0)
@@ -466,7 +466,7 @@ ndarray 数组除了可以使用底层 ndarray 构造器来创建外，也可以
 
 - numpy.fromiter
 
-    numpy.fromiter 方法从可迭代对象中建立 ndarray 对象，返回一维数组。
+    The `numpy.fromiter` method creates an `ndarray` object from an iterable and returns a one-dimensional array.
 
 
     ```python
@@ -490,14 +490,14 @@ ndarray 数组除了可以使用底层 ndarray 构造器来创建外，也可以
     ```
 
 
-### 从数值范围创建
+### Create from Numeric Ranges
 
 - numpy.arange
 
-    numpy 包中的使用 arange 函数创建数值范围并返回 ndarray 对象，函数格式如下：
+    In NumPy, the `arange` function is used to create a numeric range and return an `ndarray` object. The function format is:
 
 
-    根据 start 与 stop 指定的范围以及 step 设定的步长，生成一个 ndarray。
+    An `ndarray` is generated according to the range specified by `start` and `stop` and the step size set by `step`.
 
 
     ```python
@@ -526,7 +526,7 @@ ndarray 数组除了可以使用底层 ndarray 构造器来创建外，也可以
 
 - numpy.linspace
 
-    numpy.linspace 函数用于创建一个一维数组，数组是一个等差数列构成的，格式如下：
+    The `numpy.linspace` function is used to create a one-dimensional array made of an arithmetic progression. The format is:
 
 
     ```python
@@ -560,7 +560,7 @@ ndarray 数组除了可以使用底层 ndarray 构造器来创建外，也可以
 
 - numpy.logspace
 
-    numpy.logspace 函数用于创建一个于等比数列。格式如下：
+    The `numpy.logspace` function is used to create a geometric progression. The format is:
 
 
     ```python
@@ -586,19 +586,19 @@ ndarray 数组除了可以使用底层 ndarray 构造器来创建外，也可以
     ```
 
 
-## 数组的切片和索引
+## Array Slicing and Indexing
 
-### 切片和索引
+### Slicing and Indexing
 
-ndarray对象的内容可以通过索引或切片来访问和修改，与 Python 中 list 的切片操作一样。
+The contents of an `ndarray` can be accessed and modified through indexing or slicing, similar to slicing operations on Python lists.
 
 
-ndarray 数组可以基于 0 - n 的下标进行索引，切片对象可以通过内置的 slice 函数，并设置 start, stop 及 step 参数进行，从原数组中切割出一个新数组。
+`ndarray` arrays can be indexed with positions from `0` to `n`. Slices can be created with Python's built-in `slice` function by setting `start`, `stop`, and `step`, producing a new array from the original one.
 
-> 冒号 : 的解释：如果只放置一个参数，如 [2]，将返回与该索引相对应的单个元素。  
-> 如果为 [2:]，表示从该索引开始以后的所有项都将被提取。如果使用了两个参数，如 [2:7]，那么则提取两个索引(不包括停止索引)之间的项。
+> Explanation of `:`: if only one index is provided, such as `[2]`, it returns the single element at that index.
+> If it is `[2:]`, it means all items after that index are selected. If two parameters are used, such as `[2:7]`, it selects items between the two indices (excluding the stop index).
 >
-> 切片还可以包括省略号 …，来使选择元组的长度与数组的维度相同。 如果在行位置使用省略号，它将返回包含行中元素的 ndarray。
+> Slices can also include an ellipsis `...` to make the selection tuple length match the array dimensions. If the ellipsis is used in the row position, it returns an `ndarray` containing the elements in the row.
 >
 >
 
@@ -637,20 +637,20 @@ print (a[...,1:])  # 第2列及剩下的所有元素
 ```
 
 
-## 高级索引
+## Advanced Indexing
 
-NumPy 比一般的 Python 序列提供更多的索引方式。
-
-
-除了之前看到的用整数和切片的索引外，数组可以由整数数组索引、布尔索引及花式索引。
+NumPy provides more indexing methods than ordinary Python sequences.
 
 
-NumPy 中的高级索引指的是使用整数数组、布尔数组或者其他序列来访问数组的元素。相比于基本索引，高级索引可以访问到数组中的任意元素，并且可以用来对数组进行复杂的操作和修改。
+In addition to integer and slice indexing, arrays can also be indexed with integer arrays, boolean indexing, and fancy indexing.
 
 
-### 整数数组索引
+Advanced indexing in NumPy refers to using integer arrays, boolean arrays, or other sequences to access array elements. Compared with basic indexing, advanced indexing can access arbitrary elements and is useful for more complex operations and modifications.
 
-整数数组索引是指使用一个数组来访问另一个数组的元素。这个数组中的每个元素都是目标数组中某个维度上的索引值。
+
+### Integer Array Indexing
+
+Integer array indexing means using one array to access elements in another array. Each element in the indexing array is an index value along some dimension of the target array.
 
 
 ```python
@@ -683,12 +683,12 @@ print(d)
 ```
 
 
-### 布尔索引
+### Boolean Indexing
 
-我们可以通过一个布尔数组来索引目标数组。
+We can index a target array using a boolean array.
 
 
-布尔索引通过布尔运算（如：比较运算符）来获取符合指定条件的元素的数组。
+Boolean indexing uses boolean operations (such as comparison operators) to obtain an array of elements that satisfy specified conditions.
 
 
 ```python
@@ -710,22 +710,22 @@ print (a[np.iscomplex(a)])
 ```
 
 
-### 花式索引
+### Fancy Indexing
 
-花式索引指的是利用整数数组进行索引。
-
-
-花式索引根据索引数组的值作为目标数组的某个轴的下标来取值。
+Fancy indexing refers to indexing with integer arrays.
 
 
-对于使用一维整型数组作为索引，如果目标是一维数组，那么索引的结果就是对应位置的元素，如果目标是二维数组，那么就是对应下标的行。
+Fancy indexing retrieves values by using the values in the index array as indices along a target array axis.
 
 
-花式索引跟切片不一样，它总是将数据复制到新数组中。
+When using a one-dimensional integer array as an index: if the target is a 1D array, the result is the elements at those positions; if the target is a 2D array, the result is the rows at those indices.
 
-- 一维数组
 
-    一维数组只有一个轴 axis = 0，所以一维数组就在 axis = 0 这个轴上取值：
+Unlike slicing, fancy indexing always copies data into a new array.
+
+- One-dimensional array
+
+    A two-dimensional array has two axes, so indexing can retrieve data along the corresponding axes:
 
 
     ```python
@@ -737,9 +737,9 @@ print (a[np.iscomplex(a)])
     print(x[[0,2]])
     ```
 
-- 二维数组
+- Two-dimensional array
 
-    一维数组只有一个轴 axis = 0，所以一维数组就在 axis = 0 这个轴上取值：
+    A two-dimensional array has two axes, so indexing can retrieve data along the corresponding axes:
 
 
     ```python
@@ -755,9 +755,9 @@ print (a[np.iscomplex(a)])
     print (x[[-4,-2,-1,-7]])
     ```
 
-- 传入多个索引数组
+- Pass in multiple index arrays
 
-    np.ix_ 函数就是输入两个数组，产生笛卡尔积的映射关系。
+    The `np.ix_` function takes two arrays and produces index arrays representing their Cartesian-product mapping.
 
 
     ```python
@@ -768,15 +768,15 @@ print (a[np.iscomplex(a)])
     ```
 
 
-## 广播 broadcast
+## Broadcasting
 
-广播(Broadcast)是 numpy 对不同形状(shape)的数组进行数值计算的方式， 对数组的算术运算通常在相应的元素上进行。
-
-
-如果两个数组 a 和 b 形状相同，即满足 a.shape == b.shape，那么 a*b 的结果就是 a 与 b 数组对应位相乘。这要求维数相同，且各维度的长度相同。
+Broadcasting is NumPy's way of performing numeric computations on arrays of different shapes. Arithmetic operations on arrays are usually performed element-wise.
 
 
-当运算中的 2 个数组的形状不同时，numpy 将自动触发广播机制。4x3 的二维数组与长为 3 的一维数组相加，等效于把数组 b 在二维上重复 4 次再运算：
+If two arrays `a` and `b` have the same shape, i.e. `a.shape == b.shape`, then `a*b` multiplies corresponding elements. This requires the same number of dimensions and the same length in each dimension.
+
+
+When the shapes of two arrays in an operation are different, NumPy automatically triggers broadcasting. Adding a `4x3` 2D array and a length-3 1D array is equivalent to repeating array `b` four times along a new dimension and then performing the operation:
 
 
 ```python
@@ -797,23 +797,23 @@ print(a + bb)
 ![broadcast.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/broadcast.png)
 
 
-广播的规则:
+Broadcasting rules:
 
-1. 让所有输入数组都向其中形状最长的数组看齐，形状中不足的部分都通过在前面加 1 补齐。
-2. 输出数组的形状是输入数组形状的各个维度上的最大值。
-3. 如果输入数组的某个维度和输出数组的对应维度的长度相同或者其长度为 1 时，这个数组能够用来计算，否则出错。
-4. 当输入数组的某个维度的长度为 1 时，沿着此维度运算时都用此维度上的第一组值。
+1. Align all input arrays to the array with the most dimensions; prepend `1`s to shapes with fewer dimensions.
+2. The output shape takes the maximum size along each dimension of the input shapes.
+3. For each dimension, an input array can participate if its length matches the output dimension or its length is `1`; otherwise an error occurs.
+4. When an input array has length `1` on a dimension, the first value along that dimension is reused during computation.
 
-若条件不满足，抛出 "ValueError: frames are not aligned" 异常。
+If the conditions are not satisfied, a `ValueError: frames are not aligned` exception is raised.
 
 
-# 数组操作
+# Array Operations
 
-## 迭代数组
+## Iterating Arrays
 
-NumPy 迭代器对象 numpy.nditer 提供了一种灵活访问一个或者多个数组元素的方式。
+The NumPy iterator object `numpy.nditer` provides a flexible way to access elements of one or more arrays.
 
-迭代器最基本的任务的可以完成对数组元素的访问。
+The most basic task of an iterator is to access array elements.
 
 
 ```python
@@ -837,13 +837,13 @@ print ('\\n')
 ```
 
 
-从上述例子可以看出，a 和 a.T 的遍历顺序是一样的，也就是他们在内存中的存储顺序也是一样的，但是 a.T.copy(order = 'C') 的遍历结果是不同的，那是因为它和前两种的存储方式是不一样的。nditer默认是按K顺序，即尽可能接近数组元素在内存中的显示数据。
+From the example above, we can see that `a` and `a.T` are traversed in the same order, which means their storage order in memory is also the same. However, the traversal result of `a.T.copy(order = 'C')` is different because its storage layout differs from the first two. By default, `nditer` uses K-order, i.e., an order as close as possible to the array's actual memory layout.
 
 
-### 控制遍历顺序
+### Control Traversal Order
 
-- for x in np.nditer(a, order='F'):Fortran order，即是列序优先；
-- for x in np.nditer(a.T, order='C'):C order，即是行序优先；
+- `for x in np.nditer(a, order='F')` : Fortran order, i.e., column-major traversal;
+- `for x in np.nditer(a.T, order='C')` : C order, i.e., row-major traversal;
 
 ```python
 import numpy as np
@@ -890,12 +890,12 @@ import numpy as np
 
 a = np.arange(0,60,5)
 a = a.reshape(3,4)
-print ('原始数组是：')
+print ('Original array:')
 print (a)
 print ('\\n')
 for x in np.nditer(a, op_flags=['readwrite']):
     x[...]=2*x
-print ('修改后的数组是：')
+print ('Modified array:')
 print (a)
 ```
 
@@ -917,10 +917,10 @@ nditer 类的构造器拥有 flags 参数，它可以接受下列值：
 import numpy as np
 a = np.arange(0,60,5)
 a = a.reshape(3,4)
-print ('原始数组是：')
+print ('Original array:')
 print (a)
 print ('\\n')
-print ('修改后的数组是：')
+print ('Modified array:')
 for x in np.nditer(a, flags =  ['external_loop'], order =  'F'):
    print (x, end=", " )
 ```
@@ -936,14 +936,14 @@ import numpy as np
 
 a = np.arange(0,60,5)
 a = a.reshape(3,4)
-print  ('第一个数组为：')
+print  ('The first array is:')
 print (a)
 print  ('\\n')
-print ('第二个数组为：')
+print ('The second array is:')
 b = np.array([1,  2,  3,  4], dtype =  int)
 print (b)
 print ('\\n')
-print ('修改后的数组为：')
+print ('Modified array is:')
 for x,y in np.nditer([a,b]):
     print ("%d:%d"  %  (x,y), end=", " )
 ```

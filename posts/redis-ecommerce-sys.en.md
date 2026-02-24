@@ -16,12 +16,12 @@ Redis in Practice - Mall System
 
 - SMS login: implemented using Redis-shared sessions
 - Merchant query cache: understand issues such as cache breakdown, cache penetration, cache avalanche, etc.
-- Coupon 秒杀: Redis counters, combined with Lua to achieve high-performance Redis operations, while also understanding the principles of Redis distributed locks, including Redis' three types of message queues
+- Coupon flash sale: Redis counters, combined with Lua to achieve high-performance Redis operations, while also understanding the principles of Redis distributed locks, including Redis's three types of message queues
 - Nearby merchants: use Redis GEOHash to handle geographic coordinates
 - UV statistics: implement statistics using Redis
 - User check-in: Redis Bitmap data statistics
 - Friend follows: follow, unfollow, mutual follows, and related features based on Set
-- Shop探店: like list operations based on List, and leaderboard for likes based on SortedSet
+- Shop exploration: like-list operations based on List, and a like leaderboard based on SortedSet
 
 Project structure model:
 
@@ -762,7 +762,7 @@ public class CacheClient {
 ```
 
 
-# Coupon 秒杀
+# Coupon Flash Sale
 
 
 ## Global ID generation
@@ -814,7 +814,7 @@ public class RedisIdWorker {
 }
 ```
 
-Add 秒杀券：
+Add flash-sale voucher:
 
 
 ```java

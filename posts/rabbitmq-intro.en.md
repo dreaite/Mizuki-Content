@@ -10,7 +10,7 @@ draft: false
 lang: 'en'
 ---
 
-消息队列-RabbitMQ
+Message Queue - RabbitMQ
 
 # Getting to Know MQ
 
@@ -357,7 +357,7 @@ spring:
 ```
 
 
-Then in the consumer service, create a class SpringRabbitListener in the `cn.itcast.mq.listener` package, code如下：
+Then in the consumer service, create a class `SpringRabbitListener` in the `cn.itcast.mq.listener` package, as shown below:
 
 ```java
 package cn.itcast.mq.listener;
@@ -460,7 +460,7 @@ In the publish/subscriber model, there is an extra Exchange role, and the proces
 - Consumer: consumer, as before, subscribes to queues; no change
 - Queue: message queue, as before, receives and caches messages
 
-Exchange (交换机) only forwards messages; it does not store messages. Therefore, if there are no queues bound to the Exchange, or if no queues match the routing rules, messages will be lost!
+Exchange only forwards messages; it does not store messages. Therefore, if there are no queues bound to the Exchange, or if no queues match the routing rules, messages will be lost!
 
 ## Fanout
 

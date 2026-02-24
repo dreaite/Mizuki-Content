@@ -16,7 +16,7 @@ lang: 'en'
 
 Here we first understand URI and URL. URI stands for Uniform Resource Identifier, and URL stands for Uniform Resource Locator.
 
-For example, [https://github.com/favicon.ico，它是一个] URL, which is also a URI. There is such an icon resource, and we use URL/URI to uniquely specify its access method, which includes the access protocol https, the path (the root directory), and the resource name favicon.ico. Through such a link, we can locate this resource on the Internet, which is the URL/URI.
+For example, [https://github.com/favicon.ico] is a URL, and it is also a URI. This icon resource can be uniquely identified by a URL/URI, which includes the access protocol `https`, the path (root directory), and the resource name `favicon.ico`. Through such a link, we can locate this resource on the Internet, which is exactly what a URL/URI is used for.
 
 URL is a subset of URI, meaning every URL is a URI, but not every URI is a URL. Then, what URI is not a URL? URI also includes a subclass called URN, whose full name is Uniform Resource Name. URN only names a resource and does not specify how to locate it, for example urn:isbn:0451450523 specifies a book's ISBN, which can uniquely identify the book but does not specify where to locate it; that is URN.
 

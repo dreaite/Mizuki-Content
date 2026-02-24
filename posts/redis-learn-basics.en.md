@@ -17,58 +17,58 @@ Redis is a key-value NoSQL database. There are two keywords here:
 - Key-value type
 - NoSql
 
-其中**键值型**，是指Redis中存储的数据都是以key.value对的形式存储，而value的形式多种多样，可以是字符串.数值.甚至json：
+Here, **key-value** means that data in Redis is stored as `key.value` pairs, and the value can take many forms, such as strings, numbers, or even JSON.
 
-# Redis 入门
+# Redis Basics
 
 ## NoSQL
 
-**NoSql**可以翻译做Not Only Sql（不仅仅是SQL），或者是No Sql（非Sql的）数据库。是相对于传统关系型数据库而言，有很大差异的一种特殊的数据库，因此也称之为**非关系型数据库**。
+**NoSQL** can be understood as "Not Only SQL" or "No SQL." Compared with traditional relational databases, it is a special kind of database with major differences, so it is also called a **non-relational database**.
 
-- 与关系型数据库对比
+- Comparison with relational databases
 
-传统关系型数据库是结构化数据，每一张表都有严格的约束信息：字段名.字段数据类型.字段约束等等信息，插入的数据必须遵守这些约束：
+Traditional relational databases store structured data. Each table has strict constraints such as field names, field types, and field constraints, and inserted data must follow these rules.
 
-- 而NoSql则对数据库格式没有严格约束，往往形式松散，自由。可以是键值型；文档型；图格式
+- NoSQL databases usually do not strictly constrain data formats. They are often more flexible and can be key-value, document, or graph based.
 
-传统数据库的表与表之间往往存在关联，例如外键
+Tables in traditional databases are often related to each other, for example through foreign keys.
 
-而非关系型数据库不存在关联关系，要维护关系要么靠代码中的业务逻辑，要么靠数据之间的耦合
+Non-relational databases generally do not have built-in table relationships. Relationships must be maintained either by business logic in code or by coupling between pieces of data.
 
-传统关系型数据库会基于Sql语句做查询，语法有统一标准；
+Traditional relational databases use SQL for queries, with a relatively unified syntax standard.
 
-而不同的非关系数据库查询语法差异极大，五花八门各种各样。
+By contrast, different NoSQL databases can have very different query syntaxes.
 
-传统关系型数据库能满足事务ACID的原则
+Traditional relational databases can satisfy ACID transaction properties.
 
-而非关系型数据库往往不支持事务，或者不能严格保证ACID的特性，只能实现基本的一致性。
+NoSQL databases often do not support transactions, or cannot strictly guarantee ACID properties, and instead provide basic consistency.
 
 ![kZP40dQ.png](https://i.imgur.com/kZP40dQ.png)
 
-- 存储方式
-    - 关系型数据库基于磁盘进行存储，会有大量的磁盘IO，对性能有一定影响
-    - 非关系型数据库，他们的操作更多的是依赖于内存来操作，内存的读写速度会非常快，性能自然会好一些
-- 扩展性
-    - 关系型数据库集群模式一般是主从，主从数据一致，起到数据备份的作用，称为垂直扩展。
-    - 非关系型数据库可以将数据拆分，存储在不同机器上，可以保存海量数据，解决内存大小有限的问题。称为水平扩展。
-    - 关系型数据库因为表之间存在关联关系，如果做水平扩展会给数据查询带来很多麻烦
+- Storage method
+    - Relational databases are disk-based, which involves a lot of disk I/O and can affect performance.
+    - NoSQL databases rely more on in-memory operations. Memory read/write speed is much faster, so performance is usually better.
+- Scalability
+    - Relational database clustering is usually master-slave, where data consistency between master and slave is used for backup; this is often considered vertical scaling.
+    - NoSQL databases can split data across multiple machines, store massive amounts of data, and solve memory size limitations. This is horizontal scaling.
+    - Because relational databases have inter-table relationships, horizontal scaling can make data queries much more complicated.
 
 ## Redis
 
-[Redis](https://redis.io/)全称是**Re**mote  **D**ictionary **S**erver 远程词典服务器，是一个基于内存的键值型NoSQL数据库。
+[Redis](https://redis.io/) stands for **Re**mote **D**ictionary **S**erver. It is an in-memory key-value NoSQL database.
 
-**特征**：
+**Features**:
 
-- 键值（key-value）型，value支持多种不同数据结构，功能丰富
-- 单线程，每个命令具备原子性
-- 低延迟，速度快（基于内存.IO多路复用.良好的编码）。
-- 支持数据持久化
-- 支持主从集群.分片集群
-- 支持多语言客户端
+- Key-value model; values support many data structures and are very flexible
+- Single-threaded, with each command being atomic
+- Low latency and high speed (thanks to memory, I/O multiplexing, and efficient implementation)
+- Supports data persistence
+- Supports master-slave replication and sharding clusters
+- Supports multi-language clients
 
-## Redis 安装
+## Redis Installation
 
-通过Docker安装
+Install via Docker
 
 ```shell
 docker search redis
@@ -78,19 +78,19 @@ docker run --restart=always -p 6379:6379 --name myredis -v /home/redis/myredis/m
 docker exec -it <容器名> /bin/bash
 ```
 
-# Redis 常见命令
+# Common Redis Commands
 
-## Redis 数据结构介绍
+## Redis Data Structure Overview
 
-Redis是一个key-value的数据库，key一般是String类型，不过value的类型多种多样：
+Redis is a key-value database. Keys are usually of type `String`, while values can be of many different types:
 
 ![image-20230806154902437.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/image-20230806154902437.png)
 
-## Redis 通用命令
+## Redis Generic Commands
 
-通用指令是部分数据类型的，都可以使用的指令，常见的有：
+Generic commands can be used across multiple data types. Common ones include:
 
-- KEYS：查看符合模板的所有key
+- `KEYS`: View all keys matching a pattern
 
 ```plain text
 127.0.0.1:6379> keys *
@@ -100,9 +100,9 @@ Redis是一个key-value的数据库，key一般是String类型，不过value的�
 1) "age"
 ```
 
-**在生产环境下，不推荐使用keys 命令，因为这个命令在key过多的情况下，效率不高**
+**In production environments, `KEYS` is not recommended because it becomes inefficient when there are too many keys.**
 
-- DEL：删除一个指定的key
+- `DEL`: Delete a specified key
 
 ```plain text
 127.0.0.1:6379> del name #删除单个
@@ -127,7 +127,7 @@ OK
 1) "age"	#只剩下一个了
 ```
 
-- EXISTS：判断key是否存在
+- `EXISTS`: Check whether a key exists
 
 ```plain text
 127.0.0.1:6379> exists age
@@ -137,8 +137,8 @@ OK
 (integer) 0
 ```
 
-- EXPIRE：给一个key设置有效期，有效期到期时该key会被自动删除
-- TTL：查看一个KEY的剩余有效期
+- `EXPIRE`: Set a TTL for a key; the key is automatically deleted when it expires
+- `TTL`: Check the remaining lifetime of a key
 
 ```plain text
 127.0.0.1:6379> expire age 10
@@ -164,152 +164,152 @@ OK
 ```
 
 
-## Redis 命令-String命令
+## Redis Commands - String
 
-String类型，也就是字符串类型，是Redis中最简单的存储类型。
+The String type is the simplest storage type in Redis.
 
-其value是字符串，不过根据字符串的格式不同，又可以分为3类：
+Its value is a string, but based on the format it can be divided into three categories:
 
-- string：普通字符串
-- int：整数类型，可以做自增.自减操作
-- float：浮点类型，可以做自增.自减操作
+- `string`: regular string
+- `int`: integer type, supports increment/decrement
+- `float`: floating-point type, supports increment/decrement
 
-String的常见命令有：
+Common String commands include:
 
-- SET：添加或者修改已经存在的一个String类型的键值对
-- GET：根据key获取String类型的value
-- MSET：批量添加多个String类型的键值对
-- MGET：根据多个key获取多个String类型的value
-- INCR：让一个整型的key自增1
-- INCRBY:让一个整型的key自增并指定步长，例如：incrby num 2 让num值自增2
-- INCRBYFLOAT：让一个浮点类型的数字自增并指定步长
-- SETNX：添加一个String类型的键值对，前提是这个key不存在，否则不执行
-- SETEX：添加一个String类型的键值对，并且指定有效期
+- `SET`: Add or modify a String key-value pair
+- `GET`: Get the String value by key
+- `MSET`: Batch set multiple String key-value pairs
+- `MGET`: Batch get String values by multiple keys
+- `INCR`: Increment an integer key by 1
+- `INCRBY`: Increment an integer key by a specified step, e.g. `incrby num 2`
+- `INCRBYFLOAT`: Increment a floating-point value by a specified step
+- `SETNX`: Set a String key-value pair only if the key does not exist
+- `SETEX`: Set a String key-value pair with an expiration time
 
-## Redis 命令-Key 的层级结构
+## Redis Commands - Hierarchical Key Naming
 
-Redis没有类似MySQL中的Table的概念，我们该如何区分不同类型的key呢？
+Redis does not have a concept like MySQL tables, so how do we distinguish different types of keys?
 
-Redis的key允许有多个单词形成层级结构，多个单词之间用':'隔开
+Redis keys can use multiple words to form a hierarchical structure, separated by `:`.
 
-这个格式并非固定，也可以根据自己的需求来删除或添加词条。
+This format is not fixed; you can add or remove segments based on your own needs.
 
-例如我们的项目名称叫 heima，有user和product两种不同类型的数据，我们可以这样定义key：
+For example, if the project name is `heima` and we have `user` and `product` data, we can define keys like this:
 
-- user相关的key：**heima:user:1**
-- product相关的key：**heima:product:1**
+- User-related key: **heima:user:1**
+- Product-related key: **heima:product:1**
 
-如果Value是一个Java对象，例如一个User对象，则可以将对象序列化为JSON字符串后存储：
+If the value is a Java object (for example, a `User` object), you can serialize it into a JSON string and store it:
 
 | **KEY**         | **VALUE**                               |
 | --------------- | --------------------------------------- |
 | heima:user:1    | {"id":1, "name": "Jack", "age": 21}     |
-| heima:product:1 | {"id":1, "name": "小米11", "price": 4999} |
+| heima:product:1 | {"id":1, "name": "Xiaomi 11", "price": 4999} |
 
-一旦我们向redis采用这样的方式存储，那么在可视化界面中，redis会以层级结构来进行存储，更加方便Redis获取数据
+Once data is stored in Redis this way, visual tools can display keys hierarchically, which makes data management more convenient.
 
 
-## Redis 命令-Hash命令
+## Redis Commands - Hash
 
-Hash类型，也叫散列，其value是一个无序字典，类似于Java中的HashMap结构。
+The Hash type is an unordered dictionary, similar to a `HashMap` in Java.
 
-String结构是将对象序列化为JSON字符串后存储，当需要修改对象某个字段时很不方便：
+With the String approach, objects are stored as serialized JSON strings, which is inconvenient when you need to modify a single field.
 
-Hash结构可以将对象中的每个字段独立存储，可以针对单个字段做CRUD：
+The Hash structure stores each field of an object independently, making CRUD operations on individual fields easier.
 
-**Hash类型的常见命令**
+**Common Hash commands**
 
-- HSET key field value：添加或者修改hash类型key的field的值
-- HGET key field：获取一个hash类型key的field的值
-- HMSET：批量添加多个hash类型key的field的值
-- HMGET：批量获取多个hash类型key的field的值
-- HGETALL：获取一个hash类型的key中的所有的field和value
-- HKEYS：获取一个hash类型的key中的所有的field
-- HINCRBY:让一个hash类型key的字段值自增并指定步长
-- HSETNX：添加一个hash类型的key的field值，前提是这个field不存在，否则不执行
+- `HSET key field value`: Add or modify the value of a field in a hash key
+- `HGET key field`: Get the value of a field in a hash key
+- `HMSET`: Batch set multiple fields in a hash key
+- `HMGET`: Batch get multiple fields from a hash key
+- `HGETALL`: Get all fields and values in a hash key
+- `HKEYS`: Get all fields in a hash key
+- `HINCRBY`: Increment a numeric field in a hash key by a specified step
+- `HSETNX`: Set a field in a hash key only if that field does not exist
 
-## Redis 命令-List 命令
+## Redis Commands - List
 
-Redis中的List类型与Java中的LinkedList类似，可以看做是一个双向链表结构。既可以支持正向检索和也可以支持反向检索。
+The List type in Redis is similar to Java's `LinkedList`. It can be viewed as a doubly linked list and supports both forward and reverse access.
 
-特征也与LinkedList类似：
+Its characteristics are also similar to `LinkedList`:
 
-- 有序
-- 元素可以重复
-- 插入和删除快
-- 查询速度一般
+- Ordered
+- Elements can be duplicated
+- Fast insertion and deletion
+- Average query performance
 
-常用来存储一个有序数据，例如：朋友圈点赞列表，评论列表等。
+It is commonly used to store ordered data, such as like lists or comment lists.
 
-**List的常见命令有：**
+**Common List commands include:**
 
-- LPUSH key element ... ：向列表左侧插入一个或多个元素
-- LPOP key：移除并返回列表左侧的第一个元素，没有则返回nil
-- RPUSH key element ... ：向列表右侧插入一个或多个元素
-- RPOP key：移除并返回列表右侧的第一个元素
-- LRANGE key star end：返回一段角标范围内的所有元素
-- BLPOP和BRPOP：与LPOP和RPOP类似，只不过在没有元素时等待指定时间，而不是直接返回nil
+- `LPUSH key element ...`: Insert one or more elements on the left side of the list
+- `LPOP key`: Remove and return the first element on the left side of the list; returns `nil` if none exists
+- `RPUSH key element ...`: Insert one or more elements on the right side of the list
+- `RPOP key`: Remove and return the first element on the right side of the list
+- `LRANGE key start end`: Return all elements in an index range
+- `BLPOP` / `BRPOP`: Similar to `LPOP` and `RPOP`, but wait for a specified time when no element exists instead of returning `nil` immediately
 
-## Redis 命令-Set 命令
+## Redis Commands - Set
 
-Redis的Set结构与Java中的HashSet类似，可以看做是一个value为null的HashMap。因为也是一个hash表，因此具备与HashSet类似的特征：
+Redis Set is similar to Java's `HashSet`, and can be viewed as a `HashMap` whose values are `null`. Since it is also hash-table-based, it has characteristics similar to `HashSet`:
 
-- 无序
-- 元素不可重复
-- 查找快
-- 支持交集.并集.差集等功能
+- Unordered
+- Elements are unique
+- Fast lookup
+- Supports intersection, union, and difference operations
 
-**Set类型的常见命令**
+**Common Set commands**
 
-- SADD key member ... ：向set中添加一个或多个元素
-- SREM key member ... : 移除set中的指定元素
-- SCARD key： 返回set中元素的个数
-- SISMEMBER key member：判断一个元素是否存在于set中
-- SMEMBERS：获取set中的所有元素
-- SINTER key1 key2 ... ：求key1与key2的交集
-- SDIFF key1 key2 ... ：求key1与key2的差集
-- SUNION key1 key2 ..：求key1和key2的并集
+- `SADD key member ...`: Add one or more elements to a set
+- `SREM key member ...`: Remove specified elements from a set
+- `SCARD key`: Return the number of elements in a set
+- `SISMEMBER key member`: Check whether an element exists in a set
+- `SMEMBERS`: Get all elements in a set
+- `SINTER key1 key2 ...`: Compute the intersection of sets
+- `SDIFF key1 key2 ...`: Compute the difference of sets
+- `SUNION key1 key2 ...`: Compute the union of sets
 
-## redis 命令-SortedSet 类型
+## Redis Commands - SortedSet
 
-Redis的SortedSet是一个可排序的set集合，与Java中的TreeSet有些类似，但底层数据结构却差别很大。SortedSet中的每一个元素都带有一个score属性，可以基于score属性对元素排序，底层的实现是一个跳表（SkipList）加 hash表。
+Redis `SortedSet` is a sortable set collection, somewhat similar to Java's `TreeSet`, but with a very different underlying data structure. Each element in a `SortedSet` has a `score`, and elements are ordered by that score. The underlying implementation combines a skip list (`SkipList`) and a hash table.
 
-SortedSet具备下列特性：
+SortedSet has the following characteristics:
 
-- 可排序
-- 元素不重复
-- 查询速度快
+- Sortable
+- Unique elements
+- Fast lookup
 
-因为SortedSet的可排序特性，经常被用来实现排行榜这样的功能。
+Because of its sortable nature, `SortedSet` is often used to implement leaderboard-like features.
 
-SortedSet的常见命令有：
+Common SortedSet commands include:
 
-- ZADD key score member：添加一个或多个元素到sorted set ，如果已经存在则更新其score值
-- ZREM key member：删除sorted set中的一个指定元素
-- ZSCORE key member : 获取sorted set中的指定元素的score值
-- ZRANK key member：获取sorted set 中的指定元素的排名
-- ZCARD key：获取sorted set中的元素个数
-- ZCOUNT key min max：统计score值在给定范围内的所有元素的个数
-- ZINCRBY key increment member：让sorted set中的指定元素自增，步长为指定的increment值
-- ZRANGE key min max：按照score排序后，获取指定排名范围内的元素
-- ZRANGEBYSCORE key min max：按照score排序后，获取指定score范围内的元素
-- ZDIFF.ZINTER.ZUNION：求差集.交集.并集
+- `ZADD key score member`: Add one or more elements to a sorted set; if an element exists, update its score
+- `ZREM key member`: Remove a specified element from a sorted set
+- `ZSCORE key member`: Get the score of a specified element in a sorted set
+- `ZRANK key member`: Get the ascending rank of a specified element in a sorted set
+- `ZCARD key`: Get the number of elements in a sorted set
+- `ZCOUNT key min max`: Count elements whose score is within a given range
+- `ZINCRBY key increment member`: Increment the score of a specified element by a given amount
+- `ZRANGE key min max`: Get elements within a specified rank range after sorting by score
+- `ZRANGEBYSCORE key min max`: Get elements within a specified score range after sorting by score
+- `ZDIFF`, `ZINTER`, `ZUNION`: Difference / intersection / union operations
 
-注意：所有的排名默认都是升序，如果要降序则在命令的Z后面添加REV即可，例如：
+Note: All ranking commands are ascending by default. For descending order, add `REV` (or use the reverse variants), for example:
 
-- **升序**获取sorted set 中的指定元素的排名：ZRANK key member
-- **降序**获取sorted set 中的指定元素的排名：ZREVRANK key memeber
+- **Ascending** rank of a specified element in a sorted set: `ZRANK key member`
+- **Descending** rank of a specified element in a sorted set: `ZREVRANK key member`
 
-# Java客户端-Jedis
+# Java Client - Jedis
 
 [https://redis.io/docs/clients/](https://redis.io/docs/clients/)
 
-- Jedis和Lettuce：这两个主要是提供了Redis命令对应的API，方便我们操作Redis，而SpringDataRedis又对这两种做了抽象和封装，因此我们后期会直接以SpringDataRedis来学习。
-- Redisson：是在Redis基础上实现了分布式的可伸缩的java数据结构，例如Map.Queue等，而且支持跨进程的同步机制：Lock.Semaphore等待，比较适合用来实现特殊的功能需求。
+- Jedis and Lettuce: These primarily provide APIs corresponding to Redis commands for easier Redis operations. Spring Data Redis further abstracts and wraps both, so we will mainly use Spring Data Redis later.
+- Redisson: Builds distributed, scalable Java data structures on top of Redis (such as `Map`, `Queue`, etc.) and supports cross-process synchronization primitives such as `Lock` and `Semaphore`, which makes it suitable for more specialized requirements.
 
-## Jedis 入门
+## Jedis Basics
 
-依赖：
+Dependency:
 
 
 ```xml
@@ -322,7 +322,7 @@ SortedSet的常见命令有：
 ```
 
 
-测试：
+Test:
 
 
 ```java
@@ -370,12 +370,11 @@ void tearDown() {
 ```
 
 
-## Jedis 连接池
+## Jedis Connection Pool
 
-Jedis本身是线程不安全的，并且频繁的创建和销毁连接会有性能损耗，因此我们推荐大家使用Jedis连接池代替Jedis的直连方式
+Jedis itself is not thread-safe, and frequently creating and destroying connections causes performance overhead. Therefore, it is recommended to use a Jedis connection pool instead of direct Jedis connections.
 
-
-有关池化思想，并不仅仅是这里会使用，很多地方都有，比如说我们的数据库连接池，比如我们tomcat中的线程池，这些都是池化思想的体现。
+Pooling is not only used here; it is a common design idea in many places, such as database connection pools and thread pools in Tomcat.
 
 
 ```java
@@ -401,7 +400,7 @@ public class JedisConnectionFacotry {
 ```
 
 
-从JedisFactory中取出Jedis连接：
+Get a Jedis connection from `JedisFactory`:
 
 
 ```java
@@ -417,25 +416,25 @@ void setup() {
 
 # SpringDataRedis
 
-SpringData是Spring中数据操作的模块，包含对各种数据库的集成，其中对Redis的集成模块就叫做SpringDataRedis，官网地址：[https://spring.io/projects/spring-data-redis](https://spring.io/projects/spring-data-redis)
+Spring Data is Spring's data access module, which integrates with various databases. Its Redis integration module is called Spring Data Redis. Official site: [https://spring.io/projects/spring-data-redis](https://spring.io/projects/spring-data-redis)
 
-- 提供了对不同Redis客户端的整合（Lettuce和Jedis）
-- 提供了RedisTemplate统一API来操作Redis
-- 支持Redis的发布订阅模型
-- 支持Redis哨兵和Redis集群
-- 支持基于Lettuce的响应式编程
-- 支持基于JDK.JSON.字符串.Spring对象的数据序列化及反序列化
-- 支持基于Redis的JDKCollection实现
+- Integrates different Redis clients (Lettuce and Jedis)
+- Provides the unified `RedisTemplate` API to operate on Redis
+- Supports Redis pub/sub model
+- Supports Redis Sentinel and Redis Cluster
+- Supports reactive programming based on Lettuce
+- Supports serialization/deserialization for JDK objects, JSON, strings, and Spring objects
+- Supports JDK collection implementations backed by Redis
 
-SpringDataRedis中提供了RedisTemplate工具类，其中封装了各种对Redis的操作。并且将不同数据类型的操作API封装到了不同的类型中：
+Spring Data Redis provides the `RedisTemplate` utility class, which wraps various Redis operations. It also organizes operation APIs for different data types into different helper types:
 
 
 ![image-20230806163312657.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/image-20230806163312657.png)
 
 
-## SpringDataRedis 入门
+## SpringDataRedis Basics
 
-pom依赖：
+pom dependencies:
 
 ```xml
 <!--redis依赖-->
@@ -461,7 +460,7 @@ pom依赖：
 ```
 
 
-yml配置：
+YAML configuration:
 
 
 ```yaml
@@ -479,7 +478,7 @@ spring:
 ```
 
 
-测试：
+Test:
 
 
 ```java
@@ -500,30 +499,30 @@ class JedisDemoApplicationTests {
 }
 ```
 
-- 引入spring-boot-starter-data-redis依赖
-- 在application.yml配置Redis信息
-- 注入RedisTemplate
+- Add the `spring-boot-starter-data-redis` dependency
+- Configure Redis connection information in `application.yml`
+- Inject `RedisTemplate`
 
-## 数据序列化
+## Data Serialization
 
-RedisTemplate可以接收任意Object作为值写入Redis：
+`RedisTemplate` can accept any `Object` as a value and write it to Redis:
 
 
 ![image-20230806164703100.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/image-20230806164703100.png)
 
 
-只不过写入前会把Object序列化为字节形式，默认是采用JDK序列化，得到的结果是这样的：
+Before writing, the object is serialized into bytes. By default, JDK serialization is used, and the result looks like this:
 
 
 ![image-20230806164710423.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/image-20230806164710423.png)
 
 
-缺点：
+Disadvantages:
 
-- 可读性差
-- 内存占用较大
+- Poor readability
+- Higher memory usage
 
-自定义序列化方式
+Custom serialization strategy
 
 
 ```java
@@ -555,9 +554,9 @@ public class RedisConfig {
 
 ## StringRedisTemplate
 
-为了在反序列化时知道对象的类型，JSON序列化器会将类的class类型写入json结果中，存入Redis，会带来额外的内存开销。
+To know the object type during deserialization, the JSON serializer writes the class type into the JSON stored in Redis, which introduces extra memory overhead.
 
-为了减少内存的消耗，我们可以采用手动序列化的方式，换句话说，就是不借助默认的序列化器，而是我们自己来控制序列化的动作，同时，我们只采用String的序列化器，这样，在存储value时，我们就不需要在内存中就不用多存储数据，从而节约我们的内存空间
+To reduce memory usage, we can use manual serialization. In other words, instead of relying on the default serializer, we control the serialization process ourselves and only use the String serializer. This avoids storing extra type metadata in Redis values and saves memory.
 
 
 ```java
@@ -584,12 +583,12 @@ void testSaveUser() throws JsonProcessingException {
 ```
 
 
-RedisTemplate的两种序列化实践方案：
+Two practical serialization approaches for `RedisTemplate`:
 
-- 方案一：
-    - 自定义RedisTemplate
-    - 修改RedisTemplate的序列化器为GenericJackson2JsonRedisSerializer
-- 方案二：
-    - 使用StringRedisTemplate
-    - 写入Redis时，手动把对象序列化为JSON
-    - 读取Redis时，手动把读取到的JSON反序列化为对象
+- Option 1:
+    - Customize `RedisTemplate`
+    - Change the `RedisTemplate` serializer to `GenericJackson2JsonRedisSerializer`
+- Option 2:
+    - Use `StringRedisTemplate`
+    - Manually serialize objects to JSON before writing to Redis
+    - Manually deserialize JSON back into objects after reading from Redis

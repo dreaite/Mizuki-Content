@@ -10,18 +10,18 @@ draft: false
 lang: 'en'
 ---
 
-## **1.实验目的**  
+## **1. Experiment Objectives**  
 - Understand the IP packet format, and become familiar with the meaning and length of each IP header field  
 - Master packet capture and analysis techniques based on tcpdump and Wireshark
 
-## **2.实验环境**  
+## **2. Experimental Environment**  
 - Hardware requirements: One Alibaba Cloud ECS instance.  
 - Software requirements: Linux/Windows operating system
 
-## **3.实验内容**
+## **3. Experimental Content**
 
 
-### **3.1** **tcpdump基本用法**  
+### **3.1** **Basic tcpdump Usage**  
 tcpdump is a tool used to capture network packets and output their contents. With its powerful features and flexible capture filters, it has become the preferred tool on UNIX-like systems for network analysis and problem troubleshooting.  
 
 tcpdump supports filtering by network layer, protocol, host, network, or port, and provides logical statements such as and, or, not to help you weed out unnecessary information.  
@@ -33,7 +33,7 @@ tcpdump supports filtering by network layer, protocol, host, network, or port, a
 [_https://www.jianshu.com/p/d9162722f189_](https://www.jianshu.com/p/d9162722f189)  
 
 
-### **3.2** **wireshark基本用法**  
+### **3.2** **Basic Wireshark Usage**  
 Wireshark (formerly Ethereal) is a network packet analysis software. The function of network packet analysis software is to capture network packets and display as detailed packet information as possible. Wireshark uses WinPcap as the interface, exchanging data frames directly with the network card.  
 
 Network administrators use Wireshark to detect network problems; network security engineers use Wireshark to inspect information security related issues; developers use Wireshark to debug new communication protocols; ordinary users use Wireshark to learn about network protocols. Its interface is shown in the figure below.  
@@ -49,7 +49,7 @@ Network administrators use Wireshark to detect network problems; network securit
 [_https://pc.qq.com/search.html#!keyword=xshell_](https://pc.qq.com/search.html#!keyword=xshell)  
 
 
-### **3.3** **利用tcpdump抓包，wireshark分析包**  
+### **3.3** **Capture Packets with tcpdump and Analyze with Wireshark**  
 On the Alibaba Cloud host, run the command `traceroute www.xju.edu.cn –T`, and capture packets using tcpdump. Download the file to your local machine and analyze it with Wireshark.  
 
 **Tips:**  
@@ -78,15 +78,15 @@ On the Alibaba Cloud host, run the command `traceroute www.xju.edu.cn –T`, and
 
 **Tip:** Set the Wireshark filter bar to display only ICMP
 
-## **4．实验结果与分析**
+## **4. Experimental Results and Analysis**
 
 
-### **4.1** **tcpdump基本用法**  
+### **4.1** **Basic tcpdump Usage**  
 tcpdump is a tool used to capture network packets and output their contents. With its powerful features and flexible capture filters, it has become the preferred tool on UNIX-like systems for network analysis and problem troubleshooting.  
 
 tcpdump supports filtering by network layer, protocol, host, network or port, and provides logical statements such as and, or, not to help you weed out useless information
 
-- **默认启动**
+- **Default startup**
 
 ```plain text
 tcpdump//普通情况下，直接启动tcpdump将监视第一个网络接口上所有流过的数据包。
@@ -95,24 +95,24 @@ tcpdump//普通情况下，直接启动tcpdump将监视第一个网络接口上�
 
 ![XBDLEKRJiZI1o4z.png](https://s2.loli.net/2022/04/24/XBDLEKRJiZI1o4z.png)
 
-- 监视指定网络接口的数据包
+- Capture packets on a specified network interface
 
 ```plain text
 tcpdump -i eth1//如果不指定网卡，默认tcpdump只会监视第一个网络接口，一般是eth0
 ```
 
 
-### **4.2** **wireshark基本用法**
+### **4.2** **Basic Wireshark Usage**
 
 
-Wireshark（前称Ethereal）是一个网络封包分析软件。网络封包分析软件的功能是撷取网络封包，并尽可能显示出最为详细的网络封包资料。Wireshark使用WinPCAP作为接口，直接与网卡进行数据报文交换。  
+Wireshark (formerly Ethereal) is a network packet analysis tool. Its purpose is to capture network packets and display packet details as comprehensively as possible. Wireshark uses WinPcap as an interface to exchange data frames directly with the network card.  
 
-网络管理员使用Wireshark来检测网络问题，网络安全工程师使用Wireshark来检查资讯安全相关问题，开发者使用Wireshark来为新的通讯协定除错，普通使用者使用Wireshark来学习网络协定的相关知识。其界面如图所示。
+Network administrators use Wireshark to diagnose network issues, network security engineers use it to inspect information security problems, developers use it to debug new communication protocols, and ordinary users use it to learn about network protocols. Its interface is shown below.
 
 ![hwT2YybXpv4DZdP.png](https://s2.loli.net/2022/04/24/hwT2YybXpv4DZdP.png)
 
 
-### **4.3** **利用tcpdump抓包，wireshark分析包**
+### **4.3** **Capture Packets with tcpdump and Analyze with Wireshark**
 
 1. Execute the capture command `tcpdump -i eth0 -w test.cap` and store the captured information in the file `/root/test.cap`
 
@@ -162,13 +162,13 @@ Wireshark（前称Ethereal）是一个网络封包分析软件。网络封包分
 > ICMP message types fall into two categories: ICMP error messages and ICMP echo messages. It can be seen that the ICMP messages we captured are all of type Time Exceeded in Transit, i.e., TTL exceeded. Choosing a random ICMP message, we can see that this ICMP message has Type=11, Code=0, which is an error-message type indicating time exceeded. Its checksum is 0x4e4d, which is correct, and the checksum status is good, with TTL equal to 4.
 >
 
-## **5、实验小结**
+## **5. Experiment Summary**
 
 
-### **5.1 问题与解决办法**  
+### **5.1 Problems and Solutions**  
 > The problem when using the traceroute command produced the error -bash: traceroute: command not found. Solution: use yum install traceroute to install traceroute.  
 > When connecting to the server with Xftp, connection errors occurred. Solution: reconnect via campus network; after investigation found the cause was the server firewall.
 
-### **5.2 心得体会**  
+### **5.2 Reflections**  
 - This experiment familiarized me with the operation of code and software involved in IP protocol analysis, validating the knowledge learned in class. Through this experiment, I learned the concrete workflow for using the traceroute command, understood the basic usage of commonly used IP protocol analysis software, and improved my programming abilities.  
 - Through these common IP protocol analysis command operations, tracing IP protocol usage, this reinforced the knowledge taught in class.

@@ -34,16 +34,16 @@ Java study and review. This article mainly references [Java Core Technologies Vo
 
 | Term | Abbreviation | Explanation |
 | ------------------------------------ | --- | ---------------------------------------------- |
-| Java Development Kit（Java开发工具包）      | JDK | Software used by programmers to write Java programs |
-| Java Runtime Environment（Java 运行时环境） | JRE | Software used by users to run Java programs |
-| Server JRE（服务器 JRE）                  |     | Software for running Java programs on a server |
-| Standard Edition（标准版）                | SE  | Java platform for desktop or simple server applications |
-| Enterprise Edition（企业版）              | EE  | Java platform for complex server applications |
-| Micro Edition微型版）                    | ME  | Java platform for small devices |
+| Java Development Kit (JDK)           | JDK | Software used by programmers to write Java programs |
+| Java Runtime Environment (JRE)       | JRE | Software used by users to run Java programs |
+| Server JRE (Server Runtime)          |     | Software for running Java programs on a server |
+| Standard Edition (SE)                | SE  | Java platform for desktop or simple server applications |
+| Enterprise Edition (EE)              | EE  | Java platform for complex server applications |
+| Micro Edition (ME)                   | ME  | Java platform for small devices |
 | Java FX                              |     | An alternative toolkit for graphical user interfaces, provided in some Java SE releases prior to Java 11 |
 | OpenJDK                              |     | A free open-source implementation of Java SE |
 | Java2                                | J2  | An obsolete term used to describe Java versions between 1998 and 2006 |
-| Software Development Kit（软件开发工具包）    | SDK | An obsolete term used to describe the JDK between 1998 and 2006 |
+| Software Development Kit (SDK)       | SDK | An obsolete term used to describe the JDK between 1998 and 2006 |
 | Update                               | u   | Oracle's term, indicating bug-fix releases prior to Java 8 |
 | NetBeans                             |     | Oracle's integrated development environment |
 

@@ -242,9 +242,9 @@ export class ProjectsService {
 }
 ```
 
-### 数据库实体
+### Database Entities
 
-`Project` 实体定义了项目在数据库中的结构，通过 `@Entity()` 装饰器定义实体，通过 `@Column()` 装饰器定义列。
+`Project` defines the project's structure in the database. The `@Entity()` decorator declares the entity, and the `@Column()` decorator defines its columns.
 
 ```typescript
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
@@ -409,7 +409,7 @@ export class ProjectDetailComponent implements OnInit {
 ```
 
 
-通过这种方式，前端应用能够提供丰富的用户交互和数据展示功能。
+In this way, the frontend application can provide rich user interaction and data presentation features.
 
 # Testing
 

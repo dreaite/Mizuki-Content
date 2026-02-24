@@ -153,7 +153,7 @@ Note: the formulas above are only references; in real projects you rarely set th
 
 ## Meituan’s optimization approach
 
-Meituan's technical team, in the article [Java 线程池实现原理及其在美团业务中的实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html), discusses ideas and methods for making thread pool parameters configurable.
+Meituan's technical team, in the article [Java Thread Pool Implementation Principles and Practices in Meituan](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html), discusses ideas and methods for making thread pool parameters configurable.
 
 Their approach focuses on making core thread pool parameters customizable. The three core parameters are:
 
