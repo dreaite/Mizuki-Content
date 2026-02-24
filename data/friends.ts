@@ -14,6 +14,14 @@ export interface FriendItem {
 export const friendsData: FriendItem[] = [
 	{
 		id: 1,
+		title: "二叉树树",
+		imgurl: "https://source.unsplash.com/random",
+		desc: "保护你所爱的事物。",
+		siteurl: "https://2x.nz",
+		tags: ["INFRA"],
+	},
+	{
+		id: 2,
 		title: "Mizuki Docs",
 		imgurl: "http://q.qlogo.cn/headimg_dl?dst_uin=3231515355&spec=640&img_type=jpg",
 		desc: "User manual for Mizuki, currently in draft status, created and updated on February 22, 2026.",
@@ -21,7 +29,7 @@ export const friendsData: FriendItem[] = [
 		tags: ["Docs"],
 	},
 	{
-		id: 2,
+		id: 3,
 		title: "Astro",
 		imgurl: "https://avatars.githubusercontent.com/u/44914786?v=4&s=640",
 		desc: "A web framework designed for content-driven websites, published on February 22, 2026.",
