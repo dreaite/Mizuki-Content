@@ -22,8 +22,8 @@ export const projectsData: Project[] = [
 	{
 		id: "RssFeedTeleBot",
 		title: "RssFeedTeleBot",
-		description: "这是一个无服务器的Telegram机器人，监控RSS源、X（Twitter）用户和YouTube频道，并将通知发送到Telegram聊天、超级群组和主题。它完全运行在Cloudflare Workers上，支持直接从Telegram添加/删除订阅、多个订阅、选择性转发通知，并使用Cloudflare KV进行状态管理和Cron触发器进行调度，具有成本效益。",
-		image: "https://source.unsplash.com/random",
+		description: "一个无服务器的Telegram机器人，监控RSS源、X（Twitter）用户和YouTube频道，并将通知发送到Telegram聊天、超级群组和主题。支持直接在Telegram中添加/删除订阅，支持多个订阅和选择性转发，完全兼容Cloudflare Workers的免费层。",
+		image: "https://r2.dreaife.tokyo/notion/covers/30f5465cca1780a8a667d7cb8c1d5af5/ai-generated-1775396031107.png",
 		category: "desktop",
 		techStack: [
 			"JavaScript",
