@@ -12,30 +12,6 @@ export interface FriendItem {
 
 // 友情链接数据
 export const friendsData: FriendItem[] = [
-	{
-		id: 1,
-		title: "二叉树树",
-		imgurl: "https://q2.qlogo.cn/headimg_dl?dst_uin=2726730791&spec=0",
-		desc: "保护你所爱的事物。",
-		siteurl: "https://2x.nz",
-		tags: ["INFRA"],
-	},
-	{
-		id: 2,
-		title: "Mizuki Docs",
-		imgurl: "http://q.qlogo.cn/headimg_dl?dst_uin=3231515355&spec=640&img_type=jpg",
-		desc: "Mizuki User Manual is published with a status of \"Published\" and is tagged under \"Docs.\" It was created on February 22, 2026, and last updated on February 24, 2026.",
-		siteurl: "https://docs.mizuki.mysqil.com",
-		tags: ["Docs"],
-	},
-	{
-		id: 3,
-		title: "Astro",
-		imgurl: "https://avatars.githubusercontent.com/u/44914786?v=4&s=640",
-		desc: "A web framework designed for content-driven websites, published on February 22, 2026.",
-		siteurl: "https://github.com/withastro/astro",
-		tags: ["Framework"],
-	},
 ];
 
 // 获取所有友情链接数据
