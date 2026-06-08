@@ -19,7 +19,7 @@ draft: false
 最近做了一个主要是前端的EOA wallet登陆的[界面](https://web3wallet-login.block.dreaifehebi.com/)，也算是接触blockChain开发的开始吧，正好也可以说是接触了EVM的实际是怎么操作的。
 
 
-::github{repo=”dreaifeHebi/web3WalletLogin”}
+::github{repo="dreaifeHebi/web3WalletLogin"}
 
 
 ![image.png](https://r2.dreaife.tokyo/notion/covers/3795465cca1780d29cb9f993bf218d10/inline/0d7ea32d51521748-image.png)

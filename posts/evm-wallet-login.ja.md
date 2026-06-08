@@ -19,7 +19,7 @@ lang: 'ja'
 最近、主にフロントエンドのEOA walletログインの[画面](https://web3wallet-login.block.dreaifehebi.com/)を作りました。blockChain開発に触れ始めた、とも言えるでしょうし、ちょうどEVMが実際にどのように操作されるのかにも触れたと言えます。
 
 
-::github{repo=”dreaifeHebi/web3WalletLogin”}
+::github{repo="dreaifeHebi/web3WalletLogin"}
 
 
 ![image.png](https://r2.dreaife.tokyo/notion/covers/3795465cca1780d29cb9f993bf218d10/inline/0d7ea32d51521748-image.png)
