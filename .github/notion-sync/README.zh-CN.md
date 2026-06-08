@@ -180,6 +180,7 @@ Workflow 会传入以下默认值。如果你的 Notion 列名不同，请在 wo
 - Notion 的 cover/file URL 通常是临时签名链接，会过期。
 - 当 `NOTION_COVER_R2_ENABLED=true` 时，脚本会将 Notion 图片资产上传到 R2，并写入 R2 公网 URL，而不是临时签名链接。
 - 现有 `Post` / `About` markdown 文件中残留的 Notion 图片 URL，会在后续 sync 中自动回填为 R2 URL（即使正文本身未变化）。
+- 行首 Markdown 指令（例如 `::github{repo="owner/repo"}` 或后续自定义的 `::card{...}`）的属性花括号内部如果出现 Notion/LLM 产生的智能引号（`“”` / `‘’`），同步时会自动规范化为 ASCII 引号。
 - Workflow 会自动将 `posts/` 等内容变更提交并推送回当前分支。
 - `Friend` / `Diary` 数据文件每次运行都会基于当前 Notion 行重建（随后 `writeIfChanged` 会避免无变化写入），因此按排序生成的 ID 可保持一致。
 - `Project` 数据文件（`data/projects.ts`）也会在每次运行时重建，以保证本地数据集与 Notion 当前内容一致。

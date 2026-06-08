@@ -28,6 +28,9 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Run sync script self-checks
+        run: node .github/scripts/test-markdown-directive-normalizer.mjs
+
       - name: Install sync dependencies
         run: npm install --no-save --no-package-lock @notionhq/client@5 notion-to-md @aws-sdk/client-s3 undici
 

@@ -17,6 +17,7 @@ import {
   renderFriendsDataTs,
   renderProjectsDataTs,
 } from './notion-ts-data-sync.mjs';
+import { normalizeDirectiveAttributeQuotes } from './markdown-directive-normalizer.mjs';
 
 const CONFIG = {
   notionToken: requireEnv('NOTION_TOKEN'),
@@ -437,7 +438,8 @@ async function markdownFileContainsTemporaryNotionImageUrl(filePath) {
 async function notionPageToMarkdownString(n2m, pageId) {
   const pageMdBlocks = await n2m.pageToMarkdown(pageId);
   const mdString = n2m.toMarkdownString(pageMdBlocks);
-  return typeof mdString === 'string' ? mdString : mdString?.parent || '';
+  const markdown = typeof mdString === 'string' ? mdString : mdString?.parent || '';
+  return normalizeDirectiveAttributeQuotes(markdown);
 }
 
 function getPageCoverInfo(page) {
@@ -824,7 +826,7 @@ async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }
     responseKind: 'body response',
   });
 
-  return unwrapSingleFencedBlock(content);
+  return normalizeDirectiveAttributeQuotes(unwrapSingleFencedBlock(content));
 }
 
 function buildPostMetadataFieldTranslationSystemPrompt() {
@@ -1299,7 +1301,7 @@ function sortByUpdatedDesc(a, b) {
 
 function buildMarkdownDocument(meta, markdownBody) {
   const frontMatter = buildFrontMatter(meta);
-  const body = String(markdownBody || '').trim();
+  const body = normalizeDirectiveAttributeQuotes(markdownBody).trim();
   return `${frontMatter}${body ? `${body}\n` : ''}`;
 }
 
@@ -1350,7 +1352,7 @@ async function listMarkdownFiles(rootDir) {
 }
 
 async function writeAboutFileIfNeeded(filePath, markdownBody) {
-  const content = `${String(markdownBody || '').trim()}\n`;
+  const content = `${normalizeDirectiveAttributeQuotes(markdownBody).trim()}\n`;
   await fs.mkdir(path.dirname(filePath), { recursive: true });
   return writeIfChanged(filePath, content);
 }
@@ -1371,6 +1373,48 @@ async function updateProjectsDataFile(filePath, projectItems) {
   const fileContent = await fs.readFile(filePath, 'utf8');
   const nextContent = renderProjectsDataTs(fileContent, projectItems);
   return writeIfChanged(filePath, nextContent);
+}
+
+async function normalizeMarkdownDirectiveFile(filePath) {
+  const existing = await readFileUtf8IfExists(filePath);
+  if (!existing) return false;
+
+  const normalized = normalizeDirectiveAttributeQuotes(existing);
+  if (normalized === existing) return false;
+
+  await fs.writeFile(filePath, normalized, 'utf8');
+  return true;
+}
+
+async function normalizeMarkdownDirectiveFiles(pathsToNormalize) {
+  const files = new Set();
+
+  for (const targetPath of pathsToNormalize) {
+    const resolvedPath = path.resolve(process.cwd(), targetPath);
+    if (!(await fileExists(resolvedPath))) continue;
+
+    const stat = await fs.stat(resolvedPath);
+    if (stat.isDirectory()) {
+      for (const markdownFile of await listMarkdownFiles(resolvedPath)) {
+        files.add(markdownFile);
+      }
+      continue;
+    }
+
+    if (stat.isFile() && resolvedPath.toLowerCase().endsWith('.md')) {
+      files.add(resolvedPath);
+    }
+  }
+
+  let normalizedFiles = 0;
+  for (const filePath of files) {
+    if (await normalizeMarkdownDirectiveFile(filePath)) {
+      normalizedFiles += 1;
+      console.log(`Normalized directive quotes in ${path.relative(process.cwd(), filePath)}`);
+    }
+  }
+
+  return normalizedFiles;
 }
 
 function isMetaRecentlyUpdated(meta, nowMs, lookbackMinutes) {
@@ -2009,8 +2053,13 @@ async function main() {
     }
   }
 
+  const normalizedDirectiveFiles = await normalizeMarkdownDirectiveFiles([outputRoot, aboutPath]);
+  if (normalizedDirectiveFiles > 0) {
+    changedFiles += normalizedDirectiveFiles;
+  }
+
   console.log(
-    `Sync complete. posts=${processedPosts}, about=${aboutPages.length}, friends=${friendPages.length}, diary=${diaryPages.length}, projects=${projectPages.length}, changed=${changedFiles}, unchanged=${unchangedFiles}, skippedByWindow=${skippedByWindow}, deletedPosts=${deleted}, skippedOther=${skipped}, deleteMissingPosts=${CONFIG.deleteMissing}`
+    `Sync complete. posts=${processedPosts}, about=${aboutPages.length}, friends=${friendPages.length}, diary=${diaryPages.length}, projects=${projectPages.length}, changed=${changedFiles}, unchanged=${unchangedFiles}, normalizedDirectiveFiles=${normalizedDirectiveFiles}, skippedByWindow=${skippedByWindow}, deletedPosts=${deleted}, skippedOther=${skipped}, deleteMissingPosts=${CONFIG.deleteMissing}`
   );
   if (translationCheckpointManager.enabled) {
     const { translatedPostsTotal } = translationCheckpointManager.getStats();

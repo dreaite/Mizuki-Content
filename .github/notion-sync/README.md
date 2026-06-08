@@ -180,6 +180,7 @@ If you still have manually maintained posts under `posts/`, either:
 - Notion cover/file URLs are often temporary signed URLs and may expire.
 - When `NOTION_COVER_R2_ENABLED=true`, the sync script uploads Notion image assets to R2 and stores R2 public URLs instead of temporary signed Notion URLs.
 - Existing `Post` / `About` markdown files with expired Notion image URLs are backfilled to R2 URLs during later sync runs (even if the body did not change).
+- Markdown directives at the start of a line, such as `::github{repo="owner/repo"}` or future custom `::card{...}` blocks, automatically normalize smart quotes (`“”` / `‘’`) inside the attribute braces to ASCII quotes during sync.
 - The workflow auto-commits `posts/` changes back to the current branch.
 - `Friend` / `Diary` data files are regenerated from current Notion rows each run (then `writeIfChanged` avoids no-op writes) so ordering-based IDs stay consistent.
 - `Project` data file (`data/projects.ts`) is also regenerated each run to keep the local dataset aligned with current Notion rows.
