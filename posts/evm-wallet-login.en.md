@@ -2,7 +2,7 @@
 title: 'An EVM wallet login interface for EOAs'
 published: 2026-06-08
 updated: 2026-06-09
-description: 'This blog post provides a detailed explanation of a frontend-based EOA (Externally Owned Account) wallet login interface, covering the overall flow, technology choices, and implementation details. It first introduces the two-step login interaction: obtaining the user’s wallet address, then using the SIWE (Sign-In with Ethereum) protocol to send an authentication message containing a nonce, timestamp, and other information, requiring the user to sign it in their wallet. The author then presents key code snippets using the wagmi library—from using connect and useAccount to obtain wallet information, to initiating a signing request with useSignMessage, and finally verifying the signature through the backend /api/auth/verify endpoint. The post also briefly explains the principles behind EOA private keys, public keys, address generation, and ECDSA (secp256k1) signatures, helping readers understand the mathematical foundations of security. Finally, the author concludes with personal learning reflections, emphasizing that this project serves as an introductory practice in blockchain development and lays the groundwork for more complex on-chain interactions in the future.'
+description: 'A practical walkthrough of an EOA wallet login flow, covering connect wallet, SIWE-style signing messages, wagmi sign requests, and backend signature verification, with a focus on why address connection and ownership proof are two separate steps.'
 image: 'https://r2.dreaife.tokyo/notion/covers/3795465cca1780d29cb9f993bf218d10/2026%E5%B9%B46%E6%9C%889%E6%97%A5_01_09_11.png'
 tags: ['web3', 'wallet']
 category: 'WEB3'

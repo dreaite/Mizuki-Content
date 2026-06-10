@@ -2,7 +2,7 @@
 title: '一个对于EOA的EVM钱包登陆界面'
 published: 2026-06-08
 updated: 2026-06-09
-description: '本篇博客详尽阐述了一个基于前端实现的 EO A（Externally Owned Account）钱包登录界面，包括整体流程、技术选型与实现细节。文章首先介绍了登录的双重交互：先获取用户钱包地址，再通过 SIWE（Sign‑In with Ethereum）协议发送带有 nonce、时间戳等信息的认证消息，要求用户在钱包中签名。随后，作者展示了使用 wagmi 库的关键代码片段——从 connect、useAccount 获取钱包信息，到 useSignMessage 发起签名请求，再通过后端 /api/auth/verify 验证签名的完整实现。文中还简要解释了 EOA 私钥、公钥、地址生成及 ECDSA（secp256k1）签名原理，帮助读者理解安全性背后的数学基础。最后，作者以个人学习体会收尾，强调该项目是其区块链开发的入门实践，为后续更复杂的链上交互奠定了基础。'
+description: '从一个 EOA 钱包登录小项目出发，整理 connect wallet、SIWE 签名消息、wagmi 签名请求与后端验签之间的关系，说明钱包登录为什么需要“连接地址”和“签名证明控制权”两步。'
 permalink: 'evm-wallet-login'
 image: 'https://r2.dreaife.tokyo/notion/covers/3795465cca1780d29cb9f993bf218d10/2026%E5%B9%B46%E6%9C%889%E6%97%A5_01_09_11.png'
 tags: ['web3', 'wallet']
