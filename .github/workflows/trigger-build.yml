@@ -1,17 +1,16 @@
-# Cloudflare Pages Deploy Hook 触发器
+# Mizuki 部署触发器
 # 
-# 当内容仓库更新时,通过 Cloudflare Pages Deploy Hook 触发重新部署
+# 当内容仓库更新时,通过 GitHub repository_dispatch 触发 Mizuki 仓库部署
 # 
 # 配置步骤:
-# 1. 在 Cloudflare Pages 项目设置中获取 Deploy Hook URL
-#    Settings → Builds & deployments → Deploy hooks → Create deploy hook
+# 1. 创建有 dreaifekks/Mizuki repo 权限的 GitHub token
 # 2. 在本仓库添加 Secret:
 #    Settings → Secrets → New repository secret
-#    Name: CF_DEPLOY_HOOK
-#    Value: 粘贴 Deploy Hook URL
+#    Name: DISPATCH_TOKEN
+#    Value: GitHub token
 # 3. 推送代码测试
 
-name: Trigger Cloudflare Pages Deployment
+name: Trigger Mizuki Deployment
 
 on:
   push:
@@ -29,22 +28,35 @@ jobs:
   trigger:
     runs-on: selfN100
     steps:
-      - name: Trigger Cloudflare Pages Deploy Hook
+      - name: Trigger Mizuki deploy workflow
+        env:
+          DISPATCH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
         run: |
-          response=$(curl -s -w "\n%{http_code}" -X POST "${{ secrets.CF_DEPLOY_HOOK }}")
+          if [ -z "$DISPATCH_TOKEN" ]; then
+            echo "❌ DISPATCH_TOKEN secret is not set"
+            exit 1
+          fi
+
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            -H "Authorization: Bearer $DISPATCH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/dreaifekks/Mizuki/dispatches \
+            -d '{"event_type":"content-updated"}')
           http_code=$(echo "$response" | tail -n1)
           
-          if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ]; then
-            echo "✅ Cloudflare Pages deployment triggered successfully"
+          if [ "$http_code" -eq 204 ]; then
+            echo "✅ Mizuki deployment triggered successfully"
           else
             echo "❌ Failed to trigger deployment. HTTP code: $http_code"
+            echo "$response" | sed '$d'
             exit 1
           fi
       
       - name: Job summary
         if: success()
         run: |
-          echo "✅ Cloudflare Pages deployment triggered successfully" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Mizuki deployment triggered successfully" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Commit Details:**" >> $GITHUB_STEP_SUMMARY
           echo "- SHA: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY

@@ -1625,7 +1625,7 @@ function commitPendingContentChangesForCheckpoint(state) {
 
   runGitCommand(['add', '-A', '--', ...trackedPaths]);
 
-  const commitMessage = `chore(content): notion sync checkpoint (${state.pendingChangedPosts} posts)`;
+  const commitMessage = `chore(content): notion sync checkpoint (${state.pendingChangedPosts} posts) [skip ci]`;
   const commitResult = runGitCommand(['commit', '-m', commitMessage], { allowFailure: true });
   if (commitResult.status !== 0) {
     const output = `${commitResult.stdout || ''}\n${commitResult.stderr || ''}`;
