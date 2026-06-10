@@ -19,7 +19,7 @@ The following only represents my current understanding
 This is more or less a theoretical supplement to the [previous article](https://dreaife.tokyo/evm-wallet-login/). It roughly counts as sorting out the process and theoretical proof of a signature verification, and also incidentally filling in some knowledge about groups (
 
 
-::site={url="https://dreaife.tokyo/evm-wallet-login"}
+::site{url="https://dreaife.tokyo/evm-wallet-login"}
 
 
 # Prerequisites: secp256k1, finite fields, and elliptic-curve point operations
@@ -294,7 +294,7 @@ This structure is the mathematical foundation for the subsequent ECDSA signature
 Alternatively, you can also take a look at my conversation with gemini as a supplement (honestly, with AI, the speed of learning has accelerated quite a lot
 
 
-::site={url="https://gemini.google.com/share/f72d7ecbcf76"}
+::site{url="https://gemini.google.com/share/f72d7ecbcf76"}
 
 
 # About an EOA wallet signature and verification

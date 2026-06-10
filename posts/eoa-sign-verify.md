@@ -19,7 +19,7 @@ draft: false
 差不多是对于[上一篇文章](https://dreaife.tokyo/evm-wallet-login/)的理论补充，大概算是把一次签名验证的流程和理论证明理通了，也顺便补了一下群的知识（
 
 
-::site={url="https://dreaife.tokyo/evm-wallet-login"}
+::site{url="https://dreaife.tokyo/evm-wallet-login"}
 
 
 # 预备知识：secp256k1、有限域与椭圆曲线点运算
@@ -294,7 +294,7 @@ $$
 或者也可以看一下我和gemini的对话来补充（有一说一，有了ai，学习速度加速不少
 
 
-::site={url="https://gemini.google.com/share/f72d7ecbcf76"}
+::site{url="https://gemini.google.com/share/f72d7ecbcf76"}
 
 
 # 关于一次EOA钱包的签名和验证

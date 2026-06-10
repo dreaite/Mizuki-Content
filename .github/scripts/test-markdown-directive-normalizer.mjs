@@ -14,6 +14,16 @@ const cases = [
     expected: '::project-card{title="Wallet Login" owner=\'dreaife\'}\n',
   },
   {
+    name: 'normalizes site card with extra equals before attributes',
+    input: '::site={url=“https://dreaife.tokyo/evm-wallet-login”}\n',
+    expected: '::site{url="https://dreaife.tokyo/evm-wallet-login"}\n',
+  },
+  {
+    name: 'normalizes notion linkified site card URL',
+    input: '::site={url=“[https://dreaife.tokyo/evm-wallet-login”}](https://dreaife.tokyo/evm-wallet-login%22%7D)\n',
+    expected: '::site{url="https://dreaife.tokyo/evm-wallet-login"}\n',
+  },
+  {
     name: 'supports container directives',
     input: ':::note{title=”Heads up”}\ncontent\n:::\n',
     expected: ':::note{title="Heads up"}\ncontent\n:::\n',

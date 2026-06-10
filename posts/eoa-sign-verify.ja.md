@@ -19,7 +19,7 @@ lang: 'ja'
 だいたい[前回の記事](https://dreaife.tokyo/evm-wallet-login/)に対する理論的な補足で、一度の署名検証のフローと理論的な証明を整理したもの、ついでに群に関する知識も少し補った感じです（
 
 
-::site={url="https://dreaife.tokyo/evm-wallet-login"}
+::site{url="https://dreaife.tokyo/evm-wallet-login"}
 
 
 # 予備知識：secp256k1、有限体と楕円曲線上の点演算
@@ -294,7 +294,7 @@ $$
 あるいは、補足として私とgeminiの会話を見てもよいかもしれません（正直、ai があると学習速度はかなり加速します
 
 
-::site={url="https://gemini.google.com/share/f72d7ecbcf76"}
+::site{url="https://gemini.google.com/share/f72d7ecbcf76"}
 
 
 # EOAウォレットの署名と検証について

@@ -1,5 +1,9 @@
 const DIRECTIVE_START_PATTERN = /^\s*:{2,}[A-Za-z][A-Za-z0-9_-]*\b/;
+const DIRECTIVE_CANDIDATE_PATTERN = /^\s*:{2,}[A-Za-z][A-Za-z0-9_-]*(?:\b|=)/m;
+const NOTION_LINKED_ATTRIBUTE_PATTERN =
+  /^(\s*:{2,}[A-Za-z][A-Za-z0-9_-]*)(?:=)?\{\s*([A-Za-z][A-Za-z0-9_-]*)\s*=\s*[“”"']?\[([^\]\n]+)\]\(([^)\n]+)\)\s*$/;
 const SMART_QUOTE_PATTERN = /[“”‘’]/;
+const HTTP_URL_PATTERN = /https?:\/\/[^\s"'“”<>\]\)]+/i;
 
 function replaceSmartQuotes(value) {
   return String(value || '')
@@ -50,15 +54,57 @@ function findDirectiveAttributeBodySpan(line) {
   return null;
 }
 
+function safeDecodeUriComponent(value) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+function extractHttpUrl(value) {
+  const directMatch = String(value || '').match(HTTP_URL_PATTERN);
+  if (directMatch) return directMatch[0];
+
+  const decoded = safeDecodeUriComponent(String(value || ''));
+  const decodedMatch = decoded.match(HTTP_URL_PATTERN);
+  return decodedMatch ? decodedMatch[0] : '';
+}
+
+function normalizeDirectiveBracePrefix(line) {
+  const directiveMatch = String(line || '').match(DIRECTIVE_START_PATTERN);
+  if (!directiveMatch) return line;
+
+  const prefixEnd = directiveMatch[0].length;
+  if (line[prefixEnd] !== '=' || line[prefixEnd + 1] !== '{') return line;
+
+  return `${line.slice(0, prefixEnd)}${line.slice(prefixEnd + 1)}`;
+}
+
+function normalizeNotionLinkedDirectiveLine(line) {
+  const match = String(line || '').match(NOTION_LINKED_ATTRIBUTE_PATTERN);
+  if (!match) return line;
+
+  const [, directiveName, attributeName, linkText, linkTarget] = match;
+  const url = extractHttpUrl(linkText) || extractHttpUrl(linkTarget);
+  if (!url) return line;
+
+  return `${directiveName}{${attributeName}="${url}"}`;
+}
+
 function normalizeDirectiveLine(line) {
-  if (!SMART_QUOTE_PATTERN.test(line)) return line;
+  const linkedDirective = normalizeNotionLinkedDirectiveLine(line);
+  if (linkedDirective !== line) return linkedDirective;
 
-  const span = findDirectiveAttributeBodySpan(line);
-  if (!span) return line;
+  const prefixNormalized = normalizeDirectiveBracePrefix(line);
+  if (!SMART_QUOTE_PATTERN.test(prefixNormalized)) return prefixNormalized;
 
-  const before = line.slice(0, span.start);
-  const body = line.slice(span.start, span.end);
-  const after = line.slice(span.end);
+  const span = findDirectiveAttributeBodySpan(prefixNormalized);
+  if (!span) return prefixNormalized;
+
+  const before = prefixNormalized.slice(0, span.start);
+  const body = prefixNormalized.slice(span.start, span.end);
+  const after = prefixNormalized.slice(span.end);
 
   return `${before}${replaceSmartQuotes(body)}${after}`;
 }
@@ -91,7 +137,7 @@ function updateFenceState(line, state) {
 
 export function normalizeDirectiveAttributeQuotes(markdown) {
   const source = String(markdown || '');
-  if (!SMART_QUOTE_PATTERN.test(source) || !/^\s*:{2,}/m.test(source)) {
+  if (!DIRECTIVE_CANDIDATE_PATTERN.test(source)) {
     return source;
   }
 
