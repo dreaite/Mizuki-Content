@@ -2,7 +2,7 @@
 title: '关于一次EOA钱包的签名验证及其相关内容'
 published: 2026-06-10
 updated: 2026-06-10
-description: '延续钱包登录实践，从 secp256k1、ECDSA 与 SIWE 消息出发，梳理 EOA 钱包签名的生成、恢复公钥、计算地址和服务端验签流程，说明不暴露私钥也能证明地址控制权的原因。'
+description: '本篇文章深入解析了以太坊 EOA 钱包一次签名验证的完整流程与背后数学原理。首先回顾了 secp256k1 曲线的有限域 Fₚ、椭圆曲线点群 E(Fₚ) 以及基点 G 与其阶 n 的基本概念，详细说明了点加法、点倍加和标量乘法的模 p 与模 n 计算方式。随后，文章通过实际的 SIWE（Sign‑In with Ethereum）场景，逐步展示了钱包在收到签名请求后如何生成 r/s/v 三元组，包括哈希计算、随机数 k 的生成、R 点的求取以及 r、s、v 的具体公式。接着，服务端如何利用已知的 r、s、v、消息哈希 e 和基点 G 逆向求解公钥 Q 的公式 Q = r⁻¹(sR − eG) 进行验证，并通过 keccak‑256 取后 20 字节得到钱包地址，实现无私钥泄露的所有权确认。文章还指出了 p 与 n 的区别、椭圆曲线离散对数问题的计算难度（约 2¹²⁸）以及当前量子计算对该安全性的潜在影响。整体内容为开发者提供了从理论到实现的完整参考，适合作为博客 SEO 摘要，提升相关关键词（如 “EOA 钱包签名验证”“secp256k1”“ECDSA”“SIWE”）的搜索可见性。'
 permalink: 'eoa-sign-verify'
 image: 'https://r2.dreaife.tokyo/notion/covers/37b5465cca17804f8624caf756234df3/ai-generated-1781099535759.png'
 tags: ['wallet', 'theory', 'web3']
