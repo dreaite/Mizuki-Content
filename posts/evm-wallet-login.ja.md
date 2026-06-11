@@ -2,7 +2,7 @@
 title: 'EOA向けのEVMウォレットログイン画面'
 published: 2026-06-08
 updated: 2026-06-09
-description: 'EOA ウォレットログインの小さな実装を題材に、ウォレット接続、SIWE 形式の署名メッセージ、wagmi による署名リクエスト、バックエンド検証の関係を整理し、アドレス取得と所有権証明が別ステップになる理由を説明します。'
+description: 'EVM/EOAウォレットログインの実装例をもとに、connect wallet、SIWE形式メッセージ、wagmi署名、nonce、バックエンド検証を整理し、アドレス接続と署名による所有権証明を分ける理由を解説します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/3795465cca1780d29cb9f993bf218d10/2026%E5%B9%B46%E6%9C%889%E6%97%A5_01_09_11.png'
 tags: ['web3', 'wallet']
 category: 'WEB3'

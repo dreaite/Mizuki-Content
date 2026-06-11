@@ -2,7 +2,7 @@
 title: 'An EVM wallet login interface for EOAs'
 published: 2026-06-08
 updated: 2026-06-09
-description: 'A practical walkthrough of an EOA wallet login flow, covering connect wallet, SIWE-style signing messages, wagmi sign requests, and backend signature verification, with a focus on why address connection and ownership proof are two separate steps.'
+description: 'A practical EVM/EOA wallet login walkthrough covering connect wallet, SIWE-style messages, wagmi signing, nonce handling, and backend verification, explaining why login separates address connection from signature-based ownership proof.'
 image: 'https://r2.dreaife.tokyo/notion/covers/3795465cca1780d29cb9f993bf218d10/2026%E5%B9%B46%E6%9C%889%E6%97%A5_01_09_11.png'
 tags: ['web3', 'wallet']
 category: 'WEB3'

@@ -2,7 +2,7 @@
 title: '一个对于EOA的EVM钱包登陆界面'
 published: 2026-06-08
 updated: 2026-06-09
-description: '从一个 EOA 钱包登录小项目出发，整理 connect wallet、SIWE 签名消息、wagmi 签名请求与后端验签之间的关系，说明钱包登录为什么需要“连接地址”和“签名证明控制权”两步。'
+description: '基于一个 EVM/EOA 钱包登录界面，梳理 connect wallet、SIWE 签名消息、wagmi 签名请求、nonce 与后端验签流程，解释钱包登录为什么需要先连接地址再签名证明控制权。'
 permalink: 'evm-wallet-login'
 image: 'https://r2.dreaife.tokyo/notion/covers/3795465cca1780d29cb9f993bf218d10/2026%E5%B9%B46%E6%9C%889%E6%97%A5_01_09_11.png'
 tags: ['web3', 'wallet']
