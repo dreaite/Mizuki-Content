@@ -15,11 +15,19 @@ export interface DiaryItem {
 const diaryData: DiaryItem[] = [
 	{
 		id: 1,
+		content: "有一说一，最近开始学习区块链，没想到反而感觉更类似于当时打acm的时候学习的状态了。secp256k1要补各种数学知识和推论，再实际看ethers的实现的时候，结果又发现了熟悉的竞赛风味的代码（也是非常愉悦的了😊\n\n话说我本来以为会是学习java框架的那种感觉，现在想来从钱包这个主体来学，可能是个不错的选择。",
+		date: "2026-06-13T18:41:00.000Z",
+		images: [
+			"https://r2.dreaife.tokyo/notion/covers/37e5465cca17806aa05ecbbfe728e0a5/inline/eb4331db2b71e582-image.png",
+		],
+	},
+	{
+		id: 2,
 		content: "最近我稍微意识到了一点增量意识和存量意识的差别，虽然稳定的工资可以提供一份稳定的收入，但是这也会诱导人的思考局限在了这份开销水平之类。稳定的收入更应该作为一份心态的稳定剂，而不应该为此而把自己的行动边境就此限制。当今这个泡沫时代，依然还是有很多热钱可以赚到的，没有道理因为手上的一份收入就丢掉另一份。",
 		date: "2026-04-03T16:29:00.000Z",
 	},
 	{
-		id: 2,
+		id: 3,
 		content: "到达！\nねり真可爱",
 		date: "2026-03-05T15:23:00.000Z",
 		images: [
@@ -28,7 +36,7 @@ const diaryData: DiaryItem[] = [
 		],
 	},
 	{
-		id: 3,
+		id: 4,
 		content: "正式搬到mizuki来了😊",
 		date: "2026-02-24T08:48:00.000Z",
 		images: [
