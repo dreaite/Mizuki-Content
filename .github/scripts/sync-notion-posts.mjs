@@ -64,6 +64,12 @@ const CONFIG = {
   notionCoverR2SecretAccessKey: process.env.NOTION_COVER_R2_SECRET_ACCESS_KEY || '',
   notionCoverR2CacheControl: String(process.env.NOTION_COVER_R2_CACHE_CONTROL || 'public, max-age=3600')
     .trim(),
+  notionCoverR2DownloadMaxAttempts: parsePositiveInt(process.env.NOTION_COVER_R2_DOWNLOAD_MAX_ATTEMPTS, 5),
+  notionCoverR2DownloadTimeoutMs: parsePositiveInt(process.env.NOTION_COVER_R2_DOWNLOAD_TIMEOUT_MS, 60 * 1000),
+  notionCoverR2DownloadRetryBaseDelayMs: parsePositiveInt(
+    process.env.NOTION_COVER_R2_DOWNLOAD_RETRY_BASE_DELAY_MS,
+    1000
+  ),
   syncCheckpointEveryPosts: parsePositiveInt(process.env.NOTION_SYNC_CHECKPOINT_EVERY_POSTS, 0),
   syncCheckpointPushEnabled: parseBoolean(process.env.NOTION_SYNC_CHECKPOINT_PUSH_ENABLED, false),
   syncCheckpointMarkerPath: String(process.env.NOTION_SYNC_CHECKPOINT_MARKER_PATH || '.notion-sync-checkpoint-pushed')
@@ -925,6 +931,82 @@ function createNotionR2UploadCache() {
   return new Map();
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function formatLogLabel(logLabel) {
+  return logLabel ? ` [${logLabel}]` : '';
+}
+
+function getRetryDelayMs(attempt) {
+  const baseDelayMs = Math.max(1, CONFIG.notionCoverR2DownloadRetryBaseDelayMs);
+  const exponentialDelayMs = baseDelayMs * 2 ** Math.max(0, attempt - 1);
+  const jitterMs = Math.floor(Math.random() * Math.min(baseDelayMs, 250));
+  return Math.min(exponentialDelayMs + jitterMs, 30 * 1000);
+}
+
+function getErrorCode(error) {
+  return error?.cause?.code || error?.code || error?.name || '';
+}
+
+function isRetryableDownloadStatus(status) {
+  return status === 408 || status === 425 || status === 429 || status >= 500;
+}
+
+async function discardResponseBody(response) {
+  const cancelPromise = response?.body?.cancel?.();
+  if (cancelPromise) {
+    await cancelPromise.catch(() => undefined);
+  }
+}
+
+async function fetchNotionImageWithRetry(url, { logLabel } = {}) {
+  const maxAttempts = Math.max(1, CONFIG.notionCoverR2DownloadMaxAttempts);
+  const timeoutMs = Math.max(1, CONFIG.notionCoverR2DownloadTimeoutMs);
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    let response;
+    try {
+      response = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
+    } catch (error) {
+      const code = getErrorCode(error);
+      if (attempt >= maxAttempts) {
+        throw new Error(
+          `Failed to download Notion image for R2 upload after ${attempt} attempt(s)${formatLogLabel(logLabel)}${code ? ` (code=${code})` : ''}: ${error?.message || error}`,
+          { cause: error }
+        );
+      }
+
+      console.warn(
+        `Retrying Notion image download ${attempt}/${maxAttempts}${formatLogLabel(logLabel)}${code ? ` after ${code}` : ''}: ${error?.message || error}`
+      );
+      await sleep(getRetryDelayMs(attempt));
+      continue;
+    }
+
+    if (response.ok) {
+      return response;
+    }
+
+    if (attempt < maxAttempts && isRetryableDownloadStatus(response.status)) {
+      await discardResponseBody(response);
+      console.warn(
+        `Retrying Notion image download ${attempt}/${maxAttempts}${formatLogLabel(logLabel)} after ${response.status} ${response.statusText}`
+      );
+      await sleep(getRetryDelayMs(attempt));
+      continue;
+    }
+
+    const responseText = await response.text().catch(() => '');
+    throw new Error(
+      `Failed to download Notion image for R2 upload (${response.status} ${response.statusText})${formatLogLabel(logLabel)}: ${responseText.slice(0, 300)}`
+    );
+  }
+
+  throw new Error(`Failed to download Notion image for R2 upload${formatLogLabel(logLabel)}.`);
+}
+
 async function uploadRemoteImageUrlToR2(s3Client, uploadCache, { sourceUrl, objectKey, suggestedFileName, logLabel }) {
   const url = String(sourceUrl || '').trim();
   if (!s3Client || !CONFIG.notionCoverR2Enabled || !url) return url;
@@ -935,34 +1017,32 @@ async function uploadRemoteImageUrlToR2(s3Client, uploadCache, { sourceUrl, obje
   }
 
   const publicUrl = buildPublicUrlFromBase(CONFIG.notionCoverR2PublicBaseUrl, objectKey);
-  if (uploadCache) {
-    uploadCache.set(cacheKey, publicUrl);
-  }
 
-  const response = await fetch(url);
-  if (!response.ok) {
-    if (uploadCache) uploadCache.delete(cacheKey);
-    const responseText = await response.text().catch(() => '');
-    throw new Error(
-      `Failed to download Notion image for R2 upload (${response.status} ${response.statusText})${logLabel ? ` [${logLabel}]` : ''}: ${responseText.slice(0, 300)}`
+  try {
+    const response = await fetchNotionImageWithRetry(url, { logLabel });
+    const arrayBuffer = await response.arrayBuffer();
+    const bodyBuffer = Buffer.from(arrayBuffer);
+    const contentType = response.headers.get('content-type') || guessImageContentType(suggestedFileName);
+
+    await s3Client.send(
+      new PutObjectCommand({
+        Bucket: CONFIG.notionCoverR2Bucket,
+        Key: objectKey,
+        Body: bodyBuffer,
+        ContentType: contentType,
+        CacheControl: CONFIG.notionCoverR2CacheControl || undefined,
+      })
     );
+
+    if (uploadCache) {
+      uploadCache.set(cacheKey, publicUrl);
+    }
+
+    return publicUrl;
+  } catch (error) {
+    if (uploadCache) uploadCache.delete(cacheKey);
+    throw error;
   }
-
-  const arrayBuffer = await response.arrayBuffer();
-  const bodyBuffer = Buffer.from(arrayBuffer);
-  const contentType = response.headers.get('content-type') || guessImageContentType(suggestedFileName);
-
-  await s3Client.send(
-    new PutObjectCommand({
-      Bucket: CONFIG.notionCoverR2Bucket,
-      Key: objectKey,
-      Body: bodyBuffer,
-      ContentType: contentType,
-      CacheControl: CONFIG.notionCoverR2CacheControl || undefined,
-    })
-  );
-
-  return publicUrl;
 }
 
 async function uploadNotionCoverToR2(s3Client, uploadCache, { pageId, coverInfo }) {
