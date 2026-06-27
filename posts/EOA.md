@@ -2,7 +2,7 @@
 title: '关于EOA钱包在链上的基础操作'
 published: 2026-06-27
 updated: 2026-06-27
-description: '本篇文章深入解析了EOA钱包在链上的基础操作，涵盖钱包创建与导入、HD（助记词）钱包的原理与生成流程，以及验证和交易两大功能。文章首先介绍了随机数生成的传统钱包创建方式，随后阐述了通过BIP‑39、BIP‑32、BIP‑44实现的助记词（HD）钱包批量化创建方法。接着，分别说明了基于签名的所有权验证（EIP‑191、EIP‑712）和实际改变链上状态的交易构成（to、value、data、nonce、gas、chainId）。最后，详细描述了助记词到种子、主密钥以及特定路径（m/44’/60’/account’/0/i）派生私钥的完整技术流程，为读者提供了在以太坊上安全、可恢复且高效管理EOA钱包的实用指南。'
+description: '本文概述了EOA钱包在区块链上的基础操作，包括钱包的创建与导入、HD（助记词）钱包的生成流程、以及验证和交易两大核心功能。重点介绍了 BIP‑39、BIP‑32、BIP‑44 标准在助记词、seed、主密钥及子私钥派生中的具体步骤，并解释了硬化与非硬化子节点的计算方式。通过这些流程，用户可以批量生成安全可恢复的以太坊钱包，并实现签名验证、EIP‑712 授权以及标准转账、合约调用等交易操作。'
 permalink: 'EOA'
 image: ''
 tags: []
@@ -114,13 +114,13 @@ draft: true
 这里是通过PBKDF2-HMAC-SHA512来计算出一个512bit的seed。具体计算如下：
 
 
-$PBKDF2-HMAC-SHA512(password=utf8(助记词),salt=utf8("mnemonic"+password),iteration=2048,output=512bit)$
+$PBKDF2-HMAC-SHA512(password=mnemonic ,salt="mnemonic"+password,iteration=2048,dkLen=64bytes)$
 
 
-即把utf8 byte stream话的助记词作为password，salt为“mnemonic”+password，进行HMAC-SHA512 iteration=2048次。第一次的m1是通过助记词和password来计算，后面的m2开始都是用上一次计算的$m_{i-1}$作为password来进行HMAC-SHA512的计算。
+即把utf8 byte stream话的助记词作为password，salt为“mnemonic”+password，进行HMAC-SHA512 iteration=2048次。第一次的U1是通过助记词和password 以及block_index来计算(U1=HMAC(password,salt || INT(block_index)))，后面的U2开始都是用上一次计算的$U_{i-1}$作为key来进行HMAC-SHA512的计算(U2=HMAC(password, U1))。
 
 
-由此最终计算出的$m_{2048}$就是按照BIP-39规则生成出来的seed。
+由此最终计算出的第一个block的result = U1 xor U2 xor … xor U2048，因为512bit的输出就为要求的长度64byte，所以block只有一个，此时输出的result就是按照BIP-39规则生成出来的seed。
 
 
 ## 主密钥m的派生
@@ -129,7 +129,8 @@ $PBKDF2-HMAC-SHA512(password=utf8(助记词),salt=utf8("mnemonic"+password),iter
 根据BIP-32，对于上面计算出来的seed再执行一轮HMAC-SHA512加密得到I，具体内容如下。
 
 
-$I = HMAC-SHA512(key = “Bitcoin seed”, data = seed)$
+$I = HMAC-SHA512(key = \text{``Bitcoin seed''}, data = seed)
+$
 
 
 此时得到了一个512bit的I，按照256bit的长度，可以把它拆出左右两半长度各为256bit的数字。
@@ -144,4 +145,75 @@ $I = HMAC-SHA512(key = “Bitcoin seed”, data = seed)$
 ## 一个特定密钥的派生计算
 
 
-接下来就是BIP-44是如何通过主密钥，沿着m/44’/60’/account’/0/i路径来计算出
+接下来就是BIP-44是如何规定通过主密钥，沿着m/44’/60’/account’/0/i路径来通过BIP-32计算出一个特定密钥的了。
+
+
+这里因为开始进入secp256k1椭圆曲线的群计算范畴了，所以如果不了解基础知识的话，欢迎看我之前的原理证明（
+
+
+::site{url="https://dreaife.tokyo/eoa-sign-verify/"}
+
+- 派生路径m/44’/60’/account’/0/i
+
+    这里先介绍一下派生路径到底是什么吧。
+
+
+    派生路径可以理解为一个以主密钥m为根节点的深度为6层的数，每层都是一个$2^{32}$的数。但是对于这个$2^{32}$的数，一般只会使用其中一半，即$2^{31}$的数。这是由每层数字右上角的‘是否hardened来决定这层的数字i是单纯使用i（[0,$2^{31}$)），还是使用i‘=i+$2^{31}$。
+
+
+    同时这里的hardened标记也会影响向子节点计算时的计算方式。
+
+
+    而对于m后面44’/60’/account’/0/i这五层的含义，每层分别是：
+
+    - 44‘：BIP-44规定的目标
+    - 60’：对于Ethereum使用的coin type
+    - account‘：派生时选择的账户编号
+    - 0：external chain，一般用于普通收款地址
+    - i：对于每个账户的，第i个地址
+- non-hardened 子节点计算方式
+
+    对于某层子节点的数字i，可以通过父节点的密钥IL(下称pPk)和chainCode IR(下称pCc)通过下式计算得出子节点的I。
+
+
+    $I = HMAC-SHA512(key=pCc,data=(serP(pPk*G) || ser32(i))$
+
+
+    其中，$serP(pPk*G)$意味着，0x02/0x03 || (pPk*G)_x)，pPk*G即为父节点的公钥，0x02还是0x03由计算出的父节点公钥（mod p）的y/p-y为奇数还是偶数决定。
+
+
+    对于得到的I，同样按照256bit的长度，拆分为左右IL和IR。
+
+
+    对于该子节点密钥child private key就为(IL+parent private key) mod n
+
+
+    而子节点的child chain code，则为IR
+
+- hardened 子节点计算方式
+
+    对于某层子节点的数字i’，可以通过父节点的密钥IL(下称pPk)和chainCode IR(下称pCc)通过下式计算得出子节点的I。
+
+
+    $I = HMAC-SHA512(key=pCc,password=(0x00 || ser256(pPk) || ser32(i + 2^{31}))$
+
+
+    其中0x00意味着直接使用私钥pPk，所以不再需要判断公钥的y的奇偶性。
+
+
+    对于得到的I，同样按照256bit的长度，拆分为左右IL和IR。
+
+
+    对于该子节点密钥child private key就为(IL+parent private key) mod n
+
+
+    而子节点的child chain code，则为IR
+
+- 最终得到的私钥
+
+    按照m/44’/60’/account’/0/i这样一层层派生，最终达到address_index i的叶子节点，在这个选定的节点上计算出的该子节点的child private key，即为该账户地址的私钥d。它的实际账户地址，可以通过一般的keccak256计算私钥d*G，并取后20byte得到。
+
+
+    同时对于这个地址，有通过EIP-55的checksum对普通地址转换成大小写地址来进行校验的方式来保证地址格式的合法性（检查字符串格式/输入错误）。
+
+    > EIP-55是一种不改变地址字母，只根据该地址的keccak256计算结果改变其大小写。对于i位上的数字，如果其地址为a-f的同时，其keccak256计算结果对应的i位≥8，则将其大写，否则不变。
