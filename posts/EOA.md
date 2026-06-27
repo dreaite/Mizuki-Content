@@ -2,7 +2,7 @@
 title: '关于EOA钱包在链上的基础操作'
 published: 2026-06-27
 updated: 2026-06-27
-description: '本文简要介绍了EOA钱包在区块链上的基础操作，包括钱包的创建与导入、HD（助记词）钱包的生成流程、验证签名（EIP‑191、EIP‑712）以及交易的核心字段与发起方式，并详细阐述了BIP‑39、BIP‑32、BIP‑44 在助记词、种子、主密钥及子私钥派生中的具体计算步骤，为读者提供实用的链上钱包使用指南。'
+description: '本篇文章深入探讨了EOA钱包在链上的基础操作，涵盖钱包创建与导入、HD助记词生成流程、BIP‑39/32/44 标准的详细原理，以及验证（EIP‑191、EIP‑712）和交易（to、value、data、nonce、gas、chainId）两大核心功能，帮助读者快速掌握以太坊钱包的创建、恢复、签名验证和交易发起等关键技术要点。'
 permalink: 'EOA'
 image: ''
 tags: []
@@ -176,7 +176,9 @@ $
     对于某层子节点的数字i，可以通过父节点的密钥IL(下称pPk)和chainCode IR(下称pCc)通过下式计算得出子节点的I。
 
 
-    $I = HMAC-SHA512(key=pCc,data=(serP(pPk*G) || ser32(i))$
+    $$
+    I = HMAC-SHA512(key=pCc,data=(serP(pPk*G) || ser32(i))
+    $$
 
 
     其中，$serP(pPk*G)$意味着，0x02/0x03 || (pPk*G)_x)，pPk*G即为父节点的公钥，0x02还是0x03由计算出的父节点公钥（mod p）的y/p-y为奇数还是偶数决定。
@@ -195,7 +197,9 @@ $
     对于某层子节点的数字i’，可以通过父节点的密钥IL(下称pPk)和chainCode IR(下称pCc)通过下式计算得出子节点的I。
 
 
-    $I = HMAC-SHA512(key=pCc,password=(0x00 || ser256(pPk) || ser32(i + 2^{31}))$
+    $$
+    I = HMAC-SHA512(key=pCc,password=(0x00 || ser256(pPk) || ser32(i + 2^{31}))
+    $$
 
 
     其中0x00意味着直接使用私钥pPk，所以不再需要判断公钥的y的奇偶性。
@@ -204,10 +208,10 @@ $
     对于得到的I，同样按照256bit的长度，拆分为左右IL和IR。
 
 
-    对于该子节点密钥child private key就为(IL+parent private key) mod n
+    对于该子节点密钥child private key就为`(IL+parent private key) mod n`
 
 
-    而子节点的child chain code，则为IR
+    而子节点的child chain code，则为`IR`
 
 - 最终得到的私钥
 
