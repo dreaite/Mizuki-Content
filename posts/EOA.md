@@ -2,7 +2,7 @@
 title: '关于EOA钱包在链上的基础操作'
 published: 2026-06-27
 updated: 2026-06-27
-description: '本篇文章深入探讨了EOA钱包在链上的基础操作，涵盖钱包创建与导入、HD助记词生成流程、BIP‑39/32/44 标准的详细原理，以及验证（EIP‑191、EIP‑712）和交易（to、value、data、nonce、gas、chainId）两大核心功能，帮助读者快速掌握以太坊钱包的创建、恢复、签名验证和交易发起等关键技术要点。'
+description: '本篇文章深入解析了EOA钱包在区块链上的基础操作，涵盖钱包的创建、HD助记词恢复、验证签名（SIWE、EIP‑712）以及交易构造与生命周期，提供完整的技术细节与实现步骤，帮助开发者快速上手并在Web3项目中安全高效地使用钱包功能。'
 permalink: 'EOA'
 image: ''
 tags: []
@@ -16,7 +16,10 @@ draft: true
 ========
 
 
-钱包作为用户在实际和web3世界进行交互时经由的账号，应该说算是探索web3的门户了（在个人理解中）。所以，本次探索的内容就基于这个认识，着重探索了一下以钱包为主体，看看一个钱包可以在链上做到的基本行动。
+钱包作为用户在实际和web3世界进行交互时经由的账号，应该说算是探索web3的门户了（在个人理解中）。所以，本次探索的内容就基于这个认识，着重探索了一下以钱包为主体，看看一个钱包可以在链上做到的基本行动。这是项目展示页面：[https://evm-wallet.block.dreaifehebi.com/](https://evm-wallet.block.dreaifehebi.com/)
+
+
+::github{repo="https://github.com/dreaifeHebi/evm-eoa-wallet-demo"}
 
 
 # 钱包的创建及其行动范围
@@ -225,4 +228,245 @@ $
 # 钱包的交易
 
 
-一般有在web3进行过操作之类的话，应该会发现除了让你验证的步骤，基本上什么操作都需要你交gas费才能让操作上链
+对于一个交易，一般可以分为为了让它可以上链的交易外壳和费用模型，以及为了让交易行为真正起作用的to / value / data这些关键参数，以及nonce/chainId这些验证参数。
+
+
+## 交易的结构
+
+
+对于一个普通的EIP-1559/type2交易，大概的内部结构会是这样：
+
+
+```javascript
+type: 0x02
+
+chainId
+nonce
+
+maxPriorityFeePerGas
+maxFeePerGas
+gasLimit
+
+to
+value
+data
+
+accessList
+
+signatureYParity
+signatureR
+signatureS
+```
+
+
+这里只是对于属性的列举，一段未签名的交易，其一般更类似于json的格式：
+
+
+```javascript
+{
+  chainId: 1,
+  nonce: 42,
+  to: "0xContractOrEOA...",
+  value: "1000000000000000000",
+  data: "0x...",
+  gasLimit: "21000",
+  maxFeePerGas: "...",
+  maxPriorityFeePerGas: "..."
+}
+```
+
+
+签名后会和验证时签名的结果一样出来r/s/v，将它们追加到上述json到尾部。
+
+
+然后按照下述的结构，将交易内容和签名构成的交易编码成一串bytes，作为raw signed trans action。对于这个编码完的交易，即可发送给RPC进行广播，准备上链。
+
+
+```javascript
+0x02 || rlp([
+  chainId,
+  nonce,
+  maxPriorityFeePerGas,
+  maxFeePerGas,
+  gasLimit,
+  to,
+  value,
+  data,
+  accessList,
+  yParity,
+  r,
+  s
+])
+```
+
+
+其中，每个字段作用分别为：
+
+- chainId: 防止同一笔交易被拿到另一条链重放
+- nonce: 账户交易序号，防止同一笔交易重复执行，也决定交易顺序（注意这里的nonce是当前这条链上的操作钱包的对于nonce，对于上次交易的nonce必须是按照+1的顺序进行）
+- to: 目标地址，空则是部署合约
+- value: 附带发送的原生币数量
+- data/input: 合约调用 calldata，或部署合约时的 init code
+- gasLimit: 这笔交易最多允许消耗多少 gas
+- maxFeePerGas: 用户愿意支付的最高单价
+- maxPriorityFeePerGas: 给 validator/proposer 的小费上限
+- signature: EOA钱包对交易内容的签名
+
+## 费用模型
+
+
+对于费用模型，一般会分为这些：
+
+
+| 类型                 | 名字                   | 重点                                                          |
+| ------------------ | -------------------- | ----------------------------------------------------------- |
+| legacy / 常说 type 0 | 旧交易                  | gasPrice + gasLimit，没有 typed envelope                       |
+| type 1             | EIP-2930 access list | legacy 费用模型 gasPrice，额外带 accessList                         |
+| type 2             | EIP-1559             | maxFeePerGas + maxPriorityFeePerGas + gasLimit              |
+| type 3             | EIP-4844 blob tx     | 给 rollup 发 blob 数据，额外有 maxFeePerBlobGas、blobVersionedHashes |
+| type 4             | EIP-7702 set-code tx | 让 EOA 通过 authorizationList 设置 delegation code，接近合约账户能力      |
+
+
+这里因为主要只考虑现在常用的基础交易，所以上述结构以type2为参考进行编写。
+
+
+## 一个交易的生命周期
+
+
+对于一个交易，一般是在调用某应用/或者在钱包进行其内容构建和签名，然后再发送构建完的交易内容给RPC广播上链。大概的流程是这样：
+
+
+```mermaid
+flowchart TD
+    A["用户操作<br/>转账 / 调合约 / 部署合约"] --> B["构建 type 2 交易"]
+
+    B --> C["钱包展示交易"]
+    C --> D["用户确认签名"]
+    D --> F["raw signed transaction"]
+    F --> G["发送给 RPC<br/>eth_sendRawTransaction"]
+
+    G --> H["RPC 节点校验<br/>签名 / nonce / 余额 / gas"]
+    H --> I{"通过？"}
+    I -->|"否"| X["拒绝<br/>返回错误"]
+    I -->|"是"| J["进入 节点mempool并广播<br/>等待打包"]
+
+    J --> K["出块方选择交易"]
+    K --> L["放入区块"]
+    L --> M["全网节点验证区块<br/>重新执行交易"]
+
+    M --> N{"to / value / data"}
+
+    N -->|"to 为空"| O["部署合约<br/>data = init code"]
+    N -->|"to=EOA<br/>data=0x"| P["ETH 转账"]
+    N -->|"to=合约<br/>data=0x"| Q["receive / fallback"]
+    N -->|"to=合约<br/>data≠0x"| R["调用合约函数<br/>selector + ABI 参数"]
+
+    O --> S["执行成功？"]
+    P --> S
+    Q --> S
+    R --> S
+
+    S -->|"成功"| T["状态变更生效<br/>receipt status=1"]
+    S -->|"失败"| U["状态回滚<br/>gas 已消耗<br/>receipt status=0"]
+
+    T --> V["交易上链<br/>可查 tx / receipt / logs"]
+    U --> V
+```
+
+
+# 钱包的验证
+
+
+如引言所说，钱包可以做的除了可以直接上链的交易外，还有用于验证的不直接上链的验证行为。
+
+
+## SIWE标准的普通钱包归属权验证
+
+
+这里就是一个钱包在向一个调用的服务方证明用户存在对这个钱包的控制权。具体的内容可以参考上面放过的blog（
+
+
+::site{url="https://dreaife.tokyo/evm-wallet-login/"}
+
+
+## EIP-712，一种可以授权合约的验证
+
+
+EIP-712是一种对712签名内容表示同意的授权验证，不过它更类似于交易中的签名，即是对于一个需要调用合约的参数进行签名，允许它调用合约（支持这种授权）中属于你名下的资产。当然它只是一个签名，最终想让这个签名内容改变链上状态，还得服务方把这个签名和调用内容合并为交易，交给这个签名对象的合约去调用。
+
+- 签名内容
+
+    签名的内容一般会是这样一种格式：
+
+
+    ```javascript
+    {
+      types: {
+        EIP712Domain: [
+          { name: "name", type: "string" },
+          { name: "version", type: "string" },
+          { name: "chainId", type: "uint256" },
+          { name: "verifyingContract", type: "address" }
+        ],
+        Permit: [
+          { name: "owner", type: "address" },
+          { name: "spender", type: "address" },
+          { name: "value", type: "uint256" },
+          { name: "nonce", type: "uint256" },
+          { name: "deadline", type: "uint256" }
+        ]
+      },
+      primaryType: "Permit",
+      domain: {
+        name: "DemoToken",
+        version: "1",
+        chainId: 1,
+        verifyingContract: "0xTokenContract..."
+      },
+      message: {
+        owner: "0xUser...",
+        spender: "0xDappOrRouter...",
+        value: "1000000000000000000",
+        nonce: 0,
+        deadline: 1710000000
+      }
+    }
+    ```
+
+
+    其中，types用来定义数据结构；primaryType作为签名的主结构，有Permit，Order，Forward和Request；domain则是指定签名的适用范围；message则是用户真正授权的内容。
+
+- EIP-712的一个签名到使用的流程
+
+    比如说对于permit类型的712，就是用户owner签名允许spender这个地址可以花value数量的token，有效期到deadline，nonce为n；然后把这个授权作为签名返回给DApp，DApp通过这个授权和内容发起交易permit( owner, spender, value, deadline, v, r, s)；调用合约验证签名符合签名内容后，根据授权内容进行变更。
+
+
+    具体内容如下：
+
+    1. 协议/合约先定义可签名结构
+    Permit(owner, spender, value, nonce, deadline)
+    2. DApp 构建 EIP-712 typed data
+    包含 types、domain、primaryType、message
+    3. 钱包展示签名内容
+    用户看到是哪个 DApp、哪条链、哪个合约、授权内容是什么
+    4. 用户确认后，EOA 私钥签名
+    钱包计算 digest:
+    keccak256("\x19\x01" || domainSeparator || hashStruct(message))
+    然后签出 r/s/v
+    5. 钱包把 signature 返回给 DApp / 服务方
+    此时还没有上链，没有 gas，也没有状态变化
+    6. DApp / relayer / 其他人构建一笔交易
+    把 message 里的字段 + signature 一起传给合约
+    7. 合约在链上重建同一个 digest
+    然后用 ecrecover / ECDSA.recover 恢复 signer
+    8. 合约检查签名是否合法
+    signer 是否等于 owner
+    nonce 是否没用过
+    deadline 是否没过期
+    chainId / verifyingContract / domain 是否匹配
+    9. 检查通过后，合约执行状态变更
+    例如设置 allowance、成交订单、执行 meta transaction
+    10. 消耗 nonce
+    防止同一份签名被重复使用
+
+# 代码中的实现
