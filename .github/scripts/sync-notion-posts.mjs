@@ -808,6 +808,8 @@ async function requestPostTranslationWithCodexCli(prompt) {
 
   try {
     const codexArgs = [
+      '-a',
+      'never',
       'exec',
       '--ephemeral',
       '--ignore-rules',
@@ -816,8 +818,6 @@ async function requestPostTranslationWithCodexCli(prompt) {
       'never',
       '--sandbox',
       'read-only',
-      '--ask-for-approval',
-      'never',
       '-C',
       process.cwd(),
       '-o',
