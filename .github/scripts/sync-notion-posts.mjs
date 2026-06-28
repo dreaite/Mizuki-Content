@@ -41,6 +41,11 @@ const CONFIG = {
   postTranslationSourceLanguage: String(process.env.NOTION_POST_TRANSLATION_SOURCE_LANG || '').trim(),
   postTranslationSystemPrompt: String(process.env.NOTION_POST_TRANSLATION_SYSTEM_PROMPT || '').trim(),
   postTranslationTimeoutMs: parsePositiveInt(process.env.NOTION_POST_TRANSLATION_TIMEOUT_MS, 10 * 60 * 1000),
+  postTranslationMaxAttempts: parsePositiveInt(process.env.NOTION_POST_TRANSLATION_MAX_ATTEMPTS, 4),
+  postTranslationRetryBaseDelayMs: parsePositiveInt(
+    process.env.NOTION_POST_TRANSLATION_RETRY_BASE_DELAY_MS,
+    5000
+  ),
   postTranslationCheckpointEvery: parsePositiveInt(process.env.NOTION_POST_TRANSLATION_CHECKPOINT_EVERY, 10),
   postTranslationCheckpointGitEnabled: parseBoolean(
     process.env.NOTION_POST_TRANSLATION_CHECKPOINT_GIT_ENABLED,
@@ -763,55 +768,78 @@ function getPostTranslationHttpAgent() {
 }
 
 async function requestPostTranslationCompletion({ systemPrompt, userPrompt, responseKind, temperature = 1 }) {
-  let response;
-  try {
-    response = await fetch(`${CONFIG.postTranslationApiBaseUrl}/chat/completions`, {
-      method: 'POST',
-      signal: AbortSignal.timeout(CONFIG.postTranslationTimeoutMs),
-      dispatcher: getPostTranslationHttpAgent(),
-      headers: {
-        'Content-Type': 'application/json',
-        ...(CONFIG.postTranslationApiKey ? { Authorization: `Bearer ${CONFIG.postTranslationApiKey}` } : {}),
-      },
-      body: JSON.stringify({
-        model: CONFIG.postTranslationModel,
-        temperature,
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt,
-          },
-          {
-            role: 'user',
-            content: userPrompt,
-          },
-        ],
-      }),
-    });
-  } catch (error) {
-    const causeCode = error?.cause?.code || error?.code || '';
-    throw new Error(
-      `LLM translation request failed before response (timeout=${CONFIG.postTranslationTimeoutMs}ms${causeCode ? `, code=${causeCode}` : ''}). ${error?.message || error}`,
-      { cause: error }
-    );
-  }
+  const maxAttempts = Math.max(1, CONFIG.postTranslationMaxAttempts);
 
-  if (!response.ok) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    let response;
+    try {
+      response = await fetch(`${CONFIG.postTranslationApiBaseUrl}/chat/completions`, {
+        method: 'POST',
+        signal: AbortSignal.timeout(CONFIG.postTranslationTimeoutMs),
+        dispatcher: getPostTranslationHttpAgent(),
+        headers: {
+          'Content-Type': 'application/json',
+          ...(CONFIG.postTranslationApiKey ? { Authorization: `Bearer ${CONFIG.postTranslationApiKey}` } : {}),
+        },
+        body: JSON.stringify({
+          model: CONFIG.postTranslationModel,
+          temperature,
+          messages: [
+            {
+              role: 'system',
+              content: systemPrompt,
+            },
+            {
+              role: 'user',
+              content: userPrompt,
+            },
+          ],
+        }),
+      });
+    } catch (error) {
+      const causeCode = getErrorCode(error);
+      if (attempt >= maxAttempts) {
+        throw new Error(
+          `LLM translation request failed before response after ${attempt} attempt(s) (timeout=${CONFIG.postTranslationTimeoutMs}ms${causeCode ? `, code=${causeCode}` : ''}). ${error?.message || error}`,
+          { cause: error }
+        );
+      }
+
+      console.warn(
+        `Retrying LLM translation ${responseKind || 'response'} ${attempt}/${maxAttempts}${causeCode ? ` after ${causeCode}` : ''}: ${error?.message || error}`
+      );
+      await sleep(getPostTranslationRetryDelayMs(attempt));
+      continue;
+    }
+
+    if (response.ok) {
+      const payload = await response.json();
+      const content = payload?.choices?.[0]?.message?.content;
+      if (typeof content !== 'string' || !content.trim()) {
+        throw new Error(
+          `LLM translation ${responseKind || 'response'} did not include a non-empty choices[0].message.content string.`
+        );
+      }
+
+      return content;
+    }
+
+    if (attempt < maxAttempts && isRetryableTranslationStatus(response.status)) {
+      await discardResponseBody(response);
+      console.warn(
+        `Retrying LLM translation ${responseKind || 'response'} ${attempt}/${maxAttempts} after ${response.status} ${response.statusText}`
+      );
+      await sleep(getPostTranslationRetryDelayMs(attempt));
+      continue;
+    }
+
     const errorText = await response.text().catch(() => '');
     throw new Error(
-      `LLM translation request failed (${response.status} ${response.statusText}): ${errorText.slice(0, 500)}`
+      `LLM translation request failed after ${attempt} attempt(s) (${response.status} ${response.statusText}): ${errorText.slice(0, 500)}`
     );
   }
 
-  const payload = await response.json();
-  const content = payload?.choices?.[0]?.message?.content;
-  if (typeof content !== 'string' || !content.trim()) {
-    throw new Error(
-      `LLM translation ${responseKind || 'response'} did not include a non-empty choices[0].message.content string.`
-    );
-  }
-
-  return content;
+  throw new Error(`LLM translation ${responseKind || 'response'} failed.`);
 }
 
 async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }) {
@@ -946,11 +974,22 @@ function getRetryDelayMs(attempt) {
   return Math.min(exponentialDelayMs + jitterMs, 30 * 1000);
 }
 
+function getPostTranslationRetryDelayMs(attempt) {
+  const baseDelayMs = Math.max(1, CONFIG.postTranslationRetryBaseDelayMs);
+  const exponentialDelayMs = baseDelayMs * 2 ** Math.max(0, attempt - 1);
+  const jitterMs = Math.floor(Math.random() * Math.min(baseDelayMs, 500));
+  return Math.min(exponentialDelayMs + jitterMs, 60 * 1000);
+}
+
 function getErrorCode(error) {
   return error?.cause?.code || error?.code || error?.name || '';
 }
 
 function isRetryableDownloadStatus(status) {
+  return status === 408 || status === 425 || status === 429 || status >= 500;
+}
+
+function isRetryableTranslationStatus(status) {
   return status === 408 || status === 425 || status === 429 || status >= 500;
 }
 
@@ -1771,7 +1810,7 @@ async function main() {
   );
   if (CONFIG.postTranslationEnabled) {
     console.log(
-      `Post translation enabled: languages=[${CONFIG.postTranslationLanguages.join(', ')}], model=${CONFIG.postTranslationModel}, timeoutMs=${CONFIG.postTranslationTimeoutMs}`
+      `Post translation enabled: languages=[${CONFIG.postTranslationLanguages.join(', ')}], model=${CONFIG.postTranslationModel}, timeoutMs=${CONFIG.postTranslationTimeoutMs}, maxAttempts=${CONFIG.postTranslationMaxAttempts}`
     );
     if (CONFIG.postTranslationCheckpointGitEnabled) {
       console.log(
