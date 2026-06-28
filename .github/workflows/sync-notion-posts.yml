@@ -66,6 +66,8 @@ jobs:
           NOTION_POST_TRANSLATION_LANGS: ${{ secrets.NOTION_POST_TRANSLATION_LANGS || '' }}
           NOTION_POST_TRANSLATION_MODEL: ${{ secrets.NOTION_POST_TRANSLATION_MODEL || '' }}
           NOTION_POST_TRANSLATION_API_BASE_URL: ${{ secrets.NOTION_POST_TRANSLATION_API_BASE_URL || 'https://api.openai.com/v1' }}
+          # 可选：翻译请求传输层。curl 会使用 runner 的系统 curl TLS 行为，fetch 会使用 Node/Undici。
+          NOTION_POST_TRANSLATION_TRANSPORT: ${{ vars.NOTION_POST_TRANSLATION_TRANSPORT || 'curl' }}
           # 可选：LLM 翻译请求超时时间（毫秒），长文可调大，例如 900000 = 15 分钟
           NOTION_POST_TRANSLATION_TIMEOUT_MS: ${{ secrets.NOTION_POST_TRANSLATION_TIMEOUT_MS || '600000' }}
           # 可选：LLM 翻译请求重试，覆盖 Cloudflare 524 / 429 / 5xx 等临时失败

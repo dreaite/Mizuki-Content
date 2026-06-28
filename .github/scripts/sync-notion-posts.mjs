@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
 import { execFileSync } from 'node:child_process';
@@ -38,6 +39,9 @@ const CONFIG = {
   ).replace(/\/+$/, ''),
   postTranslationApiKey: process.env.NOTION_POST_TRANSLATION_API_KEY || '',
   postTranslationModel: String(process.env.NOTION_POST_TRANSLATION_MODEL || '').trim(),
+  postTranslationTransport: String(process.env.NOTION_POST_TRANSLATION_TRANSPORT || 'fetch')
+    .trim()
+    .toLowerCase(),
   postTranslationSourceLanguage: String(process.env.NOTION_POST_TRANSLATION_SOURCE_LANG || '').trim(),
   postTranslationSystemPrompt: String(process.env.NOTION_POST_TRANSLATION_SYSTEM_PROMPT || '').trim(),
   postTranslationTimeoutMs: parsePositiveInt(process.env.NOTION_POST_TRANSLATION_TIMEOUT_MS, 10 * 60 * 1000),
@@ -724,6 +728,12 @@ function validatePostTranslationConfig() {
       'NOTION_POST_TRANSLATION_ENABLED=true but NOTION_POST_TRANSLATION_MODEL is empty.'
     );
   }
+
+  if (!['fetch', 'curl'].includes(CONFIG.postTranslationTransport)) {
+    throw new Error(
+      `Invalid NOTION_POST_TRANSLATION_TRANSPORT: ${CONFIG.postTranslationTransport}. Expected "fetch" or "curl".`
+    );
+  }
 }
 
 function buildPostTranslationSystemPrompt() {
@@ -769,33 +779,28 @@ function getPostTranslationHttpAgent() {
 
 async function requestPostTranslationCompletion({ systemPrompt, userPrompt, responseKind, temperature = 1 }) {
   const maxAttempts = Math.max(1, CONFIG.postTranslationMaxAttempts);
+  const requestBody = JSON.stringify({
+    model: CONFIG.postTranslationModel,
+    temperature,
+    messages: [
+      {
+        role: 'system',
+        content: systemPrompt,
+      },
+      {
+        role: 'user',
+        content: userPrompt,
+      },
+    ],
+  });
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     let response;
     try {
-      response = await fetch(`${CONFIG.postTranslationApiBaseUrl}/chat/completions`, {
-        method: 'POST',
-        signal: AbortSignal.timeout(CONFIG.postTranslationTimeoutMs),
-        dispatcher: getPostTranslationHttpAgent(),
-        headers: {
-          'Content-Type': 'application/json',
-          ...(CONFIG.postTranslationApiKey ? { Authorization: `Bearer ${CONFIG.postTranslationApiKey}` } : {}),
-        },
-        body: JSON.stringify({
-          model: CONFIG.postTranslationModel,
-          temperature,
-          messages: [
-            {
-              role: 'system',
-              content: systemPrompt,
-            },
-            {
-              role: 'user',
-              content: userPrompt,
-            },
-          ],
-        }),
-      });
+      response =
+        CONFIG.postTranslationTransport === 'curl'
+          ? await requestPostTranslationWithCurl(requestBody)
+          : await requestPostTranslationWithFetch(requestBody);
     } catch (error) {
       const causeCode = getErrorCode(error);
       if (attempt >= maxAttempts) {
@@ -840,6 +845,95 @@ async function requestPostTranslationCompletion({ systemPrompt, userPrompt, resp
   }
 
   throw new Error(`LLM translation ${responseKind || 'response'} failed.`);
+}
+
+async function requestPostTranslationWithFetch(requestBody) {
+  return fetch(`${CONFIG.postTranslationApiBaseUrl}/chat/completions`, {
+    method: 'POST',
+    signal: AbortSignal.timeout(CONFIG.postTranslationTimeoutMs),
+    dispatcher: getPostTranslationHttpAgent(),
+    headers: {
+      'Content-Type': 'application/json',
+      ...(CONFIG.postTranslationApiKey ? { Authorization: `Bearer ${CONFIG.postTranslationApiKey}` } : {}),
+    },
+    body: requestBody,
+  });
+}
+
+async function requestPostTranslationWithCurl(requestBody) {
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'notion-post-translation-'));
+  const configPath = path.join(tempDir, 'curl.conf');
+  const responseBodyPath = path.join(tempDir, 'response-body');
+  const timeoutSeconds = Math.max(1, Math.ceil(CONFIG.postTranslationTimeoutMs / 1000));
+
+  try {
+    const configLines = [
+      `url = "${escapeCurlConfigValue(`${CONFIG.postTranslationApiBaseUrl}/chat/completions`)}"`,
+      'request = "POST"',
+      'silent',
+      'show-error',
+      `max-time = ${timeoutSeconds}`,
+      'header = "Content-Type: application/json"',
+    ];
+    if (CONFIG.postTranslationApiKey) {
+      configLines.push(`header = "Authorization: Bearer ${escapeCurlConfigValue(CONFIG.postTranslationApiKey)}"`);
+    }
+
+    await fs.writeFile(configPath, `${configLines.join('\n')}\n`, { mode: 0o600 });
+
+    const result = spawnSync(
+      'curl',
+      ['--config', configPath, '--data-binary', '@-', '--output', responseBodyPath, '--write-out', '%{http_code}'],
+      {
+        cwd: process.cwd(),
+        input: requestBody,
+        encoding: 'utf8',
+        maxBuffer: 10 * 1024 * 1024,
+        timeout: CONFIG.postTranslationTimeoutMs + 30 * 1000,
+      }
+    );
+
+    if (result.error) {
+      throw new Error(`curl translation transport failed to start: ${result.error.message}`, {
+        cause: result.error,
+      });
+    }
+    if (result.status !== 0) {
+      const stderr = String(result.stderr || '').trim();
+      throw new Error(`curl translation transport failed (${result.status}): ${stderr || 'unknown error'}`);
+    }
+
+    const status = Number.parseInt(String(result.stdout || '').trim(), 10);
+    if (!Number.isFinite(status) || status <= 0) {
+      throw new Error(`curl translation transport did not return a valid HTTP status: ${result.stdout || ''}`);
+    }
+
+    const bodyText = await readFileUtf8IfExists(responseBodyPath);
+    return createBufferedHttpResponse({ status, bodyText });
+  } finally {
+    await fs.rm(tempDir, { recursive: true, force: true }).catch(() => undefined);
+  }
+}
+
+function createBufferedHttpResponse({ status, bodyText }) {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    statusText: '',
+    async text() {
+      return bodyText;
+    },
+    async json() {
+      return JSON.parse(bodyText);
+    },
+  };
+}
+
+function escapeCurlConfigValue(value) {
+  return String(value || '')
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\r?\n/g, ' ');
 }
 
 async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }) {
@@ -1810,7 +1904,7 @@ async function main() {
   );
   if (CONFIG.postTranslationEnabled) {
     console.log(
-      `Post translation enabled: languages=[${CONFIG.postTranslationLanguages.join(', ')}], model=${CONFIG.postTranslationModel}, timeoutMs=${CONFIG.postTranslationTimeoutMs}, maxAttempts=${CONFIG.postTranslationMaxAttempts}`
+      `Post translation enabled: languages=[${CONFIG.postTranslationLanguages.join(', ')}], model=${CONFIG.postTranslationModel}, transport=${CONFIG.postTranslationTransport}, timeoutMs=${CONFIG.postTranslationTimeoutMs}, maxAttempts=${CONFIG.postTranslationMaxAttempts}`
     );
     if (CONFIG.postTranslationCheckpointGitEnabled) {
       console.log(
