@@ -19,7 +19,7 @@ draft: false
 钱包作为用户在实际和web3世界进行交互时经由的账号，应该说算是探索web3的门户了（在个人理解中）。所以，本次探索的内容就基于这个认识，着重探索了一下以钱包为主体，看看一个钱包可以在链上做到的基本行动。这是项目展示页面：[https://evm-wallet.block.dreaifehebi.com/](https://evm-wallet.block.dreaifehebi.com/)
 
 
-::github{repo="https://github.com/dreaifeHebi/evm-eoa-wallet-demo"}
+::github{repo="dreaifeHebi/evm-eoa-wallet-demo"}
 
 
 # 钱包的创建及其行动范围
