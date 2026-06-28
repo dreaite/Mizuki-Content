@@ -32,7 +32,7 @@ jobs:
         run: node .github/scripts/test-markdown-directive-normalizer.mjs
 
       - name: Install sync dependencies
-        run: npm install --no-save --no-package-lock @notionhq/client@5 notion-to-md @aws-sdk/client-s3 undici
+        run: npm install --no-save --no-package-lock @notionhq/client@5 notion-to-md @aws-sdk/client-s3
 
       - name: Configure git identity
         run: |
@@ -60,24 +60,23 @@ jobs:
           NOTION_FRIENDS_DATA_PATH: data/friends.ts
           NOTION_DIARY_DATA_PATH: data/diary.ts
           NOTION_PROJECTS_DATA_PATH: data/projects.ts
-          # 可选：启用 Post 正文翻译（OpenAI-compatible Chat Completions API）
+          # 可选：启用 Post 正文翻译（通过 runner 本地 Codex CLI）
           NOTION_POST_TRANSLATION_ENABLED: ${{ secrets.NOTION_POST_TRANSLATION_ENABLED || 'false' }}
           # 逗号分隔语言代码，例如：en,ja
           NOTION_POST_TRANSLATION_LANGS: ${{ secrets.NOTION_POST_TRANSLATION_LANGS || '' }}
-          NOTION_POST_TRANSLATION_MODEL: ${{ secrets.NOTION_POST_TRANSLATION_MODEL || '' }}
-          NOTION_POST_TRANSLATION_API_BASE_URL: ${{ secrets.NOTION_POST_TRANSLATION_API_BASE_URL || 'https://api.openai.com/v1' }}
-          # 可选：翻译请求传输层。curl 会使用 runner 的系统 curl TLS 行为，fetch 会使用 Node/Undici。
-          NOTION_POST_TRANSLATION_TRANSPORT: ${{ vars.NOTION_POST_TRANSLATION_TRANSPORT || 'curl' }}
-          # 可选：LLM 翻译请求超时时间（毫秒），长文可调大，例如 900000 = 15 分钟
+          # 可选：Codex CLI 路径 / 模型 / profile；不填模型和 profile 时使用 runner 上 Codex 默认配置
+          NOTION_POST_TRANSLATION_CODEX_BIN: ${{ vars.NOTION_POST_TRANSLATION_CODEX_BIN || 'codex' }}
+          NOTION_POST_TRANSLATION_CODEX_MODEL: ${{ vars.NOTION_POST_TRANSLATION_CODEX_MODEL || '' }}
+          NOTION_POST_TRANSLATION_CODEX_PROFILE: ${{ vars.NOTION_POST_TRANSLATION_CODEX_PROFILE || '' }}
+          # 可选：Codex CLI 翻译超时时间（毫秒），长文可调大，例如 900000 = 15 分钟
           NOTION_POST_TRANSLATION_TIMEOUT_MS: ${{ secrets.NOTION_POST_TRANSLATION_TIMEOUT_MS || '600000' }}
-          # 可选：LLM 翻译请求重试，覆盖 Cloudflare 524 / 429 / 5xx 等临时失败
+          # 可选：Codex CLI 翻译失败重试
           NOTION_POST_TRANSLATION_MAX_ATTEMPTS: ${{ vars.NOTION_POST_TRANSLATION_MAX_ATTEMPTS || '4' }}
           NOTION_POST_TRANSLATION_RETRY_BASE_DELAY_MS: ${{ vars.NOTION_POST_TRANSLATION_RETRY_BASE_DELAY_MS || '5000' }}
           # 可选：源语言（仅作为提示词上下文），例如 zh-cn
           NOTION_POST_TRANSLATION_SOURCE_LANG: ${{ secrets.NOTION_POST_TRANSLATION_SOURCE_LANG || '' }}
           # 可选：自定义 system prompt（不填则使用脚本内默认提示词）
           NOTION_POST_TRANSLATION_SYSTEM_PROMPT: ${{ secrets.NOTION_POST_TRANSLATION_SYSTEM_PROMPT || '' }}
-          NOTION_POST_TRANSLATION_API_KEY: ${{ secrets.NOTION_POST_TRANSLATION_API_KEY }}
           # 可选：将 Notion 图片资产（Post/Project 封面 + Post/About/Diary 正文图片）上传到 Cloudflare R2，并写入稳定公网 URL
           NOTION_COVER_R2_ENABLED: ${{ secrets.NOTION_COVER_R2_ENABLED || 'false' }}
           NOTION_COVER_R2_ENDPOINT: ${{ secrets.NOTION_COVER_R2_ENDPOINT || '' }}

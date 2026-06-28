@@ -9,7 +9,6 @@ import { execFileSync } from 'node:child_process';
 import { HeadObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
-import { Agent as UndiciAgent } from 'undici';
 import {
   buildFriendItems,
   buildProjectItems,
@@ -34,14 +33,9 @@ const CONFIG = {
   syncLookbackMultiplier: parsePositiveInt(process.env.NOTION_SYNC_LOOKBACK_MULTIPLIER, 2),
   postTranslationEnabled: parseBoolean(process.env.NOTION_POST_TRANSLATION_ENABLED, false),
   postTranslationLanguages: parseLanguageList(process.env.NOTION_POST_TRANSLATION_LANGS || ''),
-  postTranslationApiBaseUrl: String(
-    process.env.NOTION_POST_TRANSLATION_API_BASE_URL || 'https://api.openai.com/v1'
-  ).replace(/\/+$/, ''),
-  postTranslationApiKey: process.env.NOTION_POST_TRANSLATION_API_KEY || '',
-  postTranslationModel: String(process.env.NOTION_POST_TRANSLATION_MODEL || '').trim(),
-  postTranslationTransport: String(process.env.NOTION_POST_TRANSLATION_TRANSPORT || 'fetch')
-    .trim()
-    .toLowerCase(),
+  postTranslationCodexBin: String(process.env.NOTION_POST_TRANSLATION_CODEX_BIN || 'codex').trim(),
+  postTranslationCodexModel: String(process.env.NOTION_POST_TRANSLATION_CODEX_MODEL || '').trim(),
+  postTranslationCodexProfile: String(process.env.NOTION_POST_TRANSLATION_CODEX_PROFILE || '').trim(),
   postTranslationSourceLanguage: String(process.env.NOTION_POST_TRANSLATION_SOURCE_LANG || '').trim(),
   postTranslationSystemPrompt: String(process.env.NOTION_POST_TRANSLATION_SYSTEM_PROMPT || '').trim(),
   postTranslationTimeoutMs: parsePositiveInt(process.env.NOTION_POST_TRANSLATION_TIMEOUT_MS, 10 * 60 * 1000),
@@ -99,7 +93,6 @@ const CONFIG = {
   statusProperty: process.env.NOTION_STATUS_PROPERTY || 'status',
 };
 
-let postTranslationHttpAgent = null;
 const GIT_CONTENT_PATHS = ['posts', 'spec/about.md', 'data/friends.ts', 'data/diary.ts', 'data/projects.ts'];
 
 function requireEnv(name) {
@@ -723,15 +716,9 @@ function validatePostTranslationConfig() {
     );
   }
 
-  if (!CONFIG.postTranslationModel) {
+  if (!CONFIG.postTranslationCodexBin) {
     throw new Error(
-      'NOTION_POST_TRANSLATION_ENABLED=true but NOTION_POST_TRANSLATION_MODEL is empty.'
-    );
-  }
-
-  if (!['fetch', 'curl'].includes(CONFIG.postTranslationTransport)) {
-    throw new Error(
-      `Invalid NOTION_POST_TRANSLATION_TRANSPORT: ${CONFIG.postTranslationTransport}. Expected "fetch" or "curl".`
+      'NOTION_POST_TRANSLATION_ENABLED=true but NOTION_POST_TRANSLATION_CODEX_BIN is empty.'
     );
   }
 }
@@ -764,176 +751,152 @@ function unwrapAnySingleFencedBlock(text) {
   return String(match[1] || '').trim();
 }
 
-function getPostTranslationHttpAgent() {
-  if (!CONFIG.postTranslationEnabled) return undefined;
-  if (postTranslationHttpAgent) return postTranslationHttpAgent;
-
-  // Raise Undici header/body timeouts for long-running LLM translations.
-  postTranslationHttpAgent = new UndiciAgent({
-    headersTimeout: CONFIG.postTranslationTimeoutMs,
-    bodyTimeout: CONFIG.postTranslationTimeoutMs,
-  });
-
-  return postTranslationHttpAgent;
-}
-
-async function requestPostTranslationCompletion({ systemPrompt, userPrompt, responseKind, temperature = 1 }) {
+async function requestPostTranslationCompletion({ systemPrompt, userPrompt, responseKind }) {
   const maxAttempts = Math.max(1, CONFIG.postTranslationMaxAttempts);
-  const requestBody = JSON.stringify({
-    model: CONFIG.postTranslationModel,
-    temperature,
-    messages: [
-      {
-        role: 'system',
-        content: systemPrompt,
-      },
-      {
-        role: 'user',
-        content: userPrompt,
-      },
-    ],
-  });
+  const prompt = buildCodexTranslationPrompt({ systemPrompt, userPrompt, responseKind });
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-    let response;
     try {
-      response =
-        CONFIG.postTranslationTransport === 'curl'
-          ? await requestPostTranslationWithCurl(requestBody)
-          : await requestPostTranslationWithFetch(requestBody);
+      const content = await requestPostTranslationWithCodexCli(prompt);
+      if (typeof content !== 'string' || !content.trim()) {
+        throw new Error(`Codex CLI translation ${responseKind || 'response'} returned an empty final message.`);
+      }
+
+      return content;
     } catch (error) {
       const causeCode = getErrorCode(error);
       if (attempt >= maxAttempts) {
         throw new Error(
-          `LLM translation request failed before response after ${attempt} attempt(s) (timeout=${CONFIG.postTranslationTimeoutMs}ms${causeCode ? `, code=${causeCode}` : ''}). ${error?.message || error}`,
+          `Codex CLI translation failed after ${attempt} attempt(s) (timeout=${CONFIG.postTranslationTimeoutMs}ms${causeCode ? `, code=${causeCode}` : ''}). ${error?.message || error}`,
           { cause: error }
         );
       }
 
       console.warn(
-        `Retrying LLM translation ${responseKind || 'response'} ${attempt}/${maxAttempts}${causeCode ? ` after ${causeCode}` : ''}: ${error?.message || error}`
+        `Retrying Codex CLI translation ${responseKind || 'response'} ${attempt}/${maxAttempts}${causeCode ? ` after ${causeCode}` : ''}: ${error?.message || error}`
       );
       await sleep(getPostTranslationRetryDelayMs(attempt));
-      continue;
     }
-
-    if (response.ok) {
-      const payload = await response.json();
-      const content = payload?.choices?.[0]?.message?.content;
-      if (typeof content !== 'string' || !content.trim()) {
-        throw new Error(
-          `LLM translation ${responseKind || 'response'} did not include a non-empty choices[0].message.content string.`
-        );
-      }
-
-      return content;
-    }
-
-    if (attempt < maxAttempts && isRetryableTranslationStatus(response.status)) {
-      await discardResponseBody(response);
-      console.warn(
-        `Retrying LLM translation ${responseKind || 'response'} ${attempt}/${maxAttempts} after ${response.status} ${response.statusText}`
-      );
-      await sleep(getPostTranslationRetryDelayMs(attempt));
-      continue;
-    }
-
-    const errorText = await response.text().catch(() => '');
-    throw new Error(
-      `LLM translation request failed after ${attempt} attempt(s) (${response.status} ${response.statusText}): ${errorText.slice(0, 500)}`
-    );
   }
 
-  throw new Error(`LLM translation ${responseKind || 'response'} failed.`);
+  throw new Error(`Codex CLI translation ${responseKind || 'response'} failed.`);
 }
 
-async function requestPostTranslationWithFetch(requestBody) {
-  return fetch(`${CONFIG.postTranslationApiBaseUrl}/chat/completions`, {
-    method: 'POST',
-    signal: AbortSignal.timeout(CONFIG.postTranslationTimeoutMs),
-    dispatcher: getPostTranslationHttpAgent(),
-    headers: {
-      'Content-Type': 'application/json',
-      ...(CONFIG.postTranslationApiKey ? { Authorization: `Bearer ${CONFIG.postTranslationApiKey}` } : {}),
-    },
-    body: requestBody,
-  });
+function buildCodexTranslationPrompt({ systemPrompt, userPrompt, responseKind }) {
+  return [
+    'You are invoked by an automated Notion content sync job to translate blog content.',
+    'Do not run shell commands, inspect files, edit files, ask questions, or add commentary.',
+    'Return only the final translated text requested below.',
+    'Do not wrap the answer in code fences unless the translated content itself requires them.',
+    responseKind ? `Response kind: ${responseKind}` : '',
+    '',
+    '<system_translation_instructions>',
+    systemPrompt,
+    '</system_translation_instructions>',
+    '',
+    '<translation_request>',
+    userPrompt,
+    '</translation_request>',
+  ]
+    .filter((line) => line !== '')
+    .join('\n');
 }
 
-async function requestPostTranslationWithCurl(requestBody) {
+async function requestPostTranslationWithCodexCli(prompt) {
   const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'notion-post-translation-'));
-  const configPath = path.join(tempDir, 'curl.conf');
-  const responseBodyPath = path.join(tempDir, 'response-body');
-  const timeoutSeconds = Math.max(1, Math.ceil(CONFIG.postTranslationTimeoutMs / 1000));
+  const outputPath = path.join(tempDir, 'codex-last-message.txt');
 
   try {
-    const configLines = [
-      `url = "${escapeCurlConfigValue(`${CONFIG.postTranslationApiBaseUrl}/chat/completions`)}"`,
-      'request = "POST"',
-      'silent',
-      'show-error',
-      `max-time = ${timeoutSeconds}`,
-      'header = "Content-Type: application/json"',
+    const codexArgs = [
+      'exec',
+      '--ephemeral',
+      '--ignore-rules',
+      '--skip-git-repo-check',
+      '--color',
+      'never',
+      '--sandbox',
+      'read-only',
+      '--ask-for-approval',
+      'never',
+      '-C',
+      process.cwd(),
+      '-o',
+      outputPath,
     ];
-    if (CONFIG.postTranslationApiKey) {
-      configLines.push(`header = "Authorization: Bearer ${escapeCurlConfigValue(CONFIG.postTranslationApiKey)}"`);
+    if (CONFIG.postTranslationCodexModel) {
+      codexArgs.push('-m', CONFIG.postTranslationCodexModel);
     }
-
-    await fs.writeFile(configPath, `${configLines.join('\n')}\n`, { mode: 0o600 });
+    if (CONFIG.postTranslationCodexProfile) {
+      codexArgs.push('-p', CONFIG.postTranslationCodexProfile);
+    }
+    codexArgs.push('-');
 
     const result = spawnSync(
-      'curl',
-      ['--config', configPath, '--data-binary', '@-', '--output', responseBodyPath, '--write-out', '%{http_code}'],
+      'bash',
+      ['-lc', 'exec "$CODEX_TRANSLATION_BIN" "$@"', 'codex-translation', ...codexArgs],
       {
         cwd: process.cwd(),
-        input: requestBody,
+        env: buildCodexCliEnv(),
+        input: prompt,
         encoding: 'utf8',
-        maxBuffer: 10 * 1024 * 1024,
+        maxBuffer: 32 * 1024 * 1024,
         timeout: CONFIG.postTranslationTimeoutMs + 30 * 1000,
       }
     );
 
     if (result.error) {
-      throw new Error(`curl translation transport failed to start: ${result.error.message}`, {
+      throw new Error(`Codex CLI translation command failed to start: ${result.error.message}`, {
         cause: result.error,
       });
     }
     if (result.status !== 0) {
       const stderr = String(result.stderr || '').trim();
-      throw new Error(`curl translation transport failed (${result.status}): ${stderr || 'unknown error'}`);
+      const stdout = String(result.stdout || '').trim();
+      throw new Error(
+        `Codex CLI translation command failed (${result.status}): ${(stderr || stdout || 'unknown error').slice(0, 1000)}`
+      );
     }
 
-    const status = Number.parseInt(String(result.stdout || '').trim(), 10);
-    if (!Number.isFinite(status) || status <= 0) {
-      throw new Error(`curl translation transport did not return a valid HTTP status: ${result.stdout || ''}`);
-    }
-
-    const bodyText = await readFileUtf8IfExists(responseBodyPath);
-    return createBufferedHttpResponse({ status, bodyText });
+    const lastMessage = await readFileUtf8IfExists(outputPath);
+    return (lastMessage || String(result.stdout || '')).trim();
   } finally {
     await fs.rm(tempDir, { recursive: true, force: true }).catch(() => undefined);
   }
 }
 
-function createBufferedHttpResponse({ status, bodyText }) {
-  return {
-    ok: status >= 200 && status < 300,
-    status,
-    statusText: '',
-    async text() {
-      return bodyText;
-    },
-    async json() {
-      return JSON.parse(bodyText);
-    },
-  };
-}
+function buildCodexCliEnv() {
+  const env = {};
+  const passthroughNames = [
+    'PATH',
+    'HOME',
+    'USER',
+    'LOGNAME',
+    'SHELL',
+    'LANG',
+    'LC_ALL',
+    'LC_CTYPE',
+    'TERM',
+    'TMPDIR',
+    'CODEX_HOME',
+    'XDG_CONFIG_HOME',
+    'XDG_CACHE_HOME',
+    'XDG_DATA_HOME',
+    'OPENAI_API_KEY',
+    'OPENAI_BASE_URL',
+    'OPENAI_ORG_ID',
+    'OPENAI_PROJECT_ID',
+    'OLLAMA_HOST',
+    'LMSTUDIO_BASE_URL',
+  ];
 
-function escapeCurlConfigValue(value) {
-  return String(value || '')
-    .replace(/\\/g, '\\\\')
-    .replace(/"/g, '\\"')
-    .replace(/\r?\n/g, ' ');
+  for (const name of passthroughNames) {
+    if (process.env[name]) {
+      env[name] = process.env[name];
+    }
+  }
+
+  env.CODEX_TRANSLATION_BIN = CONFIG.postTranslationCodexBin;
+  return env;
 }
 
 async function translatePostMarkdownBody(markdownBody, { targetLanguage, title }) {
@@ -984,7 +947,6 @@ async function translatePostMetadataFieldText(value, { targetLanguage, fieldName
       sourceText,
     ].join('\n'),
     responseKind: `${fieldName} field response`,
-    temperature: 1,
   });
 
   return normalizeSingleLine(unwrapAnySingleFencedBlock(content));
@@ -1080,10 +1042,6 @@ function getErrorCode(error) {
 }
 
 function isRetryableDownloadStatus(status) {
-  return status === 408 || status === 425 || status === 429 || status >= 500;
-}
-
-function isRetryableTranslationStatus(status) {
   return status === 408 || status === 425 || status === 429 || status >= 500;
 }
 
@@ -1738,7 +1696,7 @@ function buildTranslationCheckpointManager() {
     runGit([
       'commit',
       '-m',
-      `chore(content): llm translation checkpoint ${batchStart}-${batchEnd} [skip ci]`,
+      `chore(content): codex translation checkpoint ${batchStart}-${batchEnd} [skip ci]`,
     ]);
 
     if (CONFIG.postTranslationCheckpointPush) {
@@ -1904,7 +1862,7 @@ async function main() {
   );
   if (CONFIG.postTranslationEnabled) {
     console.log(
-      `Post translation enabled: languages=[${CONFIG.postTranslationLanguages.join(', ')}], model=${CONFIG.postTranslationModel}, transport=${CONFIG.postTranslationTransport}, timeoutMs=${CONFIG.postTranslationTimeoutMs}, maxAttempts=${CONFIG.postTranslationMaxAttempts}`
+      `Post translation enabled: languages=[${CONFIG.postTranslationLanguages.join(', ')}], provider=codex-cli, codexBin=${CONFIG.postTranslationCodexBin}, codexModel=${CONFIG.postTranslationCodexModel || '(default)'}, timeoutMs=${CONFIG.postTranslationTimeoutMs}, maxAttempts=${CONFIG.postTranslationMaxAttempts}`
     );
     if (CONFIG.postTranslationCheckpointGitEnabled) {
       console.log(
