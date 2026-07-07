@@ -27,7 +27,7 @@ export const projectsData: Project[] = [
 		category: "web",
 		techStack: ["JavaScript", "chrome extension"],
 		status: "in-progress",
-		liveDemo: "https://github.com/dreaifekks/upwork-enhancer/releases",
+		liveDemo: "https://chromewebstore.google.com/detail/upwork-enhancer/hbllclpgdhoenkgpmmlmmemcbljjoodc",
 		sourceCode: "https://github.com/dreaifekks/upwork-enhancer",
 		startDate: "2026-07-02",
 		featured: false,
