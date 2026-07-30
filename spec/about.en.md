@@ -1,9 +1,13 @@
-A corporate drone working in Japan (counting down to quitting
+A corporate slave working in Japan (
 
-You could say I’m a stay-at-home security guard? I’m basically used to going out once a week (though sometimes it’s only once a month XD
 
-I’ve recently started working out, so my thinking and behavior may be getting slightly back on track compared with a while ago lol
+Maybe you could call me a home security guard? I’m basically used to going out once a week (and sometimes only once a month XD
+
+
+I’ve recently started working out, so perhaps my thoughts and actions are getting slightly more on track than they were before www
+
 
 I document bits of everyday life related to think/game/IT/AI/crypto/trade/create, and occasionally write technical articles as well
+
 
 Welcome to my blog!
