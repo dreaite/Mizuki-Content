@@ -6,5 +6,160 @@
     "en",
     "ja"
   ],
-  "entries": {}
+  "entries": {
+    "project:3aa5465c-ca17-8071-b4f6-e916cdcf4f4d": {
+      "kind": "project",
+      "sourceHash": "2602a6c14ac2b62aec755a657fc1607919dfdfef06cbdf304408ce259e832bc6",
+      "translations": {
+        "en": {
+          "title": "codex-reset-forecaster",
+          "description": "A vendor-independent hourly Codex reset forecasting tool. It supports evidence lineage tracking, deadline-safe modeling, and bias calibration, and comes with an intuitive 7-day web interface. It helps you obtain accurate, reliable reset forecast data and optimize your decision-making process."
+        },
+        "ja": {
+          "title": "codex-reset-forecaster",
+          "description": "ベンダーに依存しない、1時間ごとのCodexリセット予測ツールです。エビデンスの系統追跡、カットオフを考慮した安全なモデリング、バイアス校正に対応し、直感的に操作できる7日間のWebユーザーインターフェースも備えています。高精度で信頼性の高いリセット予測データを取得し、意思決定プロセスを最適化できます。"
+        }
+      }
+    },
+    "project:3915465c-ca17-8071-bc6d-fb2ba5139bac": {
+      "kind": "project",
+      "sourceHash": "f762baae363d029c0ac88acb12a3343296976513fc1972e02fcdaefcbdfdcb17",
+      "translations": {
+        "en": {
+          "title": "asmr-tg-backup",
+          "description": "A Python-based backend media backup service for ASMR content that automatically discovers audio and video through YouTube channels, general RSS feeds, and the Twitch API. The system uses yt-dlp to automatically retrieve and download media and can upload it directly to Telegram channels, making it easy to automate the archiving and efficient backup of personal audio and video collections."
+        },
+        "ja": {
+          "title": "asmr-tg-backup",
+          "description": "Pythonで開発されたASMR向けバックエンドメディアバックアップサービスです。YouTubeチャンネル、汎用RSS、Twitch APIを通じて音声や動画を自動検出できます。yt-dlpを利用してメディアを自動取得・ダウンロードし、Telegramチャンネルへ直接アップロードすることも可能です。個人の音声・動画リソースを簡単に自動アーカイブし、効率的にバックアップできます。"
+        }
+      }
+    },
+    "project:3915465c-ca17-801c-9b44-e983329c88f2": {
+      "kind": "project",
+      "sourceHash": "d5dc25ba8113d611fd23329542279823bb8fd5da72243c793724500730fc4bd6",
+      "translations": {
+        "en": {
+          "title": "upwork-enhancer",
+          "description": "upwork-enhancer is a Chrome browser extension designed specifically for the Upwork platform. Developed in JavaScript, it helps freelancers quickly evaluate and filter potential opportunities while browsing Upwork jobs, improving their efficiency in securing work."
+        },
+        "ja": {
+          "title": "upwork-enhancer",
+          "description": "upwork-enhancerは、Upworkプラットフォーム専用に設計されたChromeブラウザ拡張機能です。JavaScriptで開発されており、フリーランサーが求人を閲覧する際に、潜在的なUpwork案件をすばやく評価・絞り込みできるよう支援し、受注効率を高めます。"
+        }
+      }
+    },
+    "project:30f5465c-ca17-80a8-a667-d7cb8c1d5af5": {
+      "kind": "project",
+      "sourceHash": "90e57087e65dec40eb564d3035ba8bc582671e700447b33f254344aa5ad64188",
+      "translations": {
+        "en": {
+          "title": "RssFeedTeleBot",
+          "description": "A serverless Telegram bot that monitors RSS feeds, X (Twitter) users, and YouTube channels, then sends notifications to Telegram chats, supergroups, and topics. It supports adding and removing subscriptions directly within Telegram, multiple subscriptions, and selective forwarding, and is fully compatible with the Cloudflare Workers free tier."
+        },
+        "ja": {
+          "title": "RssFeedTeleBot",
+          "description": "RSSフィード、X（Twitter）ユーザー、YouTubeチャンネルを監視し、Telegramのチャット、スーパーグループ、トピックへ通知を送信するサーバーレスTelegramボットです。Telegram上で直接購読を追加・削除でき、複数購読や選択的な転送にも対応しています。Cloudflare Workersの無料枠と完全に互換性があります。"
+        }
+      }
+    },
+    "project:3915465c-ca17-803c-8613-c02b47c29075": {
+      "kind": "project",
+      "sourceHash": "6fd6360582a4b4b548d4bb1bb27a1745200cde7227a77244b9809d6629e05d18",
+      "translations": {
+        "en": {
+          "title": "notion2page",
+          "description": "notion2page is a Node static-site generator with no third-party dependencies, designed specifically for building English-language personal project portfolios powered by Notion. It helps developers easily transform Notion content into efficient static web pages, greatly simplifying the process of creating and maintaining a portfolio."
+        },
+        "ja": {
+          "title": "notion2page",
+          "description": "notion2pageは、サードパーティ依存関係を持たないNode製の静的サイトジェネレーターで、Notionを基盤とした英語の個人プロジェクトポートフォリオを構築するために設計されています。開発者がNotionのコンテンツを高効率な静的Webページへ簡単に変換でき、ポートフォリオの構築と保守を大幅に簡素化します。"
+        }
+      }
+    },
+    "diary:3a45465c-ca17-80d2-8d8f-c551b999f497": {
+      "kind": "diary",
+      "sourceHash": "1e06dee2f1c7736849bd3ff76cf364668cac5d627e73c239fd85f25b09e7995c",
+      "translations": {
+        "en": {
+          "content": "Happy birthday, Shinku 🎂\n\nMay the year ahead be filled with happiness too 🥰\n\nHere are some pancakes 🥞"
+        },
+        "ja": {
+          "content": "真紅、お誕生日おめでとう🎂\n\nこれからの1年も幸せでありますように🥰\n\nホットケーキだよー🥞"
+        }
+      }
+    },
+    "diary:38d5465c-ca17-806f-8141-fb6eea89de45": {
+      "kind": "diary",
+      "sourceHash": "e4550195476768360a70e863c8a9b0c8221125b879d37beed0b5d305647613ab",
+      "translations": {
+        "en": {
+          "content": "A seaside stroll with Shinku～\n\nMy very first drawing XD"
+        },
+        "ja": {
+          "content": "真紅と海辺をお散歩～\n\n自分にとって初めての絵ですXD"
+        }
+      }
+    },
+    "diary:37f5465c-ca17-80f2-9bd4-d5744e1cc073": {
+      "kind": "diary",
+      "sourceHash": "ee7e0b691b4c1b660974c4b908fe0aa909939d79601d9a19fa32fa00ba01a87b",
+      "translations": {
+        "en": {
+          "content": "Thinking about it carefully, perhaps only now am I truly beginning the next step in exploring myself. Who I am, who I can be, and who I should be—from thoughts within my mind to conscious reflection, from the desire to act to the reality that is beginning to change and overflow into the world, I am starting to feel the depth of my own existence."
+        },
+        "ja": {
+          "content": "よく考えてみると、今の自分はようやく本当の意味で、自分自身を探求する次の一歩を踏み出したところなのだと思う。自分は誰なのか、自分は誰になれるのか、自分は誰になるべきなのか。頭の中から思考へ、行動への渇望へ、そして変化し始めた現実があふれ出すまで。私は、自分という存在を深く実感し始めている。"
+        }
+      }
+    },
+    "diary:37e5465c-ca17-806a-a05e-cbbfe728e0a5": {
+      "kind": "diary",
+      "sourceHash": "6b05d1336ef646ea2ed620cb971391db81aa949b830f5535b88842d1e7e17dc1",
+      "translations": {
+        "en": {
+          "content": "Honestly, I recently started learning about blockchain, and unexpectedly, it feels more like the way I used to study when competing in ACM. secp256k1 requires catching up on all kinds of mathematical knowledge and proofs, and when I looked at the actual implementation in ethers, I found code with that familiar competitive-programming flavor again—which was also incredibly enjoyable 😊\n\nCome to think of it, I originally expected it to feel like learning a Java framework. Looking at it now, learning from the perspective of the wallet as the central subject may be a pretty good choice."
+        },
+        "ja": {
+          "content": "正直なところ、最近ブロックチェーンを学び始めたのだけれど、意外にもACMをやっていた頃の学習状態に近い感覚がある。secp256k1ではさまざまな数学知識や推論を補う必要があり、実際にethersの実装を見てみると、またもや懐かしい競技プログラミング風のコードに出会った（これもすごく楽しい😊\n\nもともとはjavaフレームワークを学ぶような感覚になると思っていたけれど、今考えると、ウォレットを軸に学ぶのはなかなか良い選択かもしれない。"
+        }
+      }
+    },
+    "diary:3375465c-ca17-80ea-b615-e309444c85a3": {
+      "kind": "diary",
+      "sourceHash": "7558c8f4539825b30b87b3f7e920104f7f9256daf4dfe6fb4142e41181b619ae",
+      "translations": {
+        "en": {
+          "content": "Recently, I have begun to notice the difference between an incremental mindset and a fixed-pie mindset. Although a stable salary provides a steady income, it can also lead people to confine their thinking to that level of spending and similar considerations. A stable income should serve as an anchor for peace of mind, not as a reason to limit the boundaries of one's actions. Even in today's bubble era, there is still plenty of hot money to be made. There is no reason to give up one source of income simply because you already have another."
+        },
+        "ja": {
+          "content": "最近、フローを重視する意識とストックを重視する意識の違いに少し気づいた。安定した給与は安定した収入をもたらしてくれるが、その一方で、人の思考をその収入に見合った支出水準などに縛りつけてしまうこともある。安定した収入は心を安定させるものとして捉えるべきであり、そのために自分の行動範囲まで制限してしまうべきではない。今のようなバブルの時代にも、まだ稼げるホットマネーはたくさんある。手元に一つ収入源があるからといって、別の収入を手放す理由はない。"
+        }
+      }
+    },
+    "diary:31a5465c-ca17-800e-a630-ce1133d62da1": {
+      "kind": "diary",
+      "sourceHash": "a45300f8e83b14372f9e3c2314b38c6035f75b5a30b07c9fb64f62e548a120c1",
+      "translations": {
+        "en": {
+          "content": "Arrived!\nNeri is so cute"
+        },
+        "ja": {
+          "content": "到着！\nねり、本当にかわいい"
+        }
+      }
+    },
+    "diary:30f5465c-ca17-802b-bd27-fbcc5d9068a4": {
+      "kind": "diary",
+      "sourceHash": "04fdd7f9670656875a046fe2ba46c3053fe80e6133c6b25e370a1fda71afd265",
+      "translations": {
+        "en": {
+          "content": "I've officially moved to mizuki 😊"
+        },
+        "ja": {
+          "content": "正式にmizukiへ引っ越してきました😊"
+        }
+      }
+    }
+  }
 }

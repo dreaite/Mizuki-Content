@@ -30,9 +30,19 @@ export interface Project {
 export const projectsData: Project[] = [
 	{
 		id: "codex-reset-forecaster",
-		lang: "zh_CN",
 		title: "codex-reset-forecaster",
 		description: "一款独立于供应商的每小时Codex重置预测工具。该工具支持证据谱系溯源、截止安全建模及偏差校准，并配备直观的7天Web用户界面。帮助您获取精确可靠的重置预测数据，优化决策流程。",
+		lang: "zh_CN",
+		translations: {
+			"en": {
+				title: "codex-reset-forecaster",
+				description: "A vendor-independent hourly Codex reset forecasting tool. It supports evidence lineage tracking, deadline-safe modeling, and bias calibration, and comes with an intuitive 7-day web interface. It helps you obtain accurate, reliable reset forecast data and optimize your decision-making process.",
+			},
+			"ja": {
+				title: "codex-reset-forecaster",
+				description: "ベンダーに依存しない、1時間ごとのCodexリセット予測ツールです。エビデンスの系統追跡、カットオフを考慮した安全なモデリング、バイアス校正に対応し、直感的に操作できる7日間のWebユーザーインターフェースも備えています。高精度で信頼性の高いリセット予測データを取得し、意思決定プロセスを最適化できます。",
+			},
+		},
 		image: "https://r2.dreaife.tokyo/notion/covers/3aa5465cca178071b4f6e916cdcf4f4d/image.png",
 		category: "web",
 		techStack: [
@@ -47,9 +57,19 @@ export const projectsData: Project[] = [
 	},
 	{
 		id: "asmr-tg-backup",
-		lang: "zh_CN",
 		title: "asmr-tg-backup",
 		description: "基于 Python 开发的 ASMR 后台媒体备份服务，支持通过 YouTube 频道、通用 RSS 及 Twitch API 自动发现音视频。系统利用 yt-dlp 自动抓取并下载媒体，还可直接将其上传至 Telegram 频道，帮助用户轻松实现个人音视频资源的自动化归档与高效备份。",
+		lang: "zh_CN",
+		translations: {
+			"en": {
+				title: "asmr-tg-backup",
+				description: "A Python-based backend media backup service for ASMR content that automatically discovers audio and video through YouTube channels, general RSS feeds, and the Twitch API. The system uses yt-dlp to automatically retrieve and download media and can upload it directly to Telegram channels, making it easy to automate the archiving and efficient backup of personal audio and video collections.",
+			},
+			"ja": {
+				title: "asmr-tg-backup",
+				description: "Pythonで開発されたASMR向けバックエンドメディアバックアップサービスです。YouTubeチャンネル、汎用RSS、Twitch APIを通じて音声や動画を自動検出できます。yt-dlpを利用してメディアを自動取得・ダウンロードし、Telegramチャンネルへ直接アップロードすることも可能です。個人の音声・動画リソースを簡単に自動アーカイブし、効率的にバックアップできます。",
+			},
+		},
 		image: "https://r2.dreaife.tokyo/notion/covers/3915465cca178071bc6dfb2ba5139bac/ai-generated-1782992455041.png",
 		category: "desktop",
 		techStack: [
@@ -65,9 +85,19 @@ export const projectsData: Project[] = [
 	},
 	{
 		id: "upwork-enhancer",
-		lang: "zh_CN",
 		title: "upwork-enhancer",
 		description: "upwork-enhancer 是一款专为 Upwork 平台设计的 Chrome 浏览器插件。该工具使用 JavaScript 开发，旨在帮助自由职业者在浏览工作岗位时，快速评估并筛选潜在的 Upwork 合作机会，提升接单效率。",
+		lang: "zh_CN",
+		translations: {
+			"en": {
+				title: "upwork-enhancer",
+				description: "upwork-enhancer is a Chrome browser extension designed specifically for the Upwork platform. Developed in JavaScript, it helps freelancers quickly evaluate and filter potential opportunities while browsing Upwork jobs, improving their efficiency in securing work.",
+			},
+			"ja": {
+				title: "upwork-enhancer",
+				description: "upwork-enhancerは、Upworkプラットフォーム専用に設計されたChromeブラウザ拡張機能です。JavaScriptで開発されており、フリーランサーが求人を閲覧する際に、潜在的なUpwork案件をすばやく評価・絞り込みできるよう支援し、受注効率を高めます。",
+			},
+		},
 		image: "https://r2.dreaife.tokyo/notion/covers/3915465cca17801c9b44e983329c88f2/ai-generated-1782992912349.png",
 		category: "web",
 		techStack: ["JavaScript", "chrome extension"],
@@ -79,9 +109,19 @@ export const projectsData: Project[] = [
 	},
 	{
 		id: "RssFeedTeleBot",
-		lang: "zh_CN",
 		title: "RssFeedTeleBot",
 		description: "一个无服务器的Telegram机器人，监控RSS源、X（Twitter）用户和YouTube频道，并将通知发送到Telegram聊天、超级群组和主题。支持直接在Telegram中添加/删除订阅，支持多个订阅和选择性转发，完全兼容Cloudflare Workers的免费层。",
+		lang: "zh_CN",
+		translations: {
+			"en": {
+				title: "RssFeedTeleBot",
+				description: "A serverless Telegram bot that monitors RSS feeds, X (Twitter) users, and YouTube channels, then sends notifications to Telegram chats, supergroups, and topics. It supports adding and removing subscriptions directly within Telegram, multiple subscriptions, and selective forwarding, and is fully compatible with the Cloudflare Workers free tier.",
+			},
+			"ja": {
+				title: "RssFeedTeleBot",
+				description: "RSSフィード、X（Twitter）ユーザー、YouTubeチャンネルを監視し、Telegramのチャット、スーパーグループ、トピックへ通知を送信するサーバーレスTelegramボットです。Telegram上で直接購読を追加・削除でき、複数購読や選択的な転送にも対応しています。Cloudflare Workersの無料枠と完全に互換性があります。",
+			},
+		},
 		image: "https://r2.dreaife.tokyo/notion/covers/30f5465cca1780a8a667d7cb8c1d5af5/ai-generated-1775396031107.png",
 		category: "desktop",
 		techStack: [
@@ -97,9 +137,19 @@ export const projectsData: Project[] = [
 	},
 	{
 		id: "notion2page",
-		lang: "zh_CN",
 		title: "notion2page",
 		description: "notion2page 是一个无第三方依赖的 Node 静态网站生成器，专为构建由 Notion 驱动的英文个人项目作品集而设计。它可以帮助开发者轻松将 Notion 内容转化为高效的静态网页，极大地简化了作品集的搭建与维护流程。",
+		lang: "zh_CN",
+		translations: {
+			"en": {
+				title: "notion2page",
+				description: "notion2page is a Node static-site generator with no third-party dependencies, designed specifically for building English-language personal project portfolios powered by Notion. It helps developers easily transform Notion content into efficient static web pages, greatly simplifying the process of creating and maintaining a portfolio.",
+			},
+			"ja": {
+				title: "notion2page",
+				description: "notion2pageは、サードパーティ依存関係を持たないNode製の静的サイトジェネレーターで、Notionを基盤とした英語の個人プロジェクトポートフォリオを構築するために設計されています。開発者がNotionのコンテンツを高効率な静的Webページへ簡単に変換でき、ポートフォリオの構築と保守を大幅に簡素化します。",
+			},
+		},
 		image: "https://r2.dreaife.tokyo/notion/covers/3915465cca17803c8613c02b47c29075/ai-generated-1782992687889.png",
 		category: "web",
 		techStack: [
