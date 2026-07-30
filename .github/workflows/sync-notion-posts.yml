@@ -1,9 +1,16 @@
 name: Sync Notion Posts
 
 on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/scripts/**'
+      - '.github/workflows/sync-notion-posts.yml'
+      - '.github/notion-data-translation-cache.json'
   workflow_dispatch:
   schedule:
-   - cron: '0 * * * *' # 可选：每1h同步一次
+    - cron: '0 * * * *' # 可选：每1h同步一次
 
 permissions:
   contents: write
