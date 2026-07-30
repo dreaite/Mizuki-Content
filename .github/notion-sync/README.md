@@ -20,7 +20,7 @@ This repository includes a GitHub Action that syncs content from a Notion databa
 Keep local content files consistent with the Notion database by `type`.
 
 - Notion `Post` pages are converted to Markdown and written to `posts/`
-- Notion `About` page (latest updated if multiple) is written to `spec/about.md`
+- The latest Notion `About` page is written to `spec/about.md`; data translation also generates `spec/about.{lang}.md`
 - Notion `Friend` pages are mapped into `data/friends.ts`
 - Notion `Diary` pages are mapped into `data/diary.ts`
 - Notion `Project` pages are mapped into `data/projects.ts`
@@ -45,6 +45,14 @@ Keep local content files consistent with the Notion database by `type`.
   - Set to `true` to enable translating `Post` markdown body via an OpenAI-compatible Chat Completions API.
 - `NOTION_POST_TRANSLATION_LANGS`
   - Comma-separated target language codes, e.g. `en,ja`.
+- `NOTION_DATA_TRANSLATION_ENABLED`
+  - Enables Codex translation for `About`, `Project`, and `Diary`. Enabled by default; set it to `false` explicitly to disable it.
+- `NOTION_DATA_TRANSLATION_LANGS`
+  - Comma-separated target languages, independent from Post translation. Defaults to `en,ja` for the site's current English and Japanese routes.
+- `NOTION_DATA_TRANSLATION_SOURCE_LANG`
+  - Source language for Notion data (default: `zh-cn`).
+- `NOTION_DATA_TRANSLATION_MAX_ITEMS` / `NOTION_DATA_TRANSLATION_MAX_CHARS`
+  - Maximum items / approximate JSON characters per structured data translation batch (defaults: `20` / `12000`).
 - `NOTION_POST_TRANSLATION_MODEL`
   - Model name used for translation requests.
 - `NOTION_POST_TRANSLATION_API_BASE_URL`
@@ -169,6 +177,18 @@ If you still have manually maintained posts under `posts/`, either:
 - Translation runs when the source post is created/updated by the normal Notion sync flow
 - If a translated file for a configured language is missing, it will be created the next time that post is processed by sync
 - If `NOTION_SYNC_DELETE_MISSING=true`, stale translated `*.{lang}.md` files are also deleted when they are no longer produced (for example, source post removed or language removed from config)
+
+## About / Project / Diary Localization
+
+- `Friend` data is never translated and continues to sync as before.
+- `About` Markdown is generated as `spec/about.{lang}.md`; the site selects an exact locale file and shows an empty state when it is absent.
+- Stale About variants are removed when the source changes while translation is disabled, or when a locale is removed from the enabled target list.
+- `Project` translates only `title` and `description`; URLs, dates, status, category, and tech stack remain structural source data.
+- `Diary` translates only `content`; dates and image URLs are not sent for translation.
+- Generated records keep the source text at the top level, write its `lang`, and add exact target-language values under `translations`.
+- The site uses an exact language match and hides an item when that translation is missing; it does not fall back to the source language.
+- Translation runs in validated, bounded JSON batches per target language. Data files are not written until all enabled batches pass validation.
+- `.github/notion-data-translation-cache.json` reuses translations only when the same Notion page has the same source-text hash, prompt revision, and Codex model/profile, avoiding hourly retranslations while preventing stale-policy reuse.
 
 ## Running
 

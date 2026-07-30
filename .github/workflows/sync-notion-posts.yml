@@ -16,6 +16,8 @@ jobs:
   sync:
     runs-on: selfN100
     timeout-minutes: 500
+    env:
+      NOTION_DATA_TRANSLATION_CACHE_PATH: ${{ vars.NOTION_DATA_TRANSLATION_CACHE_PATH || '.github/notion-data-translation-cache.json' }}
 
     steps:
       - name: Checkout repository
@@ -29,7 +31,11 @@ jobs:
           node-version: '20'
 
       - name: Run sync script self-checks
-        run: node .github/scripts/test-markdown-directive-normalizer.mjs
+        run: |
+          node .github/scripts/test-markdown-directive-normalizer.mjs
+          node .github/scripts/test-notion-data-translation.mjs
+          node .github/scripts/test-notion-data-write.mjs
+          node .github/scripts/test-notion-ts-data-sync.mjs
 
       - name: Install sync dependencies
         run: npm install --no-save --no-package-lock @notionhq/client@5 notion-to-md @aws-sdk/client-s3
@@ -77,6 +83,12 @@ jobs:
           NOTION_POST_TRANSLATION_SOURCE_LANG: ${{ secrets.NOTION_POST_TRANSLATION_SOURCE_LANG || '' }}
           # 可选：自定义 system prompt（不填则使用脚本内默认提示词）
           NOTION_POST_TRANSLATION_SYSTEM_PROMPT: ${{ secrets.NOTION_POST_TRANSLATION_SYSTEM_PROMPT || '' }}
+          # About / Project / Diary 默认启用翻译；可用 secret 显式设为 false
+          NOTION_DATA_TRANSLATION_ENABLED: ${{ secrets.NOTION_DATA_TRANSLATION_ENABLED || 'true' }}
+          NOTION_DATA_TRANSLATION_LANGS: ${{ secrets.NOTION_DATA_TRANSLATION_LANGS || '' }}
+          NOTION_DATA_TRANSLATION_SOURCE_LANG: ${{ secrets.NOTION_DATA_TRANSLATION_SOURCE_LANG || 'zh-cn' }}
+          NOTION_DATA_TRANSLATION_MAX_ITEMS: ${{ vars.NOTION_DATA_TRANSLATION_MAX_ITEMS || '20' }}
+          NOTION_DATA_TRANSLATION_MAX_CHARS: ${{ vars.NOTION_DATA_TRANSLATION_MAX_CHARS || '12000' }}
           # 可选：将 Notion 图片资产（Post/Project 封面 + Post/About/Diary 正文图片）上传到 Cloudflare R2，并写入稳定公网 URL
           NOTION_COVER_R2_ENABLED: ${{ secrets.NOTION_COVER_R2_ENABLED || 'false' }}
           NOTION_COVER_R2_ENDPOINT: ${{ secrets.NOTION_COVER_R2_ENDPOINT || '' }}
@@ -114,6 +126,8 @@ jobs:
       - name: Commit and push changes
         id: commit_push
         if: always()
+        env:
+          SYNC_OUTCOME: ${{ steps.sync_run.outcome || 'unknown' }}
         run: |
           CHECKPOINT_MARKER=".notion-sync-checkpoint-pushed"
           checkpoint_pushed="false"
@@ -129,7 +143,18 @@ jobs:
             fi
           fi
 
-          if [ -z "$(git status --porcelain -- posts spec/about.md data/friends.ts data/diary.ts data/projects.ts)" ]; then
+          if [ "$SYNC_OUTCOME" = "failure" ]; then
+            echo "Sync failed; discarding uncommitted About/data/cache changes to avoid a partial localization update"
+            git restore --worktree -- spec data/friends.ts data/diary.ts data/projects.ts
+            git clean -f -- 'spec/about.*.md'
+            if git ls-files --error-unmatch "$NOTION_DATA_TRANSLATION_CACHE_PATH" >/dev/null 2>&1; then
+              git restore --worktree -- "$NOTION_DATA_TRANSLATION_CACHE_PATH"
+            else
+              git clean -f -- "$NOTION_DATA_TRANSLATION_CACHE_PATH"
+            fi
+          fi
+
+          if [ -z "$(git status --porcelain -- posts spec data/friends.ts data/diary.ts data/projects.ts "$NOTION_DATA_TRANSLATION_CACHE_PATH")" ]; then
             echo "No content changes in posts/about/data"
             if [ "$checkpoint_pushed" = "true" ]; then
               echo "pushed=true" >> "$GITHUB_OUTPUT"
@@ -140,7 +165,7 @@ jobs:
             exit 0
           fi
 
-          git add -A posts spec/about.md data/friends.ts data/diary.ts data/projects.ts
+          git add -A posts spec data/friends.ts data/diary.ts data/projects.ts "$NOTION_DATA_TRANSLATION_CACHE_PATH"
           git commit -m "chore(content): sync notion content [skip ci]"
           git pull --rebase
           git push

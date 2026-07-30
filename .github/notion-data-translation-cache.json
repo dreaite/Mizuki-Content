@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "sourceLanguage": "zh_CN",
+  "translationRevision": "structured-data-v1|model=default|profile=default",
+  "targetLanguages": [
+    "en",
+    "ja"
+  ],
+  "entries": {}
+}

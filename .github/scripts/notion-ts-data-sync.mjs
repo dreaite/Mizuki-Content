@@ -36,11 +36,89 @@ function serializeTsStringArray(values, indent = '\t\t\t') {
   return `[\n${values.map((value) => `${indent}${escapeTsString(value)},`).join('\n')}\n${closingIndent}]`;
 }
 
+function findTsArrayEnd(source, arrayStart) {
+  let bracketDepth = 0;
+  let quote = '';
+  let escaped = false;
+  let lineComment = false;
+  let blockComment = false;
+
+  for (let index = arrayStart; index < source.length; index += 1) {
+    const char = source[index];
+    const next = source[index + 1];
+
+    if (lineComment) {
+      if (char === '\n') lineComment = false;
+      continue;
+    }
+    if (blockComment) {
+      if (char === '*' && next === '/') {
+        blockComment = false;
+        index += 1;
+      }
+      continue;
+    }
+    if (quote) {
+      if (escaped) {
+        escaped = false;
+      } else if (char === '\\') {
+        escaped = true;
+      } else if (char === quote) {
+        quote = '';
+      }
+      continue;
+    }
+
+    if (char === '/' && next === '/') {
+      lineComment = true;
+      index += 1;
+      continue;
+    }
+    if (char === '/' && next === '*') {
+      blockComment = true;
+      index += 1;
+      continue;
+    }
+    if (char === '"' || char === "'" || char === '`') {
+      quote = char;
+      continue;
+    }
+    if (char === '[') {
+      bracketDepth += 1;
+      continue;
+    }
+    if (char === ']') {
+      bracketDepth -= 1;
+      if (bracketDepth === 0) {
+        return index + 1;
+      }
+    }
+  }
+
+  throw new Error('Failed to locate the end of the target TS data array.');
+}
+
 function replaceTsArrayLiteral(fileContent, declarationPattern, newArrayLiteral) {
-  if (!declarationPattern.test(fileContent)) {
+  const match = fileContent.match(declarationPattern);
+  if (!match || !match[1]) {
     throw new Error('Failed to locate target array declaration in TS data file.');
   }
-  return fileContent.replace(declarationPattern, `$1${newArrayLiteral};`);
+
+  const arrayStart = match.index + match[1].length;
+  if (fileContent[arrayStart] !== '[') {
+    throw new Error('Target TS data declaration does not start with an array literal.');
+  }
+
+  const arrayEnd = findTsArrayEnd(fileContent, arrayStart);
+  let replacementEnd = arrayEnd;
+  while (/\s/.test(fileContent[replacementEnd] || '')) {
+    replacementEnd += 1;
+  }
+  if (fileContent[replacementEnd] === ';') {
+    replacementEnd += 1;
+  }
+
+  return `${fileContent.slice(0, arrayStart)}${newArrayLiteral};${fileContent.slice(replacementEnd)}`;
 }
 
 export function extractMarkdownImagesAndText(markdown) {
@@ -95,6 +173,7 @@ export function buildProjectItems(projectMetas) {
   const sorted = [...projectMetas].sort(sortByUpdatedDesc);
   return sorted.map((meta) => {
     const item = {
+      _translationKey: `project:${meta.pageId}`,
       id: String(meta.title || ''),
       title: meta.title,
       description: meta.description,
@@ -133,6 +212,22 @@ function serializeFriendsDataArray(items) {
   return lines.join('\n');
 }
 
+function serializeTranslations(translations, fieldNames) {
+  const entries = Object.entries(translations || {}).filter(([, value]) => value);
+  if (entries.length === 0) return [];
+
+  const lines = ['\t\ttranslations: {'];
+  for (const [language, translation] of entries) {
+    lines.push(`\t\t\t${escapeTsString(language)}: {`);
+    for (const fieldName of fieldNames) {
+      lines.push(`\t\t\t\t${fieldName}: ${escapeTsString(translation[fieldName])},`);
+    }
+    lines.push('\t\t\t},');
+  }
+  lines.push('\t\t},');
+  return lines;
+}
+
 function serializeDiaryDataArray(items) {
   const lines = ['['];
 
@@ -140,6 +235,8 @@ function serializeDiaryDataArray(items) {
     lines.push('\t{');
     lines.push(`\t\tid: ${item.id},`);
     lines.push(`\t\tcontent: ${escapeTsString(item.content)},`);
+    if (item.lang) lines.push(`\t\tlang: ${escapeTsString(item.lang)},`);
+    lines.push(...serializeTranslations(item.translations, ['content']));
     lines.push(`\t\tdate: ${escapeTsString(item.date)},`);
     if (Array.isArray(item.images) && item.images.length > 0) {
       lines.push(`\t\timages: ${serializeTsStringArray(item.images)},`);
@@ -159,6 +256,8 @@ function serializeProjectsDataArray(items) {
     lines.push(`\t\tid: ${escapeTsString(item.id)},`);
     lines.push(`\t\ttitle: ${escapeTsString(item.title)},`);
     lines.push(`\t\tdescription: ${escapeTsString(item.description)},`);
+    if (item.lang) lines.push(`\t\tlang: ${escapeTsString(item.lang)},`);
+    lines.push(...serializeTranslations(item.translations, ['title', 'description']));
     lines.push(`\t\timage: ${escapeTsString(item.image)},`);
     lines.push(`\t\tcategory: ${escapeTsString(item.category)},`);
     lines.push(`\t\ttechStack: ${serializeTsStringArray(item.techStack)},`);
@@ -181,7 +280,7 @@ function serializeProjectsDataArray(items) {
 export function renderFriendsDataTs(fileContent, friendItems) {
   return replaceTsArrayLiteral(
     fileContent,
-    /(export const friendsData:\s*FriendItem\[\]\s*=\s*)\[[\s\S]*?\];/,
+    /(export const friendsData:\s*FriendItem\[\]\s*=\s*)/,
     serializeFriendsDataArray(friendItems)
   );
 }
@@ -189,7 +288,7 @@ export function renderFriendsDataTs(fileContent, friendItems) {
 export function renderDiaryDataTs(fileContent, diaryItems) {
   return replaceTsArrayLiteral(
     fileContent,
-    /(const diaryData:\s*DiaryItem\[\]\s*=\s*)\[[\s\S]*?\];/,
+    /(const diaryData:\s*DiaryItem\[\]\s*=\s*)/,
     serializeDiaryDataArray(diaryItems)
   );
 }
@@ -197,7 +296,7 @@ export function renderDiaryDataTs(fileContent, diaryItems) {
 export function renderProjectsDataTs(fileContent, projectItems) {
   return replaceTsArrayLiteral(
     fileContent,
-    /(export const projectsData:\s*Project\[\]\s*=\s*)\[[\s\S]*?\];/,
+    /(export const projectsData:\s*Project\[\]\s*=\s*)/,
     serializeProjectsDataArray(projectItems)
   );
 }

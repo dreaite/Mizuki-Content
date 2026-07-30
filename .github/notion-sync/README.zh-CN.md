@@ -20,7 +20,7 @@
 按 `type` 将本地内容文件与 Notion 数据库保持一致。
 
 - Notion `Post` 页面会转换为 Markdown 并写入 `posts/`
-- Notion `About` 页面（如果有多个则取最近更新的一个）写入 `spec/about.md`
+- Notion `About` 页面（如果有多个则取最近更新的一个）写入 `spec/about.md`，启用数据翻译时同时生成 `spec/about.{lang}.md`
 - Notion `Friend` 页面映射到 `data/friends.ts`
 - Notion `Diary` 页面映射到 `data/diary.ts`
 - Notion `Project` 页面映射到 `data/projects.ts`
@@ -45,6 +45,14 @@
   - 设为 `true` 时，启用通过 OpenAI-compatible Chat Completions API 翻译 `Post` 的 Markdown 正文。
 - `NOTION_POST_TRANSLATION_LANGS`
   - 目标语言代码列表，逗号分隔，例如：`en,ja`。
+- `NOTION_DATA_TRANSLATION_ENABLED`
+  - 启用 `About` / `Project` / `Diary` 的 Codex 翻译；默认启用，可显式设为 `false`。
+- `NOTION_DATA_TRANSLATION_LANGS`
+  - 数据翻译目标语言，逗号分隔；独立于 Post 配置，默认 `en,ja`（对应站点当前的英文和日文路由）。
+- `NOTION_DATA_TRANSLATION_SOURCE_LANG`
+  - Notion 数据源语言（默认：`zh-cn`）。
+- `NOTION_DATA_TRANSLATION_MAX_ITEMS` / `NOTION_DATA_TRANSLATION_MAX_CHARS`
+  - 单次结构化数据翻译的最大条目数 / 近似 JSON 字符数（默认：`20` / `12000`）；较大的 Project / Diary 集合会稳定分批。
 - `NOTION_POST_TRANSLATION_MODEL`
   - 翻译请求使用的模型名称。
 - `NOTION_POST_TRANSLATION_API_BASE_URL`
@@ -169,6 +177,18 @@ Workflow 会传入以下默认值。如果你的 Notion 列名不同，请在 wo
 - 翻译在原文章按正常 Notion sync 逻辑被创建/更新时触发
 - 如果某个配置语言的翻译文件缺失，会在该文章下次被 sync 处理时自动创建
 - 当 `NOTION_SYNC_DELETE_MISSING=true` 时，已失效的翻译文件 `*.{lang}.md` 也会被删除（例如源文章删除或语言配置被移除）
+
+## About / Project / Diary 多语言内容
+
+- `Friend` 不参与翻译，仍按原逻辑同步。
+- `About` Markdown 正文会按目标语言生成 `spec/about.{lang}.md`；站点按当前语言精确选择，没有对应文件时只显示空状态。
+- About 源文变化但翻译关闭时会移除旧语言文件；启用翻译后，移出目标语言列表的旧文件也会删除，避免继续展示过期译文。
+- `Project` 只翻译 `title` / `description`；URL、日期、状态、分类和技术栈继续作为结构字段。
+- `Diary` 只翻译 `content`；日期和图片 URL 不会发送给翻译进程。
+- 生成记录会保留顶层源文，写入其 `lang`，并在 `translations` 下保存精确的目标语言内容。
+- 站点只使用当前语言的精确匹配；对应译文不存在时隐藏该条，不回退到源语言。
+- 每个目标语言使用经过校验、可控大小的 JSON 批次翻译；所有启用批次通过校验后才写入 data 文件。
+- `.github/notion-data-translation-cache.json` 仅在同一 Notion page 的源文 hash、提示词版本和 Codex 模型/profile 都未变化时复用译文，避免每小时重复翻译，也不会复用过期策略的文本。
 
 ## 运行方式
 

@@ -1,6 +1,13 @@
 // Project data configuration file
 // Used to manage data for the project display page
 
+export type DataLanguage = "zh_CN" | "en" | "ja" | "zh_TW";
+
+export interface ProjectTranslation {
+	title: string;
+	description: string;
+}
+
 export interface Project {
 	id: string;
 	title: string;
@@ -16,11 +23,14 @@ export interface Project {
 	featured?: boolean;
 	tags?: string[];
 	visitUrl?: string; // 添加前往项目链接字段
+	lang?: DataLanguage;
+	translations?: Partial<Record<DataLanguage, ProjectTranslation>>;
 }
 
 export const projectsData: Project[] = [
 	{
 		id: "codex-reset-forecaster",
+		lang: "zh_CN",
 		title: "codex-reset-forecaster",
 		description: "一款独立于供应商的每小时Codex重置预测工具。该工具支持证据谱系溯源、截止安全建模及偏差校准，并配备直观的7天Web用户界面。帮助您获取精确可靠的重置预测数据，优化决策流程。",
 		image: "https://r2.dreaife.tokyo/notion/covers/3aa5465cca178071b4f6e916cdcf4f4d/image.png",
@@ -37,6 +47,7 @@ export const projectsData: Project[] = [
 	},
 	{
 		id: "asmr-tg-backup",
+		lang: "zh_CN",
 		title: "asmr-tg-backup",
 		description: "基于 Python 开发的 ASMR 后台媒体备份服务，支持通过 YouTube 频道、通用 RSS 及 Twitch API 自动发现音视频。系统利用 yt-dlp 自动抓取并下载媒体，还可直接将其上传至 Telegram 频道，帮助用户轻松实现个人音视频资源的自动化归档与高效备份。",
 		image: "https://r2.dreaife.tokyo/notion/covers/3915465cca178071bc6dfb2ba5139bac/ai-generated-1782992455041.png",
@@ -54,6 +65,7 @@ export const projectsData: Project[] = [
 	},
 	{
 		id: "upwork-enhancer",
+		lang: "zh_CN",
 		title: "upwork-enhancer",
 		description: "upwork-enhancer 是一款专为 Upwork 平台设计的 Chrome 浏览器插件。该工具使用 JavaScript 开发，旨在帮助自由职业者在浏览工作岗位时，快速评估并筛选潜在的 Upwork 合作机会，提升接单效率。",
 		image: "https://r2.dreaife.tokyo/notion/covers/3915465cca17801c9b44e983329c88f2/ai-generated-1782992912349.png",
@@ -67,6 +79,7 @@ export const projectsData: Project[] = [
 	},
 	{
 		id: "RssFeedTeleBot",
+		lang: "zh_CN",
 		title: "RssFeedTeleBot",
 		description: "一个无服务器的Telegram机器人，监控RSS源、X（Twitter）用户和YouTube频道，并将通知发送到Telegram聊天、超级群组和主题。支持直接在Telegram中添加/删除订阅，支持多个订阅和选择性转发，完全兼容Cloudflare Workers的免费层。",
 		image: "https://r2.dreaife.tokyo/notion/covers/30f5465cca1780a8a667d7cb8c1d5af5/ai-generated-1775396031107.png",
@@ -84,6 +97,7 @@ export const projectsData: Project[] = [
 	},
 	{
 		id: "notion2page",
+		lang: "zh_CN",
 		title: "notion2page",
 		description: "notion2page 是一个无第三方依赖的 Node 静态网站生成器，专为构建由 Notion 驱动的英文个人项目作品集而设计。它可以帮助开发者轻松将 Notion 内容转化为高效的静态网页，极大地简化了作品集的搭建与维护流程。",
 		image: "https://r2.dreaife.tokyo/notion/covers/3915465cca17803c8613c02b47c29075/ai-generated-1782992687889.png",
