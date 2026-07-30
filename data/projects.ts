@@ -23,7 +23,7 @@ export const projectsData: Project[] = [
 		id: "codex-reset-forecaster",
 		title: "codex-reset-forecaster",
 		description: "一款独立于供应商的每小时Codex重置预测工具。该工具支持证据谱系溯源、截止安全建模及偏差校准，并配备直观的7天Web用户界面。帮助您获取精确可靠的重置预测数据，优化决策流程。",
-		image: "https://r2.dreaife.tokyo/notion/covers/3aa5465cca178071b4f6e916cdcf4f4d/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE_2026-07-26_221315.png",
+		image: "https://r2.dreaife.tokyo/notion/covers/3aa5465cca178071b4f6e916cdcf4f4d/image.png",
 		category: "web",
 		techStack: [
 			"JavaScript",
@@ -31,6 +31,7 @@ export const projectsData: Project[] = [
 			"forecaset",
 		],
 		status: "in-progress",
+		liveDemo: "https://codexreset.dreaife.tokyo/",
 		startDate: "2026-07-28",
 		featured: false,
 	},
