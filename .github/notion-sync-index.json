@@ -98,7 +98,7 @@
     },
     "13c5465c-ca17-8004-ad54-d1f3b101d56a": {
       "kind": "post",
-      "lastEditedTime": "2025-11-30T09:11:00.000Z",
+      "lastEditedTime": "2026-08-15T21:03:00.000Z",
       "outputPaths": [
         "angular-cactus-pot.md",
         "angular-cactus-pot.en.md",
@@ -106,7 +106,7 @@
       ],
       "pageId": "13c5465c-ca17-8004-ad54-d1f3b101d56a",
       "renderRevision": "notion-sync-index-v1|kind=post|body=official-markdown@2026-03-11|r2=enabled:dreaife-store:https://r2.dreaife.tokyo:notion/covers",
-      "signature": "56ed64662bfd212fce7f41fdc52b4ccf5a66be2a32a367faa6b1f008402b98b7"
+      "signature": "2c5d060fe6f9543cc462079a4aa40cde40ac7465f2f96bc0cec4f8bd7034f09f"
     },
     "1405465c-ca17-8007-b423-cb34358c1fa9": {
       "kind": "post",
@@ -140,7 +140,7 @@
     },
     "1515465c-ca17-8073-b194-f4ade9c3a703": {
       "kind": "post",
-      "lastEditedTime": "2026-01-17T16:40:00.000Z",
+      "lastEditedTime": "2026-08-15T21:00:00.000Z",
       "outputPaths": [
         "ubuntu-ohmyzsh-setup.md",
         "ubuntu-ohmyzsh-setup.en.md",
@@ -148,11 +148,11 @@
       ],
       "pageId": "1515465c-ca17-8073-b194-f4ade9c3a703",
       "renderRevision": "notion-sync-index-v1|kind=post|body=official-markdown@2026-03-11|r2=enabled:dreaife-store:https://r2.dreaife.tokyo:notion/covers",
-      "signature": "de18aaa5c4cebe66787a04f6f1564db4ad0fb10602c5f206faa450849f8af08c"
+      "signature": "ee32aee41f945218966b13fe7bc57624d1a3a2b8a39ed433d9632bc1533db361"
     },
     "1555465c-ca17-80f3-82f5-f1421004b0a8": {
       "kind": "post",
-      "lastEditedTime": "2025-11-30T08:52:00.000Z",
+      "lastEditedTime": "2026-08-15T21:02:00.000Z",
       "outputPaths": [
         "bidding-platform-nest-angular.md",
         "bidding-platform-nest-angular.en.md",
@@ -160,7 +160,7 @@
       ],
       "pageId": "1555465c-ca17-80f3-82f5-f1421004b0a8",
       "renderRevision": "notion-sync-index-v1|kind=post|body=official-markdown@2026-03-11|r2=enabled:dreaife-store:https://r2.dreaife.tokyo:notion/covers",
-      "signature": "42e8164f3482a1fd158f3b03d4f771badfc047aa23a1324e8d67dd7d61d9030f"
+      "signature": "29087954875fb6e7cc8f2ee5bde53e4dab2850bbe696b9a4743a153ff4491207"
     },
     "1575465c-ca17-80ec-b51b-c75146cb9231": {
       "kind": "post",
@@ -176,7 +176,7 @@
     },
     "15d5465c-ca17-80bf-85ea-c8dea673675e": {
       "kind": "post",
-      "lastEditedTime": "2025-11-30T09:07:00.000Z",
+      "lastEditedTime": "2026-08-15T21:00:00.000Z",
       "outputPaths": [
         "ubuntu-nat-routing.md",
         "ubuntu-nat-routing.en.md",
@@ -184,7 +184,7 @@
       ],
       "pageId": "15d5465c-ca17-80bf-85ea-c8dea673675e",
       "renderRevision": "notion-sync-index-v1|kind=post|body=official-markdown@2026-03-11|r2=enabled:dreaife-store:https://r2.dreaife.tokyo:notion/covers",
-      "signature": "ad973b9ae0a0f45feb8f0ea67603790b5852de5e8456b354cc27099ccb41d227"
+      "signature": "9d08810000b9eb7708000728d4f73af8fac503110a4d2ce75e2e152ff645d384"
     },
     "1670090a-8eaf-4eab-9ccd-3f1332d4e916": {
       "kind": "post",
@@ -300,7 +300,7 @@
     },
     "30d1fea5-6f39-4031-9785-fca81bdfd185": {
       "kind": "post",
-      "lastEditedTime": "2026-02-22T09:38:00.000Z",
+      "lastEditedTime": "2026-08-15T21:00:00.000Z",
       "outputPaths": [
         "smart-shell-guide.md",
         "smart-shell-guide.en.md",
@@ -308,7 +308,7 @@
       ],
       "pageId": "30d1fea5-6f39-4031-9785-fca81bdfd185",
       "renderRevision": "notion-sync-index-v1|kind=post|body=official-markdown@2026-03-11|r2=enabled:dreaife-store:https://r2.dreaife.tokyo:notion/covers",
-      "signature": "332921801fd09e80bc1ff31d44248776455369325058b1583e90c452b5963488"
+      "signature": "874fafa3eac7ad642a4896a3057a483dd3217b3143f1aa53549ff890784aa735"
     },
     "30f5465c-ca17-802b-bd27-fbcc5d9068a4": {
       "diarySource": {
@@ -659,7 +659,7 @@
       ],
       "pageId": "5e918ab0-ac6d-4f36-bf37-9d4fb01083e6",
       "renderRevision": "notion-sync-index-v1|kind=post|body=official-markdown@2026-03-11|r2=enabled:dreaife-store:https://r2.dreaife.tokyo:notion/covers",
-      "signature": "0f42608aad5101680b1289e34086545e0241eede3c719f81939e14901aa6d873"
+      "signature": "51338519b49580e3d18cdad331cf3cebfb8bf1d65e53cbda7b2c34edb5353a93"
     },
     "6bf781e8-f3ef-4da7-9c4d-abda7a6c3103": {
       "kind": "post",
