@@ -12,12 +12,15 @@ import {
   buildStableRemoteImageSourceSha1,
   canReuseLegacyR2ObjectAfterExpiredSource,
   createNotionR2UploadCache,
+  extractUrlsFromMarkdownImages,
   getNotionR2ObjectHeadCache,
   getNotionR2SourceUrlCache,
   getNotionR2UploadStats,
+  hasTemporaryNotionImageUrl,
   incrementNotionR2UploadStat,
   isExpiredNotionAssetResponse,
   isS3ObjectNotFoundError,
+  isTemporaryNotionAssetUrl,
   normalizeR2SourceSha1Metadata,
 } from './notion-r2-dedup.mjs';
 import {
@@ -611,7 +614,7 @@ async function readMarkdownFrontMatterImage(filePath) {
 async function markdownFileContainsTemporaryNotionImageUrl(filePath) {
   const content = await readFileUtf8IfExists(filePath);
   if (!content) return false;
-  return /notionusercontent\.com|prod-files-secure\.s3\./i.test(content);
+  return hasTemporaryNotionImageUrl(content);
 }
 
 async function readNotionPageMarkdown(markdownReader, pageId) {
@@ -757,54 +760,6 @@ function buildPublicUrlFromBase(baseUrl, objectKey) {
     .map((segment) => encodeURIComponent(segment))
     .join('/');
   return `${normalizedBase}/${encodedKey}`;
-}
-
-function isTemporaryNotionAssetUrl(url) {
-  const text = String(url || '').trim();
-  if (!text) return false;
-  return (
-    /notionusercontent\.com/i.test(text) ||
-    /prod-files-secure\.s3\./i.test(text) ||
-    /[?&]X-Amz-Expires=/i.test(text) ||
-    /[?&]exp=/i.test(text)
-  );
-}
-
-function extractUrlsFromMarkdownImages(markdown) {
-  const source = String(markdown || '');
-  const urls = new Set();
-
-  const markdownImagePattern = /!\[[^\]]*?\]\((.*?)\)/g;
-  source.replace(markdownImagePattern, (_, rawUrl) => {
-    let candidate = String(rawUrl || '').trim();
-    if (!candidate) return '';
-
-    if (candidate.startsWith('<')) {
-      const end = candidate.indexOf('>');
-      if (end > 0) {
-        candidate = candidate.slice(1, end);
-      }
-    } else if (/\s/.test(candidate)) {
-      candidate = candidate.split(/\s+/)[0];
-    }
-
-    candidate = candidate.trim();
-    if (candidate) {
-      urls.add(candidate);
-    }
-    return '';
-  });
-
-  const htmlImagePattern = /<img\b[^>]*?\bsrc=["']([^"']+)["'][^>]*>/gi;
-  source.replace(htmlImagePattern, (_, rawUrl) => {
-    const candidate = String(rawUrl || '').trim();
-    if (candidate) {
-      urls.add(candidate);
-    }
-    return '';
-  });
-
-  return [...urls];
 }
 
 function sanitizeSlug(value) {

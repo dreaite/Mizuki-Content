@@ -4,9 +4,12 @@ import {
   buildStableRemoteImageSourceSha1,
   canReuseLegacyR2ObjectAfterExpiredSource,
   createNotionR2UploadCache,
+  extractUrlsFromMarkdownImages,
+  hasTemporaryNotionImageUrl,
   incrementNotionR2UploadStat,
   isExpiredNotionAssetResponse,
   isS3ObjectNotFoundError,
+  isTemporaryNotionAssetUrl,
   normalizeR2SourceSha1Metadata,
 } from './notion-r2-dedup.mjs';
 
@@ -35,6 +38,29 @@ assert.equal(isExpiredNotionAssetResponse(500, 'Request has expired'), false);
 assert.equal(canReuseLegacyR2ObjectAfterExpiredSource({ exists: true }, ''), true);
 assert.equal(canReuseLegacyR2ObjectAfterExpiredSource({ exists: true }, stableSha1), false);
 assert.equal(canReuseLegacyR2ObjectAfterExpiredSource({ exists: false }, ''), false);
+
+const temporaryImageUrl = `${firstSignedUrl}&X-Amz-Expires=3600`;
+const markdownWithImages = [
+  `![Markdown image](${temporaryImageUrl} "title")`,
+  `<img alt="HTML image" src="https://cdn.example.com/stable.png">`,
+  `![Duplicate](${temporaryImageUrl})`,
+].join('\n');
+assert.deepEqual(extractUrlsFromMarkdownImages(markdownWithImages), [
+  temporaryImageUrl,
+  'https://cdn.example.com/stable.png',
+]);
+assert.equal(isTemporaryNotionAssetUrl(temporaryImageUrl), true);
+assert.equal(hasTemporaryNotionImageUrl(markdownWithImages), true);
+assert.equal(
+  hasTemporaryNotionImageUrl(`<audio src="${temporaryImageUrl}"></audio>`),
+  false,
+  'Temporary audio URLs must not force an image backfill body read.'
+);
+assert.equal(
+  hasTemporaryNotionImageUrl(`[attachment](${temporaryImageUrl})`),
+  false,
+  'Temporary non-image links must not force an image backfill body read.'
+);
 
 const cache = createNotionR2UploadCache();
 assert.equal(cache.sourceUrlCache.size, 0);

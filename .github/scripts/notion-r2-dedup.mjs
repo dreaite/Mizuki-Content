@@ -1,5 +1,57 @@
 import crypto from 'node:crypto';
 
+export function isTemporaryNotionAssetUrl(url) {
+  const text = String(url || '').trim();
+  if (!text) return false;
+  return (
+    /notionusercontent\.com/i.test(text) ||
+    /prod-files-secure\.s3\./i.test(text) ||
+    /[?&]X-Amz-Expires=/i.test(text) ||
+    /[?&]exp=/i.test(text)
+  );
+}
+
+export function extractUrlsFromMarkdownImages(markdown) {
+  const source = String(markdown || '');
+  const urls = new Set();
+
+  const markdownImagePattern = /!\[[^\]]*?\]\((.*?)\)/g;
+  source.replace(markdownImagePattern, (_, rawUrl) => {
+    let candidate = String(rawUrl || '').trim();
+    if (!candidate) return '';
+
+    if (candidate.startsWith('<')) {
+      const end = candidate.indexOf('>');
+      if (end > 0) {
+        candidate = candidate.slice(1, end);
+      }
+    } else if (/\s/.test(candidate)) {
+      candidate = candidate.split(/\s+/)[0];
+    }
+
+    candidate = candidate.trim();
+    if (candidate) {
+      urls.add(candidate);
+    }
+    return '';
+  });
+
+  const htmlImagePattern = /<img\b[^>]*?\bsrc=["']([^"']+)["'][^>]*>/gi;
+  source.replace(htmlImagePattern, (_, rawUrl) => {
+    const candidate = String(rawUrl || '').trim();
+    if (candidate) {
+      urls.add(candidate);
+    }
+    return '';
+  });
+
+  return [...urls];
+}
+
+export function hasTemporaryNotionImageUrl(markdown) {
+  return extractUrlsFromMarkdownImages(markdown).some(isTemporaryNotionAssetUrl);
+}
+
 export function buildStableRemoteImageSourceSha1(sourceUrl) {
   const source = String(sourceUrl || '').trim();
   const stableSource = source.replace(/[?#].*$/, '') || source;
