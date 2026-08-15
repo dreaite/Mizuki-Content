@@ -2338,6 +2338,9 @@ async function main() {
     }
 
     if (type === 'friend') {
+      common.image = normalizeSingleLine(
+        await resolveCoverImageUrlForMeta(page, common, notionCoverR2Client, notionR2UploadCache)
+      );
       friendPages.push(common);
       continue;
     }

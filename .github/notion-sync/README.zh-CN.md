@@ -68,6 +68,7 @@
   - 设为 `true` 时，将 Notion 图片资产上传到 Cloudflare R2，并写入稳定的公网 URL。
   - 覆盖范围：
     - `Post` 封面图（`frontmatter.image`）
+    - `Friend` 生成 TS 数据中的封面图字段（`imgurl`）
     - `Project` 生成 TS 数据中的封面图字段
     - `Post`、`About`、`Diary` 正文中的 Markdown 图片（包含 `Diary` 提取出的 `images`）
 - `NOTION_COVER_R2_ENDPOINT`

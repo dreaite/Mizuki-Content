@@ -68,6 +68,7 @@ Keep local content files consistent with the Notion database by `type`.
   - Set to `true` to upload Notion image assets to Cloudflare R2 and write stable public URLs.
   - Covers:
     - `Post` cover image (`frontmatter.image`)
+    - `Friend` cover image field (`imgurl`) in generated TS data
     - `Project` cover image fields in generated TS data
     - Markdown body images in `Post`, `About`, and `Diary` content (including diary extracted `images`)
 - `NOTION_COVER_R2_ENDPOINT`

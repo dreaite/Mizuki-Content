@@ -43,6 +43,7 @@ jobs:
           node .github/scripts/test-notion-data-translation.mjs
           node .github/scripts/test-notion-data-write.mjs
           node .github/scripts/test-notion-ts-data-sync.mjs
+          node .github/scripts/test-notion-r2-routing.mjs
 
       - name: Install sync dependencies
         run: npm install --no-save --no-package-lock @notionhq/client@5 notion-to-md @aws-sdk/client-s3
@@ -96,7 +97,7 @@ jobs:
           NOTION_DATA_TRANSLATION_SOURCE_LANG: ${{ secrets.NOTION_DATA_TRANSLATION_SOURCE_LANG || 'zh-cn' }}
           NOTION_DATA_TRANSLATION_MAX_ITEMS: ${{ vars.NOTION_DATA_TRANSLATION_MAX_ITEMS || '20' }}
           NOTION_DATA_TRANSLATION_MAX_CHARS: ${{ vars.NOTION_DATA_TRANSLATION_MAX_CHARS || '12000' }}
-          # 可选：将 Notion 图片资产（Post/Project 封面 + Post/About/Diary 正文图片）上传到 Cloudflare R2，并写入稳定公网 URL
+          # 可选：将 Notion 图片资产（Post/Friend/Project 封面 + Post/About/Diary 正文图片）上传到 Cloudflare R2，并写入稳定公网 URL
           NOTION_COVER_R2_ENABLED: ${{ secrets.NOTION_COVER_R2_ENABLED || 'false' }}
           NOTION_COVER_R2_ENDPOINT: ${{ secrets.NOTION_COVER_R2_ENDPOINT || '' }}
           NOTION_COVER_R2_REGION: ${{ secrets.NOTION_COVER_R2_REGION || 'auto' }}
