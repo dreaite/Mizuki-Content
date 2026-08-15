@@ -11,44 +11,22 @@ draft: false
 ---
 
 # svn是什么
-
-
 svn是跟git一样的文件管理工具，不过跟git不同，svn不是分布式管理，而是通过一个
-
-
 服务器对代码仓库进行管理。同时svn对文件安全管理的细粒度较git更高，可以不仅对一个仓库进行checkout，同时可以对仓库内部的一个文件夹/文件进行checkout。
-
-
 # SVN仓库
-
-
 svn在使用前，需要有一个仓库。
-
 - 自建仓库
 - 线上免费仓库
-
 # SVN客户端
-
-
 SVN比较倾向于用图形化客户端，比如tortoiseSVN。
-
-
 ## SVN命令行使用
-
-
 ### checkout
-
-
 ```shell
 svn checkout svn://url
 svn checkout svn://url save-dir
 svn checkout svn://url --username xxx --password xxx
 ```
-
-
 ### commit
-
-
 ```shell
 # 描述是必须的，但是可以填写空字符串，不指定
 svn commit -m "提交描述"
@@ -57,11 +35,7 @@ svn commit /path/to/file-or-dir -m "提交指定文件"
 # 指定后缀的所有文件
 svn commit *.js -m "提交所有 js 文件"
 ```
-
-
 ### update
-
-
 ```shell
 # 更新到最新
 svn update
@@ -70,32 +44,20 @@ svn update -r xxx
 # 仅更新指定文件或者目录
 svn up /path/to/file-or-dir
 ```
-
-
 ### add
-
-
 ```shell
 # 添加指定文件或目录
 svn add /path/to/file-or-dir
 # 添加当前目录下所有 php 文件
 svn add *.php
 ```
-
-
 ### delete
-
-
 ```shell
 svn delete /path/to/file-or-dir
 # 删除版本控制，但是本地依旧保留文件
 svn delete /path/to/file-or-dir --keep-local
 ```
-
-
 ### log
-
-
 ```shell
 # 查看当前目录的日志
 svn log
@@ -106,11 +68,7 @@ svn log -v
 # 限定只输出最新的 5 条日志
 svn log -l 5
 ```
-
-
 ### diff
-
-
 ```shell
 # 查看当前工作区的改动
 svn diff
@@ -119,24 +77,16 @@ svn diff /path/to/file-or-dir
 # 本地文件跟指定版本号比较差异
 svn diff /path/to/file-or-dir -r xxx
 # 指定版本号比较差异
-svn diff /path/to/file-or-dir -r 1:2
+svn diff /path/to/file-or-dir -r 1:2 
 ```
-
-
 ### **revert**
-
-
 ```shell
 # 撤销文件的本地修改
 svn revert test.php
 # 递归撤销目录中的本地修改
 svn revert -R /path/to/dir
 ```
-
-
 ### **ignore**
-
-
 ```shell
 # 忽略所有 log 文件。注意最后有个点号，表示在当前目录设置忽略属性。
 svn propset svn:ignore "*.log" .
@@ -151,11 +101,7 @@ svn proplist . -v
 # 删除当前目录的忽略设置
 svn propdel svn:ignore .
 ```
-
-
 ### command list
-
-
 ```shell
 # status
 svn status
@@ -181,11 +127,7 @@ svn blame filename.php
 # change svn url
 svn switch --relocate old_url new_url
 ```
-
-
 ### branches
-
-
 ```shell
 # 创建分支，从主干 trunk 创建一个分支保存到 branches/online1.0
 svn cp -m "描述内容" http://svnbucket.com/repos/trunk http://svnbucket.com/repos/branches/online1.0
@@ -199,14 +141,11 @@ svn switch svn://svnbucket.com/test/branches/online1.0
 # 删除分支
 svn rm http://svnbucket.com/repos/branches/online1.0
 ```
-
-
 ### help
-
-
 ```shell
 # 查看SVN帮助
 svn help
 # 查看指定命令的帮助信息
 svn help commit
 ```
+<empty-block/>

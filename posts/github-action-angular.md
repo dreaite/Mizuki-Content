@@ -11,30 +11,16 @@ draft: false
 ---
 
 ## angular.json
-
-
  **`projects > {your-project-name} > architect > build > options > outputPath`**
-
-
 如果默认生成静态网页在browser下，记得修改/添加属性
-
-
 ```javascript
 "baseHref": "/browser/",
 ```
-
-
 安装angular-cli-ghpages
-
-
 ```shell
 ng add angular-cli-ghpages
 ```
-
-
 ## **.github/workflows下创建工作流**
-
-
 ```yaml
 name: Deploy to GitHub Pages
 
@@ -70,15 +56,8 @@ jobs:
 env:
   GITHUB_TOKEN: ${{ secrets.TOKEN }}
 ```
-
-
 记得在github中[生成token](https://github.com/settings/tokens)用于访问repo，并在action的环境变量中添加。
-
-
 `https://github.com/${your_name}/${your_repo}/settings/secrets/actions`
-
-
 ## 推送到监控的分支
-
-
 修改github page配置，设置page分支为gh-pages
+<empty-block/>
