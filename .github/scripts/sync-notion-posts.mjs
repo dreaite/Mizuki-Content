@@ -8,7 +8,6 @@ import { execFileSync } from 'node:child_process';
 
 import { HeadObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Client } from '@notionhq/client';
-import { NotionToMarkdown } from 'notion-to-md';
 import {
   buildStableRemoteImageSourceSha1,
   canReuseLegacyR2ObjectAfterExpiredSource,
@@ -39,6 +38,34 @@ import {
 } from './notion-data-translation.mjs';
 import { writeDataFilesWithRollback } from './notion-data-write.mjs';
 import { normalizeDirectiveAttributeQuotes } from './markdown-directive-normalizer.mjs';
+import {
+  createBoundedOrderedPrefetch,
+  createNotionMarkdownReader,
+  createPacedFetch,
+} from './notion-markdown-reader.mjs';
+import {
+  assertCompleteNotionQueryResponse,
+  buildFilterProperties,
+  fetchAllPagesWithProjectionFallback,
+  validateProjectedPages,
+} from './notion-page-query.mjs';
+import {
+  NOTION_SYNC_INDEX_VERSION,
+  buildNotionPageSignature,
+  getHistoricalNotionOutputPaths,
+  getNotionOutputPathOwners,
+  isNotionSyncEntryCurrent,
+  parseNotionSyncIndex,
+  rebuildDiaryCache,
+  renderNotionSyncIndex,
+} from './notion-sync-index.mjs';
+import {
+  getInvisibleTakeoverRelativePaths,
+  getPostPublicationState,
+  isGeneratedPostTranslation,
+  registerPostOutputPaths,
+  shouldDeletePostFile,
+} from './notion-post-visibility.mjs';
 
 const POST_TRANSLATION_ENABLED = parseBoolean(process.env.NOTION_POST_TRANSLATION_ENABLED, false);
 const POST_TRANSLATION_LANGUAGES = parseLanguageList(process.env.NOTION_POST_TRANSLATION_LANGS || '');
@@ -50,6 +77,8 @@ const DATA_TRANSLATION_ENABLED = parseBoolean(
   true
 );
 const DATA_TRANSLATION_PROMPT_REVISION = 'structured-data-v1';
+const NOTION_SYNC_RENDER_REVISION = 'notion-sync-index-v1';
+const NOTION_MARKDOWN_API_VERSION = '2026-03-11';
 
 const CONFIG = {
   notionToken: requireEnv('NOTION_TOKEN'),
@@ -62,9 +91,14 @@ const CONFIG = {
   projectsDataPath: process.env.NOTION_PROJECTS_DATA_PATH || 'data/projects.ts',
   dataTranslationCachePath:
     process.env.NOTION_DATA_TRANSLATION_CACHE_PATH || '.github/notion-data-translation-cache.json',
+  syncIndexPath:
+    process.env.NOTION_SYNC_INDEX_PATH || '.github/notion-sync-index.json',
   deleteMissing: parseBoolean(process.env.NOTION_SYNC_DELETE_MISSING, false),
-  syncCronMinutes: parsePositiveInt(process.env.NOTION_SYNC_CRON_MINUTES, 60),
-  syncLookbackMultiplier: parsePositiveInt(process.env.NOTION_SYNC_LOOKBACK_MULTIPLIER, 2),
+  notionMarkdownConcurrency: parsePositiveInt(process.env.NOTION_MARKDOWN_CONCURRENCY, 2),
+  notionMarkdownMinStartIntervalMs: parseNonNegativeInt(
+    process.env.NOTION_MARKDOWN_MIN_START_INTERVAL_MS,
+    350
+  ),
   postTranslationEnabled: POST_TRANSLATION_ENABLED,
   postTranslationLanguages: POST_TRANSLATION_LANGUAGES,
   postTranslationCodexBin: String(process.env.NOTION_POST_TRANSLATION_CODEX_BIN || 'codex').trim(),
@@ -152,6 +186,82 @@ const GIT_CONTENT_PATHS = [
   CONFIG.dataTranslationCachePath,
 ];
 
+function getNotionRenderRevision(kind) {
+  const normalizedKind = String(kind || '').trim().toLowerCase();
+  const bodyRenderer = ['post', 'about', 'diary'].includes(normalizedKind)
+    ? `official-markdown@${NOTION_MARKDOWN_API_VERSION}`
+    : 'metadata-only';
+  const r2Revision = CONFIG.notionCoverR2Enabled
+    ? [
+        'enabled',
+        CONFIG.notionCoverR2Bucket,
+        CONFIG.notionCoverR2PublicBaseUrl,
+        CONFIG.notionCoverR2Prefix,
+      ].join(':')
+    : 'disabled';
+
+  return [
+    NOTION_SYNC_RENDER_REVISION,
+    `kind=${normalizedKind}`,
+    `body=${bodyRenderer}`,
+    `r2=${r2Revision}`,
+  ].join('|');
+}
+
+function buildNotionSyncSignature(meta, kind, { sourceRelativePath = '' } = {}) {
+  return buildNotionPageSignature({
+    pageId: meta.pageId,
+    kind,
+    lastEditedTime: meta.lastEditedIso,
+    status: meta.status,
+    metadata: {
+      sourceRelativePath,
+      type: meta.type,
+      title: meta.title,
+      description: meta.description,
+      permalink: meta.permalink,
+      tags: meta.tags,
+      category: meta.category,
+      siteurl: meta.siteurl,
+      updateTimeIso: meta.updateTimeIso,
+      published: meta.published,
+      updated: meta.updated,
+      projectStartDate: meta.projectStartDate,
+      projectEndDate: meta.projectEndDate,
+      techStack: meta.techStack,
+      statusValue: meta.statusValue,
+      liveDemo: meta.liveDemo,
+      sourceCode: meta.sourceCode,
+      featuredValue: meta.featuredValue,
+      coverType: meta.coverInfo?.type || '',
+      coverSourceSha1: meta.coverInfo?.url
+        ? buildStableRemoteImageSourceSha1(meta.coverInfo.url)
+        : '',
+    },
+  });
+}
+
+function buildNotionSyncIndexEntry(meta, kind, signature, extra = {}) {
+  return {
+    kind: String(kind || '').trim().toLowerCase(),
+    pageId: meta.pageId,
+    lastEditedTime: meta.lastEditedIso,
+    signature,
+    renderRevision: getNotionRenderRevision(kind),
+    ...extra,
+  };
+}
+
+function isNotionPageCacheCurrent(previousIndex, meta, kind, signature) {
+  return isNotionSyncEntryCurrent(previousIndex.pages?.[meta.pageId], {
+    pageId: meta.pageId,
+    kind,
+    lastEditedTime: meta.lastEditedIso,
+    signature,
+    renderRevision: getNotionRenderRevision(kind),
+  });
+}
+
 function requireEnv(name) {
   const value = process.env[name];
   if (!value) {
@@ -170,6 +280,12 @@ function parseBoolean(value, fallback = false) {
 function parsePositiveInt(value, fallback) {
   const parsed = Number.parseInt(String(value ?? ''), 10);
   if (!Number.isFinite(parsed) || parsed <= 0) return fallback;
+  return parsed;
+}
+
+function parseNonNegativeInt(value, fallback) {
+  const parsed = Number.parseInt(String(value ?? ''), 10);
+  if (!Number.isFinite(parsed) || parsed < 0) return fallback;
   return parsed;
 }
 
@@ -358,7 +474,8 @@ function propertyToDateRange(prop) {
 }
 
 function propertyByName(properties, name) {
-  return properties?.[name];
+  const normalizedName = String(name || '').trim();
+  return normalizedName ? properties?.[normalizedName] : undefined;
 }
 
 function findTitleProperty(properties, preferredName) {
@@ -425,12 +542,6 @@ function toUnixMs(value) {
   const iso = toIsoUtcString(value);
   if (!iso) return 0;
   return Date.parse(iso);
-}
-
-function isRecentByWindow(value, nowMs, lookbackMinutes) {
-  const timestamp = toUnixMs(value);
-  if (!timestamp) return false;
-  return nowMs - timestamp <= lookbackMinutes * 60 * 1000;
 }
 
 async function fileExists(filePath) {
@@ -500,10 +611,8 @@ async function markdownFileContainsTemporaryNotionImageUrl(filePath) {
   return /notionusercontent\.com|prod-files-secure\.s3\./i.test(content);
 }
 
-async function notionPageToMarkdownString(n2m, pageId) {
-  const pageMdBlocks = await n2m.pageToMarkdown(pageId);
-  const mdString = n2m.toMarkdownString(pageMdBlocks);
-  const markdown = typeof mdString === 'string' ? mdString : mdString?.parent || '';
+async function readNotionPageMarkdown(markdownReader, pageId) {
+  const markdown = await markdownReader.readPage(pageId);
   return normalizeDirectiveAttributeQuotes(markdown);
 }
 
@@ -1614,14 +1723,21 @@ function buildFrontMatter(meta) {
   return `${lines.join('\n')}\n`;
 }
 
-async function fetchAllDatabasePages(notion, databaseId) {
+async function fetchAllDatabasePages(notion, databaseId, filterProperties) {
   const queryTarget = await resolveQueryTarget(notion, databaseId, CONFIG.dataSourceId);
   const results = [];
   let hasMore = true;
   let startCursor = undefined;
 
   while (hasMore) {
-    const response = await queryPageBatch(notion, queryTarget, startCursor);
+    const response = await queryPageBatch(
+      notion,
+      queryTarget,
+      startCursor,
+      filterProperties
+    );
+
+    assertCompleteNotionQueryResponse(response);
 
     for (const item of response.results) {
       if (item.object === 'page') {
@@ -1636,12 +1752,18 @@ async function fetchAllDatabasePages(notion, databaseId) {
   return results;
 }
 
-async function queryPageBatch(notion, target, startCursor) {
+async function queryPageBatch(notion, target, startCursor, filterProperties) {
+  const projection =
+    Array.isArray(filterProperties) && filterProperties.length > 0
+      ? { filter_properties: filterProperties }
+      : {};
+
   if (target.kind === 'database') {
     return notion.databases.query({
       database_id: target.id,
       start_cursor: startCursor,
       page_size: 100,
+      ...projection,
     });
   }
 
@@ -1650,6 +1772,7 @@ async function queryPageBatch(notion, target, startCursor) {
       data_source_id: target.id,
       start_cursor: startCursor,
       page_size: 100,
+      ...projection,
     });
   }
 
@@ -1755,7 +1878,7 @@ function extractCommonMetadata(page) {
   }
 
   const status = normalizeSingleLine(propertyToString(propertyByName(properties, CONFIG.statusProperty)));
-  const draft = status.toLowerCase() === 'draft';
+  const publicationState = getPostPublicationState(status);
 
   return {
     pageId: page.id,
@@ -1771,7 +1894,9 @@ function extractCommonMetadata(page) {
     siteurl,
     updateTimeIso,
     lastEditedIso,
-    draft,
+    status,
+    draft: publicationState.draft,
+    invisible: publicationState.invisible,
   };
 }
 
@@ -1813,12 +1938,29 @@ function extractProjectMetadata(page) {
   };
 }
 
-function toDiaryDateIso(meta) {
-  return meta.updateTimeIso || meta.lastEditedIso || '';
+function validatePageTypesForReconciliation(pages) {
+  for (const page of pages) {
+    if (page?.archived || page?.in_trash) continue;
+    const properties = page?.properties || {};
+    const type = normalizeSingleLine(
+      propertyToString(propertyByName(properties, CONFIG.typeProperty))
+    );
+    if (!type) {
+      throw new Error(
+        `Notion page ${page?.id || '(unknown page)'} has no readable ${CONFIG.typeProperty} value; refusing to reconcile local outputs.`
+      );
+    }
+  }
+
+  return pages;
 }
 
 function sortByUpdatedDesc(a, b) {
-  return toUnixMs(b.updateTimeIso || b.lastEditedIso) - toUnixMs(a.updateTimeIso || a.lastEditedIso);
+  const timestampDifference =
+    toUnixMs(b.updateTimeIso || b.lastEditedIso) -
+    toUnixMs(a.updateTimeIso || a.lastEditedIso);
+  if (timestampDifference !== 0) return timestampDifference;
+  return String(a.pageId || '').localeCompare(String(b.pageId || ''));
 }
 
 function buildMarkdownDocument(meta, markdownBody) {
@@ -1871,6 +2013,64 @@ async function listMarkdownFiles(rootDir) {
     if (error?.code === 'ENOENT') return [];
     throw error;
   }
+}
+
+async function deletePostOutputFiles({
+  outputRoot,
+  seenRelativePaths,
+  invisibleSourceRelativePaths,
+  forceDeleteRelativePaths,
+  deleteMissing,
+}) {
+  if (
+    !deleteMissing &&
+    invisibleSourceRelativePaths.size === 0 &&
+    forceDeleteRelativePaths.size === 0
+  ) {
+    return 0;
+  }
+
+  const existingMarkdownFiles = await listMarkdownFiles(outputRoot);
+  let deleted = 0;
+
+  for (const filePath of existingMarkdownFiles) {
+    const relativePath = path
+      .relative(outputRoot, filePath)
+      .split(path.sep)
+      .join('/');
+    let generatedTranslation = false;
+
+    if (
+      !deleteMissing &&
+      !seenRelativePaths.has(relativePath) &&
+      invisibleSourceRelativePaths.size > 0
+    ) {
+      const markdown = await readFileUtf8IfExists(filePath);
+      generatedTranslation = isGeneratedPostTranslation({
+        relativePath,
+        invisibleSourceRelativePaths,
+        lang: extractFrontMatterField(markdown, 'lang'),
+        permalink: extractFrontMatterField(markdown, 'permalink'),
+      });
+    }
+
+    if (!shouldDeletePostFile({
+      relativePath,
+      seenRelativePaths,
+      invisibleSourceRelativePaths,
+      forceDeleteRelativePaths,
+      deleteMissing,
+      generatedTranslation,
+    })) {
+      continue;
+    }
+
+    await fs.rm(filePath);
+    deleted += 1;
+    console.log(`Deleted ${path.relative(process.cwd(), filePath)}`);
+  }
+
+  return deleted;
 }
 
 function renderAboutMarkdown(markdownBody) {
@@ -1934,36 +2134,20 @@ async function normalizeMarkdownDirectiveFiles(pathsToNormalize) {
   return normalizedFiles;
 }
 
-function isMetaRecentlyUpdated(meta, nowMs, lookbackMinutes) {
-  return isRecentByWindow(meta.updateTimeIso || meta.lastEditedIso, nowMs, lookbackMinutes);
-}
+async function loadDiarySource(markdownReader, meta, { s3Client, uploadCache } = {}) {
+  const rawMarkdown = await readNotionPageMarkdown(markdownReader, meta.pageId);
+  const markdown = await rewriteNotionMarkdownImageUrlsToR2(rawMarkdown, {
+    pageId: meta.pageId,
+    s3Client,
+    uploadCache,
+    logLabel: 'diary',
+  });
+  const parsed = extractMarkdownImagesAndText(markdown);
 
-async function buildDiaryItems(n2m, diaryMetas, { s3Client, uploadCache } = {}) {
-  const sorted = [...diaryMetas].sort(sortByUpdatedDesc);
-  const items = [];
-
-  for (let index = 0; index < sorted.length; index += 1) {
-    const meta = sorted[index];
-    const diaryDate = toDiaryDateIso(meta);
-    const rawMarkdown = await notionPageToMarkdownString(n2m, meta.pageId);
-    const markdown = await rewriteNotionMarkdownImageUrlsToR2(rawMarkdown, {
-      pageId: meta.pageId,
-      s3Client,
-      uploadCache,
-      logLabel: 'diary',
-    });
-    const parsed = extractMarkdownImagesAndText(markdown);
-
-    items.push({
-      _translationKey: `diary:${meta.pageId}`,
-      id: index + 1,
-      content: parsed.text,
-      date: diaryDate,
-      images: parsed.images,
-    });
-  }
-
-  return items;
+  return {
+    content: parsed.text,
+    images: parsed.images,
+  };
 }
 
 function runGit(args, options = {}) {
@@ -1989,7 +2173,7 @@ function ensureGitIdentityForAutomation() {
   runGit(['config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com']);
 }
 
-function buildTranslationCheckpointManager() {
+function buildTranslationCheckpointManager(syncCheckpointState) {
   const enabled =
     CONFIG.postTranslationEnabled &&
     CONFIG.postTranslationLanguages.length > 0 &&
@@ -2055,6 +2239,8 @@ function buildTranslationCheckpointManager() {
       if (sha) {
         console.log(`Pushed translation checkpoint commit ${sha}`);
       }
+      syncCheckpointState.pushedCount += 1;
+      await writeSyncCheckpointMarker(syncCheckpointState.pushedCount);
     }
 
     translatedPostsPending = 0;
@@ -2188,17 +2374,231 @@ async function maybeRunSyncCheckpointCommit(state) {
   await writeSyncCheckpointMarker(state.pushedCount);
 }
 
+function buildPostOutputPlan(pages, previousSyncIndex) {
+  const plansByPageId = new Map();
+  const seenRelativePaths = new Set();
+  const claimedPostRelativePaths = new Set();
+  const invisibleSourceRelativePaths = new Set();
+  const historicalInvisibleRelativePaths = new Set();
+  const staleTrackedRelativePaths = new Set();
+  const historicalPostOwnersByPath = getNotionOutputPathOwners(
+    previousSyncIndex,
+    { kind: 'post' }
+  );
+
+  for (const page of pages) {
+    if (page.archived || page.in_trash) continue;
+
+    const meta = extractPostMetadata(page);
+    if (meta.type.toLowerCase() !== 'post') continue;
+    const relativePath = ensureMdRelativePathFromSlug(meta.permalink, meta.title);
+    const signature = buildNotionSyncSignature(meta, 'post', {
+      sourceRelativePath: relativePath,
+    });
+    const translationRelativePaths = [];
+    const translationEnabledForPost =
+      CONFIG.postTranslationEnabled && !meta.draft && !meta.invisible;
+
+    if (translationEnabledForPost) {
+      for (const languageCode of CONFIG.postTranslationLanguages) {
+        translationRelativePaths.push({
+          languageCode,
+          relativePath: appendLanguageSuffixToMarkdownPath(relativePath, languageCode),
+        });
+      }
+    }
+
+    registerPostOutputPaths({
+      relativePath,
+      translationRelativePaths: translationRelativePaths.map((target) => target.relativePath),
+      invisible: meta.invisible,
+      claimedPostRelativePaths,
+      seenRelativePaths,
+      invisibleSourceRelativePaths,
+    });
+
+    const outputPaths = [
+      relativePath,
+      ...translationRelativePaths.map((target) => target.relativePath),
+    ];
+    const currentOutputPathSet = new Set(outputPaths);
+    for (const historicalPath of getHistoricalNotionOutputPaths(
+      previousSyncIndex,
+      page.id
+    )) {
+      if (meta.invisible) {
+        historicalInvisibleRelativePaths.add(historicalPath);
+      } else if (!currentOutputPathSet.has(historicalPath)) {
+        staleTrackedRelativePaths.add(historicalPath);
+      }
+    }
+
+    plansByPageId.set(page.id, {
+      meta,
+      relativePath,
+      signature,
+      translationEnabledForPost,
+      translationRelativePaths,
+      outputPaths,
+    });
+  }
+
+  const takeoverRelativePaths = getInvisibleTakeoverRelativePaths({
+    seenRelativePaths,
+    invisibleSourceRelativePaths,
+  });
+  for (const historicalPath of historicalInvisibleRelativePaths) {
+    if (seenRelativePaths.has(historicalPath)) {
+      takeoverRelativePaths.add(historicalPath);
+    }
+  }
+  for (const stalePath of staleTrackedRelativePaths) {
+    if (seenRelativePaths.has(stalePath)) {
+      takeoverRelativePaths.add(stalePath);
+    }
+  }
+  for (const [pageId, plan] of plansByPageId) {
+    if (plan.meta.invisible) continue;
+    for (const outputPath of plan.outputPaths) {
+      const historicalOwners = historicalPostOwnersByPath.get(outputPath);
+      if (
+        historicalOwners &&
+        [...historicalOwners].some((historicalPageId) => historicalPageId !== pageId)
+      ) {
+        takeoverRelativePaths.add(outputPath);
+      }
+    }
+  }
+
+  return {
+    plansByPageId,
+    seenRelativePaths,
+    invisibleSourceRelativePaths,
+    takeoverRelativePaths,
+    forceDeleteRelativePaths: new Set([
+      ...historicalInvisibleRelativePaths,
+      ...staleTrackedRelativePaths,
+      ...takeoverRelativePaths,
+    ]),
+  };
+}
+
+async function preparePostBodyReads({
+  postPlansByPageId,
+  previousSyncIndex,
+  outputRoot,
+  takeoverRelativePaths,
+  markdownReader,
+}) {
+  const refreshStates = await Promise.all(
+    [...postPlansByPageId.values()]
+      .filter((plan) => !plan.meta.invisible)
+      .map(async (plan) => {
+        const fullPath = path.resolve(outputRoot, plan.relativePath);
+        if (!(fullPath === outputRoot || fullPath.startsWith(`${outputRoot}${path.sep}`))) {
+          throw new Error(`Resolved path escapes posts directory: ${plan.relativePath}`);
+        }
+
+        const exists = await fileExists(fullPath);
+        const cacheCurrent = isNotionPageCacheCurrent(
+          previousSyncIndex,
+          plan.meta,
+          'post',
+          plan.signature
+        );
+        const containsTemporaryNotionImage =
+          exists && cacheCurrent
+            ? await markdownFileContainsTemporaryNotionImageUrl(fullPath)
+            : false;
+        const coverBackfillNeeded =
+          exists && cacheCurrent
+            ? await shouldBackfillPostCoverToR2(fullPath, plan.meta)
+            : false;
+        const bodyImageBackfillNeeded =
+          exists &&
+          cacheCurrent &&
+          CONFIG.notionCoverR2Enabled &&
+          containsTemporaryNotionImage;
+        const temporaryImageRefreshNeeded =
+          exists &&
+          cacheCurrent &&
+          !CONFIG.notionCoverR2Enabled &&
+          containsTemporaryNotionImage;
+        const forceOutputRefresh =
+          takeoverRelativePaths.has(plan.relativePath) ||
+          plan.translationRelativePaths.some((target) =>
+            takeoverRelativePaths.has(target.relativePath)
+          );
+        const shouldRefreshBody =
+          !exists ||
+          !cacheCurrent ||
+          coverBackfillNeeded ||
+          bodyImageBackfillNeeded ||
+          temporaryImageRefreshNeeded ||
+          forceOutputRefresh;
+
+        return {
+          pageId: plan.meta.pageId,
+          fullPath,
+          exists,
+          cacheCurrent,
+          coverBackfillNeeded,
+          bodyImageBackfillNeeded,
+          temporaryImageRefreshNeeded,
+          forceOutputRefresh,
+          shouldRefreshBody,
+        };
+      })
+  );
+
+  const statesByPageId = new Map(
+    refreshStates.map((state) => [state.pageId, state])
+  );
+  const bodyQueue = refreshStates.filter((state) => state.shouldRefreshBody);
+  const bodyPrefetch = createBoundedOrderedPrefetch({
+    items: bodyQueue,
+    concurrency: CONFIG.notionMarkdownConcurrency,
+    getKey: (state) => state.pageId,
+    load: (state) => readNotionPageMarkdown(markdownReader, state.pageId),
+  });
+
+  return {
+    statesByPageId,
+    async takeBody(pageId) {
+      const state = statesByPageId.get(pageId);
+      if (!state?.shouldRefreshBody) return null;
+      return bodyPrefetch.take(pageId);
+    },
+  };
+}
+
 async function main() {
   validatePostTranslationConfig();
   validateDataTranslationConfig();
   validateNotionCoverR2Config();
 
-  const notion = new Client({ auth: CONFIG.notionToken });
-  const n2m = new NotionToMarkdown({ notionClient: notion });
+  const notionFetch = createPacedFetch({
+    minStartIntervalMs: CONFIG.notionMarkdownMinStartIntervalMs,
+  });
+  const notion = new Client({
+    auth: CONFIG.notionToken,
+    fetch: notionFetch,
+    notionVersion: NOTION_MARKDOWN_API_VERSION,
+    retry: {
+      maxRetries: 5,
+      initialRetryDelayMs: 1000,
+      maxRetryDelayMs: 60_000,
+    },
+  });
+  const markdownReader = createNotionMarkdownReader({
+    officialClient: notion,
+    concurrency: CONFIG.notionMarkdownConcurrency,
+    minStartIntervalMs: CONFIG.notionMarkdownMinStartIntervalMs,
+  });
   const notionCoverR2Client = createNotionCoverR2Client();
   const notionR2UploadCache = createNotionR2UploadCache();
-  const translationCheckpointManager = buildTranslationCheckpointManager();
   const syncCheckpointState = createSyncCheckpointState();
+  const translationCheckpointManager = buildTranslationCheckpointManager(syncCheckpointState);
 
   const outputRoot = path.resolve(process.cwd(), CONFIG.postsDir);
   const aboutPath = path.resolve(process.cwd(), CONFIG.aboutPath);
@@ -2209,12 +2609,30 @@ async function main() {
     process.cwd(),
     CONFIG.dataTranslationCachePath
   );
-  const pages = await fetchAllDatabasePages(notion, CONFIG.databaseId);
+  const syncIndexPath = path.resolve(process.cwd(), CONFIG.syncIndexPath);
+  const previousSyncIndex = parseNotionSyncIndex(
+    await readFileUtf8IfExists(syncIndexPath),
+    { onWarning: (message) => console.warn(message) }
+  );
+  const nextSyncIndexPages = {};
+  const filterProperties = buildFilterProperties(CONFIG);
+  const pages = await fetchAllPagesWithProjectionFallback({
+    filterProperties,
+    fetchPages: (projection) =>
+      fetchAllDatabasePages(notion, CONFIG.databaseId, projection),
+    validate: (projectedPages) => {
+      validateProjectedPages(projectedPages, CONFIG);
+      return validatePageTypesForReconciliation(projectedPages);
+    },
+    onFallback: (error) => {
+      console.warn(
+        `Notion filter_properties projection was incomplete; retrying once with full properties: ${error.message}`
+      );
+    },
+  });
   console.log(`Fetched ${pages.length} page(s) from Notion database.`);
-  const lookbackMinutes = CONFIG.syncCronMinutes * CONFIG.syncLookbackMultiplier;
-  const nowMs = Date.now();
   console.log(
-    `Incremental sync window: ${lookbackMinutes} minute(s) (cron=${CONFIG.syncCronMinutes}m, multiplier=${CONFIG.syncLookbackMultiplier})`
+    `Persistent body index: ${path.relative(process.cwd(), syncIndexPath)}; markdownApi=${NOTION_MARKDOWN_API_VERSION}; concurrency=${CONFIG.notionMarkdownConcurrency}; minStartIntervalMs=${CONFIG.notionMarkdownMinStartIntervalMs}`
   );
   if (CONFIG.postTranslationEnabled) {
     console.log(
@@ -2243,14 +2661,37 @@ async function main() {
   let changedFiles = 0;
   let unchangedFiles = 0;
   let skipped = 0;
-  let skippedByWindow = 0;
+  let bodyCacheHits = 0;
   let deleted = 0;
-  const seenRelativePaths = new Set();
+  let invisiblePosts = 0;
+  const {
+    plansByPageId: postPlansByPageId,
+    seenRelativePaths,
+    invisibleSourceRelativePaths,
+    takeoverRelativePaths,
+    forceDeleteRelativePaths,
+  } = buildPostOutputPlan(pages, previousSyncIndex);
   const aboutPages = [];
   const friendPages = [];
   const diaryPages = [];
   const projectPages = [];
   const deferredPostTranslations = [];
+
+  deleted += await deletePostOutputFiles({
+    outputRoot,
+    seenRelativePaths,
+    invisibleSourceRelativePaths,
+    forceDeleteRelativePaths,
+    deleteMissing: CONFIG.deleteMissing,
+  });
+
+  const postBodyReads = await preparePostBodyReads({
+    postPlansByPageId,
+    previousSyncIndex,
+    outputRoot,
+    takeoverRelativePaths,
+    markdownReader,
+  });
 
   for (const page of pages) {
     if (page.archived || page.in_trash) {
@@ -2263,47 +2704,57 @@ async function main() {
 
     if (type === 'post') {
       let postChanged = false;
-      const meta = extractPostMetadata(page);
-      const relativePath = ensureMdRelativePathFromSlug(meta.permalink, meta.title);
-      if (seenRelativePaths.has(relativePath)) {
-        throw new Error(`Duplicate slug/permalink detected for output path: ${relativePath}`);
+      const postPlan = postPlansByPageId.get(page.id);
+      if (!postPlan) {
+        throw new Error(`Missing preflight output plan for Post page: ${page.id}`);
       }
-      seenRelativePaths.add(relativePath);
+      const {
+        meta: plannedMeta,
+        relativePath,
+        signature,
+        translationEnabledForPost,
+        translationRelativePaths,
+        outputPaths,
+      } = postPlan;
 
-      const translationRelativePaths = [];
-      const translationEnabledForPost = CONFIG.postTranslationEnabled && !meta.draft;
-      if (translationEnabledForPost) {
-        for (const languageCode of CONFIG.postTranslationLanguages) {
-          const translatedRelativePath = appendLanguageSuffixToMarkdownPath(relativePath, languageCode);
-          if (seenRelativePaths.has(translatedRelativePath)) {
-            throw new Error(`Duplicate translated output path detected: ${translatedRelativePath}`);
-          }
-          seenRelativePaths.add(translatedRelativePath);
-          translationRelativePaths.push({ languageCode, relativePath: translatedRelativePath });
-        }
+      if (plannedMeta.invisible) {
+        nextSyncIndexPages[page.id] = buildNotionSyncIndexEntry(
+          plannedMeta,
+          'post',
+          signature,
+          { outputPaths: [relativePath] }
+        );
+        invisiblePosts += 1;
+        console.log(`Invisible post excluded from repository output: ${relativePath}`);
+        continue;
       }
 
-      const fullPath = path.resolve(outputRoot, relativePath);
-      if (!(fullPath === outputRoot || fullPath.startsWith(`${outputRoot}${path.sep}`))) {
-        throw new Error(`Resolved path escapes posts directory: ${relativePath}`);
+      const meta = plannedMeta;
+      const refreshState = postBodyReads.statesByPageId.get(page.id);
+      if (!refreshState) {
+        throw new Error(`Missing body refresh plan for visible Post page: ${page.id}`);
       }
-
-      const exists = await fileExists(fullPath);
-      const recent = isMetaRecentlyUpdated(meta, nowMs, lookbackMinutes);
-      const coverBackfillNeeded = exists && !recent ? await shouldBackfillPostCoverToR2(fullPath, meta) : false;
-      const bodyImageBackfillNeeded =
-        exists && !recent && CONFIG.notionCoverR2Enabled
-          ? await markdownFileContainsTemporaryNotionImageUrl(fullPath)
-          : false;
+      const {
+        fullPath,
+        exists,
+        cacheCurrent,
+        coverBackfillNeeded,
+        bodyImageBackfillNeeded,
+        forceOutputRefresh,
+        shouldRefreshBody,
+      } = refreshState;
+      if (forceOutputRefresh) {
+        console.log(`Refreshing visible post that takes over Invisible output: ${relativePath}`);
+      }
       let sourceWriteResult = 'skipped';
-      if (!exists || recent || coverBackfillNeeded || bodyImageBackfillNeeded) {
+      if (shouldRefreshBody) {
         if (coverBackfillNeeded || bodyImageBackfillNeeded) {
           console.log(`Backfilling R2 image URLs for ${relativePath}`);
         }
         meta.image = normalizeSingleLine(
           await resolveCoverImageUrlForMeta(page, meta, notionCoverR2Client, notionR2UploadCache)
         );
-        const rawMarkdownBody = await notionPageToMarkdownString(n2m, page.id);
+        const rawMarkdownBody = await postBodyReads.takeBody(page.id);
         const markdownBody = await rewriteNotionMarkdownImageUrlsToR2(rawMarkdownBody, {
           pageId: meta.pageId,
           s3Client: notionCoverR2Client,
@@ -2320,66 +2771,11 @@ async function main() {
           console.log(`${exists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), fullPath)}`);
         }
 
-        if (translationEnabledForPost) {
-          let translatedAnyTarget = false;
-          for (const translationTarget of translationRelativePaths) {
-            const translatedFullPath = path.resolve(outputRoot, translationTarget.relativePath);
-            if (!(translatedFullPath === outputRoot || translatedFullPath.startsWith(`${outputRoot}${path.sep}`))) {
-              throw new Error(
-                `Resolved translated path escapes posts directory: ${translationTarget.relativePath}`
-              );
-            }
-
-            const translatedExists = await fileExists(translatedFullPath);
-            const shouldTranslateNow = sourceWriteResult !== 'unchanged' || !translatedExists;
-            if (!shouldTranslateNow) {
-              continue;
-            }
-
-            console.log(
-              `${translatedExists ? 'Updating' : 'Creating'} translation (${translationTarget.languageCode}) for ${relativePath}`
-            );
-            translatedAnyTarget = true;
-            const translatedBody = await translatePostMarkdownBody(markdownBody, {
-              targetLanguage: translationTarget.languageCode,
-              title: meta.title,
-            });
-            const translatedMeta = await translatePostMetadataFields(meta, {
-              targetLanguage: translationTarget.languageCode,
-            });
-            const translatedDocument = buildMarkdownDocument(
-              {
-                ...meta,
-                title: translatedMeta.title,
-                description: translatedMeta.description,
-                omitPermalink: true,
-                lang: translationTarget.languageCode,
-              },
-              translatedBody
-            );
-            const translatedWriteResult = await writeIfChanged(translatedFullPath, translatedDocument);
-            if (translatedWriteResult === 'unchanged') {
-              unchangedFiles += 1;
-            } else {
-              changedFiles += 1;
-              console.log(
-                `${translatedExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), translatedFullPath)}`
-              );
-            }
-          }
-
-          if (translatedAnyTarget) {
-            translationCheckpointManager.noteTranslatedPost();
-            if (translationCheckpointManager.shouldFlush()) {
-              await translationCheckpointManager.flush({ reason: 'checkpoint' });
-            }
-          }
-        }
       } else {
-        skippedByWindow += 1;
+        bodyCacheHits += 1;
       }
 
-      if (CONFIG.postTranslationEnabled) {
+      if (translationEnabledForPost) {
         for (const translationTarget of translationRelativePaths) {
           const translatedFullPath = path.resolve(outputRoot, translationTarget.relativePath);
           if (!(translatedFullPath === outputRoot || translatedFullPath.startsWith(`${outputRoot}${path.sep}`))) {
@@ -2387,7 +2783,11 @@ async function main() {
           }
 
           const translatedExists = await fileExists(translatedFullPath);
-          const shouldDeferTranslation = sourceWriteResult === 'skipped' && !translatedExists;
+          const shouldDeferTranslation =
+            takeoverRelativePaths.has(translationTarget.relativePath) ||
+            !cacheCurrent ||
+            !['skipped', 'unchanged'].includes(sourceWriteResult) ||
+            !translatedExists;
           if (!shouldDeferTranslation) {
             continue;
           }
@@ -2405,6 +2805,12 @@ async function main() {
       }
 
       processedPosts += 1;
+      nextSyncIndexPages[page.id] = buildNotionSyncIndexEntry(
+        plannedMeta,
+        'post',
+        signature,
+        { outputPaths }
+      );
       if (postChanged) {
         syncCheckpointState.pendingChangedPosts += 1;
         await maybeRunSyncCheckpointCommit(syncCheckpointState);
@@ -2442,34 +2848,25 @@ async function main() {
     skipped += 1;
   }
 
-  await translationCheckpointManager.flush({ force: true, reason: 'final-flush' });
-
-  if (CONFIG.deleteMissing) {
-    const existingMarkdownFiles = await listMarkdownFiles(outputRoot);
-    for (const filePath of existingMarkdownFiles) {
-      const relativePath = path
-        .relative(outputRoot, filePath)
-        .split(path.sep)
-        .join('/');
-
-      if (seenRelativePaths.has(relativePath)) {
-        continue;
-      }
-
-      await fs.rm(filePath);
-      deleted += 1;
-      console.log(`Deleted ${path.relative(process.cwd(), filePath)}`);
-    }
-  }
-
   if (aboutPages.length > 0) {
     const aboutExists = await fileExists(aboutPath);
-    const anyAboutRecent = aboutPages.some((meta) => isMetaRecentlyUpdated(meta, nowMs, lookbackMinutes));
-    const aboutImageBackfillNeeded =
-      aboutExists && !anyAboutRecent && CONFIG.notionCoverR2Enabled
-        ? await markdownFileContainsTemporaryNotionImageUrl(aboutPath)
-        : false;
     const selectedAbout = [...aboutPages].sort(sortByUpdatedDesc)[0];
+    const aboutSignature = buildNotionSyncSignature(selectedAbout, 'about');
+    const aboutCacheCurrent = isNotionPageCacheCurrent(
+      previousSyncIndex,
+      selectedAbout,
+      'about',
+      aboutSignature
+    );
+    const aboutContainsTemporaryNotionImage = aboutExists && aboutCacheCurrent
+      ? await markdownFileContainsTemporaryNotionImageUrl(aboutPath)
+      : false;
+    const aboutImageBackfillNeeded =
+      aboutExists && aboutCacheCurrent && CONFIG.notionCoverR2Enabled &&
+      aboutContainsTemporaryNotionImage;
+    const aboutTemporaryImageRefreshNeeded =
+      aboutExists && aboutCacheCurrent && !CONFIG.notionCoverR2Enabled &&
+      aboutContainsTemporaryNotionImage;
 
     if (aboutPages.length > 1) {
       console.warn(
@@ -2494,13 +2891,19 @@ async function main() {
       }))
     );
     const shouldRefreshAbout =
-      !aboutExists || anyAboutRecent || aboutImageBackfillNeeded;
+      !aboutExists ||
+      !aboutCacheCurrent ||
+      aboutImageBackfillNeeded ||
+      aboutTemporaryImageRefreshNeeded;
     const hasMissingAboutTranslation = aboutTranslationStates.some(
       (target) => !target.exists
     );
     const hasObsoleteAboutTranslation =
       CONFIG.dataTranslationEnabled &&
       obsoleteAboutTranslationTargets.length > 0;
+    if (!shouldRefreshAbout) {
+      bodyCacheHits += 1;
+    }
 
     if (
       shouldRefreshAbout ||
@@ -2514,8 +2917,8 @@ async function main() {
       }
 
       if (shouldRefreshAbout) {
-        const rawAboutMarkdown = await notionPageToMarkdownString(
-          n2m,
+        const rawAboutMarkdown = await readNotionPageMarkdown(
+          markdownReader,
           selectedAbout.pageId
         );
         const aboutMarkdown = await rewriteNotionMarkdownImageUrlsToR2(
@@ -2589,16 +2992,47 @@ async function main() {
           `${action} ${path.relative(process.cwd(), writeResult.filePath)}`
         );
       }
-    } else {
-      skippedByWindow += 1;
     }
+
+    nextSyncIndexPages[selectedAbout.pageId] = buildNotionSyncIndexEntry(
+      selectedAbout,
+      'about',
+      aboutSignature,
+      {
+        outputPaths: [
+          CONFIG.aboutPath,
+          ...aboutTranslationTargets.map((target) =>
+            path.relative(process.cwd(), target.filePath).split(path.sep).join('/')
+          ),
+        ],
+      }
+    );
   }
 
   const friendItems = buildFriendItems(friendPages);
-  const sourceDiaryItems = await buildDiaryItems(n2m, diaryPages, {
-    s3Client: notionCoverR2Client,
-    uploadCache: notionR2UploadCache,
+  const diaryCacheResult = await rebuildDiaryCache({
+    diaryMetas: diaryPages.map((meta) => ({
+      ...meta,
+      pageSignature: buildNotionSyncSignature(meta, 'diary'),
+    })),
+    previousIndex: previousSyncIndex,
+    renderRevision: getNotionRenderRevision('diary'),
+    concurrency: CONFIG.notionMarkdownConcurrency,
+    canReuseCachedDiarySource: (source) =>
+      !isTemporaryNotionAssetUrl(source.content) &&
+      source.images.every((imageUrl) => !isTemporaryNotionAssetUrl(imageUrl)),
+    loadDiarySource: (meta) =>
+      loadDiarySource(markdownReader, meta, {
+        s3Client: notionCoverR2Client,
+        uploadCache: notionR2UploadCache,
+      }),
   });
+  const sourceDiaryItems = diaryCacheResult.items;
+  Object.assign(nextSyncIndexPages, diaryCacheResult.entries);
+  bodyCacheHits += diaryCacheResult.cacheHits;
+  console.log(
+    `Diary body cache: hits=${diaryCacheResult.cacheHits}, misses=${diaryCacheResult.cacheMisses}`
+  );
   const sourceProjectItems = buildProjectItems(projectPages);
   const localizedData = await prepareLocalizedDataItems(
     sourceProjectItems,
@@ -2646,49 +3080,66 @@ async function main() {
   if (CONFIG.postTranslationEnabled && deferredPostTranslations.length > 0) {
     console.log(`Processing deferred post translations: ${deferredPostTranslations.length} job(s).`);
 
+    const translationJobsBySource = new Map();
     for (const job of deferredPostTranslations) {
-      console.log(
-        `${job.translatedExists ? 'Updating' : 'Creating'} translation (${job.languageCode}) for ${job.baseRelativePath}`
-      );
+      const jobs = translationJobsBySource.get(job.sourceFullPath) || [];
+      jobs.push(job);
+      translationJobsBySource.set(job.sourceFullPath, jobs);
+    }
 
-      const sourceDocument = await readFileUtf8IfExists(job.sourceFullPath);
+    for (const jobs of translationJobsBySource.values()) {
+      const firstJob = jobs[0];
+      const sourceDocument = await readFileUtf8IfExists(firstJob.sourceFullPath);
       if (!sourceDocument) {
         throw new Error(
-          `Source post markdown is missing while generating translation: ${path.relative(process.cwd(), job.sourceFullPath)}`
+          `Source post markdown is missing while generating translation: ${path.relative(process.cwd(), firstJob.sourceFullPath)}`
         );
       }
 
       const sourceBody = stripMarkdownFrontMatter(sourceDocument);
       const sourceImage = normalizeSingleLine(extractFrontMatterField(sourceDocument, 'image'));
-      const translatedBody = await translatePostMarkdownBody(sourceBody, {
-        targetLanguage: job.languageCode,
-        title: job.meta.title,
-      });
-      const translatedMeta = await translatePostMetadataFields(job.meta, {
-        targetLanguage: job.languageCode,
-      });
-      const translatedDocument = buildMarkdownDocument(
-        {
-          ...job.meta,
-          title: translatedMeta.title,
-          description: translatedMeta.description,
-          image: sourceImage || job.meta.image,
-          omitPermalink: true,
-          lang: job.languageCode,
-        },
-        translatedBody
-      );
-      const translatedWriteResult = await writeIfChanged(job.translatedFullPath, translatedDocument);
-      if (translatedWriteResult === 'unchanged') {
-        unchangedFiles += 1;
-      } else {
-        changedFiles += 1;
+      for (const job of jobs) {
         console.log(
-          `${job.translatedExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), job.translatedFullPath)}`
+          `${job.translatedExists ? 'Updating' : 'Creating'} translation (${job.languageCode}) for ${job.baseRelativePath}`
         );
+
+        const translatedBody = await translatePostMarkdownBody(sourceBody, {
+          targetLanguage: job.languageCode,
+          title: job.meta.title,
+        });
+        const translatedMeta = await translatePostMetadataFields(job.meta, {
+          targetLanguage: job.languageCode,
+        });
+        const translatedDocument = buildMarkdownDocument(
+          {
+            ...job.meta,
+            title: translatedMeta.title,
+            description: translatedMeta.description,
+            image: sourceImage || job.meta.image,
+            omitPermalink: true,
+            lang: job.languageCode,
+          },
+          translatedBody
+        );
+        const translatedWriteResult = await writeIfChanged(job.translatedFullPath, translatedDocument);
+        if (translatedWriteResult === 'unchanged') {
+          unchangedFiles += 1;
+        } else {
+          changedFiles += 1;
+          console.log(
+            `${job.translatedExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), job.translatedFullPath)}`
+          );
+        }
+      }
+
+      translationCheckpointManager.noteTranslatedPost();
+      if (translationCheckpointManager.shouldFlush()) {
+        await translationCheckpointManager.flush({ reason: 'checkpoint' });
       }
     }
   }
+
+  await translationCheckpointManager.flush({ force: true, reason: 'final-flush' });
 
   const normalizedDirectiveFiles = await normalizeMarkdownDirectiveFiles([
     outputRoot,
@@ -2701,6 +3152,23 @@ async function main() {
     changedFiles += normalizedDirectiveFiles;
   }
 
+  const syncIndexExists = await fileExists(syncIndexPath);
+  const syncIndexWriteResult = await writeIfChanged(
+    syncIndexPath,
+    renderNotionSyncIndex({
+      version: NOTION_SYNC_INDEX_VERSION,
+      pages: nextSyncIndexPages,
+    })
+  );
+  if (syncIndexWriteResult === 'unchanged') {
+    unchangedFiles += 1;
+  } else {
+    changedFiles += 1;
+    console.log(
+      `${syncIndexExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), syncIndexPath)}`
+    );
+  }
+
   if (CONFIG.notionCoverR2Enabled) {
     const r2Stats = getNotionR2UploadStats(notionR2UploadCache);
     console.log(
@@ -2708,8 +3176,13 @@ async function main() {
     );
   }
 
+  const markdownReaderStats = markdownReader.getStats();
   console.log(
-    `Sync complete. posts=${processedPosts}, about=${aboutPages.length}, friends=${friendPages.length}, diary=${diaryPages.length}, projects=${projectPages.length}, changed=${changedFiles}, unchanged=${unchangedFiles}, normalizedDirectiveFiles=${normalizedDirectiveFiles}, skippedByWindow=${skippedByWindow}, deletedPosts=${deleted}, skippedOther=${skipped}, deleteMissingPosts=${CONFIG.deleteMissing}`
+    `Notion markdown reads: official=${markdownReaderStats.official}`
+  );
+
+  console.log(
+    `Sync complete. posts=${processedPosts}, invisiblePosts=${invisiblePosts}, about=${aboutPages.length}, friends=${friendPages.length}, diary=${diaryPages.length}, projects=${projectPages.length}, changed=${changedFiles}, unchanged=${unchangedFiles}, normalizedDirectiveFiles=${normalizedDirectiveFiles}, bodyCacheHits=${bodyCacheHits}, deletedPosts=${deleted}, skippedOther=${skipped}, deleteMissingPosts=${CONFIG.deleteMissing}`
   );
   if (translationCheckpointManager.enabled) {
     const { translatedPostsTotal } = translationCheckpointManager.getStats();

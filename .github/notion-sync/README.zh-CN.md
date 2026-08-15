@@ -41,6 +41,10 @@
 - `NOTION_DATA_SOURCE_ID`
   - 使用新版 Notion API / SDK v5 且一个 database 下有多个 data source 时，建议显式配置。
   - 如果不配置，脚本会尝试从 `NOTION_DATABASE_ID` 自动解析 data source。
+- `NOTION_SYNC_INDEX_PATH`
+  - 正文同步索引路径，默认 `.github/notion-sync-index.json`。索引缺失、损坏或版本不匹配时会安全退化为重新拉正文。
+- `NOTION_MARKDOWN_CONCURRENCY` / `NOTION_MARKDOWN_MIN_START_INTERVAL_MS`
+  - 正文读取 worker 数和 Notion HTTP 请求的统一启动间隔，默认 `2` / `350` 毫秒。
 - `NOTION_POST_TRANSLATION_ENABLED`
   - 设为 `true` 时，启用通过 OpenAI-compatible Chat Completions API 翻译 `Post` 的 Markdown 正文。
 - `NOTION_POST_TRANSLATION_LANGS`
@@ -97,7 +101,7 @@ Workflow 会传入以下默认值。如果你的 Notion 列名不同，请在 wo
 - page cover -> front matter `image`
 - `tags` -> front matter `tags`
 - `category` -> front matter `category`
-- `status` -> front matter `draft`（`Draft` => `true`）
+- `status` -> 发布状态（`Draft` 保留源文件并写为 `draft: true`；`Invisible` 删除源文件和所有翻译文件）
 
 附加映射：
 
@@ -154,6 +158,7 @@ Workflow 会传入以下默认值。如果你的 Notion 列名不同，请在 wo
 这意味着：
 
 - `posts/` 下任何 **不是** 当前 Notion `Post` 页面产出的 `*.md` 文件，都会在同步时被删除。
+- `status = Invisible` 的 `Post` 会始终被排除。当前 `slug`、同步索引中记录的旧 slug、源 Markdown 和已生成语言版本都会在正文读取前删除，不依赖 `NOTION_SYNC_DELETE_MISSING`；生产 workflow 的全量 sweep 还负责首次建立索引时的历史遗留。
 
 如果你仍有手动维护的文章放在 `posts/` 下，请选择：
 
@@ -194,7 +199,16 @@ Workflow 会传入以下默认值。如果你的 Notion 列名不同，请在 wo
 ## 运行方式
 
 - 手动运行：GitHub Actions -> `Sync Notion Posts` -> `Run workflow`
-- 可选定时任务：workflow 中已包含注释掉的 `cron` 示例
+- 定时任务：workflow 当前每小时运行一次，也可手动触发
+
+## 同步性能与持久索引
+
+- 每轮仍分页获取完整页面 list，保证删除、改类型和 `Invisible` 能全量对账；查询只投影同步实际使用的属性。若投影结果缺少 `title/type/status/slug`，脚本会在任何删除前无投影重拉一次，仍不完整则终止。
+- `.github/notion-sync-index.json` 记录 page ID、`last_edited_time`、输出签名、转换器版本和已生成路径。只有索引精确命中且输出存在时才跳过正文；索引永远不是可见性真相源。
+- `Post` / `About` 不再依赖时间窗口重复拉正文。`Diary` 只重新拉取发生变化的页面，缓存仅保存每页的 `content/images`；成员、排序、日期和连续 ID 每轮仍由当前完整 list 重建。
+- 正文读取使用两个 worker，Notion client 在 fetch 层统一应用默认 350ms 的请求启动间隔；写文件、翻译和 Git checkpoint 仍保持串行，避免竞态。
+- 正文只使用 Notion 官方 Markdown API（`2026-03-11`）。响应被截断或包含未知 block 时，本轮同步直接失败，不推进持久索引，也不覆盖对应页面；不再保留旧 Block 转换器回退。
+- 索引只在整轮正文、翻译、数据写入和指令规范化全部成功后更新。仅索引变化会提交回内容仓库，但不会触发 Mizuki 重新部署。
 
 ## 说明
 
@@ -204,6 +218,6 @@ Workflow 会传入以下默认值。如果你的 Notion 列名不同，请在 wo
 - 现有 `Post` / `About` markdown 文件中残留的 Notion 图片 URL，会在后续 sync 中自动回填为 R2 URL（即使正文本身未变化）。
 - 行首 Markdown 指令（例如 `::github{repo="owner/repo"}` 或后续自定义的 `::card{...}`）的属性花括号内部如果出现 Notion/LLM 产生的智能引号（`“”` / `‘’`），同步时会自动规范化为 ASCII 引号。
 - Workflow 会自动将 `posts/` 等内容变更提交并推送回当前分支。
-- `Friend` / `Diary` 数据文件每次运行都会基于当前 Notion 行重建（随后 `writeIfChanged` 会避免无变化写入），因此按排序生成的 ID 可保持一致。
+- `Friend` / `Diary` 数据文件每次运行都会基于当前 Notion 行重建（随后 `writeIfChanged` 会避免无变化写入）；Diary 正文按 page ID 缓存，但排序和 ID 不从缓存恢复。
 - `Project` 数据文件（`data/projects.ts`）也会在每次运行时重建，以保证本地数据集与 Notion 当前内容一致。
-- Workflow 安装 `@notionhq/client@5`（固定大版本）以减少未来自动升级带来的破坏性变更。
+- Workflow 固定安装 `@notionhq/client@5.25.2`；Markdown API 版本变化时会通过版本化索引强制重新生成正文。

@@ -8,6 +8,7 @@ on:
       - '.github/scripts/**'
       - '.github/workflows/sync-notion-posts.yml'
       - '.github/notion-data-translation-cache.json'
+      - '.github/notion-sync-index.json'
   workflow_dispatch:
   schedule:
     - cron: '0 * * * *' # 可选：每1h同步一次
@@ -25,6 +26,7 @@ jobs:
     timeout-minutes: 500
     env:
       NOTION_DATA_TRANSLATION_CACHE_PATH: ${{ vars.NOTION_DATA_TRANSLATION_CACHE_PATH || '.github/notion-data-translation-cache.json' }}
+      NOTION_SYNC_INDEX_PATH: ${{ vars.NOTION_SYNC_INDEX_PATH || '.github/notion-sync-index.json' }}
 
     steps:
       - name: Checkout repository
@@ -43,11 +45,15 @@ jobs:
           node .github/scripts/test-notion-data-translation.mjs
           node .github/scripts/test-notion-data-write.mjs
           node .github/scripts/test-notion-ts-data-sync.mjs
+          node .github/scripts/test-notion-post-visibility.mjs
+          node .github/scripts/test-notion-sync-index.mjs
+          node .github/scripts/test-notion-page-query.mjs
+          node .github/scripts/test-notion-markdown-reader.mjs
           node .github/scripts/test-notion-r2-dedup.mjs
           node .github/scripts/test-notion-r2-routing.mjs
 
       - name: Install sync dependencies
-        run: npm install --no-save --no-package-lock @notionhq/client@5 notion-to-md @aws-sdk/client-s3
+        run: npm install --no-save --no-package-lock @notionhq/client@5.25.2 @aws-sdk/client-s3
 
       - name: Configure git identity
         run: |
@@ -66,9 +72,10 @@ jobs:
           # 可选（Notion SDK v5 且一个 database 下有多个 data source 时建议显式配置）
           NOTION_DATA_SOURCE_ID: ${{ secrets.NOTION_DATA_SOURCE_ID }}
           NOTION_SYNC_DELETE_MISSING: 'true'
-          # 同步窗口 = cron 周期 * 2（分钟）
-          NOTION_SYNC_CRON_MINUTES: '60'
-          NOTION_SYNC_LOOKBACK_MULTIPLIER: '8'
+          # 正文统一由 Notion 官方 Markdown API 读取；索引仅用于性能，不参与可见性判断
+          NOTION_MARKDOWN_CONCURRENCY: ${{ vars.NOTION_MARKDOWN_CONCURRENCY || '2' }}
+          # 两个 worker 共用约 3 req/s 的启动节奏，并由 SDK 处理 Retry-After
+          NOTION_MARKDOWN_MIN_START_INTERVAL_MS: ${{ vars.NOTION_MARKDOWN_MIN_START_INTERVAL_MS || '350' }}
           # 可选：如果你的 Notion 数据库列名不同，可在仓库 Variables 中覆盖这些值
           NOTION_POSTS_DIR: posts
           NOTION_ABOUT_PATH: spec/about.md
@@ -141,6 +148,7 @@ jobs:
           CHECKPOINT_MARKER=".notion-sync-checkpoint-pushed"
           checkpoint_pushed="false"
           checkpoint_push_count="0"
+          local_checkpoint_commits="false"
           if [ -f "$CHECKPOINT_MARKER" ]; then
             checkpoint_push_count="$(tr -cd '0-9' < "$CHECKPOINT_MARKER")"
             if [ -z "$checkpoint_push_count" ]; then
@@ -151,21 +159,39 @@ jobs:
               echo "Checkpoint marker detected: ${checkpoint_push_count} intermediate push(es)"
             fi
           fi
-
-          if [ "$SYNC_OUTCOME" = "failure" ]; then
-            echo "Sync failed; discarding uncommitted About/data/cache changes to avoid a partial localization update"
-            git restore --worktree -- spec data/friends.ts data/diary.ts data/projects.ts
-            git clean -f -- 'spec/about.*.md'
-            if git ls-files --error-unmatch "$NOTION_DATA_TRANSLATION_CACHE_PATH" >/dev/null 2>&1; then
-              git restore --worktree -- "$NOTION_DATA_TRANSLATION_CACHE_PATH"
-            else
-              git clean -f -- "$NOTION_DATA_TRANSLATION_CACHE_PATH"
+          if git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' >/dev/null 2>&1; then
+            local_ahead_count="$(git rev-list --count '@{upstream}..HEAD')"
+            if [ "$local_ahead_count" -gt 0 ]; then
+              local_checkpoint_commits="true"
+              echo "Detected ${local_ahead_count} local checkpoint commit(s) pending push"
             fi
           fi
 
-          if [ -z "$(git status --porcelain -- posts spec data/friends.ts data/diary.ts data/projects.ts "$NOTION_DATA_TRANSLATION_CACHE_PATH")" ]; then
-            echo "No content changes in posts/about/data"
-            if [ "$checkpoint_pushed" = "true" ]; then
+          if [ "$SYNC_OUTCOME" = "failure" ]; then
+            echo "Sync failed; discarding uncommitted About/data/cache/index changes to avoid advancing state past output"
+            git restore --source=HEAD --staged --worktree -- spec data/friends.ts data/diary.ts data/projects.ts
+            git clean -f -- 'spec/about.*.md'
+            if git ls-files --error-unmatch "$NOTION_DATA_TRANSLATION_CACHE_PATH" >/dev/null 2>&1; then
+              git restore --source=HEAD --staged --worktree -- "$NOTION_DATA_TRANSLATION_CACHE_PATH"
+            else
+              git clean -f -- "$NOTION_DATA_TRANSLATION_CACHE_PATH"
+            fi
+            if git ls-files --error-unmatch "$NOTION_SYNC_INDEX_PATH" >/dev/null 2>&1; then
+              git restore --source=HEAD --staged --worktree -- "$NOTION_SYNC_INDEX_PATH"
+            else
+              git clean -f -- "$NOTION_SYNC_INDEX_PATH"
+            fi
+          fi
+
+          content_status="$(git status --porcelain -- posts spec data/friends.ts data/diary.ts data/projects.ts)"
+          state_status="$(git status --porcelain -- "$NOTION_DATA_TRANSLATION_CACHE_PATH" "$NOTION_SYNC_INDEX_PATH")"
+          if [ -z "$content_status" ] && [ -z "$state_status" ]; then
+            echo "No content or sync-state changes"
+            if [ "$local_checkpoint_commits" = "true" ]; then
+              git pull --rebase
+              git push
+            fi
+            if [ "$checkpoint_pushed" = "true" ] || [ "$local_checkpoint_commits" = "true" ]; then
               echo "pushed=true" >> "$GITHUB_OUTPUT"
               echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
             else
@@ -174,12 +200,17 @@ jobs:
             exit 0
           fi
 
-          git add -A posts spec data/friends.ts data/diary.ts data/projects.ts "$NOTION_DATA_TRANSLATION_CACHE_PATH"
+          git add -A posts spec data/friends.ts data/diary.ts data/projects.ts "$NOTION_DATA_TRANSLATION_CACHE_PATH" "$NOTION_SYNC_INDEX_PATH"
           git commit -m "chore(content): sync notion content [skip ci]"
           git pull --rebase
           git push
-          echo "pushed=true" >> "$GITHUB_OUTPUT"
           echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          if [ -n "$content_status" ] || [ "$checkpoint_pushed" = "true" ] || [ "$local_checkpoint_commits" = "true" ]; then
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Only sync state changed; skipping Mizuki deploy"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Trigger Mizuki deploy workflow
         if: ${{ always() && steps.commit_push.outputs.pushed == 'true' }}

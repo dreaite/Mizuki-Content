@@ -41,6 +41,10 @@ Keep local content files consistent with the Notion database by `type`.
 - `NOTION_DATA_SOURCE_ID`
   - Recommended when using newer Notion API / SDK v5 and your database contains multiple data sources.
   - If omitted, the script will try to resolve a data source automatically from `NOTION_DATABASE_ID`.
+- `NOTION_SYNC_INDEX_PATH`
+  - Persistent body-sync index path (default `.github/notion-sync-index.json`). Missing, malformed, or unsupported indexes safely fall back to body cache misses.
+- `NOTION_MARKDOWN_CONCURRENCY` / `NOTION_MARKDOWN_MIN_START_INTERVAL_MS`
+  - Body-reader worker count and shared Notion HTTP request-start interval (defaults: `2` / `350` ms).
 - `NOTION_POST_TRANSLATION_ENABLED`
   - Set to `true` to enable translating `Post` markdown body via an OpenAI-compatible Chat Completions API.
 - `NOTION_POST_TRANSLATION_LANGS`
@@ -97,7 +101,7 @@ The workflow passes these defaults. Change them in the workflow if your column n
 - page cover -> front matter `image`
 - `tags` -> front matter `tags`
 - `category` -> front matter `category`
-- `status` -> front matter `draft` (`Draft` => `true`)
+- `status` -> publication state (`Draft` keeps the source as `draft: true`; `Invisible` removes the source and translated files)
 
 Additional mappings:
 
@@ -154,6 +158,7 @@ The workflow currently sets:
 This means:
 
 - Any `*.md` file under `posts/` that is **not** produced from a current Notion `Post` page will be deleted on sync.
+- A `Post` with `status = Invisible` is always excluded. Its current slug, old slugs recorded by the sync index, source Markdown, and generated language variants are deleted before any body read regardless of `NOTION_SYNC_DELETE_MISSING`; the production full sweep also covers historical files during the initial cold-index run.
 
 If you still have manually maintained posts under `posts/`, either:
 
@@ -194,7 +199,16 @@ If you still have manually maintained posts under `posts/`, either:
 ## Running
 
 - Manual run: GitHub Actions -> `Sync Notion Posts` -> `Run workflow`
-- Optional schedule is included as a commented `cron` entry in the workflow
+- Scheduled run: the workflow currently runs hourly and can also be triggered manually
+
+## Sync Performance and Persistent Index
+
+- Every run still fetches the complete paginated page list so deletion, type changes, and `Invisible` remain fully reconciled. The query projects only properties used by sync. If `title/type/status/slug` is missing, the script retries once without projection before any deletion and aborts if the full response is still incomplete.
+- `.github/notion-sync-index.json` records page ID, `last_edited_time`, output signature, renderer revision, and generated paths. A body is skipped only on an exact index hit with its output present; the index is never a visibility source of truth.
+- `Post` and `About` no longer use a time window that repeatedly downloads unchanged bodies. `Diary` fetches only changed pages and caches only page-local `content/images`; membership, ordering, dates, and contiguous IDs are rebuilt from the current full list every run.
+- Body reads use two workers and the Notion client applies a fetch-level 350ms request-start interval; file writes, translation, and Git checkpoints remain serial to avoid races.
+- Bodies are read exclusively through Notion's official Markdown API (`2026-03-11`). A truncated response or any unknown block aborts the run without advancing the persistent index or overwriting the affected page; there is no legacy Block-renderer fallback.
+- The index is written only after bodies, translations, data writes, and directive normalization all succeed. An index-only commit is pushed to the content repository without triggering a Mizuki deployment.
 
 ## Notes
 
@@ -204,6 +218,6 @@ If you still have manually maintained posts under `posts/`, either:
 - Existing `Post` / `About` markdown files with expired Notion image URLs are backfilled to R2 URLs during later sync runs (even if the body did not change).
 - Markdown directives at the start of a line, such as `::github{repo="owner/repo"}` or future custom `::card{...}` blocks, automatically normalize smart quotes (`“”` / `‘’`) inside the attribute braces to ASCII quotes during sync.
 - The workflow auto-commits `posts/` changes back to the current branch.
-- `Friend` / `Diary` data files are regenerated from current Notion rows each run (then `writeIfChanged` avoids no-op writes) so ordering-based IDs stay consistent.
+- `Friend` / `Diary` data files are regenerated from current Notion rows each run (then `writeIfChanged` avoids no-op writes). Diary bodies are cached by page ID, while ordering and IDs are never restored from cache.
 - `Project` data file (`data/projects.ts`) is also regenerated each run to keep the local dataset aligned with current Notion rows.
-- The workflow installs `@notionhq/client@5` (major pinned) to reduce future breaking changes from automatic upgrades.
+- The workflow pins `@notionhq/client@5.25.2`; Markdown API version changes invalidate the persistent body index.
