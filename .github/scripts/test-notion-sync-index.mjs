@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 
 import {
   NOTION_SYNC_INDEX_VERSION,
+  buildDiaryBootstrapEntries,
   buildNotionPageSignature,
   createEmptyNotionSyncIndex,
   getHistoricalNotionOutputPaths,
@@ -163,6 +164,59 @@ function diaryEntry(pageId, lastEditedTime, source) {
     diarySource: source,
   };
 }
+
+const bootstrappedDiaryEntries = buildDiaryBootstrapEntries({
+  diaryMetas: [
+    { pageId: 'b', updateTimeIso: cachedLastEdited, lastEditedIso: cachedLastEdited },
+    {
+      pageId: 'c',
+      updateTimeIso: '2026-08-16T10:00:00.000Z',
+      lastEditedIso: '2026-08-16T10:00:00.000Z',
+    },
+    { pageId: 'a', updateTimeIso: cachedLastEdited, lastEditedIso: cachedLastEdited },
+  ],
+  diaryItems: [
+    {
+      id: 1,
+      content: 'existing c',
+      date: '2026-08-16T10:00:00.000Z',
+      images: [],
+    },
+    {
+      id: 2,
+      content: 'existing a',
+      date: cachedLastEdited,
+      images: ['https://cdn.example/a.webp'],
+    },
+    {
+      id: 3,
+      content: 'existing b',
+      date: cachedLastEdited,
+    },
+  ],
+  renderRevision: diaryRevision,
+});
+assert.equal(bootstrappedDiaryEntries.c.diarySource.content, 'existing c');
+assert.deepEqual(bootstrappedDiaryEntries.a.diarySource.images, [
+  'https://cdn.example/a.webp',
+]);
+assert.equal(bootstrappedDiaryEntries.b.diarySource.content, 'existing b');
+assert.throws(
+  () => buildDiaryBootstrapEntries({
+    diaryMetas: [{ pageId: 'a', lastEditedIso: cachedLastEdited }],
+    diaryItems: [],
+    renderRevision: diaryRevision,
+  }),
+  /Notion has 1 item\(s\), but the generated data file has 0/
+);
+assert.throws(
+  () => buildDiaryBootstrapEntries({
+    diaryMetas: [{ pageId: 'a', lastEditedIso: cachedLastEdited }],
+    diaryItems: [{ id: 1, content: 'wrong date', date: '2026-08-14T00:00:00.000Z' }],
+    renderRevision: diaryRevision,
+  }),
+  /expected date 2026-08-15T10:00:00.000Z/
+);
 
 const previousDiaryIndex = {
   version: NOTION_SYNC_INDEX_VERSION,

@@ -24,6 +24,7 @@ import {
   buildFriendItems,
   buildProjectItems,
   extractMarkdownImagesAndText,
+  parseDiaryDataTs,
   renderDiaryDataTs,
   renderFriendsDataTs,
   renderProjectsDataTs,
@@ -51,6 +52,7 @@ import {
 } from './notion-page-query.mjs';
 import {
   NOTION_SYNC_INDEX_VERSION,
+  buildDiaryBootstrapEntries,
   buildNotionPageSignature,
   getHistoricalNotionOutputPaths,
   getNotionOutputPathOwners,
@@ -79,6 +81,7 @@ const DATA_TRANSLATION_ENABLED = parseBoolean(
 const DATA_TRANSLATION_PROMPT_REVISION = 'structured-data-v1';
 const NOTION_SYNC_RENDER_REVISION = 'notion-sync-index-v1';
 const NOTION_MARKDOWN_API_VERSION = '2026-03-11';
+const BOOTSTRAP_SYNC_INDEX_ONLY = process.argv.includes('--bootstrap-index-only');
 
 const CONFIG = {
   notionToken: requireEnv('NOTION_TOKEN'),
@@ -2483,6 +2486,119 @@ function buildPostOutputPlan(pages, previousSyncIndex) {
   };
 }
 
+async function requireBootstrapFile(filePath, label) {
+  if (await fileExists(filePath)) return;
+  throw new Error(
+    `Cannot bootstrap Notion sync index: missing ${label} at ${path.relative(process.cwd(), filePath)}.`
+  );
+}
+
+async function buildBootstrapSyncIndexPages({
+  pages,
+  postPlansByPageId,
+  outputRoot,
+  aboutPath,
+  diaryDataPath,
+}) {
+  const entries = {};
+  let visiblePosts = 0;
+  let invisiblePosts = 0;
+
+  for (const plan of postPlansByPageId.values()) {
+    if (plan.meta.invisible) {
+      entries[plan.meta.pageId] = buildNotionSyncIndexEntry(
+        plan.meta,
+        'post',
+        plan.signature,
+        { outputPaths: [plan.relativePath] }
+      );
+      invisiblePosts += 1;
+      continue;
+    }
+
+    for (const outputPath of plan.outputPaths) {
+      const fullPath = path.resolve(outputRoot, outputPath);
+      if (!(fullPath === outputRoot || fullPath.startsWith(`${outputRoot}${path.sep}`))) {
+        throw new Error(`Resolved bootstrap path escapes posts directory: ${outputPath}`);
+      }
+      await requireBootstrapFile(fullPath, `Post output ${outputPath}`);
+    }
+
+    entries[plan.meta.pageId] = buildNotionSyncIndexEntry(
+      plan.meta,
+      'post',
+      plan.signature,
+      { outputPaths: plan.outputPaths }
+    );
+    visiblePosts += 1;
+  }
+
+  const aboutPages = [];
+  const diaryMetas = [];
+  for (const page of pages) {
+    if (page.archived || page.in_trash) continue;
+    const meta = extractCommonMetadata(page);
+    const type = meta.type.toLowerCase();
+    if (type === 'about') aboutPages.push(meta);
+    if (type === 'diary') {
+      diaryMetas.push({
+        ...meta,
+        pageSignature: buildNotionSyncSignature(meta, 'diary'),
+      });
+    }
+  }
+
+  if (aboutPages.length > 0) {
+    const selectedAbout = [...aboutPages].sort(sortByUpdatedDesc)[0];
+    const aboutSignature = buildNotionSyncSignature(selectedAbout, 'about');
+    const aboutTranslationTargets = getAboutTranslationTargets(aboutPath);
+    await requireBootstrapFile(aboutPath, 'About source');
+    for (const target of aboutTranslationTargets) {
+      await requireBootstrapFile(target.filePath, `About translation ${target.locale}`);
+    }
+    entries[selectedAbout.pageId] = buildNotionSyncIndexEntry(
+      selectedAbout,
+      'about',
+      aboutSignature,
+      {
+        outputPaths: [
+          CONFIG.aboutPath,
+          ...aboutTranslationTargets.map((target) =>
+            path.relative(process.cwd(), target.filePath).split(path.sep).join('/')
+          ),
+        ],
+      }
+    );
+  }
+
+  const diaryDataContent = await fs.readFile(diaryDataPath, 'utf8');
+  const diaryItems = parseDiaryDataTs(diaryDataContent);
+  const diaryEntries = buildDiaryBootstrapEntries({
+    diaryMetas,
+    diaryItems,
+    renderRevision: getNotionRenderRevision('diary'),
+  });
+  for (const [pageId, entry] of Object.entries(diaryEntries)) {
+    if (
+      isTemporaryNotionAssetUrl(entry.diarySource.content) ||
+      entry.diarySource.images.some((imageUrl) => isTemporaryNotionAssetUrl(imageUrl))
+    ) {
+      throw new Error(
+        `Cannot bootstrap Diary page ${pageId}: generated data contains a temporary Notion asset URL.`
+      );
+    }
+  }
+  Object.assign(entries, diaryEntries);
+
+  return {
+    entries,
+    visiblePosts,
+    invisiblePosts,
+    aboutPages: aboutPages.length,
+    diaryPages: diaryMetas.length,
+  };
+}
+
 async function preparePostBodyReads({
   postPlansByPageId,
   previousSyncIndex,
@@ -2652,7 +2768,7 @@ async function main() {
       `Notion cover R2 sync enabled: bucket=${CONFIG.notionCoverR2Bucket}, publicBaseUrl=${CONFIG.notionCoverR2PublicBaseUrl}`
     );
   }
-  if (shouldUseSyncCheckpointPush()) {
+  if (!BOOTSTRAP_SYNC_INDEX_ONLY && shouldUseSyncCheckpointPush()) {
     console.log(`Sync checkpoint push enabled: every ${CONFIG.syncCheckpointEveryPosts} changed post(s).`);
     await writeSyncCheckpointMarker(0);
   }
@@ -2671,6 +2787,45 @@ async function main() {
     takeoverRelativePaths,
     forceDeleteRelativePaths,
   } = buildPostOutputPlan(pages, previousSyncIndex);
+
+  if (BOOTSTRAP_SYNC_INDEX_ONLY) {
+    if (Object.keys(previousSyncIndex.pages || {}).length > 0) {
+      throw new Error(
+        'Refusing --bootstrap-index-only because the persistent Notion sync index already contains page entries.'
+      );
+    }
+
+    const bootstrap = await buildBootstrapSyncIndexPages({
+      pages,
+      postPlansByPageId,
+      outputRoot,
+      aboutPath,
+      diaryDataPath,
+    });
+    const bootstrapDeleted = await deletePostOutputFiles({
+      outputRoot,
+      seenRelativePaths,
+      invisibleSourceRelativePaths,
+      forceDeleteRelativePaths,
+      deleteMissing: CONFIG.deleteMissing,
+    });
+    const syncIndexExists = await fileExists(syncIndexPath);
+    const syncIndexWriteResult = await writeIfChanged(
+      syncIndexPath,
+      renderNotionSyncIndex({
+        version: NOTION_SYNC_INDEX_VERSION,
+        pages: bootstrap.entries,
+      })
+    );
+    console.log(
+      `${syncIndexExists ? 'Updated' : 'Created'} ${path.relative(process.cwd(), syncIndexPath)}`
+    );
+    console.log(
+      `Bootstrap index complete. visiblePosts=${bootstrap.visiblePosts}, invisiblePosts=${bootstrap.invisiblePosts}, about=${bootstrap.aboutPages}, diary=${bootstrap.diaryPages}, deletedPosts=${bootstrapDeleted}, indexWrite=${syncIndexWriteResult}, bodyReads=0, translations=0`
+    );
+    return;
+  }
+
   const aboutPages = [];
   const friendPages = [];
   const diaryPages = [];

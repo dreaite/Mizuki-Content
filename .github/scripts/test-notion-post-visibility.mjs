@@ -207,6 +207,8 @@ const mainIndex = syncSource.indexOf('async function main()');
 const invisibleCleanupIndex = syncSource.indexOf('deletePostOutputFiles({', mainIndex);
 const mainPageLoopIndex = syncSource.indexOf('for (const page of pages)', mainIndex);
 const mainSource = syncSource.slice(mainIndex);
+const bootstrapBranchIndex = mainSource.indexOf('if (BOOTSTRAP_SYNC_INDEX_ONLY)');
+const bodyPrefetchIndex = mainSource.indexOf('const postBodyReads = await preparePostBodyReads');
 const mainInvisibleBranch =
   mainSource.match(/if \(plannedMeta\.invisible\) \{(?<body>[\s\S]*?)\n      \}/)?.groups?.body || '';
 assert.match(mainInvisibleBranch, /continue;/, 'Invisible posts must stop before body generation.');
@@ -254,6 +256,15 @@ assert.match(
 );
 assert.match(syncSource, /syncCheckpointState\.pushedCount \+= 1;/);
 assert.match(syncSource, /await writeSyncCheckpointMarker\(syncCheckpointState\.pushedCount\);/);
+assert.ok(
+  bootstrapBranchIndex >= 0 && bootstrapBranchIndex < bodyPrefetchIndex,
+  'Index bootstrap must finish before any Post body prefetch can start.'
+);
+assert.match(
+  mainSource,
+  /Bootstrap index complete\.[\s\S]*?bodyReads=0, translations=0/,
+  'Index bootstrap must explicitly remain body- and translation-free.'
+);
 assert.ok(
   invisibleCleanupIndex >= 0 && invisibleCleanupIndex < mainPageLoopIndex,
   'Invisible output cleanup must happen before processing any post body or translation.'

@@ -200,6 +200,7 @@ Workflow 会传入以下默认值。如果你的 Notion 列名不同，请在 wo
 
 - 手动运行：GitHub Actions -> `Sync Notion Posts` -> `Run workflow`
 - 定时任务：workflow 当前每小时运行一次，也可手动触发
+- 一次性索引初始化：手动运行 workflow 时设 `bootstrap_index_only=true`。该模式只获取 Notion 轻量 page list，确认当前 Post/About 及其译文都已存在，从生成后的 `data/diary.ts` 写入 Diary 正文缓存，然后生成 `.github/notion-sync-index.json`；不会读取正文或调用翻译。索引已有条目时会拒绝再次初始化。
 
 ## 同步性能与持久索引
 

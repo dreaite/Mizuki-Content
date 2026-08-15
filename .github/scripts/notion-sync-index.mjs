@@ -305,6 +305,92 @@ function normalizeDiarySource(value) {
   };
 }
 
+function prepareSortedDiaryMetas(diaryMetas) {
+  const sortedMetas = [...(diaryMetas || [])].sort(compareDiaryMetas);
+  const seenPageIds = new Set();
+  for (const meta of sortedMetas) {
+    const pageId = getDiaryPageId(meta);
+    if (!pageId) throw new Error('Every Diary meta must include pageId.');
+    if (seenPageIds.has(pageId)) throw new Error(`Duplicate Diary pageId: ${pageId}`);
+    if (!getDiaryLastEditedTime(meta)) {
+      throw new Error(`Diary page ${pageId} is missing lastEditedIso/lastEditedTime.`);
+    }
+    seenPageIds.add(pageId);
+  }
+  return sortedMetas;
+}
+
+function buildDiaryIndexEntry(meta, source, renderRevision) {
+  const pageId = getDiaryPageId(meta);
+  const lastEditedTime = getDiaryLastEditedTime(meta);
+  const signature = normalizeText(meta.pageSignature) ||
+    buildNotionPageSignature({
+      pageId,
+      kind: 'diary',
+      lastEditedTime,
+      status: meta.status,
+      metadata: meta.signatureMetadata || {},
+    });
+
+  return {
+    kind: 'diary',
+    pageId,
+    lastEditedTime,
+    signature,
+    renderRevision,
+    diarySource: source,
+  };
+}
+
+export function buildDiaryBootstrapEntries({
+  diaryMetas,
+  diaryItems,
+  renderRevision,
+}) {
+  const normalizedRenderRevision = normalizeText(renderRevision);
+  if (!normalizedRenderRevision) {
+    throw new Error('buildDiaryBootstrapEntries requires a non-empty renderRevision.');
+  }
+
+  const sortedMetas = prepareSortedDiaryMetas(diaryMetas);
+  const existingItems = Array.from(diaryItems || []);
+  if (existingItems.length !== sortedMetas.length) {
+    throw new Error(
+      `Cannot bootstrap Diary index: Notion has ${sortedMetas.length} item(s), but the generated data file has ${existingItems.length}.`
+    );
+  }
+
+  const entries = {};
+  for (const [index, meta] of sortedMetas.entries()) {
+    const item = existingItems[index];
+    const pageId = getDiaryPageId(meta);
+    const expectedDate = getDiaryDate(meta);
+    const actualDate = normalizeText(item?.date);
+    if (actualDate !== expectedDate) {
+      throw new Error(
+        `Cannot bootstrap Diary page ${pageId}: expected date ${expectedDate || '(empty)'}, found ${actualDate || '(empty)'}.`
+      );
+    }
+    if (item?.id != null && Number(item.id) !== index + 1) {
+      throw new Error(
+        `Cannot bootstrap Diary page ${pageId}: expected generated id ${index + 1}, found ${item.id}.`
+      );
+    }
+
+    const source = normalizeDiarySource(item);
+    if (!source) {
+      throw new Error(`Cannot bootstrap Diary page ${pageId}: generated source is invalid.`);
+    }
+    entries[pageId] = buildDiaryIndexEntry(
+      meta,
+      source,
+      normalizedRenderRevision
+    );
+  }
+
+  return entries;
+}
+
 /**
  * Rebuild current Diary items from current list metadata plus a per-page body cache.
  * The current list controls membership, ordering, date, and numeric ids; cache
@@ -330,17 +416,7 @@ export async function rebuildDiaryCache({
     throw new Error('rebuildDiaryCache requires a non-empty renderRevision.');
   }
 
-  const sortedMetas = [...(diaryMetas || [])].sort(compareDiaryMetas);
-  const seenPageIds = new Set();
-  for (const meta of sortedMetas) {
-    const pageId = getDiaryPageId(meta);
-    if (!pageId) throw new Error('Every Diary meta must include pageId.');
-    if (seenPageIds.has(pageId)) throw new Error(`Duplicate Diary pageId: ${pageId}`);
-    if (!getDiaryLastEditedTime(meta)) {
-      throw new Error(`Diary page ${pageId} is missing lastEditedIso/lastEditedTime.`);
-    }
-    seenPageIds.add(pageId);
-  }
+  const sortedMetas = prepareSortedDiaryMetas(diaryMetas);
 
   const parsedIndex = parseNotionSyncIndex(previousIndex);
   const rebuilt = await mapWithConcurrency(
@@ -389,14 +465,11 @@ export async function rebuildDiaryCache({
         meta,
         source,
         reused,
-        entry: {
-          kind: 'diary',
-          pageId,
-          lastEditedTime,
-          signature,
-          renderRevision: normalizedRenderRevision,
-          diarySource: source,
-        },
+        entry: buildDiaryIndexEntry(
+          { ...meta, pageSignature: signature },
+          source,
+          normalizedRenderRevision
+        ),
       };
     }
   );

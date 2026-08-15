@@ -10,6 +10,12 @@ on:
       - '.github/notion-data-translation-cache.json'
       - '.github/notion-sync-index.json'
   workflow_dispatch:
+    inputs:
+      bootstrap_index_only:
+        description: '只从仓库现有正文/译文建立同步索引，不拉正文或翻译'
+        required: false
+        default: false
+        type: boolean
   schedule:
     - cron: '0 * * * *' # 可选：每1h同步一次
 
@@ -137,7 +143,12 @@ jobs:
           NOTION_TAGS_PROPERTY: tags
           NOTION_CATEGORY_PROPERTY: category
           NOTION_STATUS_PROPERTY: status
-        run: node .github/scripts/sync-notion-posts.mjs
+        run: |
+          sync_args=()
+          if [ "${{ inputs.bootstrap_index_only || false }}" = "true" ]; then
+            sync_args+=(--bootstrap-index-only)
+          fi
+          node .github/scripts/sync-notion-posts.mjs "${sync_args[@]}"
 
       - name: Commit and push changes
         id: commit_push

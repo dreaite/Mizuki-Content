@@ -200,6 +200,7 @@ If you still have manually maintained posts under `posts/`, either:
 
 - Manual run: GitHub Actions -> `Sync Notion Posts` -> `Run workflow`
 - Scheduled run: the workflow currently runs hourly and can also be triggered manually
+- One-time index bootstrap: manually run the workflow with `bootstrap_index_only=true`. It fetches only the lightweight Notion page list, validates that every current Post/About translation already exists, seeds Diary sources from the generated `data/diary.ts`, and writes `.github/notion-sync-index.json` without reading bodies or invoking translation. It refuses to run once the index already contains entries.
 
 ## Sync Performance and Persistent Index
 

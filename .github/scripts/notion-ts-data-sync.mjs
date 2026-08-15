@@ -98,6 +98,60 @@ function findTsArrayEnd(source, arrayStart) {
   throw new Error('Failed to locate the end of the target TS data array.');
 }
 
+function extractTsArrayLiteral(fileContent, declarationPattern) {
+  const source = String(fileContent || '');
+  const match = source.match(declarationPattern);
+  if (!match || !match[1]) {
+    throw new Error('Failed to locate target array declaration in TS data file.');
+  }
+
+  const arrayStart = match.index + match[1].length;
+  if (source[arrayStart] !== '[') {
+    throw new Error('Target TS data declaration does not start with an array literal.');
+  }
+
+  return source.slice(arrayStart, findTsArrayEnd(source, arrayStart));
+}
+
+function stripJsonTrailingCommas(source) {
+  let result = '';
+  let quote = '';
+  let escaped = false;
+
+  for (let index = 0; index < source.length; index += 1) {
+    const char = source[index];
+    if (quote) {
+      result += char;
+      if (escaped) {
+        escaped = false;
+      } else if (char === '\\') {
+        escaped = true;
+      } else if (char === quote) {
+        quote = '';
+      }
+      continue;
+    }
+
+    if (char === '"') {
+      quote = char;
+      result += char;
+      continue;
+    }
+
+    if (char === ',') {
+      let lookahead = index + 1;
+      while (/\s/.test(source[lookahead] || '')) lookahead += 1;
+      if (source[lookahead] === '}' || source[lookahead] === ']') {
+        continue;
+      }
+    }
+
+    result += char;
+  }
+
+  return result;
+}
+
 function replaceTsArrayLiteral(fileContent, declarationPattern, newArrayLiteral) {
   const match = fileContent.match(declarationPattern);
   if (!match || !match[1]) {
@@ -291,6 +345,46 @@ export function renderDiaryDataTs(fileContent, diaryItems) {
     /(const diaryData:\s*DiaryItem\[\]\s*=\s*)/,
     serializeDiaryDataArray(diaryItems)
   );
+}
+
+export function parseDiaryDataTs(fileContent) {
+  const arrayLiteral = extractTsArrayLiteral(
+    fileContent,
+    /(const diaryData:\s*DiaryItem\[\]\s*=\s*)/
+  );
+  const jsonCompatible = stripJsonTrailingCommas(
+    arrayLiteral.replace(
+      /^(\s*)([A-Za-z_$][A-Za-z0-9_$]*)(\s*:)/gm,
+      '$1"$2"$3'
+    )
+  );
+
+  let parsed;
+  try {
+    parsed = JSON.parse(jsonCompatible);
+  } catch (error) {
+    throw new Error(`Failed to parse generated Diary data: ${error.message}`);
+  }
+
+  if (!Array.isArray(parsed)) {
+    throw new Error('Generated Diary data must contain an array.');
+  }
+  for (const [index, item] of parsed.entries()) {
+    if (
+      !item ||
+      typeof item !== 'object' ||
+      Array.isArray(item) ||
+      typeof item.content !== 'string' ||
+      typeof item.date !== 'string' ||
+      (item.images != null &&
+        (!Array.isArray(item.images) ||
+          item.images.some((imageUrl) => typeof imageUrl !== 'string')))
+    ) {
+      throw new Error(`Generated Diary item ${index + 1} is invalid.`);
+    }
+  }
+
+  return parsed;
 }
 
 export function renderProjectsDataTs(fileContent, projectItems) {
