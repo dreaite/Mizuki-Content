@@ -6,7 +6,7 @@ description: '通过修改Netplan配置、启用IP转发和配置NAT转发，实
 permalink: 'ubuntu-nat-routing'
 image: 'https://r2.dreaife.tokyo/notion/covers/15d5465cca1780bf85eac8dea673675e/IMG_1935.jpg'
 tags: ['network', 'linux']
-category: 'prog-side'
+category: 'cs-base'
 draft: false
 ---
 

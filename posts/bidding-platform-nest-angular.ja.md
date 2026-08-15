@@ -1,25 +1,20 @@
 ---
-title: 'Nest.jsとAngularベースの入札プラットフォーム（JestテストとCI/CD）'
+title: 'Nest.jsとAngularを基盤とした入札プラットフォーム—JestテストとCI/CDも含む'
 published: 2024-12-07
 updated: 2024-12-08
-description: 'このプロジェクトはNest.jsとAngularを基盤とした入札プラットフォームで、ユーザー登録、プロジェクト管理、入札管理などの機能を提供します。データベースにはPostgreSQLを使用し、SwaggerでAPIドキュメントを生成します。バックエンドではAWS Cognitoを用いた安全な認証を実装し、フロントエンドではプロジェクト表示と入札管理を行える使いやすいUIを構築しています。コード品質を担保するためにJestでテストを行い、GitHub ActionsでCI/CDも実現しています。'
+description: '本プロジェクトは、Nest.jsとAngularをベースにした入札プラットフォームです。ユーザー登録、プロジェクト管理、入札管理機能を提供し、データベースにはPostgreSQLを使用、SwaggerでAPIドキュメントを生成します。バックエンドには安全な認証機能を実装し、ユーザー認証にはAWS Cognitoを採用しています。フロントエンドにはユーザーフレンドリーなインターフェースを構築し、プロジェクトの表示と入札管理に対応しています。Jestによるテストでコード品質を確保し、GitHub Actionsを通じて継続的インテグレーションとデプロイを実現しています。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1555465cca1780f382f5f1421004b0a8/IMG_1767.jpg'
 tags: ['nodejs', 'ts', 'aws']
-category: 'BACKEND'
+category: 'PROJECT'
 draft: false
 lang: 'ja'
 ---
 
-# Nest.js と Angular を基盤とした入札プラットフォーム
-
-## プロジェクトの概要
-
-本プロジェクトは、Nest.js と Angular を基盤とした入札プラットフォームで、入札と管理のための完全なシステムを提供することを目的としています。
-
-プロジェクトの主な機能には、ユーザー登録とログイン、プロジェクトの作成と管理、入札管理、ユーザーロール管理が含まれます。フロントエンドは Angular フレームワークで構築され、バックエンドは Nest.js フレームワークで構築され、データベースは PostgreSQL を使用し、Swagger を通じて API ドキュメントを提供します。
-
-このプロジェクトは DigitalOcean の Droplet 上にデプロイされ、フロントエンドは Nginx を使ってデプロイされています。
-
+# Nest.js と Angular をベースにした入札プラットフォーム
+## プロジェクト概要
+本プロジェクトは Nest.js と Angular をベースにした入札プラットフォームで、包括的な入札・管理システムの提供を目的としています。
+主な機能には、ユーザー登録とログイン、プロジェクトの作成と管理、入札管理、ユーザーロール管理があります。フロントエンドは Angular フレームワーク、バックエンドは Nest.js フレームワークで構築され、データベースには PostgreSQL を使用しています。また、Swagger による API ドキュメントも提供しています。
+プロジェクトは DigitalOcean の Droplet 上にデプロイされ、フロントエンドは Nginx を介して配信されます。
 ```plain text
 前端 (Angular)
   ↓（API 请求）
@@ -32,144 +27,118 @@ Cognito (用户认证)
 后端 (Nest.js)
   ↑（处理后的响应）
 前端 (Angular)
+
 ```
-
-## プロジェクト構造
-
-- **frontend**: すべてのフロントエンドコードを含み、Angular フレームワークで構築されています。
-- **backend**: すべてのバックエンドコードを含み、Nest.js フレームワークで構築されています。
-- **.github**: CI/CD のための設定ファイルを含みます。
-
+## プロジェクト構成
+- **frontend**: Angular フレームワークで構築された、すべてのフロントエンドコードが含まれています。
+- **backend**: Nest.js フレームワークで構築された、すべてのバックエンドコードが含まれています。
+- **.github**: 継続的インテグレーションとデプロイに使用する GitHub Actions の設定ファイルが含まれています。
 # バックエンド
-
 ## バックエンドの構築
-
-バックエンドは Nest.js フレームワークで構築され、モジュール化され拡張性のあるアーキテクチャを提供します。主な機能は、ユーザー認証、プロジェクト管理、入札管理などです。バックエンドは TypeORM を通じてデータベース操作を行い、複数のデータベースタイプをサポートします。
-
-### バックエンド技術スタック
-
-- **Nest.js**: 高速で拡張性の高い Node.js サーバーサイドアプリケーションを構築するためのフレームワーク。
-- **TypeORM**: データベースとやり取りする ORM フレームワーク。
-- **Swagger**: API ドキュメントを生成するための Swagger。
-
-### バックエンド構築手順
-
-1. **依存関係のインストール**: `backend` ディレクトリで `npm install` を実行してすべての必要な依存関係をインストールします。
-2. **環境変数の設定**: プロジェクトのルートに `.env` ファイルを作成し、データベース接続情報やその他の環境変数を設定します。
-3. **開発サーバーの起動**: `npm run start:dev` を使って開発サーバーを起動します。ホットリロードをサポートします。
-4. **本番ビルド**: `npm run build` を使って本番環境ビルドを行い、生成されたファイルは `dist` ディレクトリに配置されます。
-
+バックエンドは Nest.js フレームワークで構築され、モジュール化された拡張性の高いアーキテクチャを提供します。主な機能には、ユーザー認証、プロジェクト管理、入札管理などがあります。バックエンドでは TypeORM を介してデータベースを操作し、複数のデータベース形式をサポートしています。
+### バックエンドの技術スタック
+- **Nest.js**: 効率的で拡張性の高い Node.js サーバーサイドアプリケーションの構築に使用します。
+- **TypeORM**: データベース操作に使用する ORM フレームワークです。
+- **Swagger**: API ドキュメントを生成し、開発者が API を確認・テストしやすくするために使用します。
+### バックエンドの構築手順
+1. **依存関係のインストール**: `backend` ディレクトリで `npm install` を実行し、必要な依存関係をすべてインストールします。
+2. **環境変数の設定**: プロジェクトのルートディレクトリに `.env` ファイルを作成し、データベース接続情報やその他の環境変数を設定します。
+3. **開発サーバーの実行**: `npm run start:dev` を使用して、ホットリロード対応の開発サーバーを起動します。
+4. **本番ビルド**: `npm run build` を使用して本番環境向けにビルドします。生成されたファイルは `dist` ディレクトリに配置されます。
 ### データベース
-
-このプロジェクトは PostgreSQL をデータベースとして使用し、すべてのデータベース操作は TypeORM を介して行われます。データベースの初期化スクリプトは `backend/SQL/init-script.sql` にあり、データベースの作成と初期化に使用できます。
-
-バックエンドのコード構造は明確で、モジュール化設計により機能の拡張と保守がより容易になります。
-
+本プロジェクトでは PostgreSQL をデータベースとして使用し、すべてのデータベース操作を TypeORM を介して行います。データベースの初期化スクリプトは `backend/SQL/init-script.sql` にあり、データベースの作成と初期化に使用できます。
+バックエンドのコード構成は明確で、モジュール化された設計により、機能の拡張や保守が容易になっています。
 ## バックエンドのセキュリティ認証
-
-バックエンドのセキュリティ認証は AWS Cognito を用いて実現しており、Nest.js のインターセプターとサービスと組み合わせて、ユーザーの認証と認可を保証します。
-
-### 認証アーキテクチャ
-
-- **AWS Cognito**: ユーザー登録、ログイン、認証に使用。Cognito は安全なユーザープールとIDプールの管理を提供します。
-- **Nest.js インターセプター**: HTTP リクエストを捕捉し、リクエストヘッダの JWT Token を検証して、ユーザーの身元を確認します。
-- **Service 層**: Cognito とのやり取りを処理し、Cognito ユーザーとデータベース上のユーザー情報を関連付けます。
-
+バックエンドのセキュリティ認証は AWS Cognito で実装され、Nest.js のインターセプターおよびサービスと組み合わせることで、ユーザーの認証と認可を保証します。
+### セキュリティ認証アーキテクチャ
+- **AWS Cognito**: ユーザー登録、ログイン、本人認証に使用します。Cognito は安全なユーザープールと ID プールの管理機能を提供します。
+- **Nest.js インターセプター**: HTTP リクエストをインターセプトし、リクエストヘッダー内の JWT Token を検証して、ユーザーの正当性を保証します。
+- **Service 層**: Cognito との連携、および Cognito ユーザーとデータベース内のユーザー情報との関連付けを担当します。
 ### 実装手順
+1. **Cognito ユーザープールの設定**: AWS Cognito でユーザープールを作成し、JWT Token の生成と検証をサポートするようにアプリクライアントを設定します。
+2. **JWT インターセプター**: Nest.js でインターセプターを作成し、リクエストヘッダー内の JWT Token を解析して有効性を検証し、ユーザー情報をリクエストオブジェクトに追加します。
+	```typescript
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, UnauthorizedException } from '@nestjs/common';
+import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
-1. **Cognito ユーザープールの設定**: AWS Cognito でユーザープールを作成し、JWT Token の生成と検証をサポートするアプリクライアントを設定します。
-2. **JWT インターセプター**: Nest.js でインターセプターを作成し、リクエストヘッダの JWT Token を解析・検証し、ユーザー情報をリクエストオブジェクトに付加します。
+@Injectable()
+export class JwtInterceptor implements NestInterceptor {
+  constructor(private readonly authService: AuthService) {}
 
-    ```typescript
-    import { Injectable, NestInterceptor, ExecutionContext, CallHandler, UnauthorizedException } from '@nestjs/common';
-    import { Observable } from 'rxjs';
-    import { AuthService } from './auth.service';
-    
-    @Injectable()
-    export class JwtInterceptor implements NestInterceptor {
-      constructor(private readonly authService: AuthService) {}
-    
-      intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-        const request = context.switchToHttp().getRequest();
-        const token = request.headers.authorization?.split(' ')[1];
-    
-        if (!token) {
-          throw new UnauthorizedException('Token not found');
-        }
-    
-        const user = this.authService.validateToken(token);
-        if (!user) {
-          throw new UnauthorizedException('Invalid token');
-        }
-    
-        request.user = user;
-        return next.handle();
-      }
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    const request = context.switchToHttp().getRequest();
+    const token = request.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+      throw new UnauthorizedException('Token not found');
     }
-    ```
 
-3. **ユーザーサービス**: データベースからユーザー情報を取得し、それを Cognito のユーザーと関連付けるユーザーサービスを作成します。Cognito ID を一意識別子として、データベースにユーザー情報を格納します。
-
-    ```typescript
-    import { Injectable } from '@nestjs/common';
-    import { UsersRepository } from './users.repository';
-    
-    @Injectable()
-    export class UsersService {
-      constructor(private readonly usersRepository: UsersRepository) {}
-    
-      async findOrCreateUser(cognitoId: string, email: string) {
-        let user = await this.usersRepository.findOneByCognitoId(cognitoId);
-        if (!user) {
-          user = await this.usersRepository.create({ cognitoId, email });
-        }
-        return user;
-      }
+    const user = this.authService.validateToken(token);
+    if (!user) {
+      throw new UnauthorizedException('Invalid token');
     }
-    ```
 
-4. **役割と権限管理**: データベースにユーザーの役割（例: 管理者、クライアント、入札者）を定義し、インターセプター内で役割に基づく権限検証を行います。
+    request.user = user;
+    return next.handle();
+  }
+}
 
-    ```typescript
-    import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-    import { Reflector } from '@nestjs/core';
-    
-    @Injectable()
-    export class RolesGuard implements CanActivate {
-      constructor(private reflector: Reflector) {}
-    
-      canActivate(context: ExecutionContext): boolean {
-        const roles = this.reflector.get<string[]>('roles', context.getHandler());
-        if (!roles) {
-          return true;
-        }
-        const request = context.switchToHttp().getRequest();
-        const user = request.user;
-        return roles.includes(user.role);
-      }
+	```
+3. **ユーザーサービス**: データベースからユーザー情報を取得し、Cognito ユーザーと関連付けるユーザーサービスを作成します。Cognito ID を一意の識別子として使用し、ユーザー情報をデータベースに保存します。
+	```typescript
+import { Injectable } from '@nestjs/common';
+import { UsersRepository } from './users.repository';
+
+@Injectable()
+export class UsersService {
+  constructor(private readonly usersRepository: UsersRepository) {}
+
+  async findOrCreateUser(cognitoId: string, email: string) {
+    let user = await this.usersRepository.findOneByCognitoId(cognitoId);
+    if (!user) {
+      user = await this.usersRepository.create({ cognitoId, email });
     }
-    ```
+    return user;
+  }
+}
 
-    必要な権限を持つ API には `@Roles('admin')` デコレーターを追加して、必要な役割を指定します。
+	```
+4. **ロールと権限の管理**: データベースでユーザーロール（管理者、クライアント、入札者など）を定義し、インターセプターでロールに基づく権限検証を行います。
+	```typescript
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 
-    ```typescript
-    @Post()
-    @Roles('admin')
-    createProject(@Body() createProjectDto: CreateProjectDto) {
-      return this.projectsService.createProject(createProjectDto);
+@Injectable()
+export class RolesGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+
+  canActivate(context: ExecutionContext): boolean {
+    const roles = this.reflector.get<string[]>('roles', context.getHandler());
+    if (!roles) {
+      return true;
     }
-    ```
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+    return roles.includes(user.role);
+  }
+}
 
-このようにして、バックエンドはユーザーの身元と権限を効果的に管理し、システムのセキュリティと信頼性を確保します。
+	```
+	権限検証が必要な API に `@Roles('admin')` デコレーターを追加し、必要なロールを指定します。
+	```typescript
+@Post()
+@Roles('admin')
+createProject(@Body() createProjectDto: CreateProjectDto) {
+  return this.projectsService.createProject(createProjectDto);
+}
 
+	```
+この方法により、バックエンドでユーザーの ID と権限を効果的に管理し、システムの安全性と信頼性を確保できます。
 ## プロジェクト管理の実装
-
-プロジェクト管理モジュールでは、Controller を介して Service を呼び出し、Service を介してデータベースとやり取りする方法を示します。
-
+プロジェクト管理モジュールでは、Controller から Service を呼び出し、さらに Service を介してデータベースと連携する方法を示します。
 ### Controller
-
 `ProjectsController` では、HTTP リクエストを処理するルートとメソッドを定義します。
-
 ```typescript
 import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
@@ -204,12 +173,10 @@ export class ProjectsController {
     return this.projectsService.delete(id);
   }
 }
+
 ```
-
 ### Service
-
-`ProjectsService` はビジネスロジックの処理とデータベースとの対話を担当します。
-
+`ProjectsService` はビジネスロジックを処理し、データベースとの連携を担当します。
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
@@ -240,12 +207,10 @@ export class ProjectsService {
     return this.dataSource.getRepository(Project).delete(id);
   }
 }
+
 ```
-
 ### データベースエンティティ
-
-`Project` エンティティはデータベース内のプロジェクトの構造を定義します。`@Entity()` デコレーターでエンティティを、`@Column()` デコレーターで列を定義します。
-
+`Project` エンティティはデータベース内のプロジェクト構造を定義します。`@Entity()` デコレーターでエンティティを定義し、`@Column()` デコレーターで列を定義します。
 ```typescript
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -272,32 +237,22 @@ export class Project {
   @Column({ default: 'open' })
   status: string;
 }
+
 ```
-
-このようにして、Controller は HTTP リクエストの処理を、Service はビジネスロジックを、データベースエンティティはデータ構造を定義し、三者が協力して完全なプロジェクト管理機能を実現します。
-
+この方法では、Controller が HTTP リクエストを処理し、Service がビジネスロジックを担当し、データベースエンティティがデータ構造を定義します。この3つが連携することで、包括的なプロジェクト管理機能を実現します。
 # フロントエンド
-
-フロントエンドは Angular フレームワークを用いて構築され、使いやすいユーザーインターフェースとインタラクション体験を提供します。主な機能は、プロジェクトの表示、入札管理、ユーザー登録とログインなど。
-
-## フロントエンド技術スタック
-
-- **Angular**: 現代的なシングルページアプリケーションを構築するためのもの。
-- **RxJS**: 非同期データフローの処理に使用します。
+フロントエンドは Angular フレームワークで構築され、ユーザーフレンドリーなインターフェースと操作性を提供します。主な機能には、プロジェクトの表示、入札管理、ユーザー登録とログインなどがあります。
+## フロントエンドの技術スタック
+- **Angular**: モダンなシングルページアプリケーションの構築に使用します。
+- **RxJS**: 非同期データストリームの処理に使用します。
 - **Angular CLI**: 強力な開発ツールとコマンドラインインターフェースを提供します。
-
-## フロントエンドのビルド手順
-
-1. **依存関係のインストール**: `frontend` ディレクトリで `npm install` を実行して、すべての必要な依存関係をインストールします。
-2. **開発サーバー**: `ng serve` を使って開発サーバーを起動します。デフォルトは `http://localhost:4200/` です。
-3. **本番ビルド**: `ng build` を使って本番環境をビルドします。生成されたファイルは `dist` ディレクトリに配置されます。
-
+## フロントエンドの構築手順
+1. **依存関係のインストール**: `frontend` ディレクトリで `npm install` を実行し、必要な依存関係をすべてインストールします。
+2. **開発サーバー**: `ng serve` を使用して開発サーバーを起動します。デフォルトでは `http://localhost:4200/` で実行されます。
+3. **本番ビルド**: `ng build` を使用して本番環境向けにビルドします。生成されたファイルは `dist` ディレクトリに配置されます。
 ## プロジェクト詳細コンポーネント
-
-フロントエンドアプリケーションは複数のコンポーネントで構成され、各コンポーネントが特定の機能モジュールを担当します。以下はサンプルコンポーネントの実装です。
-
-`ProjectDetailComponent` は単一プロジェクトの詳細情報を表示するためのものです。
-
+フロントエンドアプリケーションは複数のコンポーネントで構成され、それぞれが特定の機能モジュールを担当します。以下はコンポーネント実装の例です。
+`ProjectDetailComponent` は、単一プロジェクトの詳細情報を表示するために使用します。
 ```typescript
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -341,9 +296,9 @@ export class ProjectDetailComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'ロードできませんでした';
+        this.error = '加载项目详情失败';
         this.loading = false;
-        console.error('ロードエラー:', err);
+        console.error('加载项目详情错误:', err);
       }
     });
   }
@@ -354,22 +309,19 @@ export class ProjectDetailComponent implements OnInit {
         this.bids = data;
       },
       error: (err) => {
-        console.error('投標リストのロードエラー:', err);
+        console.error('加载投标列表错误:', err);
       }
     });
   }
 }
+
 ```
-
-
 ### テンプレートファイル
-
-`project-detail.component.html` はプロジェクト詳細の表示構造を定義します。
-
+`project-detail.component.html` は、プロジェクト詳細の表示構造を定義します。
 ```html
 <div class="project-detail">
   <div *ngIf="loading" class="loading">
-    ロード中...
+    加载中...
   </div>
 
   <div *ngIf="error" class="error">
@@ -379,13 +331,13 @@ export class ProjectDetailComponent implements OnInit {
   <div *ngIf="project && !loading" class="project-info">
     <h2>{{ project.title }}</h2>
     <div class="project-meta">
-      <p>予算: ¥{{ project.budget_min }} - ¥{{ project.budget_max }}</p>
-      <p>締め切り: {{ project.deadline | date }}</p>
-      <p>ステータス: {{ project.status }}</p>
+      <p>预算: ¥{{ project.budget_min }} - ¥{{ project.budget_max }}</p>
+      <p>截止日期: {{ project.deadline | date }}</p>
+      <p>状态: {{ project.status }}</p>
     </div>
 
     <div class="project-description">
-      <h3>プロジェクトの説明</h3>
+      <h3>项目描述</h3>
       <p>{{ project.description }}</p>
     </div>
 
@@ -396,33 +348,25 @@ export class ProjectDetailComponent implements OnInit {
     </app-bid-form>
 
     <div class="bids-section" *ngIf="userRole === 'client' || userRole === 'admin'">
-      <h3>入札リスト</h3>
+      <h3>投标列表</h3>
       <div *ngFor="let bid of bids" class="bid-card">
-        <p>入札者: {{ bid.bidder_id }}</p>
-        <p>入札額: ¥{{ bid.amount }}</p>
-        <p>入札説明: {{ bid.message }}</p>
-        <p>状態: {{ bid.status }}</p>
+        <p>投标人: {{ bid.bidder_id }}</p>
+        <p>投标金额: ¥{{ bid.amount }}</p>
+        <p>投标说明: {{ bid.message }}</p>
+        <p>状态: {{ bid.status }}</p>
       </div>
     </div>
   </div>
 </div>
+
 ```
-
-
-このようにして、フロントエンドアプリケーションは豊富なユーザーインタラクションとデータ表示機能を提供します。
-
+この方法により、フロントエンドアプリケーションで豊富なユーザー操作機能とデータ表示機能を提供できます。
 # テスト
-
-プロジェクトは Jest を用いて単体テストと結合テストを実施し、コードの正確性と安定性を確保します。同時に ESLint を用いてコード品質をチェックし、コードスタイルの一貫性を保ちます。
-
+本プロジェクトでは Jest を使用して単体テストと統合テストを行い、コードの正確性と安定性を確保します。また、ESLint を使用してコード品質をチェックし、コーディングスタイルの一貫性を維持します。
 ## Jest テスト
-
-Jest は強力な JavaScript テストフレームワークで、アサーション、モック、スナップショットテストをサポートします。
-
-### Jest 設定
-
-プロジェクトの `package.json` に Jest の設定を行います。
-
+Jest は、アサーション、モック、スナップショットテストをサポートする強力な JavaScript テストフレームワークです。
+### Jest の設定
+プロジェクトの `package.json` で Jest を設定します。
 ```json
 "scripts": {
   "test": "jest",
@@ -442,13 +386,10 @@ Jest は強力な JavaScript テストフレームワークで、アサーショ
   "coverageDirectory": "../coverage",
   "testEnvironment": "node"
 }
+
 ```
-
-
-### サンプルテスト
-
-以下はシンプルなサービステストの例です：
-
+### テスト例
+以下は簡単なサービステストの例です。
 ```typescript
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectsService } from './projects.service';
@@ -475,17 +416,12 @@ describe('ProjectsService', () => {
     });
   });
 });
+
 ```
-
-
-## ESLint コード品質チェック
-
-ESLint は JavaScript コードのパターンを検出・報告するツールで、開発者がコードの一貫性と品質を保つのに役立ちます。
-
-### ESLint 設定
-
-プロジェクトのルートに `.eslintrc.js` ファイルを作成します：
-
+## ESLint によるコード品質チェック
+ESLint は、JavaScript コード内のパターンを識別して報告するツールであり、開発者がコードの一貫性と品質を維持するのに役立ちます。
+### ESLint の設定
+プロジェクトのルートディレクトリに `.eslintrc.js` ファイルを作成します。
 ```javascript
 module.exports = {
   parser: '@typescript-eslint/parser',
@@ -510,35 +446,24 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
   },
 };
+
 ```
-
-
 ### ESLint の実行
-
-`package.json` にスクリプトを追加します：
-
+`package.json` にスクリプトを追加します。
 ```json
 "scripts": {
   "lint": "eslint . --ext .ts"
 }
+
 ```
-
 `npm run lint` を実行してコード品質をチェックします。
-
-Jest と ESLint を活用することで、プロジェクトはコードの正確性と一貫性を確保し、開発効率とコード品質を向上させます。
-
+Jest と ESLint を使用することで、プロジェクトはコードの正確性と一貫性を確保し、開発効率とコード品質を向上させることができます。
 # CI/CD
-
-このプロジェクトは GitHub Actions を用いて継続的インテグレーションと継続的デリバリー（CI/CD）を実現し、コミットごとに自動でビルド、テスト、デプロイを実行します。
-
+本プロジェクトでは GitHub Actions を使用して継続的インテグレーションと継続的デプロイ（CI/CD）を実現し、コードがコミットされるたびに自動的にビルド、テスト、デプロイされるようにしています。
 ## GitHub Actions
-
-GitHub Actions は、ソフトウェア開発ワークフローを自動化するツールです。設定ファイルを定義することで、コードリポジトリ内でビルド、テスト、デプロイのタスクを自動的に実行できます。
-
+GitHub Actions は、ソフトウェア開発ワークフローを自動化するためのツールです。ワークフローファイルを定義することで、コードリポジトリ内でビルド、テスト、デプロイの各タスクを自動実行できます。
 ### ワークフローの設定
-
-プロジェクトの `.github/workflows/deploy.yml` ファイルで CI/CD ワークフローを定義しています：
-
+プロジェクトの `.github/workflows/deploy.yml` ファイルで CI/CD ワークフローを定義します。
 ```yaml
 name: CI/CD Pipeline
 
@@ -606,12 +531,9 @@ jobs:
         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       run: |
         # 部署脚本或命令
+
 ```
-
-
 ## デプロイ
-
-- **DigitalOcean**: プロジェクトは DigitalOcean の Droplet 上にデプロイされ、フロントエンドは Nginx を介してデプロイされます。
-- **自動化フロー**: `main` ブランチへのコードコミットごとに、GitHub Actions が自動でビルド、テスト、デプロイのフローを実行します。
-
-このようにして、コードの変更に迅速に対応でき、各コミットのコードが厳密にテストと検証を経て、本番環境へ自動デプロイされることを保証します。
+- **DigitalOcean**: プロジェクトは DigitalOcean の Droplet 上にデプロイされ、フロントエンドは Nginx を介して配信されます。
+- **自動化フロー**: コードが `main` ブランチにコミットされるたびに、GitHub Actions がビルド、テスト、デプロイの各プロセスを自動的に実行します。
+この方法により、プロジェクトはコードの変更に迅速に対応できます。また、コミットされたコードが毎回厳格なテストと検証を受けたうえで、自動的に本番環境へデプロイされることを保証できます。

@@ -6,7 +6,7 @@ description: '在Ubuntu上安装ohMyZsh及其组件的步骤包括：首先安�
 permalink: 'ubuntu-ohmyzsh-setup'
 image: 'https://r2.dreaife.tokyo/notion/covers/1515465cca178073b194f4ade9c3a703/IMG_1723.jpg'
 tags: ['bash', 'linux']
-category: 'prog-side'
+category: 'cs-base'
 draft: false
 ---
 

@@ -1,175 +1,144 @@
 ---
-title: 'Bidding Platform Based on Nest.js and Angular, with Jest Tests and CI/CD'
+title: 'Auction Platform Built with Nest.js and Angular—with Jest Testing and CI/CD'
 published: 2024-12-07
 updated: 2024-12-08
-description: 'This project is a bidding platform built with Nest.js and Angular, providing features such as user registration, project management, and bid management. It uses PostgreSQL as the database and Swagger to generate API documentation. The backend implements secure authentication with AWS Cognito, while the frontend provides a user-friendly interface for project display and bid management. The project uses Jest for testing to ensure code quality and GitHub Actions for continuous integration and deployment.'
+description: 'This project is a bidding platform built with Nest.js and Angular. It provides user registration, project management, and bid management features, uses PostgreSQL as its database, and generates API documentation with Swagger. The backend implements secure authentication using AWS Cognito. The frontend offers a user-friendly interface for browsing projects and managing bids. Jest is used for testing to ensure code quality, while GitHub Actions enables continuous integration and deployment.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1555465cca1780f382f5f1421004b0a8/IMG_1767.jpg'
 tags: ['nodejs', 'ts', 'aws']
-category: 'BACKEND'
+category: 'PROJECT'
 draft: false
 lang: 'en'
 ---
 
-# Auction Platform Based on Nest.js and Angular
-
-## Project Overview
-
+# Bidding Platform Based on Nest.js and Angular
+## Overall Project Description
 This project is a bidding platform based on Nest.js and Angular, designed to provide a complete bidding and management system.
-
-Its main features include user registration and login, project creation and management, bid management, and user role management. The frontend is built with the Angular framework, the backend with the Nest.js framework, the database uses PostgreSQL, and API documentation is provided via Swagger.
-
-The project is deployed on a DigitalOcean Droplet, with the frontend served via Nginx.
-
+Its main features include user registration and login, project creation and management, bid management, and user role management. The frontend is built with Angular, the backend with Nest.js, and PostgreSQL is used as the database. API documentation is provided through Swagger.
+The project is deployed on a DigitalOcean Droplet, with the frontend served through Nginx.
 ```plain text
-Frontend (Angular)
-  ↓（API requests）
-Cognito (User authentication)
-  ↓（after verification, forwards requests）
-Backend (Nest.js)
-  ↓（database queries）
-Database (PostgreSQL)
-  ↑（data return）
-Backend (Nest.js)
-  ↑（processed response）
-Frontend (Angular)
+前端 (Angular)
+  ↓（API 请求）
+Cognito (用户认证)
+  ↓（验证通过后请求转发）
+后端 (Nest.js)
+  ↓（数据库查询）
+数据库 (PostgreSQL)
+  ↑（数据返回）
+后端 (Nest.js)
+  ↑（处理后的响应）
+前端 (Angular)
+
 ```
-
 ## Project Structure
-
-- **frontend**: Contains all frontend code, built with the Angular framework.
-- **backend**: Contains all backend code, built with the Nest.js framework.
+- **frontend**: Contains all frontend code and is built with Angular.
+- **backend**: Contains all backend code and is built with Nest.js.
 - **.github**: Contains GitHub Actions configuration files for continuous integration and deployment.
-
 # Backend
-
-## Backend Build
-
-The backend is built using the Nest.js framework, providing a modular and extensible architecture. Main features include user authentication, project management, bid management, etc. The backend uses TypeORM for database operations, supporting multiple database types.
-
-### Backend Tech Stack
-
+## Backend Development
+The backend is built with Nest.js, providing a modular and scalable architecture. Its main features include user authentication, project management, and bid management. The backend uses TypeORM for database operations and supports multiple database types.
+### Backend Technology Stack
 - **Nest.js**: Used to build efficient, scalable Node.js server-side applications.
-- **TypeORM**: An ORM framework for database interactions.
-- **Swagger**: Used to generate API documentation, making it easier for developers to view and test APIs.
-
+- **TypeORM**: An ORM framework used for database interaction.
+- **Swagger**: Used to generate API documentation, making it easier for developers to inspect and test APIs.
 ### Backend Build Steps
-
-1. **Install dependencies**: In the `backend` directory, run `npm install` to install all necessary dependencies.
-2. **Configure environment variables**: Create a `.env` file in the project root to configure database connection information and other environment variables.
-3. **Run development server**: Start the development server with `npm run start:dev`, supporting hot reloading.
-4. **Production build**: Use `npm run build` for production builds; the generated files are in the `dist` directory.
-
+1. **Install dependencies**: Run `npm install` in the `backend` directory to install all required dependencies.
+2. **Configure environment variables**: Create a `.env` file in the project root directory and configure database connection details and other environment variables.
+3. **Run the development server**: Use `npm run start:dev` to start the development server with hot reload support.
+4. **Production build**: Use `npm run build` to create a production build. The generated files are located in the `dist` directory.
 ### Database
-
-The project uses PostgreSQL as the database; all database operations are performed via TypeORM. The database initialization script is located at `backend/SQL/init-script.sql` and can be used to create and initialize the database.
-
-The backend codebase is well organized, and the modular design makes extending functionality and maintenance easier.
-
-## Backend Security Authentication
-
-Backend security authentication is implemented via AWS Cognito, combined with Nest.js interceptors and services to ensure user authentication and authorization.
-
-### Security Authentication Architecture
-
-- **AWS Cognito**: Used for user registration, login, and authentication. Cognito provides secure user pools and identity pool management.
-- **Nest.js Interceptors**: Used to intercept HTTP requests, validate the JWT Token in the request headers, ensuring the legitimacy of user identities.
-- **Service Layer**: Responsible for handling interactions with Cognito and associating Cognito users with user information in the database.
-
+The project uses PostgreSQL as its database, with all database operations handled through TypeORM. The database initialization script is located at `backend/SQL/init-script.sql` and can be used to create and initialize the database.
+The backend has a clear code structure, and its modular design makes feature expansion and maintenance more convenient.
+## Backend Security and Authentication
+Backend security and authentication are implemented through AWS Cognito in combination with Nest.js interceptors and services, ensuring proper user authentication and authorization.
+### Security and Authentication Architecture
+- **AWS Cognito**: Used for user registration, login, and authentication. Cognito provides secure user pool and identity pool management.
+- **Nest.js Interceptor**: Used to intercept HTTP requests and validate the JWT Token in the request headers, ensuring the user's identity is legitimate.
+- **Service Layer**: Responsible for interacting with Cognito and associating Cognito users with user information stored in the database.
 ### Implementation Steps
+1. **Configure a Cognito user pool**: Create a user pool in AWS Cognito and configure an app client to support JWT Token generation and validation.
+2. **JWT interceptor**: Create an interceptor in Nest.js that parses the JWT Token from the request headers, validates it, and attaches the user information to the request object.
+	```typescript
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, UnauthorizedException } from '@nestjs/common';
+import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
-1. **Cognito User Pool Configuration**: Create a user pool in AWS Cognito and configure the app client to support JWT token generation and validation.
-2. **JWT Interceptor**: Create an interceptor in Nest.js to parse the JWT token from the request headers, validate its validity, and attach user information to the request object.
+@Injectable()
+export class JwtInterceptor implements NestInterceptor {
+  constructor(private readonly authService: AuthService) {}
 
-    ```typescript
-    import { Injectable, NestInterceptor, ExecutionContext, CallHandler, UnauthorizedException } from '@nestjs/common';
-    import { Observable } from 'rxjs';
-    import { AuthService } from './auth.service';
-    
-    @Injectable()
-    export class JwtInterceptor implements NestInterceptor {
-      constructor(private readonly authService: AuthService) {}
-    
-      intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-        const request = context.switchToHttp().getRequest();
-        const token = request.headers.authorization?.split(' ')[1];
-    
-        if (!token) {
-          throw new UnauthorizedException('Token not found');
-        }
-    
-        const user = this.authService.validateToken(token);
-        if (!user) {
-          throw new UnauthorizedException('Invalid token');
-        }
-    
-        request.user = user;
-        return next.handle();
-      }
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    const request = context.switchToHttp().getRequest();
+    const token = request.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+      throw new UnauthorizedException('Token not found');
     }
-    ```
 
-3. **User Service**: Create a user service that retrieves user information from the database and associates it with Cognito users. Use the Cognito ID as the unique identifier to store user information in the database.
-
-    ```typescript
-    import { Injectable } from '@nestjs/common';
-    import { UsersRepository } from './users.repository';
-    
-    @Injectable()
-    export class UsersService {
-      constructor(private readonly usersRepository: UsersRepository) {}
-    
-      async findOrCreateUser(cognitoId: string, email: string) {
-        let user = await this.usersRepository.findOneByCognitoId(cognitoId);
-        if (!user) {
-          user = await this.usersRepository.create({ cognitoId, email });
-        }
-        return user;
-      }
+    const user = this.authService.validateToken(token);
+    if (!user) {
+      throw new UnauthorizedException('Invalid token');
     }
-    ```
 
-4. **Role and Permissions Management**: Define user roles in the database (e.g., admin, client, bidder) and perform authorization based on roles in the interceptor.
+    request.user = user;
+    return next.handle();
+  }
+}
 
-    ```typescript
-    import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-    import { Reflector } from '@nestjs/core';
-    
-    @Injectable()
-    export class RolesGuard implements CanActivate {
-      constructor(private reflector: Reflector) {}
-    
-      canActivate(context: ExecutionContext): boolean {
-        const roles = this.reflector.get<string[]>('roles', context.getHandler());
-        if (!roles) {
-          return true;
-        }
-        const request = context.switchToHttp().getRequest();
-        const user = request.user;
-        return roles.includes(user.role);
-      }
+	```
+3. **User service**: Create a user service responsible for retrieving user information from the database and associating it with Cognito users. Store user information in the database using the Cognito ID as the unique identifier.
+	```typescript
+import { Injectable } from '@nestjs/common';
+import { UsersRepository } from './users.repository';
+
+@Injectable()
+export class UsersService {
+  constructor(private readonly usersRepository: UsersRepository) {}
+
+  async findOrCreateUser(cognitoId: string, email: string) {
+    let user = await this.usersRepository.findOneByCognitoId(cognitoId);
+    if (!user) {
+      user = await this.usersRepository.create({ cognitoId, email });
     }
-    ```
+    return user;
+  }
+}
 
-    Add the `@Roles('admin')` decorator on APIs that require authorization to specify the required role.
+	```
+4. **Role and permission management**: Define user roles in the database, such as administrator, client, and bidder, and validate permissions by role in the interceptor.
+	```typescript
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 
-    ```typescript
-    @Post()
-    @Roles('admin')
-    createProject(@Body() createProjectDto: CreateProjectDto) {
-      return this.projectsService.createProject(createProjectDto);
+@Injectable()
+export class RolesGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+
+  canActivate(context: ExecutionContext): boolean {
+    const roles = this.reflector.get<string[]>('roles', context.getHandler());
+    if (!roles) {
+      return true;
     }
-    ```
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+    return roles.includes(user.role);
+  }
+}
 
-This approach allows the backend to effectively manage user identities and permissions, ensuring the security and reliability of the system.
+	```
+	Add the `@Roles('admin')` decorator to APIs that require permission validation to specify the required role.
+	```typescript
+@Post()
+@Roles('admin')
+createProject(@Body() createProjectDto: CreateProjectDto) {
+  return this.projectsService.createProject(createProjectDto);
+}
 
+	```
+This approach enables the backend to manage user identities and permissions effectively, ensuring system security and reliability.
 ## Project Management Implementation
-
-In the project management module, it will show how to call a Service via a Controller, then have the Service interact with the database.
-
+The project management module demonstrates how the Controller calls the Service, which then interacts with the database.
 ### Controller
-
-In `ProjectsController`, define the routes and methods to handle HTTP requests.
-
+In `ProjectsController`, routes and methods are defined to handle HTTP requests.
 ```typescript
 import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
@@ -204,12 +173,10 @@ export class ProjectsController {
     return this.projectsService.delete(id);
   }
 }
+
 ```
-
 ### Service
-
-`ProjectsService` handles business logic and interacts with the database.
-
+`ProjectsService` is responsible for handling business logic and interacting with the database.
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
@@ -240,12 +207,10 @@ export class ProjectsService {
     return this.dataSource.getRepository(Project).delete(id);
   }
 }
+
 ```
-
-### Database Entities
-
-`Project` defines the project's structure in the database. The `@Entity()` decorator declares the entity, and the `@Column()` decorator defines its columns.
-
+### Database Entity
+The `Project` entity defines the structure of a project in the database. The entity is defined using the `@Entity()` decorator, while columns are defined using the `@Column()` decorator.
 ```typescript
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -272,32 +237,22 @@ export class Project {
   @Column({ default: 'open' })
   status: string;
 }
+
 ```
-
-Through this approach, the Controller handles HTTP requests, the Service handles business logic, and the database entity defines the data structure. The three work together to implement complete project management functionality.
-
+With this approach, the Controller handles HTTP requests, the Service handles business logic, and the database entity defines the data structure. Together, they provide complete project management functionality.
 # Frontend
-
-The frontend is built with the Angular framework, providing a user-friendly interface and rich interactions. Main features include project display, bid management, user registration and login, etc.
-
-## Frontend Tech Stack
-
+The frontend is built with Angular, providing a user-friendly interface and interactive experience. Its main features include project display, bid management, user registration, and login.
+## Frontend Technology Stack
 - **Angular**: Used to build modern single-page applications.
-- **RxJS**: Used to handle asynchronous data streams.
+- **RxJS**: Used to process asynchronous data streams.
 - **Angular CLI**: Provides powerful development tools and a command-line interface.
-
 ## Frontend Build Steps
-
-1. **Install dependencies**: Run `npm install` in the `frontend` directory to install all necessary dependencies.
-2. **Development server**: Start the development server with `ng serve`, typically running at `http://localhost:4200/`.
-3. **Production build**: Use `ng build` for production builds; the generated files are in the `dist` directory.
-
+1. **Install dependencies**: Run `npm install` in the `frontend` directory to install all required dependencies.
+2. **Development server**: Use `ng serve` to start the development server, which runs at `http://localhost:4200/` by default.
+3. **Production build**: Use `ng build` to create a production build. The generated files are located in the `dist` directory.
 ## Project Details Component
-
-The frontend application consists of multiple components, each responsible for a specific feature module. Here is an implementation of a sample component.
-
-`ProjectDetailComponent` is used to display the details of a single project.
-
+The frontend application consists of multiple components, with each component responsible for a specific functional module. The following is an example component implementation.
+`ProjectDetailComponent` is used to display detailed information about a single project.
 ```typescript
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -341,9 +296,9 @@ export class ProjectDetailComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Failed to load project details';
+        this.error = '加载项目详情失败';
         this.loading = false;
-        console.error('Error loading project details:', err);
+        console.error('加载项目详情错误:', err);
       }
     });
   }
@@ -354,22 +309,19 @@ export class ProjectDetailComponent implements OnInit {
         this.bids = data;
       },
       error: (err) => {
-        console.error('Error loading bid list:', err);
+        console.error('加载投标列表错误:', err);
       }
     });
   }
 }
+
 ```
-
-
 ### Template File
-
-`project-detail.component.html` defines the structure for displaying project details.
-
+`project-detail.component.html` defines the display structure for the project details.
 ```html
 <div class="project-detail">
   <div *ngIf="loading" class="loading">
-    Loading...
+    加载中...
   </div>
 
   <div *ngIf="error" class="error">
@@ -379,13 +331,13 @@ export class ProjectDetailComponent implements OnInit {
   <div *ngIf="project && !loading" class="project-info">
     <h2>{{ project.title }}</h2>
     <div class="project-meta">
-      <p>Budget: ¥{{ project.budget_min }} - ¥{{ project.budget_max }}</p>
-      <p>Deadline: {{ project.deadline | date }}</p>
-      <p>Status: {{ project.status }}</p>
+      <p>预算: ¥{{ project.budget_min }} - ¥{{ project.budget_max }}</p>
+      <p>截止日期: {{ project.deadline | date }}</p>
+      <p>状态: {{ project.status }}</p>
     </div>
 
     <div class="project-description">
-      <h3>Project Description</h3>
+      <h3>项目描述</h3>
       <p>{{ project.description }}</p>
     </div>
 
@@ -396,33 +348,25 @@ export class ProjectDetailComponent implements OnInit {
     </app-bid-form>
 
     <div class="bids-section" *ngIf="userRole === 'client' || userRole === 'admin'">
-      <h3>Bid List</h3>
+      <h3>投标列表</h3>
       <div *ngFor="let bid of bids" class="bid-card">
-        <p>Bidder: {{ bid.bidder_id }}</p>
-        <p>Bid Amount: ¥{{ bid.amount }}</p>
-        <p>Bid Description: {{ bid.message }}</p>
-        <p>Status: {{ bid.status }}</p>
+        <p>投标人: {{ bid.bidder_id }}</p>
+        <p>投标金额: ¥{{ bid.amount }}</p>
+        <p>投标说明: {{ bid.message }}</p>
+        <p>状态: {{ bid.status }}</p>
       </div>
     </div>
   </div>
 </div>
+
 ```
-
-
-In this way, the frontend application can provide rich user interaction and data presentation features.
-
+This approach enables the frontend application to provide rich user interactions and data presentation capabilities.
 # Testing
-
-The project uses Jest for unit and integration testing to ensure code correctness and stability. ESLint is also used for code quality checks to ensure consistent coding style.
-
-## Jest Tests
-
-Jest is a powerful JavaScript testing framework that supports assertions, mocks, and snapshot testing.
-
+The project uses Jest for unit and integration testing to ensure code correctness and stability. ESLint is also used for code quality checks to maintain a consistent coding style.
+## Jest Testing
+Jest is a powerful JavaScript testing framework that supports assertions, mocking, and snapshot testing.
 ### Jest Configuration
-
 Configure Jest in the project's `package.json`:
-
 ```json
 "scripts": {
   "test": "jest",
@@ -442,13 +386,10 @@ Configure Jest in the project's `package.json`:
   "coverageDirectory": "../coverage",
   "testEnvironment": "node"
 }
+
 ```
-
-
 ### Example Test
-
 The following is a simple service test example:
-
 ```typescript
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectsService } from './projects.service';
@@ -475,17 +416,12 @@ describe('ProjectsService', () => {
     });
   });
 });
+
 ```
-
-
 ## ESLint Code Quality Checks
-
-ESLint is a tool that identifies and reports patterns in JavaScript code, helping developers maintain consistency and quality.
-
+ESLint is a tool for identifying and reporting patterns in JavaScript code, helping developers maintain code consistency and quality.
 ### ESLint Configuration
-
-Create a `.eslintrc.js` file in the project root:
-
+Create a `.eslintrc.js` file in the project root directory:
 ```javascript
 module.exports = {
   parser: '@typescript-eslint/parser',
@@ -510,36 +446,24 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
   },
 };
+
 ```
-
-
 ### Running ESLint
-
-Add a script in `package.json`:
-
+Add a script to `package.json`:
 ```json
 "scripts": {
   "lint": "eslint . --ext .ts"
 }
+
 ```
-
-
 Run `npm run lint` to check code quality.
-
-By using Jest and ESLint, the project can ensure code correctness and consistency, improving development efficiency and code quality.
-
+By using Jest and ESLint, the project can ensure code correctness and consistency while improving development efficiency and code quality.
 # CI/CD
-
-The project uses GitHub Actions to implement continuous integration and continuous deployment (CI/CD), ensuring code is automatically built, tested, and deployed after each commit.
-
+The project uses GitHub Actions to implement continuous integration and continuous deployment (CI/CD), ensuring that the code is automatically built, tested, and deployed after every commit.
 ## GitHub Actions
-
-GitHub Actions is a tool for automating software development workflows. By defining workflow files, you can automatically perform build, test, and deployment tasks in the repository.
-
+GitHub Actions is a tool for automating software development workflows. By defining workflow files, build, test, and deployment tasks can be executed automatically within the repository.
 ### Workflow Configuration
-
-The CI/CD workflow is defined in the project at `.github/workflows/deploy.yml`:
-
+The CI/CD workflow is defined in the project's `.github/workflows/deploy.yml` file:
 ```yaml
 name: CI/CD Pipeline
 
@@ -606,13 +530,10 @@ jobs:
       with:
         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       run: |
-        # Deployment scripts or commands
+        # 部署脚本或命令
+
 ```
-
-
 ## Deployment
-
-- **DigitalOcean**: The project is deployed on a DigitalOcean Droplet, with the frontend served via Nginx.
-- **Automation**: Each push to the main branch triggers automatic building, testing, and deployment via GitHub Actions.
-
-This approach allows the project to respond quickly to code changes, ensuring every commit is thoroughly tested and validated, and automatically deployed to production.
+- **DigitalOcean**: The project is deployed on a DigitalOcean Droplet, with the frontend served through Nginx.
+- **Automated workflow**: Whenever code is committed to the `main` branch, GitHub Actions automatically runs the build, test, and deployment workflow.
+This approach enables the project to respond quickly to code changes, ensuring that every commit undergoes rigorous testing and validation before being deployed automatically to the production environment.

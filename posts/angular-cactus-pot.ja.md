@@ -1,83 +1,59 @@
 ---
-title: 'Angularベースのアニメ展示サイト＋ログイン・登録（Cognito）'
+title: 'Angularベースのアニメーション展示サイト＋ログイン・新規登録（Cognito）'
 published: 2024-11-12
 updated: 2024-11-12
-description: 'このプロジェクトは、Bangumi上のアニメを表示・検索するためのAngularベースのWebアプリで、ユーザー認証にCognitoを使用しています。GitHub Actionsによる自動ビルド・デプロイを通じて、GitHub Pagesへの自動デプロイにも対応しています。主な技術スタックはAngular 16、TypeScript、HTML、CSSで、ログイン、登録、検索、アニメカレンダーなどの機能を備えています。'
+description: 'このプロジェクトは、Bangumiのアニメ作品を表示・検索するためのAngularベースのWebアプリケーションで、ユーザー認証にはCognitoを使用しています。GitHub Actionsによる自動ビルドとGitHub Pagesへの自動デプロイに対応しています。主な技術スタックはAngular 16、TypeScript、HTML、CSSで、明確なプロジェクト構成を備え、ユーザーのログイン、登録、検索、アニメカレンダーなどの機能を搭載しています。'
 image: 'https://r2.dreaife.tokyo/notion/covers/13c5465cca178004ad54d1f3b101d56a/IMG_1506.jpg'
 tags: ['ts', 'angular', 'github-action', 'doc']
-category: 'FRONTEND'
+category: 'PROJECT'
 draft: false
 lang: 'ja'
 ---
 
-# プロジェクト紹介
-
-本プロジェクトは私の Angular 練習用のプロジェクトで、Angular をベースとした Web アプリケーションです。Bangumi に掲載されているアニメを表示・検索するためのもので、API は [Bangumi API](https://bangumi.github.io/api/) から提供されています。
-
-本プロジェクトは [GitHub Actions](https://github.com/features/actions) を使用して、[GitHub Pages](https://dreaife.github.io/my-angular-project-test/) に自動デプロイします。
-
-## プロジェクト名
-
-my-angular-project-test
-
-URL：[https://dreaife.github.io/my-angular-project-test/](https://dreaife.github.io/my-angular-project-test/)
-
-## プロジェクトの目的
-
-- Angular をベースにした静的サイトをデプロイする
-- GitHub Actions の自動デプロイを練習する
-- API 呼び出しで機能を実現する
-- Cognito を使用してユーザー認証を行う
-- インターセプターを使用してリクエストを処理する
-- ガードを使用してページを保護する
-
-## プロジェクト技術スタック
-
-- Angular 16
-- TypeScript
-- HTML
-- CSS
-- GitHub Actions
-- Cognito
-
-# 環境準備
-
-## 環境要件
-
-- Node.js バージョン 20 以上
-- Angular CLI
-
-## インストール手順
-
-1. Node.js をインストール
-
-    ```shell
-    <https://nodejs.org/en/download/>
-    ```
-
-2. Angular CLI をインストール
-
-    ```shell
-    npm install -g @angular/cli
-    ```
-
-3. プロジェクトを取得
-
-    ```shell
-    git clone <https://github.com/dreaife/my-angular-project-test.git>
-    cd my-angular-project-test
-    npm install
-    ```
-
-
-# プロジェクト構成
-
-## ディレクトリ構成
-
-本プロジェクトは Angular CLI を使用して作成され、構造は以下のとおりです：
-
-
-```plain text
+<synced_block url="https://app.notion.com/p/13c5465cca178004ad54d1f3b101d56a#13c5465cca178062a954c5a48b7da40e">
+	# プロジェクト紹介
+	本プロジェクトは、私がAngularを練習するために作成したAngularベースのWebアプリケーションです。[Bangumi API](https://bangumi.github.io/api/)を使用して、Bangumi上のアニメを表示・検索します。
+	本プロジェクトは、[GitHub Actions](https://github.com/features/actions)を使用して[GitHub Pages](https://dreaife.github.io/my-angular-project-test/)へ自動的にデプロイされます。
+	## プロジェクト名
+	my-angular-project-test
+	アドレス：[https://dreaife.github.io/my-angular-project-test/](https://dreaife.github.io/my-angular-project-test/)
+	## プロジェクトの目的
+	- Angularベースの静的Webサイトをデプロイする
+	- GitHub Actionsによる自動デプロイを練習する
+	- APIを呼び出して機能を実装する
+	- Cognitoを使用してユーザー認証を行う
+	- インターセプターを使用してリクエストを処理する
+	- ガードを使用してページを保護する
+	## 技術スタック
+	- Angular 16
+	- TypeScript
+	- HTML
+	- CSS
+	- GitHub Actions
+	- Cognito
+	# 環境の準備
+	## 環境要件
+	- Node.js バージョン20以降
+	- Angular CLI
+	## インストール手順
+	1. Node.jsをインストールする
+		```shell
+<https://nodejs.org/en/download/>
+		```
+	2. Angular CLIをインストールする
+		```shell
+npm install -g @angular/cli
+		```
+	3. プロジェクトをインストールする
+		```shell
+git clone <https://github.com/dreaife/my-angular-project-test.git>
+cd my-angular-project-test
+npm install
+		```
+	# プロジェクト構成
+	## ディレクトリ構成
+	本プロジェクトはAngular CLIを使用して作成されており、構成は次のとおりです：
+	```plain text
 my-angular-project-test/
 ├── src/
 │   ├── app/
@@ -98,39 +74,29 @@ my-angular-project-test/
 │   ├── index.html
 │   ├── main.ts
 ├── ...
-```
-
-
-以下の通りに:
-
-- `src/app` ディレクトリはプロジェクトの主要ディレクトリで、すべてのコンポーネント、サービス、インターセプター、ガード等を含みます。
-- `src/environments` ディレクトリは環境設定ファイルで、開発環境と本番環境の設定を含みます。
-- `src/components` ディレクトリはプロジェクトの主要コンポーネントで、すべてのページコンポーネントを含みます。
-    - `login` コンポーネントはログインページで、Cognito の SDK を使用してログインします。
-    - `home` コンポーネントはアニメーションカレンダーのページで、`bgm.service.getCalendar` を呼び出してデータを取得・表示します。
-    - `search` コンポーネントは検索ページで、`bgm.service.search` を呼び出してデータを取得・表示します。
-- `src/guards` ディレクトリはプロジェクトの主要なガードを含み、`auth.guard.ts` ガードを含み、ログインが必要なページを保護します。未ログインの場合はログインページへリダイレクトします。
-- `src/interceptors` ディレクトリはプロジェクトの主要なインターセプターを含み、`auth.interceptor.ts` インターセプターを含み、リクエストに認証情報を追加します。
-- `src/services` ディレクトリはプロジェクトの主要なサービスで、`auth.service.ts` サービスはログイン・ログアウトなどの処理を担当します。`bgm.service.ts` サービスは Bangumi API を呼び出すためのものです。
-- `src/main.ts` はプロジェクトのメインエントリーファイルで、Angular アプリケーションを起動するためのものです。
-
-# 关键功能实现
-
-## 使用Cognito进行用户认证
-
-### Cognito を使用したユーザー認証
-
-`src/app/services/auth.service.ts` で、Cognito の SDK を使用してユーザー認証を行います。
-
-Cognito を使用する前に、AWS Cognito でユーザプールを作成し、カスタム Cognito バリデーションドメインを設定し、アプリクライアントを作成してクライアントIDを取得する必要があります。
-
-取得した ID を `src/app/environment/environment.ts` に配置して、Cognito の設定情報を行います。
-
-### ログイン
-
-`ログイン`
-
-```typescript
+	```
+	各ディレクトリの説明：
+	- `src/app`<br>プロジェクトのメインディレクトリで、すべてのコンポーネント、サービス、インターセプター、ガードなどが含まれます。
+	- `src/environments`<br>環境設定ファイルのディレクトリで、開発環境および本番環境の設定が含まれます。
+	- `src/components`<br>プロジェクトの主要コンポーネントのディレクトリで、すべてのページコンポーネントが含まれます。
+		- `login` コンポーネントはログインページで、Cognito SDKを呼び出してログインします。
+		- `home` コンポーネントはアニメカレンダーページで、`bgm.service.getCalendar`を呼び出してデータを取得し、表示します。
+		- `search` コンポーネントは検索ページで、`bgm.service.search`を呼び出してデータを取得し、表示します。
+	- `src/guards`<br>プロジェクトの主要なガードのディレクトリです。ログインが必要なページを保護するための `auth.guard.ts` ガードが含まれており、未ログインの場合はログインページへリダイレクトします。
+	- `src/interceptors`<br>プロジェクトの主要なインターセプターのディレクトリです。リクエストに認証情報を追加するための `auth.interceptor.ts` インターセプターが含まれます。
+	- `src/services`<br>プロジェクトの主要なサービスのディレクトリです。ログインやログアウトなどの処理を行う `auth.service.ts` サービスと、Bangumi APIを呼び出す `bgm.service.ts` サービスが含まれます。
+	- `src/main.ts`<br>Angularアプリケーションを起動するための、プロジェクトのメインエントリーファイルです。
+	# 主要機能の実装
+	## Cognitoを使用したユーザー認証
+	`src/app/services/auth.service.ts` では、Cognito SDKを使用してユーザー認証を行います。
+	Cognitoを使用する前に、AWS Cognitoでユーザープールを作成し、カスタムCognito認証ドメインを設定してから、アプリクライアントを作成してクライアントIDを取得する必要があります。
+	取得したIDを使用して、`src/app/environment/environment.ts` にCognitoの設定情報を記述します。
+	### ログイン
+	cognitoUser.authenticateUserメソッドを使用してログインし、成功後にidTokenまたはaccessTokenをsessionStorageへ保存します。
+	ヒント：
+	未検証のユーザーは、最初に新しいパスワードを設定する必要があります。この場合はnewPasswordRequiredメソッドをオーバーライドし、resolve(\{ newPasswordRequired: true, cognitoUser \})を設定します。これによりログインページの表示内容を切り替え、ユーザーに新しいパスワードの設定を促します。
+	実装コード：
+	```typescript
 signIn(username: string, password: string): Promise<any> {
     const authenticationDetails = new AuthenticationDetails({
       Username: username,
@@ -174,13 +140,10 @@ signIn(username: string, password: string): Promise<any> {
       });
     });
   }
-```
-
-
-用户设置新密码时，调用completeNewPassword方法，通过cognitoUser.completeNewPasswordChallenge方法设置新密码。
-
-```typescript
-// 设置新密码方法
+	```
+	ユーザーが新しいパスワードを設定する際はcompleteNewPasswordメソッドを呼び出し、cognitoUser.completeNewPasswordChallengeメソッドで新しいパスワードを設定します。
+	```typescript
+  // 设置新密码方法
   completeNewPassword(cognitoUser: CognitoUser, newPassword: string): Promise<any> {
     return new Promise((resolve, reject) => {
       cognitoUser.completeNewPasswordChallenge(newPassword, {}, {
@@ -189,15 +152,11 @@ signIn(username: string, password: string): Promise<any> {
       });
     });
   }
-```
-
-
-### 注册
-
-通过cognitoUser.signUp方法进行注册，成功后将用户名和密码存储到cognito中。将页面重定向到登录页面。
-
-```typescript
-// 注册方法
+	```
+	### 登録
+	cognitoUser.signUpメソッドを使用して登録し、成功後にユーザー名とパスワードをCognitoへ保存します。その後、ログインページへリダイレクトします。
+	```typescript
+  // 注册方法
   signUp(username: string, password: string, email: string): Promise<any> {
     return new Promise((resolve, reject) => {
       const attributeList : CognitoUserAttribute[] = [];
@@ -212,40 +171,28 @@ signIn(username: string, password: string): Promise<any> {
       });
     });
   }
-```
-
-
-### 登出
-
-通过cognitoUser.signOut方法进行登出，登出后删除sessionStorage中的userToken。
-
-```typescript
-logout() {
+	```
+	### ログアウト
+	cognitoUser.signOutメソッドを使用してログアウトし、ログアウト後にsessionStorage内のuserTokenを削除します。
+	```typescript
+  logout() {
     // 登出
     this.userPool.getCurrentUser()?.signOut();
     sessionStorage.removeItem('userToken');
     this.router.navigate(['/login']);
   }
-```
-
-
-## ログインページ
-
-ログインページは `src/app/components/login/login.component.ts` で、Cognito の SDK を使用してログインを実行し、成功時には idToken または accessToken を sessionStorage に保存します。
-
-ページは authMode で表示内容を制御します。authMode には以下の種類があります：
-
-- login：ログインページ
-- register：登録ページ
-- forgotPassword：パスワードを忘れたページ
-- confirmSignUp：確認ページ
-- resetPassword：パスワードをリセットするページ
-
-対応するボタンをクリックすると、authService の switchMode メソッドを呼び出して authMode を切り替え、表示内容を切り替えます。
-
-ページの実装：
-
-```typescript
+	```
+	## ログインページ
+	ログインページは `src/app/components/login/login.component.ts` です。Cognito SDKを使用してログインし、成功後にidTokenまたはaccessTokenをsessionStorageへ保存します。
+	ページの表示内容はauthModeによって制御されます。authModeには次の種類があります：
+	- login：ログインページ
+	- register：登録ページ
+	- forgotPassword：パスワードを忘れた場合のページ
+	- confirmSignUp：確認ページ
+	- resetPassword：パスワードリセットページ
+	各ボタンをクリックすると、authServiceのswitchModeメソッドが呼び出され、authModeを切り替えることでページの表示内容も切り替わります。
+	ページの実装：
+	```typescript
 switchMode(mode: 'login' | 'register' | 'forgotPassword' | 'confirmSignUp' | 'resetPassword') {
     this.authMode = mode;
     this.message = '';
@@ -256,58 +203,53 @@ switchMode(mode: 'login' | 'register' | 'forgotPassword' | 'confirmSignUp' | 're
       this.authService.signIn(this.username, this.password).then(
         (resp) => {
           if (resp.newPasswordRequired) {
-            // 初回ログインでパスワード変更が必要、モーダルを表示
+            // 初次登录需要重置密码，显示浮窗
             this.showNewPasswordModal = true;
             this.cognitoUser = resp.cognitoUser;
           } else {
-            // ログイン成功
-            this.message = 'ログイン成功！';
+            // 登录成功
+            this.message = '登录成功！';
           }
         }).catch(err => {
-          this.message = `ログイン失敗：${err}`;
+          this.message = `登录失败：${err}`;
         });
     } else if (this.authMode === 'register') {
       this.authService.signUp(this.username, this.password, this.email).then(
         () => {
-          this.message = '登録に成功しました！メールを確認して認証コードを入力してください。';
+          this.message = '注册成功！请检查邮箱并输入验证码。';
           this.authMode = 'confirmSignUp';
         },
-        (err) => (this.message = `登録に失敗しました：${err}`)
+        (err) => (this.message = `注册失败：${err}`)
       );
     } else if (this.authMode === 'forgotPassword') {
       this.authService.forgotPassword(this.username).then(
         () => {
-          this.message = '認証コードを送信しました。メールを確認して認証コードと新しいパスワードを入力してください。';
+          this.message = '验证码已发送，请检查邮箱并输入验证码和新密码。';
           this.authMode = 'resetPassword';
         },
-        (err) => (this.message = `認証コードの送信に失敗しました：${err}`)
+        (err) => (this.message = `发送验证码失败：${err}`)
       );
     } else if (this.authMode === 'confirmSignUp') {
       this.authService.confirmSignUp(this.username, this.code).then(
-        () => (this.message = '認証成功！ ログインしてください。'),
-        (err) => (this.message = `認証に失敗しました：${err}`)
+        () => (this.message = '验证成功！请登录。'),
+        (err) => (this.message = `验证失败：${err}`)
       );
     } else if (this.authMode === 'resetPassword') {
       this.authService.confirmPassword(this.username, this.code, this.newPassword).then(
         () => {
-          this.message = 'パスワードのリセットに成功しました！ 新しいパスワードでログインしてください。';
-          this.authMode = 'login'; // ログインページに切り替え
+          this.message = '密码重置成功！请使用新密码登录。';
+          this.authMode = 'login'; // 切换回登录页面
         },
-        (err) => (this.message = `パスワードの更新に失敗しました：${err}`)
+        (err) => (this.message = `密码更新失败：${err}`)
       );
     }
   }
-```
-
-
-## アニメーションカレンダーページ
-
-アニメーションカレンダーページは `src/app/components/home/home.component.ts` で、`bgm.service.getCalendar` を呼び出してデータを取得・表示します。
-
-ページが初期化されると、`ngOnInit` メソッドを呼び出してデータを取得・表示します。
-
-```typescript
-ngOnInit() : void {
+	```
+	## アニメカレンダーページ
+	アニメカレンダーページは `src/app/components/home/home.component.ts` です。`bgm.service.getCalendar`を呼び出してデータを取得し、表示します。
+	ページの初期化時に`ngOnInit`メソッドを呼び出し、データを取得して表示します。
+	```typescript
+  ngOnInit() : void {
     // this.bgmService.getCalendar().subscribe(data => console.log(data));
     // this.bgmService.getSubject('482850').subscribe(data => console.log(data));
     this.bgmService.getCalendar().subscribe((data:any[]) => {
@@ -343,35 +285,28 @@ ngOnInit() : void {
     const website = this.selectedItem.infobox.find((info: any) => info.key === '官方网站');
     return website ? website.value : null;
   }
-```
-
-
-## 検索ページ
-
-検索ページは `src/app/components/search/search.component.ts` で、`bgm.service.search` を呼び出してデータを取得・表示します。
-
-ページは title で検索キーワードを受け取り、options で表示内容を制御します。options には次の種類があります：
-
-- limit：1 ページあたりの表示件数
-- type：タイプ
-- meta_tags：メタタグ
-- tag：タグ
-- air_date：放送日
-- rating：評価
-- rank：ランク
-- nsfw：アダルト内容を含むか
-- page：ページ番号
-
-API へリクエストを送る際、title と options を組み直して送信します。リクエストの再構築は以下のとおりです：
-
-```typescript
-// 検索方法
+	```
+	## 検索ページ
+	検索ページは `src/app/components/search/search.component.ts` です。`bgm.service.search`を呼び出してデータを取得し、表示します。
+	ページはtitleで検索キーワードを受け取り、optionsで表示内容を制御します。optionsには次の項目があります：
+	- limit：1ページあたりの表示件数
+	- type：種類
+	- meta_tags：メタタグ
+	- tag：タグ
+	- air_date：放送日
+	- rating：評価
+	- rank：ランキング
+	- nsfw：成人向けコンテンツを含むかどうか
+	- page：ページ番号
+	APIへリクエストを送信する際は、titleとoptionsを再構成してから送信します。リクエストの再構成は次のとおりです：
+	```typescript
+// 搜索方法
   onSearch(): void {
     if (this.searchQuery.trim()) {
       this.isLoading = true;
       this.errorMessage = '';
 
-      // 検索オプションを設定
+      // 配置搜索选项
       const options = {
         limit: this.limit,
         type: this.type,
@@ -386,46 +321,38 @@ API へリクエストを送る際、title と options を組み直して送信�
 
       this.bgmService.searchSubject(this.searchQuery, options).subscribe(
         (response: any) => {
-          this.searchResults = response.data; // data 配列を抽出
-          this.totalResults = response.total; // 総数を抽出
+          this.searchResults = response.data; // 提取 data 数组
+          this.totalResults = response.total; // 提取总数
           this.isLoading = false;
         },
         (error) => {
-          this.errorMessage = '検索に失敗しました。再試行してください。';
+          this.errorMessage = '搜索失败，请重试。';
           this.isLoading = false;
         }
       );
     }
   }
-```
-
-
-## インターセプターによる認証情報の付与
-
-`src/app/interceptors/auth.interceptor.ts` では、インターセプターを介してリクエストに認証情報を追加します。
-
-インターセプターの実装：
-
-```typescript
+	```
+	## インターセプターによる認証情報の追加
+	`src/app/interceptors/auth.interceptor.ts` では、インターセプターを使用してリクエストに認証情報を追加します。
+	インターセプターの実装：
+	```typescript
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authToken = environment.bgm.authToken;
 
-  if (req.url.startsWith('<https://api.bgm.tv/v0>')) { # もしリクエストURLがhttps://api.bgm.tv/v0で始まる場合、認証情報を追加
+  if (req.url.startsWith('<https://api.bgm.tv/v0>')) { # 如果请求地址以https://api.bgm.tv/v0开头，则添加认证信息
     const authReq = req.clone({
       setHeaders: {
-        Authorization: `Bearer ${authToken}`, # 認証情報を追加
+        Authorization: `Bearer ${authToken}`, # 添加认证信息
       }
     });
     return next(authReq);
   }
   return next(req);
 };
-```
-
-
-インターセプターを使用する際には app.config.ts でインターセプターを設定する必要があります。
-
-```typescript
+	```
+	インターセプターを使用するには、app.config.tsでインターセプターを設定する必要があります。
+	```typescript
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(
@@ -433,16 +360,11 @@ export const appConfig: ApplicationConfig = {
     )
   ]
 };
-```
-
-
-## ガードによるページ保護
-
-`src/app/guards/auth.guard.ts` で、ログインが必要なページを保護します。未ログインの場合はログインページへリダイレクトします。
-
-ガードの実装：
-
-```typescript
+	```
+	## ガードによるページ保護
+	`src/app/guards/auth.guard.ts` では、ガードを使用してログインが必要なページを保護し、未ログインの場合はログインページへリダイレクトします。
+	ガードの実装：
+	```typescript
 export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
@@ -450,121 +372,104 @@ export const authGuard: CanActivateFn = (route, state) => {
   if (authService.isLoggedIn()) {
     return true;
   } else {
-    // 未ログインの場合、/loginへリダイレクト
+    // 没有登录，重定向到 /login
     router.navigate(['/login']);
     return false;
   }
 };
-```
-
-
-ルーティング設定でガードを使用します。
-
-```typescript
+	```
+	ガードを使用するには、ルーティング設定でガードを指定する必要があります。
+	```typescript
 { path: '', component: HomeComponent, canActivate: [authGuard] }, # 主页需要登录
-```
-
-
-# プロジェクト起動
-
-1. プロジェクトを起動
-
-    ```shell
-    ng serve
-    ```
-
-2. アクセス先
-
-    アクセス先：[http://localhost:4200/](http://localhost:4200/)
-
-
-# プロジェクトデプロイ
-
-- ローカルでプロジェクトをビルド
-
-    ```shell
-    ng build
-    ```
-
-- 自動デプロイ
-
-    本プロジェクトは GitHub Actions を使用して GitHub Pages に自動デプロイします。コードを GitHub にプッシュするたび、GitHub Actions がプッシュイベントを検出し、自動的にプロジェクトをビルドして GitHub Pages にデプロイします。
-
-    設定ファイル `.github/workflows/main.yml` を作成して、GitHub Actions による自動デプロイを設定します。
-
-    内容は以下のとおりです：
-
-```yaml
-# GitHub Actions ワークフロー，用途: プロジェクトを GitHub Pages にデプロイ
+	```
+	# プロジェクトの起動
+	1. プロジェクトを起動する
+		```shell
+ng serve
+		```
+	2. アドレスへアクセスする
+		アクセス先：[http://localhost:4200/](http://localhost:4200/)
+	# プロジェクトのデプロイ
+	- プロジェクトをローカルでビルドする
+		```shell
+ng build
+		```
+	- 自動デプロイ
+		本プロジェクトは、GitHub Actionsを使用してGitHub Pagesへ自動的にデプロイされます。コードをGitHubへpushするたびに、GitHub Actionsがpushイベントを検出し、プロジェクトを自動的にビルドしてGitHub Pagesへデプロイします。
+		GitHub Actionsによるプロジェクトの自動デプロイを設定するため、設定ファイル`.github/workflows/main.yml`を作成します。
+		内容は次のとおりです：
+		```yaml
+# GitHub Actions 工作流，用于将项目部署到 GitHub Pages
 name: Deploy to GitHub Pages
 
-# トリガー条件: master ブランチへプッシュされたとき
+# 触发条件：当推送到 master 分支时触发
 on:
-  push:
+push:
     branches:
-    - master  # または監視するブランチ名
+    - master  # 或者你要监控的分支名称
 
 jobs:
-  build-and-deploy:
-    # 最新の Ubuntu を実行環境として使用
+build-and-deploy:
+    # 使用最新的 Ubuntu 作为运行环境
     runs-on: ubuntu-latest
     steps:
-    # 第1歩：コードをチェックアウト
+    # 第一步：检出代码
     - name: Checkout code
-      uses: actions/checkout@v3
+        uses: actions/checkout@v3
 
-    # 第2歩：Node.js 環境を設定
+    # 第二步：设置 Node.js 环境
     - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-      node-version: '20'  # プロジェクトの要件に応じて Node.js のバージョンを変更
+        uses: actions/setup-node@v3
+        with:
+        node-version: '20'  # 请根据项目需求修改 Node.js 版本
 
-    # 第3歩：プロジェクトの依存をインストール
+    # 第三步：安装项目依赖
     - name: Install dependencies
-      run: npm install
+        run: npm install
 
-    # 第4歩：環境設定ファイル environment.ts を生成
+    # 第四步：生成环境配置文件 environment.ts
     - name: Generate environment.ts
-      run: |
-      # src/app/environment ディレクトリを作成（存在しない場合）
-      mkdir -p src/app/environment
+        run: |
+        # 创建 src/app/environment 目录（如果不存在）
+        mkdir -p src/app/environment
 
-      # environment.ts ファイルを生成し、Cognito と Bangumi API の設定情報を含める
-      echo "export const environment = {
-          production: true,
-          cognito: {
-              userPoolId: '$COGNITO_USER_POOL_ID',
-              clientId: '$COGNITO_CLIENT_ID',
-              domain: '$COGNITO_DOMAIN'
-          },
-          bgm: {
-          url: '<https://api.bgm.tv/v0>',
-          authToken: '$BGM_AUTH_TOKEN',
-          userAgent: 'dreaife/my-angular-project-test'
-          }
-      };" > src/app/environment/environment.ts # 環境設定ファイルを生成
+        # 生成 environment.ts 文件，包含 Cognito 和 Bangumi API 的配置信息
+        echo "export const environment = {
+            production: true,
+            cognito: {
+                userPoolId: '$COGNITO_USER_POOL_ID',
+                clientId: '$COGNITO_CLIENT_ID',
+                domain: '$COGNITO_DOMAIN'
+            },
+            bgm: {
+            url: '<https://api.bgm.tv/v0>',
+            authToken: '$BGM_AUTH_TOKEN',
+            userAgent: 'dreaife/my-angular-project-test'
+            }
+        };" > src/app/environment/environment.ts # 生成环境配置文件
 
-      # 生成したファイルを列挙して確認
-      ls src/app/environment
+        # 列出生成的文件以确认
+        ls src/app/environment
 
-    # 第5歩：プロジェクトをビルド
+    # 第五步：构建项目
     - name: Build project
-      run: npm run build -- --configuration production --base-href "/my-angular-project-test/" # プロジェクトをビルド
+        run: npm run build -- --configuration production --base-href "/my-angular-project-test/" # 构建项目
 
-    # 第6歩：GitHub Pages にデプロイ
+    # 第六步：部署到 GitHub Pages
     - name: Deploy to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@v4
-      with:
-      # browser はビルド出力のフォルダ、内部ファイルには index.html が含まれる
-      folder: dist/my-angular-project/browser  # 実際の出力パスに従ってください
-      token: ${{ secrets.TOKEN }}
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+        # browser 为构建输出的文件夹，内部文件包含 index.html
+        folder: dist/my-angular-project/browser  # 请根据实际输出路径填写
+        token: ${{ secrets.TOKEN }}
 
-# 環境変数の設定、機密情報は GitHub Secrets に保存します
-
+# 环境变量配置，使用 GitHub Secrets 存储敏感信息
 env:
     COGNITO_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
     COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
     COGNITO_DOMAIN: ${{ secrets.COGNITO_DOMAIN }}
     BGM_AUTH_TOKEN: ${{ secrets.BGM_AUTH_TOKEN }}
     GITHUB_TOKEN: ${{ secrets.TOKEN }}
-```
+		```
+	<empty-block/>
+</synced_block>

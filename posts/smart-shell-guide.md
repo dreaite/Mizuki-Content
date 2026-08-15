@@ -6,7 +6,7 @@ description: '介绍了shell的基本特性和使用，包括如何运行程序�
 permalink: 'smart-shell-guide'
 image: 'https://r2.dreaife.tokyo/notion/covers/30d1fea56f3940319785fca81bdfd185/20220818_231226.jpg'
 tags: ['bash']
-category: 'prog-side'
+category: 'cs-base'
 draft: false
 ---
 

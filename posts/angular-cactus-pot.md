@@ -6,7 +6,7 @@ description: '该项目是基于Angular的Web应用，用于展示和搜索Bangu
 permalink: 'angular-cactus-pot'
 image: 'https://r2.dreaife.tokyo/notion/covers/13c5465cca178004ad54d1f3b101d56a/IMG_1506.jpg'
 tags: ['ts', 'angular', 'github-action', 'doc']
-category: 'FRONTEND'
+category: 'PROJECT'
 draft: false
 ---
 

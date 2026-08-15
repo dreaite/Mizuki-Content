@@ -6,7 +6,7 @@ description: '该项目是一个基于Nest.js和Angular的竞价平台，提供�
 permalink: 'bidding-platform-nest-angular'
 image: 'https://r2.dreaife.tokyo/notion/covers/1555465cca1780f382f5f1421004b0a8/IMG_1767.jpg'
 tags: ['nodejs', 'ts', 'aws']
-category: 'BACKEND'
+category: 'PROJECT'
 draft: false
 ---
 
