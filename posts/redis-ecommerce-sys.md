@@ -297,7 +297,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 # 商户查询缓存
 
 
-**缓存(****Cache),就是数据交换的****缓冲区**,俗称的缓存就是**缓冲区内的数据**,一般从数据库中获取,存储于本地代码(例如:
+**缓存(Cache),就是数据交换的缓冲区**,俗称的缓存就是**缓冲区内的数据**,一般从数据库中获取,存储于本地代码(例如:
 
 
 ```java

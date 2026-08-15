@@ -1,27 +1,34 @@
 ---
-title: 'Trading Journal'
+title: 'Transaction History'
 published: 2025-02-14
 updated: 2025-02-15
-description: 'Recent trading experience shows a relatively high win rate, especially with a short position on February 3 that produced significant profit. Although some gains were lost due to judgment errors, overall returns remain positive. The market is currently range-bound and may face a second test in the short term, so caution is needed. The trading strategy is mainly based on candlesticks and volume, with position allocation of 80% low-leverage trend trading, 10% high-leverage high-frequency trading, and the remaining funds used for on-chain operations. To avoid emotional trading, staying in cash is recommended when judgment is unclear, and high-risk operations should be considered after cash flow becomes stable.'
+description: 'Recent trading activity has shown a high win rate, particularly with substantial profits from the short position on February 3. Although some gains were lost due to misjudgments, overall returns remain positive. The market is currently volatile and may face a second test in the near term, so caution is advised. The trading strategy is based primarily on candlestick charts and trading volume, with 80% of capital allocated to low-leverage macro-trend trades, 10% to high-leverage high-frequency trades, and the remainder to on-chain activities. To avoid emotionally driven trading, it is advisable to stay out of the market when the outlook is unclear and pursue high-risk operations only after establishing stable cash flow.'
 image: 'https://r2.dreaife.tokyo/notion/covers/19a5465cca178011a14beaac4312e5b0/IMG_2580.jpg'
 tags: ['life', 'web3', 'thinking']
-category: 'WEB3'
+category: 'market'
 draft: false
 lang: 'en'
 ---
 
-Before I realized it, a month had passed. Lately I feel my trading win rate has been pretty high, so I’m going to do a thorough review.
+A month has passed before I knew it. My trading win rate has felt pretty high lately, so I wanted to do a review.
 
-My last big win was a short on 2/3, using some idle capital to run a high-leverage trade, which nearly doubled my principal. But I misjudged the target level for Ethereum’s move, and a good portion of those profits was lost as a result. Still, the overall return was positive, and it was at least some experience gained.
 
-Then there’s the rebound and the subsequent chop in the market. It seems there hasn’t been much large-capital participation, which has made my judgments more accurate; even high-frequency trading accounts have multiplied several times. Looking ahead, even though injecting liquidity should lead to another up move, it’s not clear whether there will first be a supply-test rally followed by a retest before pushing higher, or how it will unfold. I can’t discern any signal yet and can only wait for the market to develop. In this respect, it’s quite trying. After all, from a mid- to long-term perspective I remain bullish, but in the short term the market is weak; a second test might still come. I’m also doing swing trades in the current range, and it’s really worrying when a big influx of money suddenly comes in to start the final leg. Regarding my mindset, it’s indeed exhausting.
+My most recent big profit came from a short position on 2/3. I used a small amount of spare capital with high leverage and nearly doubled my principal. However, I misjudged the target level of Ethereum’s wick, which cost me a significant portion of those profits. At least I still came out ahead overall and gained some experience from it.
 
-From my current trading experience, although I’ve had several big ups and downs and have done a lot on-chain trading, I still get a bit flustered when facing a drop of more than around 30% in stablecoins. Therefore, I think I should summarize my trading methods and impose some trading rules to constrain myself, so that when facing big gains or losses again, the emotional volatility won’t distort my trading approach.
 
-First, the trading method: I currently rely entirely on price candles plus volume to judge the market’s next move. In other words, I mainly do left-side trading; I look at the 4h and daily charts, and when the market is more volatile I will also check the 1h chart for judgment.
+Then there is the current sideways market following the rebound. Perhaps because there has not been much participation from large capital, my calls have become considerably more accurate, and my high-frequency trading account has also grown severalfold. Looking ahead, once liquidity is injected, there will almost certainly be another rally. However, I still cannot tell whether the market will first perform a supply test, then a secondary test before moving higher, or take some other path. All I can do is wait and see how the market develops. In that sense, the current conditions are quite mentally exhausting. I remain bullish from a medium- to long-term perspective, but the market is weak in the short term and may still undergo another test. At the same time, I am swing trading within the current range and constantly worried that large capital might suddenly enter the market and officially kick off the final leg. Psychologically, it really is draining.
 
-Regarding position sizing, about 80% of the capital is used for low-leverage trades to ride the big trend, 10% for higher-leverage, relatively higher-frequency trades (though the trading cycle is around a day), and the remainder is mainly on-chain speculative plays. After all, with small capital, these are still relatively high-risk trades (losses could reach around 10%).
 
-Then the mindset: because I am still easily influenced by market swings, when a judgment is unclear I choose to sit out or wait for the candles to complete before deciding. As for the high-frequency trading portion, once there is stable cash flow, engaging in more gambling-like trades will not let emotions overly affect trading actions; in fact, it increases the success rate of trading.
+Looking back at my trading experience so far, I have already lived through several major rallies and crashes and done quite a bit of on-chain trading. Even so, facing a drop of more than 30% in stablecoin terms still left me somewhat stunned. Therefore, I think I should summarize my trading approach and establish some rules to keep myself disciplined. That way, when I face another major rise or fall, the resulting emotional swings will be less likely to distort how I trade.
 
-All in all, I’m jotting down my recent trading reflections a little, also to prevent myself from slipping back into the old path of emotional trading in the future.
+
+First, regarding my trading approach, I currently judge the market’s next move almost entirely from candlestick patterns and trading volume. In other words, I primarily engage in left-side trading. I mainly watch the 4h and 1d charts, switching to the 1h chart for additional judgment when the market becomes more volatile.
+
+
+As for position allocation, I currently use 80% of my capital for low-leverage trades based on the broader trend. Another 10% goes toward relatively higher-frequency trades with high leverage, although their holding period is still around one day. The remainder is mainly used to hunt for on-chain memecoins. Since my capital is still limited, I am currently taking relatively high risks, with potential losses reaching 10%.
+
+
+Then there is the matter of mindset. Since I am still easily affected by market fluctuations, I choose to stay out of the market when the direction is unclear, or wait for a candlestick to close before making a judgment. As for the high-frequency portion, I have found that after establishing a stable cash flow, taking on more gambling-like trades no longer causes emotional swings that significantly affect my execution. In fact, my success rate has improved considerably.
+
+
+All in all, I wanted to briefly record my recent trading experiences, partly to prevent myself from slipping back into emotionally driven trading in the future.

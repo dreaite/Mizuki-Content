@@ -6,7 +6,7 @@ description: '最近的交易经历显示出较高的胜率，尤其是在2月3�
 permalink: 'trading-insights-2025'
 image: 'https://r2.dreaife.tokyo/notion/covers/19a5465cca178011a14beaac4312e5b0/IMG_2580.jpg'
 tags: ['life', 'web3', 'thinking']
-category: 'WEB3'
+category: 'market'
 draft: false
 ---
 
