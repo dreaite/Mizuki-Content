@@ -11,5 +11,13 @@ assert.match(
   /common\.image\s*=\s*normalizeSingleLine\(\s*await resolveCoverImageUrlForMeta\(\s*page,\s*common,\s*notionCoverR2Client,\s*notionR2UploadCache\s*\)\s*\)/,
   'Friend covers must pass through the same R2 resolver as other generated cover fields.'
 );
+assert.match(syncSource, /await headR2ObjectIfExists\(s3Client, uploadCache, objectKey\)/);
+assert.match(syncSource, /buildStableRemoteImageSourceSha1\(url\)/);
+assert.match(syncSource, /'notion-source-sha1': sourceUrlSha1/);
+assert.match(syncSource, /error\?\.isNotionImageHttpError === true/);
+assert.match(
+  syncSource,
+  /canReuseLegacyR2ObjectAfterExpiredSource\(existingObject, existingSourceUrlSha1\)/
+);
 
 console.log('notion R2 routing checks passed');

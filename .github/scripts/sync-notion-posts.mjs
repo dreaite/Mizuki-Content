@@ -10,6 +10,18 @@ import { HeadObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
 import {
+  buildStableRemoteImageSourceSha1,
+  canReuseLegacyR2ObjectAfterExpiredSource,
+  createNotionR2UploadCache,
+  getNotionR2ObjectHeadCache,
+  getNotionR2SourceUrlCache,
+  getNotionR2UploadStats,
+  incrementNotionR2UploadStat,
+  isExpiredNotionAssetResponse,
+  isS3ObjectNotFoundError,
+  normalizeR2SourceSha1Metadata,
+} from './notion-r2-dedup.mjs';
+import {
   buildFriendItems,
   buildProjectItems,
   extractMarkdownImagesAndText,
@@ -1282,10 +1294,6 @@ function createNotionCoverR2Client() {
   });
 }
 
-function createNotionR2UploadCache() {
-  return new Map();
-}
-
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -1361,9 +1369,13 @@ async function fetchNotionImageWithRetry(url, { logLabel } = {}) {
     }
 
     const responseText = await response.text().catch(() => '');
-    throw new Error(
+    const error = new Error(
       `Failed to download Notion image for R2 upload (${response.status} ${response.statusText})${formatLogLabel(logLabel)}: ${responseText.slice(0, 300)}`
     );
+    error.isNotionImageHttpError = true;
+    error.status = response.status;
+    error.responseText = responseText;
+    throw error;
   }
 
   throw new Error(`Failed to download Notion image for R2 upload${formatLogLabel(logLabel)}.`);
@@ -1373,12 +1385,23 @@ async function uploadRemoteImageUrlToR2(s3Client, uploadCache, { sourceUrl, obje
   const url = String(sourceUrl || '').trim();
   if (!s3Client || !CONFIG.notionCoverR2Enabled || !url) return url;
 
+  const sourceUrlCache = getNotionR2SourceUrlCache(uploadCache);
   const cacheKey = `${objectKey}|${url}`;
-  if (uploadCache?.has(cacheKey)) {
-    return uploadCache.get(cacheKey);
+  if (sourceUrlCache?.has(cacheKey)) {
+    incrementNotionR2UploadStat(uploadCache, 'sourceCacheHits');
+    return sourceUrlCache.get(cacheKey);
   }
 
   const publicUrl = buildPublicUrlFromBase(CONFIG.notionCoverR2PublicBaseUrl, objectKey);
+  const sourceUrlSha1 = buildStableRemoteImageSourceSha1(url);
+  const existingObject = await headR2ObjectIfExists(s3Client, uploadCache, objectKey);
+  const existingSourceUrlSha1 = normalizeR2SourceSha1Metadata(existingObject?.metadata);
+
+  if (existingObject?.exists && existingSourceUrlSha1 === sourceUrlSha1) {
+    sourceUrlCache?.set(cacheKey, publicUrl);
+    incrementNotionR2UploadStat(uploadCache, 'reusedBySourceHash');
+    return publicUrl;
+  }
 
   try {
     const response = await fetchNotionImageWithRetry(url, { logLabel });
@@ -1393,18 +1416,75 @@ async function uploadRemoteImageUrlToR2(s3Client, uploadCache, { sourceUrl, obje
         Body: bodyBuffer,
         ContentType: contentType,
         CacheControl: CONFIG.notionCoverR2CacheControl || undefined,
+        Metadata: {
+          'notion-source-sha1': sourceUrlSha1,
+        },
       })
     );
 
-    if (uploadCache) {
-      uploadCache.set(cacheKey, publicUrl);
-    }
+    sourceUrlCache?.set(cacheKey, publicUrl);
+    setHeadR2ObjectCache(uploadCache, objectKey, {
+      exists: true,
+      metadata: { 'notion-source-sha1': sourceUrlSha1 },
+    });
+    incrementNotionR2UploadStat(uploadCache, 'uploads');
 
     return publicUrl;
   } catch (error) {
-    if (uploadCache) uploadCache.delete(cacheKey);
+    if (
+      canReuseLegacyR2ObjectAfterExpiredSource(existingObject, existingSourceUrlSha1) &&
+      error?.isNotionImageHttpError === true &&
+      isExpiredNotionAssetResponse(error?.status, error?.responseText || error?.message)
+    ) {
+      sourceUrlCache?.set(cacheKey, publicUrl);
+      incrementNotionR2UploadStat(uploadCache, 'expiredSourceFallbacks');
+      console.warn(
+        `Reusing existing R2 object after expired Notion image URL${formatLogLabel(logLabel)}: ${objectKey}`
+      );
+      return publicUrl;
+    }
+
+    sourceUrlCache?.delete(cacheKey);
     throw error;
   }
+}
+
+async function headR2ObjectIfExists(s3Client, uploadCache, objectKey) {
+  if (!s3Client || !objectKey) return { exists: false, metadata: null };
+
+  const cache = getNotionR2ObjectHeadCache(uploadCache);
+  if (cache?.has(objectKey)) {
+    return cache.get(objectKey);
+  }
+
+  incrementNotionR2UploadStat(uploadCache, 'headRequests');
+  try {
+    const response = await s3Client.send(
+      new HeadObjectCommand({
+        Bucket: CONFIG.notionCoverR2Bucket,
+        Key: objectKey,
+      })
+    );
+    const entry = {
+      exists: true,
+      metadata: response?.Metadata || null,
+    };
+    cache?.set(objectKey, entry);
+    return entry;
+  } catch (error) {
+    if (isS3ObjectNotFoundError(error)) {
+      const entry = { exists: false, metadata: null };
+      cache?.set(objectKey, entry);
+      return entry;
+    }
+    throw error;
+  }
+}
+
+function setHeadR2ObjectCache(uploadCache, objectKey, entry) {
+  const cache = getNotionR2ObjectHeadCache(uploadCache);
+  if (!cache || !objectKey) return;
+  cache.set(objectKey, entry);
 }
 
 async function uploadNotionCoverToR2(s3Client, uploadCache, { pageId, coverInfo }) {
@@ -2619,6 +2699,13 @@ async function main() {
   ]);
   if (normalizedDirectiveFiles > 0) {
     changedFiles += normalizedDirectiveFiles;
+  }
+
+  if (CONFIG.notionCoverR2Enabled) {
+    const r2Stats = getNotionR2UploadStats(notionR2UploadCache);
+    console.log(
+      `Notion R2 sync stats: headRequests=${r2Stats?.headRequests || 0}, sourceCacheHits=${r2Stats?.sourceCacheHits || 0}, reusedBySourceHash=${r2Stats?.reusedBySourceHash || 0}, uploads=${r2Stats?.uploads || 0}, expiredSourceFallbacks=${r2Stats?.expiredSourceFallbacks || 0}`
+    );
   }
 
   console.log(

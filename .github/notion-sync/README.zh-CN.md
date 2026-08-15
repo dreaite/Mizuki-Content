@@ -200,6 +200,7 @@ Workflow 会传入以下默认值。如果你的 Notion 列名不同，请在 wo
 
 - Notion 的 cover/file URL 通常是临时签名链接，会过期。
 - 当 `NOTION_COVER_R2_ENABLED=true` 时，脚本会将 Notion 图片资产上传到 R2，并写入 R2 公网 URL，而不是临时签名链接。
+- R2 对象会保存去掉临时 query/hash 后的源 URL SHA-1；`HeadObject` metadata 匹配时直接复用，不再下载或上传。缺少该 metadata 的旧对象会额外上传一次完成回填。
 - 现有 `Post` / `About` markdown 文件中残留的 Notion 图片 URL，会在后续 sync 中自动回填为 R2 URL（即使正文本身未变化）。
 - 行首 Markdown 指令（例如 `::github{repo="owner/repo"}` 或后续自定义的 `::card{...}`）的属性花括号内部如果出现 Notion/LLM 产生的智能引号（`“”` / `‘’`），同步时会自动规范化为 ASCII 引号。
 - Workflow 会自动将 `posts/` 等内容变更提交并推送回当前分支。

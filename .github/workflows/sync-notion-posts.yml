@@ -43,6 +43,7 @@ jobs:
           node .github/scripts/test-notion-data-translation.mjs
           node .github/scripts/test-notion-data-write.mjs
           node .github/scripts/test-notion-ts-data-sync.mjs
+          node .github/scripts/test-notion-r2-dedup.mjs
           node .github/scripts/test-notion-r2-routing.mjs
 
       - name: Install sync dependencies
