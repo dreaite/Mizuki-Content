@@ -110,8 +110,10 @@ $$
 
 $$
 
-x_3 \equiv \lambda^2 - x_1 - x_2 \pmod p
-\\y_3 \equiv \lambda(x_1 - x_3) - y_1 \pmod p
+\begin{aligned}
+x_3 \equiv \lambda^2 - x_1 - x_2 \pmod p \\
+y_3 \equiv \lambda(x_1 - x_3) - y_1 \pmod p
+\end{aligned}
 
 $$
 
@@ -351,10 +353,10 @@ $$
 
 
         $$
-        \begin{align}
+        \begin{aligned}
         dG &= \left(r^{-1}(sk - z) \bmod n\right)G \\
            &= r^{-1}(skG - eG)
-        \end{align}
+        \end{aligned}
         $$
 
 

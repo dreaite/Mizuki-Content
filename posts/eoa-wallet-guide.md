@@ -58,7 +58,7 @@ draft: false
 
 # HD钱包的创建
 
-这里开始介绍对于现在最常用的HD钱包，对于ETH链上的钱包，会是如何生成出助记词，并由此派生出$`2^{31}*2^{31}`$（account hardened派生的$`2^{31}`$种可能性\*address_index non-hardened派生的$`2^{31}`$种可能性）可能性的钱包私钥。
+这里开始介绍对于现在最常用的HD钱包，对于ETH链上的钱包，会是如何生成出助记词，并由此派生出$2^{31}*2^{31}$（account hardened派生的$2^{31}$种可能性\*address_index non-hardened派生的$2^{31}$种可能性）可能性的钱包私钥。
 
 ## HD钱包的私钥创建流程
 
@@ -87,16 +87,16 @@ draft: false
 
 - 对于entropy和checksum进行拼接，得到一个256bit+8bit，即264bit的数
 - 这里我们按照11bit来对这个数据进行分组，可以得到264/11 = 24组，这也是为什么256bit对应了24位助记词
-- 然后对于每组，在2048（$`2^{11}`$）个的BIP-39 wordlist中挑选出对应word
+- 然后对于每组，在2048（$2^{11}$）个的BIP-39 wordlist中挑选出对应word
 - 此时获得的24位word就是一般在HD钱包中使用的助记词
 
 然后是助记词到seed的生成
 
 这里是通过PBKDF2-HMAC-SHA512来计算出一个512bit的seed。具体计算如下：
 
-$`PBKDF2-HMAC-SHA512(password=mnemonic ,salt="mnemonic"+password,iteration=2048,dkLen=64bytes)`$
+$PBKDF2-HMAC-SHA512(password=mnemonic ,salt="mnemonic"+password,iteration=2048,dkLen=64bytes)$
 
-即把utf8 byte stream话的助记词作为password，salt为“mnemonic”+password，进行HMAC-SHA512 iteration=2048次。第一次的U1是通过助记词和password 以及block_index来计算(U1=HMAC(password,salt \|\| INT(block_index)))，后面的U2开始都是用上一次计算的$`U_{i-1}`$作为key来进行HMAC-SHA512的计算(U2=HMAC(password, U1))。
+即把utf8 byte stream话的助记词作为password，salt为“mnemonic”+password，进行HMAC-SHA512 iteration=2048次。第一次的U1是通过助记词和password 以及block_index来计算(U1=HMAC(password,salt \|\| INT(block_index)))，后面的U2开始都是用上一次计算的$U_{i-1}$作为key来进行HMAC-SHA512的计算(U2=HMAC(password, U1))。
 
 由此最终计算出的第一个block的result = U1 xor U2 xor … xor U2048，因为512bit的输出就为要求的长度64byte，所以block只有一个，此时输出的result就是按照BIP-39规则生成出来的seed。
 
@@ -104,11 +104,11 @@ $`PBKDF2-HMAC-SHA512(password=mnemonic ,salt="mnemonic"+password,iteration=2048,
 
 根据BIP-32，对于上面计算出来的seed再执行一轮HMAC-SHA512加密得到I，具体内容如下。
 
-$`I = HMAC-SHA512(key = \text{``Bitcoin seed''}, data = seed)`$
+$I = HMAC-SHA512(key = \text{``Bitcoin seed''}, data = seed)$
 
 此时得到了一个512bit的I，按照256bit的长度，可以把它拆出左右两半长度各为256bit的数字。
 
-对于左边的$`I_L`$，作为主密钥master private key；对于右边的$`I_R`$，作为master chain code。
+对于左边的$I_L$，作为主密钥master private key；对于右边的$I_R$，作为master chain code。
 
 它们会用于下一步BIP-44的派生计算中。
 
@@ -124,7 +124,7 @@ $`I = HMAC-SHA512(key = \text{``Bitcoin seed''}, data = seed)`$
 
 	这里先介绍一下派生路径到底是什么吧。
 
-	派生路径可以理解为一个以主密钥m为根节点的深度为6层的数，每层都是一个$`2^{32}`$的数。但是对于这个$`2^{32}`$的数，一般只会使用其中一半，即$`2^{31}`$的数。这是由每层数字右上角的‘是否hardened来决定这层的数字i是单纯使用i（\[0,$`2^{31}`$)），还是使用i‘=i+$`2^{31}`$。
+	派生路径可以理解为一个以主密钥m为根节点的深度为6层的数，每层都是一个$2^{32}$的数。但是对于这个$2^{32}$的数，一般只会使用其中一半，即$2^{31}$的数。这是由每层数字右上角的‘是否hardened来决定这层的数字i是单纯使用i（\[0,$2^{31}$)），还是使用i‘=i+$2^{31}$。
 
 	同时这里的hardened标记也会影响向子节点计算时的计算方式。
 
@@ -143,7 +143,7 @@ $`I = HMAC-SHA512(key = \text{``Bitcoin seed''}, data = seed)`$
 	
 	$$
 
-	其中，$`serP(pPk*G)`$意味着，0x02/0x03 \|\| (pPk\*G)_x)，pPk\*G即为父节点的公钥，0x02还是0x03由计算出的父节点公钥（mod p）的y/p-y为奇数还是偶数决定。
+	其中，$serP(pPk*G)$意味着，0x02/0x03 \|\| (pPk\*G)_x)，pPk\*G即为父节点的公钥，0x02还是0x03由计算出的父节点公钥（mod p）的y/p-y为奇数还是偶数决定。
 
 	对于得到的I，同样按照256bit的长度，拆分为左右IL和IR。
 

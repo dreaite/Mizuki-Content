@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 import {
+  normalizeNotionMathSyntax,
   normalizeNotionMarkdownDocument,
   normalizeNotionMarkdownForCommonMark,
 } from './notion-markdown-normalizer.mjs';
@@ -25,6 +26,87 @@ assert.equal(
     '- 项目一\n- 项目二',
   ].join('\n\n'),
   'Notion blocks must become CommonMark blocks while Shift+Enter remains a br tag.'
+);
+
+assert.equal(
+  normalizeNotionMathSyntax('坐标为 $`x, y \\in \\mathbb{F}_p`$，普通代码为 `x`。'),
+  '坐标为 $x, y \\in \\mathbb{F}_p$，普通代码为 `x`。',
+  'Notion code spans inside inline math delimiters must be removed.'
+);
+assert.equal(
+  normalizeNotionMathSyntax("$`I = \\text{``Bitcoin seed''}`$"),
+  "$I = \\text{``Bitcoin seed''}$",
+  'Backticks inside a TeX expression must not terminate the outer Notion code span.'
+);
+assert.equal(
+  normalizeNotionMathSyntax([
+    '$$',
+    '\\begin{align}',
+    'dG &= first \\\\',
+    '   &= second',
+    '\\end{align}',
+    '$$',
+  ].join('\n')),
+  [
+    '$$',
+    '\\begin{aligned}',
+    'dG &= first \\\\',
+    '   &= second',
+    '\\end{aligned}',
+    '$$',
+  ].join('\n'),
+  'KaTeX display math must use aligned rather than align.'
+);
+assert.equal(
+  normalizeNotionMathSyntax([
+    '$$',
+    'x_3 \\equiv first',
+    '\\\\y_3 \\equiv second',
+    '$$',
+  ].join('\n')),
+  [
+    '$$',
+    '\\begin{aligned}',
+    'x_3 \\equiv first \\\\',
+    'y_3 \\equiv second',
+    '\\end{aligned}',
+    '$$',
+  ].join('\n'),
+  'A leading display-math row break must become an aligned row separator.'
+);
+assert.equal(
+  normalizeNotionMathSyntax([
+    '\t\t$$',
+    '\t\t\\begin{align}',
+    'dG &= first \\\\',
+    '   &= second',
+    '\\end{align}',
+    '\t\t$$',
+  ].join('\n')),
+  [
+    '\t\t$$',
+    '\t\t\\begin{aligned}',
+    '\t\tdG &= first \\\\',
+    '\t\t   &= second',
+    '\t\t\\end{aligned}',
+    '\t\t$$',
+  ].join('\n'),
+  'Nested display-math content must inherit the delimiter indentation.'
+);
+assert.equal(
+  normalizeNotionMathSyntax([
+    '```md',
+    '$`literal`$',
+    '\\begin{align}',
+    '```',
+  ].join('\n')),
+  [
+    '```md',
+    '$`literal`$',
+    '\\begin{align}',
+    '```',
+  ].join('\n'),
+  'Math-looking text inside fenced code must stay unchanged.'
 );
 
 const fencedCode = [

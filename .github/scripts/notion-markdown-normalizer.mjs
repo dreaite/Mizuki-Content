@@ -86,6 +86,120 @@ function readNoticeAttribute(line) {
   return match?.[1] || match?.[2] || match?.[3] || '';
 }
 
+function normalizeInlineMathCodeSpans(line) {
+  return String(line || '').replace(/\$`([^\n]*?)`\$/g, (_, expression) => `$${expression}$`);
+}
+
+function normalizeDisplayMathLines(lines) {
+  const normalized = lines
+    .map((line) => line
+      .replace(/\\begin\{align\*?\}/g, '\\begin{aligned}')
+      .replace(/\\end\{align\*?\}/g, '\\end{aligned}'));
+  const firstContent = normalized.findIndex((line) => line.trim());
+  const lastContent = normalized.findLastIndex((line) => line.trim());
+  if (firstContent < 0) return normalized;
+
+  const leading = normalized.slice(0, firstContent);
+  const body = normalized.slice(firstContent, lastContent + 1);
+  const trailing = normalized.slice(lastContent + 1);
+  if (body.some((line) => /\\begin\{aligned\}/.test(line))) return normalized;
+
+  let foundLeadingBreak = false;
+  const rows = [];
+  for (const line of body) {
+    const breakMatch = line.match(/^(\s*)\\\\(.*)$/);
+    if (!breakMatch) {
+      rows.push(line);
+      continue;
+    }
+
+    foundLeadingBreak = true;
+    for (let index = rows.length - 1; index >= 0; index -= 1) {
+      if (!rows[index].trim()) continue;
+      rows[index] = `${rows[index].trimEnd()} \\\\`;
+      break;
+    }
+    rows.push(`${breakMatch[1]}${breakMatch[2]}`);
+  }
+
+  if (!foundLeadingBreak) return normalized;
+  const indentation = body[0]?.match(/^\s*/)?.[0] || '';
+  return [
+    ...leading,
+    `${indentation}\\begin{aligned}`,
+    ...rows,
+    `${indentation}\\end{aligned}`,
+    ...trailing,
+  ];
+}
+
+function updateRawFenceState(line, state) {
+  const match = String(line || '').match(/^\s*(`{3,}|~{3,})/);
+  if (!match) return state;
+  const marker = match[1];
+
+  if (!state) {
+    return { markerChar: marker[0], markerLength: marker.length };
+  }
+  if (marker[0] === state.markerChar && marker.length >= state.markerLength) {
+    return null;
+  }
+  return state;
+}
+
+export function normalizeNotionMathSyntax(markdown) {
+  const lines = String(markdown || '').replace(/\r\n?/g, '\n').split('\n');
+  const output = [];
+  let fenceState = null;
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    if (fenceState) {
+      output.push(line);
+      fenceState = updateRawFenceState(line, fenceState);
+      continue;
+    }
+
+    const nextFenceState = updateRawFenceState(line, fenceState);
+    if (nextFenceState) {
+      output.push(line);
+      fenceState = nextFenceState;
+      continue;
+    }
+
+    const equationOpen = line.match(/^(\s*)\$\$\s*$/);
+    if (equationOpen) {
+      const endIndex = lines.findIndex((candidate, candidateIndex) =>
+        candidateIndex > index && candidate.trim() === '$$');
+      if (endIndex > index) {
+        const bodyLines = lines.slice(index + 1, endIndex);
+        const alreadyIndented = !equationOpen[1] || bodyLines
+          .filter((bodyLine) => bodyLine.trim())
+          .every((bodyLine) => bodyLine.startsWith(equationOpen[1]));
+        const indentedBody = alreadyIndented
+          ? bodyLines
+          : bodyLines.map((bodyLine) =>
+              bodyLine.trim()
+                ? bodyLine.startsWith(equationOpen[1])
+                  ? bodyLine
+                  : `${equationOpen[1]}${bodyLine}`
+                : '');
+        output.push(
+          line,
+          ...normalizeDisplayMathLines(indentedBody),
+          lines[endIndex]
+        );
+        index = endIndex;
+        continue;
+      }
+    }
+
+    output.push(normalizeInlineMathCodeSpans(line));
+  }
+
+  return output.join('\n');
+}
+
 function readPipeTableBlock(lines, startIndex) {
   if (!PIPE_TABLE_ROW_PATTERN.test(lines[startIndex])) return null;
   if (!PIPE_TABLE_DELIMITER_PATTERN.test(lines[startIndex + 1] || '')) return null;
@@ -222,7 +336,7 @@ function normalizeBlockSequence(lines) {
 export function normalizeNotionMarkdownForCommonMark(markdown) {
   const source = String(markdown || '').replace(/\r\n?/g, '\n');
   if (!source.trim()) return '';
-  return normalizeBlockSequence(source.split('\n'));
+  return normalizeNotionMathSyntax(normalizeBlockSequence(source.split('\n')));
 }
 
 export function normalizeNotionMarkdownDocument(markdownDocument) {
