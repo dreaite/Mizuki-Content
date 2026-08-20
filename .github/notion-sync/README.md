@@ -25,6 +25,7 @@ Keep local content files consistent with the Notion database by `type`.
 - Notion `Diary` pages are mapped into `data/diary.ts`
 - Notion `Project` pages are mapped into `data/projects.ts`
 - Existing files are updated when content/front matter changes
+- Notion-flavored Markdown is converted to CommonMark before writing posts: block lines regain paragraph spacing, `<br>` line breaks are preserved, `<empty-block/>` becomes spacing, and synced-block wrappers are removed while keeping their children
 - Files missing from Notion are deleted (when `NOTION_SYNC_DELETE_MISSING=true`)
 - When posts are changed and pushed, the workflow can directly trigger Cloudflare Pages Deploy Hook (`CF_DEPLOY_HOOK`)
 

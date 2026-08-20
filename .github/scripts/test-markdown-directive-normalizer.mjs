@@ -19,6 +19,16 @@ const cases = [
     expected: '::site{url="https://dreaife.tokyo/evm-wallet-login"}\n',
   },
   {
+    name: 'normalizes Notion-escaped directive braces',
+    input: '::github\\{repo=”dreaifeHebi/web3WalletLogin”\\}\n',
+    expected: '::github{repo="dreaifeHebi/web3WalletLogin"}\n',
+  },
+  {
+    name: 'normalizes extra equals with Notion-escaped braces',
+    input: '::site=\\{url=”https://dreaife.tokyo/evm-wallet-login”\\}\n',
+    expected: '::site{url="https://dreaife.tokyo/evm-wallet-login"}\n',
+  },
+  {
     name: 'normalizes notion linkified site card URL',
     input: '::site={url=“[https://dreaife.tokyo/evm-wallet-login”}](https://dreaife.tokyo/evm-wallet-login%22%7D)\n',
     expected: '::site{url="https://dreaife.tokyo/evm-wallet-login"}\n',

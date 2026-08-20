@@ -71,14 +71,17 @@ function extractHttpUrl(value) {
   return decodedMatch ? decodedMatch[0] : '';
 }
 
-function normalizeDirectiveBracePrefix(line) {
+function normalizeDirectiveOuterBraces(line) {
   const directiveMatch = String(line || '').match(DIRECTIVE_START_PATTERN);
   if (!directiveMatch) return line;
 
   const prefixEnd = directiveMatch[0].length;
-  if (line[prefixEnd] !== '=' || line[prefixEnd + 1] !== '{') return line;
+  const suffix = line.slice(prefixEnd);
+  const openMatch = suffix.match(/^(?:=)?\\?\{/);
+  if (!openMatch) return line;
 
-  return `${line.slice(0, prefixEnd)}${line.slice(prefixEnd + 1)}`;
+  const normalizedSuffix = `{${suffix.slice(openMatch[0].length)}`.replace(/\\\}(\s*)$/, '}$1');
+  return `${line.slice(0, prefixEnd)}${normalizedSuffix}`;
 }
 
 function normalizeNotionLinkedDirectiveLine(line) {
@@ -93,18 +96,18 @@ function normalizeNotionLinkedDirectiveLine(line) {
 }
 
 function normalizeDirectiveLine(line) {
-  const linkedDirective = normalizeNotionLinkedDirectiveLine(line);
-  if (linkedDirective !== line) return linkedDirective;
+  const braceNormalized = normalizeDirectiveOuterBraces(line);
+  const linkedDirective = normalizeNotionLinkedDirectiveLine(braceNormalized);
+  if (linkedDirective !== braceNormalized) return linkedDirective;
 
-  const prefixNormalized = normalizeDirectiveBracePrefix(line);
-  if (!SMART_QUOTE_PATTERN.test(prefixNormalized)) return prefixNormalized;
+  if (!SMART_QUOTE_PATTERN.test(braceNormalized)) return braceNormalized;
 
-  const span = findDirectiveAttributeBodySpan(prefixNormalized);
-  if (!span) return prefixNormalized;
+  const span = findDirectiveAttributeBodySpan(braceNormalized);
+  if (!span) return braceNormalized;
 
-  const before = prefixNormalized.slice(0, span.start);
-  const body = prefixNormalized.slice(span.start, span.end);
-  const after = prefixNormalized.slice(span.end);
+  const before = braceNormalized.slice(0, span.start);
+  const body = braceNormalized.slice(span.start, span.end);
+  const after = braceNormalized.slice(span.end);
 
   return `${before}${replaceSmartQuotes(body)}${after}`;
 }

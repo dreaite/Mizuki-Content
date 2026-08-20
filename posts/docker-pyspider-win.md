@@ -11,8 +11,11 @@ draft: false
 ---
 
 在win11中使用pyspider安装出现问题，发生多个报错
+
 发现官网有用docker安装的方式
+
 # 直接通过docker
+
 ```shell
 # mysql
 docker run --name mysql -d -v /data/mysql:/var/lib/mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes mysql:latest
@@ -34,7 +37,9 @@ docker run --name scheduler -d --link mysql:mysql --link rabbitmq:rabbitmq binux
 docker run --name webui -m 256m -d -p 5000:5000 --link mysql:mysql --link rabbitmq:rabbitmq --link scheduler:scheduler --link phantomjs:phantomjs binux/pyspider:latest webui
 
 ```
+
 # 使用docker-compse
+
 ```yaml
 services:
   phantomjs:
@@ -78,5 +83,7 @@ services:
       - "5000:5000"
 
 ```
+
 然后运行即可<br>`docker-compose up -d`<br>运行成功后，如果访问[http://localhost:5000/](http://localhost:5000/)出现下面内容，则说明pyspider运行成功。
+
 ![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/202401022235683.png)

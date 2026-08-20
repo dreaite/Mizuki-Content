@@ -51,6 +51,7 @@ jobs:
           node .github/scripts/test-notion-data-translation.mjs
           node .github/scripts/test-notion-data-write.mjs
           node .github/scripts/test-notion-ts-data-sync.mjs
+          node .github/scripts/test-notion-markdown-normalizer.mjs
           node .github/scripts/test-notion-post-metadata.mjs
           node .github/scripts/test-notion-post-visibility.mjs
           node .github/scripts/test-notion-sync-index.mjs

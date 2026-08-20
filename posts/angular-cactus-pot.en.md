@@ -10,50 +10,72 @@ draft: false
 lang: 'en'
 ---
 
-<synced_block url="https://app.notion.com/p/13c5465cca178004ad54d1f3b101d56a#13c5465cca178062a954c5a48b7da40e">
-	# Project Overview
-	This is my Angular practice project, an Angular-based Web application for browsing and searching anime on Bangumi. It uses the [Bangumi API](https://bangumi.github.io/api/).
-	This project is automatically deployed to [GitHub Pages](https://dreaife.github.io/my-angular-project-test/) using [GitHub Actions](https://github.com/features/actions).
-	## Project Name
-	my-angular-project-test
-	URL: [https://dreaife.github.io/my-angular-project-test/](https://dreaife.github.io/my-angular-project-test/)
-	## Project Objectives
-	- Deploy an Angular-based static website
-	- Practice automated deployment with GitHub Actions
-	- Implement features by calling APIs
-	- Use Cognito for user authentication
-	- Use an interceptor to process requests
-	- Use a guard to protect pages
-	## Technology Stack
-	- Angular 16
-	- TypeScript
-	- HTML
-	- CSS
-	- GitHub Actions
-	- Cognito
-	# Prerequisites
-	## Requirements
-	- Node.js version 20 or later
-	- Angular CLI
-	## Installation
-	1. Install Node.js
-		```shell
-<https://nodejs.org/en/download/>
-		```
-	2. Install Angular CLI
-		```shell
-npm install -g @angular/cli
-		```
-	3. Install the project
-		```shell
-git clone <https://github.com/dreaife/my-angular-project-test.git>
-cd my-angular-project-test
-npm install
-		```
-	# Project Structure
-	## Directory Structure
-	This project was created using Angular CLI and has the following structure:
-	```plain text
+# Project Overview
+
+This is my Angular practice project, an Angular-based Web application for browsing and searching anime on Bangumi. It uses the [Bangumi API](https://bangumi.github.io/api/).
+
+This project is automatically deployed to [GitHub Pages](https://dreaife.github.io/my-angular-project-test/) using [GitHub Actions](https://github.com/features/actions).
+
+## Project Name
+
+my-angular-project-test
+
+URL: [https://dreaife.github.io/my-angular-project-test/](https://dreaife.github.io/my-angular-project-test/)
+
+## Project Objectives
+
+- Deploy an Angular-based static website
+- Practice automated deployment with GitHub Actions
+- Implement features by calling APIs
+- Use Cognito for user authentication
+- Use an interceptor to process requests
+- Use a guard to protect pages
+
+## Technology Stack
+
+- Angular 16
+- TypeScript
+- HTML
+- CSS
+- GitHub Actions
+- Cognito
+
+# Prerequisites
+
+## Requirements
+
+- Node.js version 20 or later
+- Angular CLI
+
+## Installation
+
+1. Install Node.js
+
+	```shell
+	<https://nodejs.org/en/download/>
+	```
+
+2. Install Angular CLI
+
+	```shell
+	npm install -g @angular/cli
+	```
+
+3. Install the project
+
+	```shell
+	git clone <https://github.com/dreaife/my-angular-project-test.git>
+	cd my-angular-project-test
+	npm install
+	```
+
+# Project Structure
+
+## Directory Structure
+
+This project was created using Angular CLI and has the following structure:
+
+```plain text
 my-angular-project-test/
 ├── src/
 │   ├── app/
@@ -74,29 +96,42 @@ my-angular-project-test/
 │   ├── index.html
 │   ├── main.ts
 ├── ...
-	```
-	Where:
-	- `src/app`<br>The main project directory, containing all components, services, interceptors, guards, and more.
-	- `src/environments`<br>The environment configuration directory, containing configurations for the development and production environments.
-	- `src/components`<br>The main components directory, containing all page components.
-		- The `login` component is the login page and uses the Cognito SDK to sign users in;
-		- The `home` component is the anime calendar page, which retrieves and displays data by calling `bgm.service.getCalendar`;
-		- The `search` component is the search page, which retrieves and displays data by calling `bgm.service.search`.
-	- `src/guards`<br>The main guards directory, containing the `auth.guard.ts` guard. It protects pages that require authentication and redirects unauthenticated users to the login page.
-	- `src/interceptors`<br>The main interceptors directory, containing the `auth.interceptor.ts` interceptor, which adds authentication information to requests.
-	- `src/services`<br>The main services directory, containing the `auth.service.ts` service for handling login, logout, and other operations, and the `bgm.service.ts` service for calling the Bangumi API.
-	- `src/main.ts`<br>The main entry point used to launch the Angular application.
-	# Key Features
-	## User Authentication with Cognito
-	In `src/app/services/auth.service.ts`, the Cognito SDK is used for user authentication.
-	Before using Cognito, you must first create a user pool in AWS Cognito, configure a custom Cognito authentication domain, and create an app client to obtain the client ID.
-	Use the obtained ID to configure Cognito in `src/app/environment/environment.ts`.
-	### Login
-	Users sign in through the cognitoUser.authenticateUser method. After a successful login, the idToken or accessToken is stored in sessionStorage.
-	Tip:
-	Unverified users must first set a new password. In this case, override the newPasswordRequired method and set resolve(\{ newPasswordRequired: true, cognitoUser \}). The login page can then switch its displayed content and prompt the user to set a new password.
-	Implementation:
-	```typescript
+```
+
+Where:
+
+- `src/app`<br>The main project directory, containing all components, services, interceptors, guards, and more.
+- `src/environments`<br>The environment configuration directory, containing configurations for the development and production environments.
+- `src/components`<br>The main components directory, containing all page components.
+	- The `login` component is the login page and uses the Cognito SDK to sign users in;
+	- The `home` component is the anime calendar page, which retrieves and displays data by calling `bgm.service.getCalendar`;
+	- The `search` component is the search page, which retrieves and displays data by calling `bgm.service.search`.
+- `src/guards`<br>The main guards directory, containing the `auth.guard.ts` guard. It protects pages that require authentication and redirects unauthenticated users to the login page.
+- `src/interceptors`<br>The main interceptors directory, containing the `auth.interceptor.ts` interceptor, which adds authentication information to requests.
+- `src/services`<br>The main services directory, containing the `auth.service.ts` service for handling login, logout, and other operations, and the `bgm.service.ts` service for calling the Bangumi API.
+- `src/main.ts`<br>The main entry point used to launch the Angular application.
+
+# Key Features
+
+## User Authentication with Cognito
+
+In `src/app/services/auth.service.ts`, the Cognito SDK is used for user authentication.
+
+Before using Cognito, you must first create a user pool in AWS Cognito, configure a custom Cognito authentication domain, and create an app client to obtain the client ID.
+
+Use the obtained ID to configure Cognito in `src/app/environment/environment.ts`.
+
+### Login
+
+Users sign in through the cognitoUser.authenticateUser method. After a successful login, the idToken or accessToken is stored in sessionStorage.
+
+Tip:
+
+Unverified users must first set a new password. In this case, override the newPasswordRequired method and set resolve(\{ newPasswordRequired: true, cognitoUser \}). The login page can then switch its displayed content and prompt the user to set a new password.
+
+Implementation:
+
+```typescript
 signIn(username: string, password: string): Promise<any> {
     const authenticationDetails = new AuthenticationDetails({
       Username: username,
@@ -140,9 +175,11 @@ signIn(username: string, password: string): Promise<any> {
       });
     });
   }
-	```
-	When a user sets a new password, call the completeNewPassword method, which sets the new password through the cognitoUser.completeNewPasswordChallenge method.
-	```typescript
+```
+
+When a user sets a new password, call the completeNewPassword method, which sets the new password through the cognitoUser.completeNewPasswordChallenge method.
+
+```typescript
   // 设置新密码方法
   completeNewPassword(cognitoUser: CognitoUser, newPassword: string): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -152,10 +189,13 @@ signIn(username: string, password: string): Promise<any> {
       });
     });
   }
-	```
-	### Registration
-	Register users through the cognitoUser.signUp method. After successful registration, the username and password are stored in Cognito, and the page is redirected to the login page.
-	```typescript
+```
+
+### Registration
+
+Register users through the cognitoUser.signUp method. After successful registration, the username and password are stored in Cognito, and the page is redirected to the login page.
+
+```typescript
   // 注册方法
   signUp(username: string, password: string, email: string): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -171,28 +211,38 @@ signIn(username: string, password: string): Promise<any> {
       });
     });
   }
-	```
-	### Logout
-	Log users out through the cognitoUser.signOut method. After logout, userToken is removed from sessionStorage.
-	```typescript
+```
+
+### Logout
+
+Log users out through the cognitoUser.signOut method. After logout, userToken is removed from sessionStorage.
+
+```typescript
   logout() {
     // 登出
     this.userPool.getCurrentUser()?.signOut();
     sessionStorage.removeItem('userToken');
     this.router.navigate(['/login']);
   }
-	```
-	## Login Page
-	The login page is located at `src/app/components/login/login.component.ts`. It uses the Cognito SDK to sign users in and stores the idToken or accessToken in sessionStorage after a successful login.
-	The page uses authMode to control the displayed content. authMode supports the following values:
-	- login: Login page
-	- register: Registration page
-	- forgotPassword: Forgot password page
-	- confirmSignUp: Verification page
-	- resetPassword: Reset password page
-	When the corresponding button is clicked, the switchMode method of authService is called to change authMode and update the content displayed on the page.
-	Page implementation:
-	```typescript
+```
+
+## Login Page
+
+The login page is located at `src/app/components/login/login.component.ts`. It uses the Cognito SDK to sign users in and stores the idToken or accessToken in sessionStorage after a successful login.
+
+The page uses authMode to control the displayed content. authMode supports the following values:
+
+- login: Login page
+- register: Registration page
+- forgotPassword: Forgot password page
+- confirmSignUp: Verification page
+- resetPassword: Reset password page
+
+When the corresponding button is clicked, the switchMode method of authService is called to change authMode and update the content displayed on the page.
+
+Page implementation:
+
+```typescript
 switchMode(mode: 'login' | 'register' | 'forgotPassword' | 'confirmSignUp' | 'resetPassword') {
     this.authMode = mode;
     this.message = '';
@@ -244,11 +294,15 @@ switchMode(mode: 'login' | 'register' | 'forgotPassword' | 'confirmSignUp' | 're
       );
     }
   }
-	```
-	## Anime Calendar Page
-	The anime calendar page is located at `src/app/components/home/home.component.ts`. It retrieves and displays data by calling `bgm.service.getCalendar`.
-	When the page is initialized, the `ngOnInit` method is called to retrieve and display the data.
-	```typescript
+```
+
+## Anime Calendar Page
+
+The anime calendar page is located at `src/app/components/home/home.component.ts`. It retrieves and displays data by calling `bgm.service.getCalendar`.
+
+When the page is initialized, the `ngOnInit` method is called to retrieve and display the data.
+
+```typescript
   ngOnInit() : void {
     // this.bgmService.getCalendar().subscribe(data => console.log(data));
     // this.bgmService.getSubject('482850').subscribe(data => console.log(data));
@@ -285,21 +339,27 @@ switchMode(mode: 'login' | 'register' | 'forgotPassword' | 'confirmSignUp' | 're
     const website = this.selectedItem.infobox.find((info: any) => info.key === '官方网站');
     return website ? website.value : null;
   }
-	```
-	## Search Page
-	The search page is located at `src/app/components/search/search.component.ts`. It retrieves and displays data by calling `bgm.service.search`.
-	The page receives search keywords through title and uses options to control the displayed content. options includes the following:
-	- limit: Number of items displayed per page
-	- type: Type
-	- meta_tags: Meta tags
-	- tag: Tag
-	- air_date: Air date
-	- rating: Rating
-	- rank: Rank
-	- nsfw: Whether to include adult content
-	- page: Page number
-	When sending a request to the API, title and options are restructured before being sent. The request is restructured as follows:
-	```typescript
+```
+
+## Search Page
+
+The search page is located at `src/app/components/search/search.component.ts`. It retrieves and displays data by calling `bgm.service.search`.
+
+The page receives search keywords through title and uses options to control the displayed content. options includes the following:
+
+- limit: Number of items displayed per page
+- type: Type
+- meta_tags: Meta tags
+- tag: Tag
+- air_date: Air date
+- rating: Rating
+- rank: Rank
+- nsfw: Whether to include adult content
+- page: Page number
+
+When sending a request to the API, title and options are restructured before being sent. The request is restructured as follows:
+
+```typescript
 // 搜索方法
   onSearch(): void {
     if (this.searchQuery.trim()) {
@@ -332,11 +392,15 @@ switchMode(mode: 'login' | 'register' | 'forgotPassword' | 'confirmSignUp' | 're
       );
     }
   }
-	```
-	## Adding Authentication Information with an Interceptor
-	In `src/app/interceptors/auth.interceptor.ts`, the interceptor adds authentication information to requests.
-	Interceptor implementation:
-	```typescript
+```
+
+## Adding Authentication Information with an Interceptor
+
+In `src/app/interceptors/auth.interceptor.ts`, the interceptor adds authentication information to requests.
+
+Interceptor implementation:
+
+```typescript
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authToken = environment.bgm.authToken;
 
@@ -350,9 +414,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
   return next(req);
 };
-	```
-	To use the interceptor, configure it in app.config.ts.
-	```typescript
+```
+
+To use the interceptor, configure it in app.config.ts.
+
+```typescript
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(
@@ -360,11 +426,15 @@ export const appConfig: ApplicationConfig = {
     )
   ]
 };
-	```
-	## Protecting Pages with a Guard
-	In `src/app/guards/auth.guard.ts`, the guard protects pages that require authentication and redirects unauthenticated users to the login page.
-	Guard implementation:
-	```typescript
+```
+
+## Protecting Pages with a Guard
+
+In `src/app/guards/auth.guard.ts`, the guard protects pages that require authentication and redirects unauthenticated users to the login page.
+
+Guard implementation:
+
+```typescript
 export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
@@ -377,99 +447,112 @@ export const authGuard: CanActivateFn = (route, state) => {
     return false;
   }
 };
-	```
-	To use the guard, add it to the route configuration.
-	```typescript
+```
+
+To use the guard, add it to the route configuration.
+
+```typescript
 { path: '', component: HomeComponent, canActivate: [authGuard] }, # 主页需要登录
+```
+
+# Starting the Project
+
+1. Start the project
+
+	```shell
+	ng serve
 	```
-	# Starting the Project
-	1. Start the project
-		```shell
-ng serve
-		```
-	2. Visit the URL
-		URL: [http://localhost:4200/](http://localhost:4200/)
-	# Project Deployment
-	- Build the project locally
-		```shell
-ng build
-		```
-	- Automated deployment
-		This project uses GitHub Actions to deploy automatically to GitHub Pages. Whenever code is pushed to GitHub, GitHub Actions detects the push event, builds the project, and deploys it to GitHub Pages.
-		Create the `.github/workflows/main.yml` configuration file to configure the project's automated deployment with GitHub Actions.
-		Its contents are as follows:
-		```yaml
-# GitHub Actions 工作流，用于将项目部署到 GitHub Pages
-name: Deploy to GitHub Pages
 
-# 触发条件：当推送到 master 分支时触发
-on:
-push:
-    branches:
-    - master  # 或者你要监控的分支名称
+2. Visit the URL
 
-jobs:
-build-and-deploy:
-    # 使用最新的 Ubuntu 作为运行环境
-    runs-on: ubuntu-latest
-    steps:
-    # 第一步：检出代码
-    - name: Checkout code
-        uses: actions/checkout@v3
+	URL: [http://localhost:4200/](http://localhost:4200/)
 
-    # 第二步：设置 Node.js 环境
-    - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-        node-version: '20'  # 请根据项目需求修改 Node.js 版本
+# Project Deployment
 
-    # 第三步：安装项目依赖
-    - name: Install dependencies
-        run: npm install
+- Build the project locally
 
-    # 第四步：生成环境配置文件 environment.ts
-    - name: Generate environment.ts
-        run: |
-        # 创建 src/app/environment 目录（如果不存在）
-        mkdir -p src/app/environment
+	```shell
+	ng build
+	```
 
-        # 生成 environment.ts 文件，包含 Cognito 和 Bangumi API 的配置信息
-        echo "export const environment = {
-            production: true,
-            cognito: {
-                userPoolId: '$COGNITO_USER_POOL_ID',
-                clientId: '$COGNITO_CLIENT_ID',
-                domain: '$COGNITO_DOMAIN'
-            },
-            bgm: {
-            url: '<https://api.bgm.tv/v0>',
-            authToken: '$BGM_AUTH_TOKEN',
-            userAgent: 'dreaife/my-angular-project-test'
-            }
-        };" > src/app/environment/environment.ts # 生成环境配置文件
+- Automated deployment
 
-        # 列出生成的文件以确认
-        ls src/app/environment
+	This project uses GitHub Actions to deploy automatically to GitHub Pages. Whenever code is pushed to GitHub, GitHub Actions detects the push event, builds the project, and deploys it to GitHub Pages.
 
-    # 第五步：构建项目
-    - name: Build project
-        run: npm run build -- --configuration production --base-href "/my-angular-project-test/" # 构建项目
+	Create the `.github/workflows/main.yml` configuration file to configure the project's automated deployment with GitHub Actions.
 
-    # 第六步：部署到 GitHub Pages
-    - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-        # browser 为构建输出的文件夹，内部文件包含 index.html
-        folder: dist/my-angular-project/browser  # 请根据实际输出路径填写
-        token: ${{ secrets.TOKEN }}
+	Its contents are as follows:
 
-# 环境变量配置，使用 GitHub Secrets 存储敏感信息
-env:
-    COGNITO_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
-    COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
-    COGNITO_DOMAIN: ${{ secrets.COGNITO_DOMAIN }}
-    BGM_AUTH_TOKEN: ${{ secrets.BGM_AUTH_TOKEN }}
-    GITHUB_TOKEN: ${{ secrets.TOKEN }}
-		```
-	<empty-block/>
-</synced_block>
+	```yaml
+	# GitHub Actions 工作流，用于将项目部署到 GitHub Pages
+	name: Deploy to GitHub Pages
+
+	# 触发条件：当推送到 master 分支时触发
+	on:
+	push:
+	    branches:
+	    - master  # 或者你要监控的分支名称
+
+	jobs:
+	build-and-deploy:
+	    # 使用最新的 Ubuntu 作为运行环境
+	    runs-on: ubuntu-latest
+	    steps:
+	    # 第一步：检出代码
+	    - name: Checkout code
+	        uses: actions/checkout@v3
+
+	    # 第二步：设置 Node.js 环境
+	    - name: Setup Node.js
+	        uses: actions/setup-node@v3
+	        with:
+	        node-version: '20'  # 请根据项目需求修改 Node.js 版本
+
+	    # 第三步：安装项目依赖
+	    - name: Install dependencies
+	        run: npm install
+
+	    # 第四步：生成环境配置文件 environment.ts
+	    - name: Generate environment.ts
+	        run: |
+	        # 创建 src/app/environment 目录（如果不存在）
+	        mkdir -p src/app/environment
+
+	        # 生成 environment.ts 文件，包含 Cognito 和 Bangumi API 的配置信息
+	        echo "export const environment = {
+	            production: true,
+	            cognito: {
+	                userPoolId: '$COGNITO_USER_POOL_ID',
+	                clientId: '$COGNITO_CLIENT_ID',
+	                domain: '$COGNITO_DOMAIN'
+	            },
+	            bgm: {
+	            url: '<https://api.bgm.tv/v0>',
+	            authToken: '$BGM_AUTH_TOKEN',
+	            userAgent: 'dreaife/my-angular-project-test'
+	            }
+	        };" > src/app/environment/environment.ts # 生成环境配置文件
+
+	        # 列出生成的文件以确认
+	        ls src/app/environment
+
+	    # 第五步：构建项目
+	    - name: Build project
+	        run: npm run build -- --configuration production --base-href "/my-angular-project-test/" # 构建项目
+
+	    # 第六步：部署到 GitHub Pages
+	    - name: Deploy to GitHub Pages
+	        uses: JamesIves/github-pages-deploy-action@v4
+	        with:
+	        # browser 为构建输出的文件夹，内部文件包含 index.html
+	        folder: dist/my-angular-project/browser  # 请根据实际输出路径填写
+	        token: ${{ secrets.TOKEN }}
+
+	# 环境变量配置，使用 GitHub Secrets 存储敏感信息
+	env:
+	    COGNITO_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
+	    COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
+	    COGNITO_DOMAIN: ${{ secrets.COGNITO_DOMAIN }}
+	    BGM_AUTH_TOKEN: ${{ secrets.BGM_AUTH_TOKEN }}
+	    GITHUB_TOKEN: ${{ secrets.TOKEN }}
+	```

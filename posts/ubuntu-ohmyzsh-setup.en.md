@@ -11,12 +11,15 @@ lang: 'en'
 ---
 
 # Install Zsh
+
 ```shell
 sudo apt install -y zsh git || sudo pacman -S --needed zsh git || sudo yum install zsh git || sudo zypper in zsh git || sudo apk add zsh git;
 sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)" &&
 zsh
 ```
+
 # Install the theme
+
 ```shell
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k &&
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions &&
@@ -36,8 +39,11 @@ plugins=(\
 )' ~/.zshrc &&
 exit
 ```
+
 # Install plugins
+
 Plugins:
+
 ```shell
 plugins=(
    git
@@ -51,6 +57,7 @@ plugins=(
    zsh-syntax-highlighting
 )
 ```
+
 ```shell
 git clone https://github.com/MichaelAquilina/zsh-you-should-use.git $ZSH_CUSTOM/plugins/you-should-use
 git clone https://github.com/fdellwing/zsh-bat.git $ZSH_CUSTOM/plugins/zsh-bat
@@ -59,4 +66,3 @@ apt update
 apt install bat
 source ~/.zshrc
 ```
-<empty-block/>

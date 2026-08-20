@@ -42,6 +42,7 @@ import {
 } from './notion-data-translation.mjs';
 import { writeDataFilesWithRollback } from './notion-data-write.mjs';
 import { normalizeDirectiveAttributeQuotes } from './markdown-directive-normalizer.mjs';
+import { normalizeNotionMarkdownForCommonMark } from './notion-markdown-normalizer.mjs';
 import {
   extractFrontMatterField,
   resolvePostDescription,
@@ -87,6 +88,7 @@ const DATA_TRANSLATION_ENABLED = parseBoolean(
 );
 const DATA_TRANSLATION_PROMPT_REVISION = 'structured-data-v1';
 const NOTION_SYNC_RENDER_REVISION = 'notion-sync-index-v1';
+const NOTION_POST_RENDER_REVISION = 'notion-sync-index-v2';
 const NOTION_MARKDOWN_API_VERSION = '2026-03-11';
 const BOOTSTRAP_SYNC_INDEX_ONLY = process.argv.includes('--bootstrap-index-only');
 
@@ -202,6 +204,9 @@ const GIT_CONTENT_PATHS = [
 
 function getNotionRenderRevision(kind) {
   const normalizedKind = String(kind || '').trim().toLowerCase();
+  const renderRevision = normalizedKind === 'post'
+    ? NOTION_POST_RENDER_REVISION
+    : NOTION_SYNC_RENDER_REVISION;
   const bodyRenderer = ['post', 'about', 'diary'].includes(normalizedKind)
     ? `official-markdown@${NOTION_MARKDOWN_API_VERSION}`
     : 'metadata-only';
@@ -215,7 +220,7 @@ function getNotionRenderRevision(kind) {
     : 'disabled';
 
   return [
-    NOTION_SYNC_RENDER_REVISION,
+    renderRevision,
     `kind=${normalizedKind}`,
     `body=${bodyRenderer}`,
     `r2=${r2Revision}`,
@@ -596,7 +601,9 @@ async function markdownFileContainsTemporaryNotionImageUrl(filePath) {
 
 async function readNotionPageMarkdown(markdownReader, pageId) {
   const markdown = await markdownReader.readPage(pageId);
-  return normalizeDirectiveAttributeQuotes(markdown);
+  return normalizeDirectiveAttributeQuotes(
+    normalizeNotionMarkdownForCommonMark(markdown)
+  );
 }
 
 function getPageCoverInfo(page) {

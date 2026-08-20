@@ -25,6 +25,7 @@
 - Notion `Diary` 页面映射到 `data/diary.ts`
 - Notion `Project` 页面映射到 `data/projects.ts`
 - 当内容或 front matter 发生变化时更新已有文件
+- Post 写入前会将 Notion-flavored Markdown 转成 CommonMark：恢复块间段落空行，保留 Shift+Enter 对应的 `<br>`，将 `<empty-block/>` 转为空块，并在保留子内容的同时移除 synced-block 包装
 - 当文件在 Notion 中已不存在时删除本地文件（`NOTION_SYNC_DELETE_MISSING=true` 时）
 - 当文章同步后有变更并推送成功时，可直接触发 Cloudflare Pages Deploy Hook（`CF_DEPLOY_HOOK`）
 
