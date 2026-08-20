@@ -2,7 +2,7 @@
 title: '满载的梦想与希望，自我的宽恕与畅想——樱花摸鱼'
 published: 2022-09-18
 updated: 2022-09-18
-description: '樱花摸鱼的游玩经历充满了梦想与希望，伴随着汉化补丁的推出，重新点燃了对这款游戏的兴趣。游戏中的音乐《さくら、もゆ》贯穿始终，传达了无法传达的爱恋和希望。角色们的行动带来了震撼与动力，让人思考生活的意义，不仅仅是追求金钱与生存，而是追寻梦想与幸福。希望更多人能喜欢这款优秀的游戏。'
+description: '《さくら、もゆ。》通关感想：记录从搁置到因汉化补丁重拾作品的过程，并回望歌曲、角色牺牲与成长所承载的梦想、希望和自我宽恕。'
 permalink: 'sakura-dreams-hope'
 image: 'https://r2.dreaife.tokyo/notion/covers/2e1f116038864fb8b2f212e3e2493bcc/MASHIRO_e102b.png'
 tags: ['recomand', 'thinking']

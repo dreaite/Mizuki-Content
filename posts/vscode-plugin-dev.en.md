@@ -2,7 +2,7 @@
 title: 'Getting Started with VSCode Plugin Development'
 published: 2025-03-13
 updated: 2025-03-13
-description: 'Developing a VSCode extension requires preparing Node.js, VSCode, Yeoman, and generator-code. Yeoman can be used to generate the basic plugin structure and understand key files such as package.json and the entry file src/extension.ts. The plugin can be run and tested through the debug panel, and after completion it can be packaged with vsce and published to the VSCode Marketplace. Plugin activation is defined through activationEvents in package.json, supporting multiple types of activation events.'
+description: 'Create a VS Code extension with Yeoman, then learn package.json, activationEvents, extension.ts, debugging, vsce packaging, and publishing.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1b55465cca17808d8be3e99dd76eae9f/IMG_2747.jpg'
 tags: ['vscode', 'plugin']
 category: 'plugin'

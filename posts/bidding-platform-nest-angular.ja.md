@@ -2,7 +2,7 @@
 title: 'Nest.jsとAngularを基盤とした入札プラットフォーム—JestテストとCI/CDも含む'
 published: 2024-12-07
 updated: 2024-12-08
-description: '本プロジェクトは、Nest.jsとAngularをベースにした入札プラットフォームです。ユーザー登録、プロジェクト管理、入札管理機能を提供し、データベースにはPostgreSQLを使用、SwaggerでAPIドキュメントを生成します。バックエンドには安全な認証機能を実装し、ユーザー認証にはAWS Cognitoを採用しています。フロントエンドにはユーザーフレンドリーなインターフェースを構築し、プロジェクトの表示と入札管理に対応しています。Jestによるテストでコード品質を確保し、GitHub Actionsを通じて継続的インテグレーションとデプロイを実現しています。'
+description: 'Nest.js、Angular、PostgreSQL、AWS Cognitoで入札プラットフォームを構築。ユーザー・案件・入札管理、Swagger API、Jest、GitHub Actions CI/CDを扱います。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1555465cca1780f382f5f1421004b0a8/IMG_1767.jpg'
 tags: ['nodejs', 'ts', 'aws']
 category: 'PROJECT'

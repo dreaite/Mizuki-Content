@@ -2,7 +2,7 @@
 title: 'About Errors When Using pandas.to_datetime with Different Time Formats'
 published: 2024-01-02
 updated: 2024-01-02
-description: 'When using the pandas to_datetime function, errors may occur if date values use different formats. Setting the format parameter to ''mixed'' can solve issues caused by inconsistent formats. Example code shows how to handle invalid date formats and successfully convert values to datetime.'
+description: 'Fix pandas.to_datetime errors from mixed date strings with format="mixed", plus a concise example converting inconsistent values to datetime.'
 image: 'https://r2.dreaife.tokyo/notion/covers/3426b492685447d7b65f4c01dd9c4fce/2421860-20240103003119896-530983932.png'
 tags: ['pandas', '数据处理']
 category: 'cs-base'

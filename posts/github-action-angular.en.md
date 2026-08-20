@@ -2,7 +2,7 @@
 title: 'Automatically Deploy Angular Pages with GitHub Actions'
 published: 2024-11-04
 updated: 2024-11-04
-description: 'This post explains how to configure an Angular project for automatic deployment to GitHub Pages, including modifying the outputPath in angular.json, installing angular-cli-ghpages, creating a GitHub Actions workflow to build and deploy on pushes to a specific branch, and generating the token required to access the repository. Finally, it sets the GitHub Pages branch to gh-pages.'
+description: 'Deploy Angular to GitHub Pages with GitHub Actions, covering outputPath, angular-cli-ghpages, workflow setup, tokens, and the gh-pages branch.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca1780709669dd1e198f2678/Gal1mvpbQAA_8s_.jpg'
 tags: ['github-action']
 category: 'infra'

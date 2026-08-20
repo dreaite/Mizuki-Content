@@ -2,7 +2,7 @@
 title: 'Auction Platform Built with Nest.js and Angular—with Jest Testing and CI/CD'
 published: 2024-12-07
 updated: 2024-12-08
-description: 'This project is a bidding platform built with Nest.js and Angular. It provides user registration, project management, and bid management features, uses PostgreSQL as its database, and generates API documentation with Swagger. The backend implements secure authentication using AWS Cognito. The frontend offers a user-friendly interface for browsing projects and managing bids. Jest is used for testing to ensure code quality, while GitHub Actions enables continuous integration and deployment.'
+description: 'Build a Nest.js and Angular bidding platform with PostgreSQL and AWS Cognito, plus Swagger APIs, Jest tests, and GitHub Actions CI/CD.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1555465cca1780f382f5f1421004b0a8/IMG_1767.jpg'
 tags: ['nodejs', 'ts', 'aws']
 category: 'PROJECT'

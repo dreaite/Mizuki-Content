@@ -2,7 +2,7 @@
 title: 'Using SVN'
 published: 2024-11-04
 updated: 2024-11-04
-description: 'SVN is a centralized file management/version control tool that supports fine-grained file access management. Before use, a repository must be created, and graphical clients such as TortoiseSVN are recommended. Common commands include checkout, commit, update, add, delete, log, diff, revert, and ignore, and the article also covers branch management and help commands. Detailed command usage is listed to help users get started quickly.'
+description: 'A concise SVN guide to centralized version control, repository setup, TortoiseSVN, checkout, update, commit, diff, revert, ignore rules, and branches.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca178060a708e1b3428bd22e/IMG_1451.jpg'
 tags: ['SVN']
 category: 'infra'

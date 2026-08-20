@@ -2,7 +2,7 @@
 title: 'missing-semester-class01'
 published: 2023-01-11
 updated: 2023-01-11
-description: 'Introduces the basic features and usage of the shell, including running programs, navigating paths, managing file permissions, redirecting input and output streams, and administering root privileges. It also provides multiple Bash command examples and exercises to reinforce the material.'
+description: 'Missing Semester shell notes on commands, paths, permissions, pipes, I/O redirection, root privileges, Bash examples, and exercises.'
 image: 'https://r2.dreaife.tokyo/notion/covers/30d1fea56f3940319785fca81bdfd185/20220818_231226.jpg'
 tags: ['bash']
 category: 'cs-base'

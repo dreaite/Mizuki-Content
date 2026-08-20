@@ -2,7 +2,7 @@
 title: 'Getting Started with Docker'
 published: 2023-08-10
 updated: 2023-08-10
-description: 'Docker is a technology for solving microservice deployment problems by packaging applications and their dependencies into isolated containers, avoiding inconsistent environments and dependency conflicts. Compared with virtual machines, Docker starts faster and uses fewer resources. Its architecture includes images and containers, and users can share and obtain images through Docker Hub. Basic operations include creating and managing images and containers and using volumes for data persistence and host-container decoupling. Docker Compose can simplify distributed application deployment.'
+description: 'A practical Docker introduction covering containers vs. VMs, images, Docker Hub, core commands, persistent volumes, and Docker Compose.'
 image: 'https://r2.dreaife.tokyo/notion/covers/093263234b9d454390c0f01ed1b0909d/2421860-20230810182019038-697482712.png'
 tags: ['docker', 'deploy']
 category: 'infra'

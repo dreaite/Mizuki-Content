@@ -2,7 +2,7 @@
 title: 'Docker入門'
 published: 2023-08-10
 updated: 2023-08-10
-description: 'Dockerは、アプリケーションと依存関係を分離されたコンテナにパッケージ化することで、環境差異や依存関係の衝突を避け、マイクロサービスのデプロイ問題を解決する技術です。仮想マシンと比べて起動が速く、リソース使用量も少ないのが特徴です。Dockerのアーキテクチャはイメージとコンテナで構成され、Docker Hubでイメージを共有・取得できます。基本操作にはイメージ/コンテナの作成・管理や、データ永続化とホスト分離のためのボリューム利用が含まれます。Docker Composeを使うと分散アプリケーションのデプロイを簡素化できます。'
+description: 'Docker入門として、仮想マシンとの違い、イメージとコンテナ、Docker Hub、基本コマンド、永続化ボリューム、Docker Composeを整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/093263234b9d454390c0f01ed1b0909d/2421860-20230810182019038-697482712.png'
 tags: ['docker', 'deploy']
 category: 'infra'

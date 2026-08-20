@@ -2,7 +2,7 @@
 title: 'missing-semester-class01'
 published: 2023-01-11
 updated: 2023-01-11
-description: 'シェルの基本的な機能と使い方を紹介し、プログラムの実行、パスの移動、ファイル権限、入出力ストリームのリダイレクト、rootユーザーの権限管理について解説します。学習内容を定着させるため、複数のBashコマンド例と演習問題も掲載しています。'
+description: 'Missing Semesterのシェル入門ノート。コマンド実行、パス移動、権限、パイプ、入出力リダイレクト、root権限を例題付きで整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/30d1fea56f3940319785fca81bdfd185/20220818_231226.jpg'
 tags: ['bash']
 category: 'cs-base'

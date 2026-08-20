@@ -2,7 +2,7 @@
 title: 'VSCodeプラグイン開発入門'
 published: 2025-03-13
 updated: 2025-03-13
-description: 'VSCodeプラグイン開発には、Node.js、VSCode、Yeoman、generator-codeの準備が必要です。Yeomanを使ってプラグインの基本構成を生成し、package.jsonやエントリファイルsrc/extension.tsなどのプロジェクト構造を理解します。デバッグパネルから実行・テストでき、完成後はvsceでパッケージ化してVSCode Marketplaceへ公開できます。プラグインの有効化はpackage.jsonのactivationEventsで定義され、複数種類のアクティベーションイベントに対応します。'
+description: 'Yeomanとgenerator-codeでVS Code拡張を作成し、package.json、activationEvents、extension.tsを理解。デバッグからvsceでの配布まで扱います。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1b55465cca17808d8be3e99dd76eae9f/IMG_2747.jpg'
 tags: ['vscode', 'plugin']
 category: 'plugin'

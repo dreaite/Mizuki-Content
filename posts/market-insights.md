@@ -2,7 +2,7 @@
 title: '本人在x的一些关于市场认识的总结'
 published: 2026-08-10
 updated: 2026-08-11
-description: '从复杂系统与博弈论出发，梳理市场运行、情绪反身性与货币价值共识的内在逻辑，帮助读者穿透短期波动，建立对市场预期与通胀传导的深层认知。'
+description: '从复杂系统与博弈视角讨论市场的反身性：盈利模式为何会被对手盘与情绪反馈消解，以及货币贬值预期如何经由大宗商品、企业成本和囤货行为传导成通胀螺旋。'
 permalink: 'market-insights'
 image: 'https://r2.dreaife.tokyo/notion/covers/3b85465cca178058ab16d23d1491db0b/shinku_birthday.png'
 tags: ['thinking', 'market', 'trade']

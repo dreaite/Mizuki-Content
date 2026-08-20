@@ -51,6 +51,7 @@ jobs:
           node .github/scripts/test-notion-data-translation.mjs
           node .github/scripts/test-notion-data-write.mjs
           node .github/scripts/test-notion-ts-data-sync.mjs
+          node .github/scripts/test-notion-post-metadata.mjs
           node .github/scripts/test-notion-post-visibility.mjs
           node .github/scripts/test-notion-sync-index.mjs
           node .github/scripts/test-notion-page-query.mjs
@@ -105,6 +106,8 @@ jobs:
           NOTION_POST_TRANSLATION_SOURCE_LANG: ${{ secrets.NOTION_POST_TRANSLATION_SOURCE_LANG || '' }}
           # 可选：自定义 system prompt（不填则使用脚本内默认提示词）
           NOTION_POST_TRANSLATION_SYSTEM_PROMPT: ${{ secrets.NOTION_POST_TRANSLATION_SYSTEM_PROMPT || '' }}
+          # 默认保留已有 Markdown 中人工优化的 SEO description；设为 false 才从 Notion/翻译重新生成
+          NOTION_PRESERVE_EXISTING_POST_DESCRIPTIONS: ${{ vars.NOTION_PRESERVE_EXISTING_POST_DESCRIPTIONS || 'true' }}
           # About / Project / Diary 默认启用翻译；可用 secret 显式设为 false
           NOTION_DATA_TRANSLATION_ENABLED: ${{ secrets.NOTION_DATA_TRANSLATION_ENABLED || 'true' }}
           NOTION_DATA_TRANSLATION_LANGS: ${{ secrets.NOTION_DATA_TRANSLATION_LANGS || '' }}

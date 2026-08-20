@@ -2,7 +2,7 @@
 title: 'Xでの市場認識に関する個人的なまとめ'
 published: 2026-08-10
 updated: 2026-08-11
-description: '複雑系とゲーム理論の観点から、市場の機能、感情の再帰性、通貨価値を支えるコンセンサスの内在的な論理を整理し、短期的な変動に惑わされず、市場予想とインフレ波及の仕組みを深く理解できるよう読者を導きます。'
+description: '複雑系とゲーム理論の視点から市場の再帰性を考察し、収益パターンが市場参加者と感情のフィードバックで崩れる理由、通貨下落期待が商品価格・企業コスト・買いだめを通じてインフレスパイラルへ波及する過程を整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/3b85465cca178058ab16d23d1491db0b/shinku_birthday.png'
 tags: ['thinking', 'market', 'trade']
 category: 'market'

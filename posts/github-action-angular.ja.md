@@ -2,7 +2,7 @@
 title: 'GitHub ActionsでAngularページを自動デプロイ'
 published: 2024-11-04
 updated: 2024-11-04
-description: 'AngularプロジェクトをGitHub Pagesへ自動デプロイするための設定を説明します。内容には、angular.jsonのoutputPath変更、angular-cli-ghpagesの導入、特定ブランチへのpush時にビルドとデプロイを行うGitHub Actionsワークフローの作成、リポジトリ操作に必要なトークンの生成が含まれます。最後に、GitHub Pagesの公開ブランチをgh-pagesに設定します。'
+description: 'GitHub ActionsでAngularをGitHub Pagesへ自動デプロイ。outputPath、angular-cli-ghpages、ワークフロー、トークン、gh-pagesブランチの設定を扱います。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca1780709669dd1e198f2678/Gal1mvpbQAA_8s_.jpg'
 tags: ['github-action']
 category: 'infra'

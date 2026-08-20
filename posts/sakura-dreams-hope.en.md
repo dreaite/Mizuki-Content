@@ -2,7 +2,7 @@
 title: 'Dreams and Hope Overflowing, Self-Forgiveness and Reverie — Sakura, Moyu.'
 published: 2022-09-18
 updated: 2022-09-18
-description: 'My experience with Sakura, Moyu. followed a long arc from excitement to giving up and then rekindled passion. The release of the Chinese localization patch helped me finally finish it. This post is about that process, the dreams and hope carried by the song "さくら、もゆ", and the emotional impact the characters and story left on me.'
+description: 'A review of Sakura, Moyu.: returning after the Chinese patch, finishing the visual novel, and reflecting on its music, sacrifice, dreams, and hope.'
 image: 'https://r2.dreaife.tokyo/notion/covers/2e1f116038864fb8b2f212e3e2493bcc/MASHIRO_e102b.png'
 tags: ['recomand', 'thinking']
 category: 'gal'

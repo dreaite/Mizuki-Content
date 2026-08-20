@@ -2,7 +2,7 @@
 title: '关于GPT-SoVITS从仓库到Windows11本地运行的导入'
 published: 2026-07-05
 updated: 2026-07-06
-description: '本文只代表作者个人观点，状态为草稿。'
+description: '在 Windows 11 从 Git 仓库部署 GPT-SoVITS 的实操指南，覆盖 Python/uv、CUDA PyTorch、TorchCodec 与 FFmpeg shared DLL、预训练模型、WebUI、数据集格式和常见训练故障。'
 permalink: 'pre-read-tips'
 image: 'https://source.unsplash.com/random'
 tags: []

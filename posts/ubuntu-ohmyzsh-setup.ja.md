@@ -2,7 +2,7 @@
 title: 'UbuntuにOh My Zshとそのコンポーネントをインストールする'
 published: 2024-12-03
 updated: 2024-12-03
-description: 'UbuntuにohMyZshとそのコンポーネントをインストールする手順は、まずzshとgitをインストールし、次にwgetを使用してohMyZshを導入します。続いて、powerlevel10kテーマと必要なプラグインをクローンし、.zshrcファイルを更新してテーマとプラグインを適用します。最後に、zsh-batやyou-should-useなどの追加プラグインをインストールし、システムを更新してすべてが正常に動作することを確認します。'
+description: 'UbuntuにOh My Zshを導入し、Zsh、Git、Powerlevel10k、各種プラグイン、.zshrcを設定して使いやすい端末環境を整えます。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1515465cca178073b194f4ade9c3a703/IMG_1723.jpg'
 tags: ['bash', 'linux']
 category: 'cs-base'

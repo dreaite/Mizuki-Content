@@ -2,7 +2,7 @@
 title: 'Psychological Record 1'
 published: 2026-03-05
 updated: 2026-03-06
-description: 'Realizing I’ve been suppressing my emotions, reflecting on how past living habits have led to fear of the outside world and inner stillness. Hoping to find my true self through interacting with the world, while facing the sense of responsibility in choosing a direction and the fear of losing other possibilities. The true self needs to be shaped through exploration, and choosing a future direction means giving up other possibilities.'
+description: 'A reflection on emotional suppression and self-formation: the self emerges through interaction and choice, while hesitation masks fear.'
 image: 'https://r2.dreaife.tokyo/notion/covers/31a5465cca1780a3aa46f35da870624c/IMG_4498.jpg'
 tags: ['self', 'mental', 'discover']
 category: 'psycho'

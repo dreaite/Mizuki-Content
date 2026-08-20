@@ -2,7 +2,7 @@
 title: 'missing-semester-class01'
 published: 2023-01-11
 updated: 2023-01-11
-description: '介绍了shell的基本特性和使用，包括如何运行程序、导航路径、文件权限、输入输出流的重定向，以及根用户的权限管理。提供了多个bash命令示例和课后习题以巩固学习内容。'
+description: 'Missing Semester Shell 入门笔记，涵盖程序执行、路径导航、文件权限、管道与输入输出重定向、root 权限，并附 Bash 命令示例和练习。'
 permalink: 'smart-shell-guide'
 image: 'https://r2.dreaife.tokyo/notion/covers/30d1fea56f3940319785fca81bdfd185/20220818_231226.jpg'
 tags: ['bash']

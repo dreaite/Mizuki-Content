@@ -2,7 +2,7 @@
 title: 'Personal Crisis Management and Future Income Planning'
 published: 2025-01-23
 updated: 2025-01-23
-description: 'In the face of possible future economic crises and natural disasters, the first priority is ensuring personal safety and choosing a relatively safe place to live. Next, maintaining a work visa and increasing income are key to dealing with financial crises, with the goal of sustaining life through stable wages and passive income. A job provides stable cash flow, while product sales can bring long-term returns and require market research. Finally, after accumulating assets, financial management should be considered to achieve wealth growth.'
+description: 'A resilience plan for crises and disasters, prioritizing safe housing, work-visa stability, reliable cash flow, product income, and investing.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1845465cca1780b28400ef19d8886705/IMG_2349.jpg'
 tags: ['thinking', 'life']
 category: 'life'

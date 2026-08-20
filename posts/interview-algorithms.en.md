@@ -2,7 +2,7 @@
 title: 'Interview Algorithm Study 1'
 published: 2023-08-11
 updated: 2023-08-11
-description: 'This post contains multiple algorithm interview problems and solutions, including snake matrix filling, quicksort on a singly linked list, finding peaks and local minima, the egg hardness problem, a stack supporting minimum retrieval, and finding the entry node of a cycle in a linked list. Each problem includes a detailed description, input/output format, and sample code.'
+description: 'Interview solutions for snake matrices, linked-list quicksort, peaks, egg dropping, minimum stacks, and cycle-entry detection, with code.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1670090a8eaf4eab9ccd3f1332d4e916/2421860-20230811144113268-1519746820.png'
 tags: ['meeting', 'algorithm']
 category: 'algorithm'

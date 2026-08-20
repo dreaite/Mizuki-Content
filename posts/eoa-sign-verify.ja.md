@@ -2,7 +2,7 @@
 title: 'EOAウォレットの署名検証とその関連内容について'
 published: 2026-06-10
 updated: 2026-06-10
-description: 'EOAウォレットの署名検証を、secp256k1、ECDSAのr/s/v、公開鍵復元、keccak-256によるアドレス計算から整理し、SIWEログインで秘密鍵を渡さず所有権を確認する仕組みを解説します。'
+description: 'secp256k1の有限体と点演算からECDSAのr/s/v署名と公開鍵復元を導出し、SIWEを例に、サーバーが秘密鍵に触れずメッセージハッシュとkeccak-256でEOAアドレスの管理権を検証する仕組みを解説します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/37b5465cca17804f8624caf756234df3/ai-generated-1781099535759.png'
 tags: ['wallet', 'theory', 'web3']
 category: 'WEB3'

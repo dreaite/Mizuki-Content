@@ -2,7 +2,7 @@
 title: '关于EOA钱包在链上的基础操作'
 published: 2026-06-27
 updated: 2026-06-27
-description: '快速掌握Web3钱包在链上的核心操作。内容涵盖EOA与HD钱包的创建原理、助记词生成与BIP派生流程，深入剖析SIWE和EIP-712链上验证，以及交易构造、签名、广播的完整周期，助你理清钱包底层逻辑。'
+description: '从钱包视角梳理 EOA 与 HD 钱包的密钥派生、EIP-1559 交易结构与生命周期，以及 SIWE、EIP-191、EIP-712 的签名验证，并给出 ethers.js 创建钱包、验签和广播交易的实现示例。'
 permalink: 'eoa-wallet-guide'
 image: 'https://r2.dreaife.tokyo/notion/covers/38c5465cca1780e5bf80d0662451b860/ai-generated-1782646843083.png'
 tags: ['wallet', 'web3', 'transaction']

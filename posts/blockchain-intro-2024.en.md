@@ -2,7 +2,7 @@
 title: 'Understanding Blockchain'
 published: 2024-12-09
 updated: 2024-12-09
-description: 'Blockchain is a structure composed of blocks linked in chronological order, with core characteristics such as decentralization, immutability, transparency, and security. Its workflow includes transaction creation, validation, packaging, and adding blocks to the chain. Application scenarios include cryptocurrencies, supply chain management, and financial services. Challenges include scalability, energy consumption, and user education. The underlying logic is based on distributed ledgers and consensus mechanisms to ensure data security and consistency.'
+description: 'Learn blockchain through blocks, distributed ledgers, and consensus: transaction flow, immutability, real-world uses, and scalability tradeoffs.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1575465cca1780ecb51bc75146cb9231/IMG_1823(1).jpg'
 tags: ['web3', 'theory']
 category: 'WEB3'

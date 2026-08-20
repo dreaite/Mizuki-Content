@@ -2,7 +2,7 @@
 title: '博客迁移-Mizuki配置记录'
 published: 2026-02-22
 updated: 2026-02-23
-description: '从notionNext迁移到mizuki的过程记录，主要原因是notionNext的限制。选择mizuki是因为其轻量级和良好的功能平衡，支持日记和项目展示。配置过程简单，内容通过md和ts文件控制，同时实现了与bangumi API的连接。计划通过CI同步notion内容，并进行多语言适配，解决了图片链接过期的问题。'
+description: '从 NotionNext 迁移到 Astro 博客 Mizuki 的配置记录，涵盖内容结构、Bangumi 接入、自托管 CI 的 Notion 同步、R2 图片持久化与 LLM 多语言生成。'
 permalink: 'blog-migration-mizuki'
 image: 'https://r2.dreaife.tokyo/notion/covers/30f5465cca1780cc8df8e7c367a16f3d/IMG_4450.jpg'
 tags: ['blog', 'llm', 'deploy', 'notion']

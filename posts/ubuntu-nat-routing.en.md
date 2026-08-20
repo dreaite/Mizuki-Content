@@ -2,7 +2,7 @@
 title: 'Forwarding Network Traffic to a Router via NAT on Ubuntu'
 published: 2024-12-15
 updated: 2024-12-15
-description: 'Configure Netplan, enable IP forwarding, and set up NAT to allow Ubuntu to share its network connection with a router. The process includes clearing existing configurations, assigning a static IP address, installing and configuring a DHCP service, and verifying that network sharing works correctly.'
+description: 'Share an Ubuntu host network with a router by configuring Netplan, static IP, IP forwarding, DHCP, and NAT rules, then verify client connectivity.'
 image: 'https://r2.dreaife.tokyo/notion/covers/15d5465cca1780bf85eac8dea673675e/IMG_1935.jpg'
 tags: ['network', 'linux']
 category: 'cs-base'

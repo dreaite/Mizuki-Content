@@ -68,6 +68,8 @@
   - 可选，源语言提示（仅作为 prompt 上下文），例如：`zh-cn`。
 - `NOTION_POST_TRANSLATION_SYSTEM_PROMPT`
   - 可选，自定义翻译行为的 system prompt。
+- `NOTION_PRESERVE_EXISTING_POST_DESCRIPTIONS`
+  - Notion 正文或译文重新生成时保留 Markdown 中已有的 `description`，避免人工优化的 SEO 简介被覆盖。默认 `true`；设为 `false` 才会从 Notion 与翻译结果重新生成。
 - `NOTION_COVER_R2_ENABLED`
   - 设为 `true` 时，将 Notion 图片资产上传到 Cloudflare R2，并写入稳定的公网 URL。
   - 覆盖范围：
@@ -96,7 +98,7 @@ Workflow 会传入以下默认值。如果你的 Notion 列名不同，请在 wo
 - `title` -> front matter `title`
 - `createTime` -> front matter `published`（仅日期 `YYYY-MM-DD`）
 - `date` -> front matter `updated`（仅日期 `YYYY-MM-DD`）
-- `summary` -> front matter `description`
+- `summary` -> 新文章的 front matter `description`；已有简介默认保留
 - `slug` -> front matter `permalink` 和输出文件名
 - page cover -> front matter `image`
 - `tags` -> front matter `tags`

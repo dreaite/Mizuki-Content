@@ -2,7 +2,7 @@
 title: '个人网上受骗01-骗局分析'
 published: 2024-08-19
 updated: 2024-08-20
-description: '分析了一个网络骗局的运作方式，包括通过社交软件引流、诱导用户付款以及利用用户的贪欲。尽管发现了多个漏洞，最终还是因对金钱的渴望而上当受骗。强调了理性投资的重要性，提醒人们在面对诱惑时要保持冷静，评估投资的风险和收益。'
+description: '复盘一次网络诈骗经历，拆解社交平台引流、诱导付款和利用贪欲的手法，并总结识别异常、评估投资风险及避免情绪决策的教训。'
 permalink: 'scam-analysis-2024'
 image: 'https://r2.dreaife.tokyo/notion/covers/1774c94989624c98953feedabade9c8e/20240802_040855728_iOS.jpg'
 tags: ['thinking']

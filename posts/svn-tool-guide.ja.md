@@ -2,7 +2,7 @@
 title: 'SVNの使い方'
 published: 2024-11-04
 updated: 2024-11-04
-description: 'SVNは細かなファイル権限管理をサポートする集中型のファイル管理（バージョン管理）ツールです。利用前にはリポジトリ作成が必要で、TortoiseSVNのようなGUIクライアントの利用が推奨されます。代表的なコマンドにはcheckout、commit、update、add、delete、log、diff、revert、ignoreがあり、さらにブランチ管理やヘルプコマンドについても扱います。コマンドの具体的な使い方が詳しく整理されており、素早く学習を始めるのに適しています。'
+description: '集中型バージョン管理SVNの入門。リポジトリ作成、TortoiseSVN、checkout、update、commit、diff、revert、ignore、ブランチ操作を整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca178060a708e1b3428bd22e/IMG_1451.jpg'
 tags: ['SVN']
 category: 'infra'

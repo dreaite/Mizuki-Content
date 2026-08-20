@@ -2,7 +2,7 @@
 title: 'Sunflower: A Coming-of-Age Story from Child to Adult'
 published: 2024-07-04
 updated: 2024-07-04
-description: 'This story explores the process of growing from a child into an adult, emphasizing the longing for the future and the importance of cherishing precious things. The characters influence each other while facing fragility and the challenges of growth, involving themes such as viruses, inherited memories, and intertwined human destinies. In the end, the characters seek hope and redemption amid complex emotions and fate.'
+description: 'A spoiler-filled reflection on Himawari, exploring coming of age, inherited memories, intertwined destinies, sacrifice, hope, and redemption.'
 image: 'https://r2.dreaife.tokyo/notion/covers/48ae26ddba2f483c87e74706f78aa658/s_17_2.jpg'
 tags: ['recomand', 'thinking']
 category: 'gal'

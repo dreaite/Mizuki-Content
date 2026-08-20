@@ -2,7 +2,7 @@
 title: '个人危机管理和未来收入规划'
 published: 2025-01-23
 updated: 2025-01-23
-description: '面对未来可能的经济危机和自然灾害，首先需要确保生命安全并选择相对安全的居住地。其次，维持工签和提高收入是应对金融危机的关键，期望通过稳定的工资和被动收入来维持生活。工作提供稳定现金流，而产品销售则能带来长期收益，需做好市场调研。最后，资产积累后应考虑理财，以实现财富增值。'
+description: '一份面向经济危机与自然灾害的个人风险规划，讨论居住安全、工作签证、稳定现金流、产品收入与资产配置的优先顺序。'
 permalink: 'personal-crisis-plan'
 image: 'https://r2.dreaife.tokyo/notion/covers/1845465cca1780b28400ef19d8886705/IMG_2349.jpg'
 tags: ['thinking', 'life']

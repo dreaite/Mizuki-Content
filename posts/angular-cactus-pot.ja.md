@@ -2,7 +2,7 @@
 title: 'Angularベースのアニメーション展示サイト＋ログイン・新規登録（Cognito）'
 published: 2024-11-12
 updated: 2024-11-12
-description: 'このプロジェクトは、Bangumiのアニメ作品を表示・検索するためのAngularベースのWebアプリケーションで、ユーザー認証にはCognitoを使用しています。GitHub Actionsによる自動ビルドとGitHub Pagesへの自動デプロイに対応しています。主な技術スタックはAngular 16、TypeScript、HTML、CSSで、明確なプロジェクト構成を備え、ユーザーのログイン、登録、検索、アニメカレンダーなどの機能を搭載しています。'
+description: 'Angular 16とAWS CognitoでBangumiのアニメ展示サイトを構築。ログイン・登録、検索、カレンダー表示、GitHub ActionsによるPages配備を扱います。'
 image: 'https://r2.dreaife.tokyo/notion/covers/13c5465cca178004ad54d1f3b101d56a/IMG_1506.jpg'
 tags: ['ts', 'angular', 'github-action', 'doc']
 category: 'PROJECT'

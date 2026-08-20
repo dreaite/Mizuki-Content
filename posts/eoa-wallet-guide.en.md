@@ -2,7 +2,7 @@
 title: 'Basic On-Chain Operations for EOA Wallets'
 published: 2026-06-27
 updated: 2026-06-27
-description: 'Quickly master the core on-chain operations of Web3 wallets. Covers the principles behind creating EOA and HD wallets, mnemonic generation and the BIP derivation process, an in-depth look at SIWE and EIP-712 on-chain verification, and the full lifecycle of transaction construction, signing, and broadcasting to help you understand the underlying logic of wallets.'
+description: 'Guide to EOA/HD key derivation, EIP-1559 transactions, SIWE/EIP-191/EIP-712 signing, and ethers.js verification and broadcasting examples.'
 image: 'https://r2.dreaife.tokyo/notion/covers/38c5465cca1780e5bf80d0662451b860/ai-generated-1782646843083.png'
 tags: ['wallet', 'web3', 'transaction']
 category: 'WEB3'

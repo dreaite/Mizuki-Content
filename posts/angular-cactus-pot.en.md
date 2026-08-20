@@ -2,7 +2,7 @@
 title: 'Angular-Based Animation Showcase Website with Login and Registration (Cognito)'
 published: 2024-11-12
 updated: 2024-11-12
-description: 'This Angular-based web application lets users browse and search for anime on Bangumi, with Cognito for user authentication. It supports automated builds and deployment to GitHub Pages via GitHub Actions. The main technology stack includes Angular 16, TypeScript, HTML, and CSS. The project has a clear structure and provides user login, registration, search, and anime calendar features.'
+description: 'Build a Bangumi anime browser with Angular 16 and AWS Cognito, including sign-in, registration, search, calendar views, and GitHub Pages deployment.'
 image: 'https://r2.dreaife.tokyo/notion/covers/13c5465cca178004ad54d1f3b101d56a/IMG_1506.jpg'
 tags: ['ts', 'angular', 'github-action', 'doc']
 category: 'PROJECT'

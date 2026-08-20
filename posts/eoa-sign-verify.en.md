@@ -2,7 +2,7 @@
 title: 'About an EOA Wallet Signature Verification and Related Content'
 published: 2026-06-10
 updated: 2026-06-10
-description: 'A developer-focused guide to EOA wallet signature verification, covering secp256k1, ECDSA r/s/v signatures, public key recovery, keccak-256 address derivation, and how SIWE proves wallet ownership without exposing the private key.'
+description: 'How secp256k1 math produces ECDSA r/s/v signatures and public-key recovery, enabling SIWE servers to verify EOA control without private keys.'
 image: 'https://r2.dreaife.tokyo/notion/covers/37b5465cca17804f8624caf756234df3/ai-generated-1781099535759.png'
 tags: ['wallet', 'theory', 'web3']
 category: 'WEB3'

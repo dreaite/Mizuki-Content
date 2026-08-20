@@ -2,7 +2,7 @@
 title: 'CSAPP Chapter 1: A Tour of Computer Systems'
 published: 2023-01-15
 updated: 2023-01-15
-description: 'A computer system consists of hardware and system software and runs applications through a program life cycle of creation, execution, output, and termination. Information is made of bits and context, and programs are transformed into executables by the compilation system. The processor reads and executes instructions, using caches to improve performance. The operating system manages hardware and provides abstractions such as processes and virtual memory to support concurrency and parallelism. Abstraction is a core concept in computer science, and virtual machines provide an abstraction of an entire computer.'
+description: 'CSAPP Chapter 1 notes tracing a program from bits and compilation through CPU execution, caches, OS abstractions, processes, and virtual memory.'
 image: 'https://r2.dreaife.tokyo/notion/covers/fbaef38b501a4cd8a8a2d1c58798cf70/2421860-20230116004313116-1139297538.png'
 tags: ['caapp', 'os', 'c']
 category: 'cs-base'

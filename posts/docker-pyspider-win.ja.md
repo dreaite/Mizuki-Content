@@ -2,7 +2,7 @@
 title: 'DockerでWin11上のpyspiderを動かす'
 published: 2024-01-02
 updated: 2024-01-02
-description: 'Win11でpyspiderを使う際にインストール問題が発生した場合、Dockerを使って導入できます。Dockerコマンドとdocker-composeの使用例を示し、起動後は http://localhost:5000/ にアクセスしてpyspiderが正常に動作しているか確認できます。'
+description: 'Windows 11でpyspiderをDockerまたはDocker Composeから起動し、ローカル依存関係の問題を回避して、localhost:5000のWebUIで動作確認します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/d0b67049d0274e6c9a4212cfb1241db0/2421860-20240102223652859-707973973.png'
 tags: ['spider', 'docker', 'pyspider']
 category: 'spider'

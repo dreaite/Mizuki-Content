@@ -43,6 +43,10 @@ import {
 import { writeDataFilesWithRollback } from './notion-data-write.mjs';
 import { normalizeDirectiveAttributeQuotes } from './markdown-directive-normalizer.mjs';
 import {
+  extractFrontMatterField,
+  resolvePostDescription,
+} from './notion-post-metadata.mjs';
+import {
   createBoundedOrderedPrefetch,
   createNotionMarkdownReader,
   createPacedFetch,
@@ -112,6 +116,10 @@ const CONFIG = {
   postTranslationCodexProfile: String(process.env.NOTION_POST_TRANSLATION_CODEX_PROFILE || '').trim(),
   postTranslationSourceLanguage: POST_TRANSLATION_SOURCE_LANGUAGE,
   postTranslationSystemPrompt: String(process.env.NOTION_POST_TRANSLATION_SYSTEM_PROMPT || '').trim(),
+  preserveExistingPostDescriptions: parseBoolean(
+    process.env.NOTION_PRESERVE_EXISTING_POST_DESCRIPTIONS,
+    true
+  ),
   dataTranslationEnabled: DATA_TRANSLATION_ENABLED,
   dataTranslationLanguages: parseLanguageList(
     process.env.NOTION_DATA_TRANSLATION_LANGS || 'en,ja'
@@ -567,37 +575,6 @@ async function readFileUtf8IfExists(filePath) {
     if (error?.code === 'ENOENT') return '';
     throw error;
   }
-}
-
-function parseLooseYamlScalar(value) {
-  const text = String(value || '').trim();
-  if (!text) return '';
-
-  if ((text.startsWith("'") && text.endsWith("'")) || (text.startsWith('"') && text.endsWith('"'))) {
-    const quote = text[0];
-    let inner = text.slice(1, -1);
-    if (quote === "'") {
-      inner = inner.replace(/''/g, "'");
-    } else {
-      inner = inner.replace(/\\"/g, '"');
-    }
-    return inner;
-  }
-
-  return text;
-}
-
-function extractFrontMatterField(markdown, fieldName) {
-  const source = String(markdown || '');
-  const frontMatterMatch = source.match(/^---\n([\s\S]*?)\n---(?:\n|$)/);
-  if (!frontMatterMatch) return '';
-
-  const body = frontMatterMatch[1];
-  const escapedField = String(fieldName || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const lineMatch = body.match(new RegExp(`^${escapedField}:\\s*(.+?)\\s*$`, 'm'));
-  if (!lineMatch) return '';
-
-  return parseLooseYamlScalar(lineMatch[1]);
 }
 
 function stripMarkdownFrontMatter(markdown) {
@@ -1172,9 +1149,14 @@ async function translatePostMetadataFieldText(value, { targetLanguage, fieldName
   return normalizeSingleLine(unwrapAnySingleFencedBlock(content));
 }
 
-async function translatePostMetadataFields(meta, { targetLanguage }) {
+async function translatePostMetadataFields(meta, { targetLanguage, existingMarkdown = '' }) {
   const sourceTitle = normalizeSingleLine(meta?.title);
   const sourceDescription = normalizeSingleLine(meta?.description);
+  const preservedDescription = resolvePostDescription({
+    generatedDescription: '',
+    existingMarkdown,
+    preserveExisting: CONFIG.preserveExistingPostDescriptions,
+  });
 
   const [translatedTitle, translatedDescription] = await Promise.all([
     translatePostMetadataFieldText(sourceTitle, {
@@ -1182,11 +1164,13 @@ async function translatePostMetadataFields(meta, { targetLanguage }) {
       fieldName: 'title',
       title: sourceTitle,
     }),
-    translatePostMetadataFieldText(sourceDescription, {
-      targetLanguage,
-      fieldName: 'description',
-      title: sourceTitle,
-    }),
+    preservedDescription
+      ? Promise.resolve(preservedDescription)
+      : translatePostMetadataFieldText(sourceDescription, {
+          targetLanguage,
+          fieldName: 'description',
+          title: sourceTitle,
+        }),
   ]);
 
   return {
@@ -2871,7 +2855,21 @@ async function main() {
           uploadCache: notionR2UploadCache,
           logLabel: 'post',
         });
-        const document = buildMarkdownDocument(meta, markdownBody);
+        const existingSourceDocument =
+          CONFIG.preserveExistingPostDescriptions && exists
+            ? await readFileUtf8IfExists(fullPath)
+            : '';
+        const document = buildMarkdownDocument(
+          {
+            ...meta,
+            description: resolvePostDescription({
+              generatedDescription: meta.description,
+              existingMarkdown: existingSourceDocument,
+              preserveExisting: CONFIG.preserveExistingPostDescriptions,
+            }),
+          },
+          markdownBody
+        );
         sourceWriteResult = await writeIfChanged(fullPath, document);
         if (sourceWriteResult === 'unchanged') {
           unchangedFiles += 1;
@@ -3217,8 +3215,13 @@ async function main() {
           targetLanguage: job.languageCode,
           title: job.meta.title,
         });
+        const existingTranslatedDocument =
+          CONFIG.preserveExistingPostDescriptions && job.translatedExists
+            ? await readFileUtf8IfExists(job.translatedFullPath)
+            : '';
         const translatedMeta = await translatePostMetadataFields(job.meta, {
           targetLanguage: job.languageCode,
+          existingMarkdown: existingTranslatedDocument,
         });
         const translatedDocument = buildMarkdownDocument(
           {

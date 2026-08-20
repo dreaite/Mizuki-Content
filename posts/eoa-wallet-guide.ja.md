@@ -2,7 +2,7 @@
 title: 'EOAウォレットのオンチェーン基本操作について'
 published: 2026-06-27
 updated: 2026-06-27
-description: 'Web3ウォレットにおけるオンチェーンの主要操作を素早く習得。EOAとHDウォレットの作成原理、ニーモニック生成とBIP派生プロセスを取り上げ、SIWEとEIP-712によるオンチェーン検証、さらにトランザクションの構築・署名・ブロードキャストまでの完全なサイクルを深く解説し、ウォレットの基礎ロジックの理解を助けます。'
+description: 'ウォレットの視点からEOA/HDウォレットの鍵派生、EIP-1559トランザクション、SIWE・EIP-191・EIP-712署名を整理し、ethers.jsによる作成・検証・ブロードキャストの実装例を示します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/38c5465cca1780e5bf80d0662451b860/ai-generated-1782646843083.png'
 tags: ['wallet', 'web3', 'transaction']
 category: 'WEB3'

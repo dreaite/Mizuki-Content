@@ -2,7 +2,7 @@
 title: 'The First Round of Screening in the New Era'
 published: 2026-04-09
 updated: 2026-04-09
-description: 'This article explores how, against the backdrop of rapid AI development, the cost of using advanced models will become a key factor in a new round of social screening. The author expresses concern that rising model usage fees may lead to a digital divide, pointing out that when usage costs increase from today’s subsidized prices to higher levels, ordinary users may struggle to afford them, resulting in class-based differentiation in technology access. The article also reviews AI’s diverse applications in fields such as security, video, and music, emphasizing that AI is expanding from a coding tool into broader industries. From a personal perspective, the author describes how to navigate the tide of the times with limited capital and calls for attention to the impact of technology costs on public access. Keywords: AI model costs, digital divide, technological screening, AI applications, anxiety of the times.'
+description: 'How rising SOTA model prices could turn AI access into a new cognitive divide as AI expands beyond coding into security, video, and music.'
 image: 'https://r2.dreaife.tokyo/notion/covers/33d5465cca1780ba8e6fc66550e148be/IMG_4685.jpg'
 tags: ['thinking', 'ai']
 category: 'life'

@@ -2,7 +2,7 @@
 title: '个人开发环境构筑'
 published: 2025-10-19
 updated: 2025-10-20
-description: '计划将开发环境迁移到Linux子主机，所需环境包括Java、Node.js、Python、C++、Go语言，MySQL、PostgreSQL、Redis、ElasticSearch数据库，以及RabbitMQ和Nginx微服务，基础工具为Git和Docker，并通过Cloudflare映射80端口以实现外网访问。'
+description: '个人 Linux 开发子机的环境规划，涵盖 Java/Node.js/Python/C++/Go、常用数据库与 RabbitMQ/Nginx，并以 Git、Docker 和 Cloudflare 端口映射支撑开发及外网访问。'
 permalink: 'personal-dev-env'
 image: 'https://source.unsplash.com/random'
 tags: []

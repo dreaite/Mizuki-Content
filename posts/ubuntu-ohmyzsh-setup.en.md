@@ -2,7 +2,7 @@
 title: 'Installing Oh My Zsh and Its Plugins on Ubuntu'
 published: 2024-12-03
 updated: 2024-12-03
-description: 'To install Oh My Zsh and its components on Ubuntu, first install Zsh and Git, then install Oh My Zsh using wget. Next, clone the Powerlevel10k theme and required plugins, and update the .zshrc file to enable them. Finally, install additional plugins such as zsh-bat and you-should-use, and update the system to ensure everything works properly.'
+description: 'Install and configure Oh My Zsh on Ubuntu with Zsh, Git, Powerlevel10k, useful plugins, and .zshrc settings for a productive terminal.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1515465cca178073b194f4ade9c3a703/IMG_1723.jpg'
 tags: ['bash', 'linux']
 category: 'cs-base'

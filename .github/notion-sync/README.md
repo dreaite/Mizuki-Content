@@ -68,6 +68,8 @@ Keep local content files consistent with the Notion database by `type`.
   - Optional source language hint (prompt context only), e.g. `zh-cn`.
 - `NOTION_POST_TRANSLATION_SYSTEM_PROMPT`
   - Optional custom system prompt for translation behavior.
+- `NOTION_PRESERVE_EXISTING_POST_DESCRIPTIONS`
+  - Keeps an existing Markdown `description` when Notion content or translations are regenerated, so hand-written SEO copy is not overwritten. Defaults to `true`; set to `false` to regenerate descriptions from Notion and translation output.
 - `NOTION_COVER_R2_ENABLED`
   - Set to `true` to upload Notion image assets to Cloudflare R2 and write stable public URLs.
   - Covers:
@@ -96,7 +98,7 @@ The workflow passes these defaults. Change them in the workflow if your column n
 - `title` -> front matter `title`
 - `createTime` -> front matter `published` (date only `YYYY-MM-DD`)
 - `date` -> front matter `updated` (date only `YYYY-MM-DD`)
-- `summary` -> front matter `description`
+- `summary` -> front matter `description` for new posts; existing descriptions are preserved by default
 - `slug` -> front matter `permalink` and output filename
 - page cover -> front matter `image`
 - `tags` -> front matter `tags`

@@ -2,7 +2,7 @@
 title: 'Transaction History'
 published: 2025-02-14
 updated: 2025-02-15
-description: 'Recent trading activity has shown a high win rate, particularly with substantial profits from the short position on February 3. Although some gains were lost due to misjudgments, overall returns remain positive. The market is currently volatile and may face a second test in the near term, so caution is advised. The trading strategy is based primarily on candlestick charts and trading volume, with 80% of capital allocated to low-leverage macro-trend trades, 10% to high-leverage high-frequency trades, and the remainder to on-chain activities. To avoid emotionally driven trading, it is advisable to stay out of the market when the outlook is unclear and pursue high-risk operations only after establishing stable cash flow.'
+description: 'A review of early-2025 crypto trades, covering candle and volume signals, leverage, position sizing, risk allocation, and emotional discipline.'
 image: 'https://r2.dreaife.tokyo/notion/covers/19a5465cca178011a14beaac4312e5b0/IMG_2580.jpg'
 tags: ['life', 'web3', 'thinking']
 category: 'market'

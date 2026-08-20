@@ -2,7 +2,7 @@
 title: 'Blog Migration - Mizuki Configuration Records'
 published: 2026-02-22
 updated: 2026-02-23
-description: 'A record of the migration from NotionNext to Mizuki, mainly due to NotionNext''s limitations. Mizuki was chosen for its lightweight nature and good balance of features, supporting diaries and project showcases. The configuration process is simple, with content controlled via md and ts files, and it also connects to the Bangumi API. The plan is to synchronize Notion content via CI, implement multilingual support, and address the issue of image links expiring.'
+description: 'Migrating from NotionNext to Mizuki with Bangumi integration, self-hosted Notion sync, R2 image persistence, and LLM-generated translations.'
 image: 'https://r2.dreaife.tokyo/notion/covers/30f5465cca1780cc8df8e7c367a16f3d/IMG_4450.jpg'
 tags: ['blog', 'llm', 'deploy', 'notion']
 category: 'infra'

@@ -2,7 +2,7 @@
 title: 'Personal Online Scam 01: Scam Analysis'
 published: 2024-08-19
 updated: 2024-08-20
-description: 'This post analyzes how an online scam operated, including attracting traffic through social platforms, inducing users to pay, and exploiting human greed. Although multiple loopholes were noticed, the author still fell for the scam due to the desire for money. It emphasizes the importance of rational investing and reminds readers to stay calm when facing temptation and to evaluate investment risks and returns.'
+description: 'A firsthand online-scam analysis of social-media lures, payment pressure, greed-driven manipulation, warning signs, and safer investment decisions.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1774c94989624c98953feedabade9c8e/20240802_040855728_iOS.jpg'
 tags: ['thinking']
 category: 'life'

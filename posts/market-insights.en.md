@@ -2,7 +2,7 @@
 title: 'A Summary of My Thoughts on the Market on X'
 published: 2026-08-10
 updated: 2026-08-11
-description: 'Drawing on complex systems and game theory, this post unpacks the underlying logic of market dynamics, emotional reflexivity, and the consensus underpinning monetary value, helping readers look beyond short-term volatility and develop a deeper understanding of market expectations and inflation transmission.'
+description: 'Why profitable patterns erode under market feedback, and how currency-devaluation expectations spread through commodities, costs, and hoarding.'
 image: 'https://r2.dreaife.tokyo/notion/covers/3b85465cca178058ab16d23d1491db0b/shinku_birthday.png'
 tags: ['thinking', 'market', 'trade']
 category: 'market'
