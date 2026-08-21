@@ -14,6 +14,14 @@ export interface FriendItem {
 export const friendsData: FriendItem[] = [
 	{
 		id: 1,
+		title: "XnneHang",
+		imgurl: "https://source.unsplash.com/random",
+		desc: "写代码是因为爱。",
+		siteurl: "https://xnnehang.top",
+		tags: [],
+	},
+	{
+		id: 2,
 		title: "且听书吟",
 		imgurl: "https://r2.dreaife.tokyo/notion/covers/37b5465cca1780e5b733f2e08041648a/logo.svg",
 		desc: "诗与梦想的远方",
