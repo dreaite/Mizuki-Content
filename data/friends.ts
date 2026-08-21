@@ -15,7 +15,7 @@ export const friendsData: FriendItem[] = [
 	{
 		id: 1,
 		title: "XnneHang",
-		imgurl: "https://source.unsplash.com/random",
+		imgurl: "https://xnnehang.top/avatar.jpg",
 		desc: "写代码是因为爱。",
 		siteurl: "https://xnnehang.top",
 		tags: [],
