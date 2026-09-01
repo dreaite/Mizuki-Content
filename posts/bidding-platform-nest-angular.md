@@ -5,8 +5,8 @@ updated: 2024-12-08
 description: '使用 Nest.js、Angular、PostgreSQL 与 AWS Cognito 构建竞价平台，涵盖用户、项目和投标管理、Swagger API、Jest 测试及 GitHub Actions CI/CD。'
 permalink: 'bidding-platform-nest-angular'
 image: 'https://r2.dreaife.tokyo/notion/covers/1555465cca1780f382f5f1421004b0a8/IMG_1767.jpg'
-tags: ['nodejs', 'ts', 'aws']
-category: 'PROJECT'
+tags: ['nodejs', 'ts', 'aws', 'PROJECT']
+category: 'EXPLORE'
 draft: false
 ---
 

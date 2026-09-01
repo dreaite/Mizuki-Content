@@ -5,8 +5,8 @@ updated: 2025-02-15
 description: '复盘 2025 年初的加密市场交易：记录 K 线与成交量判断、低杠杆趋势仓和高杠杆试验仓的资金分配，以及避免情绪化交易的风控原则。'
 permalink: 'trading-insights-2025'
 image: 'https://r2.dreaife.tokyo/notion/covers/19a5465cca178011a14beaac4312e5b0/IMG_2580.jpg'
-tags: ['life', 'web3', 'thinking']
-category: 'market'
+tags: ['life', 'web3', 'thinking', 'market']
+category: 'RETROSPECT'
 draft: false
 ---
 

@@ -5,8 +5,8 @@ updated: 2024-11-04
 description: 'SVN 入门指南：理解集中式版本控制与仓库结构，掌握 checkout、update、commit、diff、revert、ignore、分支管理及 TortoiseSVN 基础用法。'
 permalink: 'svn-tool-guide'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca178060a708e1b3428bd22e/IMG_1451.jpg'
-tags: ['SVN']
-category: 'infra'
+tags: ['SVN', 'INFRA']
+category: 'STUDY'
 draft: false
 ---
 

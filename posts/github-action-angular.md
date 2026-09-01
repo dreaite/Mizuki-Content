@@ -5,8 +5,8 @@ updated: 2024-11-04
 description: '配置 GitHub Actions 将 Angular 项目自动部署到 GitHub Pages，涵盖 outputPath、angular-cli-ghpages、工作流、访问令牌和 gh-pages 分支设置。'
 permalink: 'github-action-angular'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca1780709669dd1e198f2678/Gal1mvpbQAA_8s_.jpg'
-tags: ['github-action']
-category: 'infra'
+tags: ['github-action', 'INFRA']
+category: 'TROUBLESHOOT'
 draft: false
 ---
 

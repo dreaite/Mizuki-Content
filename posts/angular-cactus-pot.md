@@ -5,8 +5,8 @@ updated: 2024-11-12
 description: '使用 Angular 16 与 AWS Cognito 构建 Bangumi 动画展示网站，涵盖登录注册、动画搜索与日历，并通过 GitHub Actions 自动部署到 GitHub Pages。'
 permalink: 'angular-cactus-pot'
 image: 'https://r2.dreaife.tokyo/notion/covers/13c5465cca178004ad54d1f3b101d56a/IMG_1506.jpg'
-tags: ['ts', 'angular', 'github-action', 'doc']
-category: 'PROJECT'
+tags: ['ts', 'angular', 'github-action', 'doc', 'PROJECT']
+category: 'EXPLORE'
 draft: false
 ---
 

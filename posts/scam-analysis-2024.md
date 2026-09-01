@@ -5,8 +5,8 @@ updated: 2024-08-20
 description: '复盘一次网络诈骗经历，拆解社交平台引流、诱导付款和利用贪欲的手法，并总结识别异常、评估投资风险及避免情绪决策的教训。'
 permalink: 'scam-analysis-2024'
 image: 'https://r2.dreaife.tokyo/notion/covers/1774c94989624c98953feedabade9c8e/20240802_040855728_iOS.jpg'
-tags: ['thinking']
-category: 'life'
+tags: ['thinking', 'life']
+category: 'RETROSPECT'
 draft: false
 ---
 

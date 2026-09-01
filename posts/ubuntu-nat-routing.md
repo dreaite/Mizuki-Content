@@ -5,8 +5,8 @@ updated: 2024-12-15
 description: '在 Ubuntu 上配置 Netplan 静态 IP、IP 转发、DHCP 与 NAT 规则，将主机网络共享给路由器，并通过客户端连接验证转发是否生效。'
 permalink: 'ubuntu-nat-routing'
 image: 'https://r2.dreaife.tokyo/notion/covers/15d5465cca1780bf85eac8dea673675e/IMG_1935.jpg'
-tags: ['network', 'linux']
-category: 'cs-base'
+tags: ['network', 'linux', 'cs-base']
+category: 'TROUBLESHOOT'
 draft: false
 ---
 

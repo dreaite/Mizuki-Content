@@ -5,8 +5,8 @@ updated: 2024-12-03
 description: '在 Ubuntu 安装并配置 Oh My Zsh，涵盖 Zsh、Git、Powerlevel10k、常用插件与 .zshrc 设置，完成主题和命令行增强环境。'
 permalink: 'ubuntu-ohmyzsh-setup'
 image: 'https://r2.dreaife.tokyo/notion/covers/1515465cca178073b194f4ade9c3a703/IMG_1723.jpg'
-tags: ['bash', 'linux']
-category: 'cs-base'
+tags: ['bash', 'linux', 'cs-base']
+category: 'TROUBLESHOOT'
 draft: false
 ---
 
