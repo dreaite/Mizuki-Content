@@ -4,17 +4,17 @@ published: 2024-12-15
 updated: 2024-12-15
 description: 'Share an Ubuntu host network with a router by configuring Netplan, static IP, IP forwarding, DHCP, and NAT rules, then verify client connectivity.'
 image: 'https://r2.dreaife.tokyo/notion/covers/15d5465cca1780bf85eac8dea673675e/IMG_1935.jpg'
-tags: ['network', 'linux']
-category: 'cs-base'
+tags: ['network', 'linux', 'cs-base']
+category: 'TROUBLESHOOT'
 draft: false
 lang: 'en'
 ---
 
-For my setup, the host first obtains an internet connection, then forwards and shares it with the router via an Ethernet cable.
+For my particular setup, the host first needs to obtain internet access and then forward and share the connection with a router via an Ethernet cable.
 
 The solution is described below.
 
-PS: This configuration was performed on a fresh Ubuntu installation. If your environment contains configurations that need to be retained, back them up first to avoid losing them.
+P.S.: This configuration was performed on a fresh Ubuntu installation. If your environment contains configurations that need to be preserved, back them up first to avoid losing them.
 
 # Check the Current Network Status
 
@@ -46,7 +46,7 @@ ip addr
 #       valid_lft forever preferred_lft forever
 ```
 
-Identify the network interfaces connected to the internet and the router.
+Identify the network interfaces used to connect to the internet and to the router.
 
 # **Network Configuration**
 
@@ -120,7 +120,7 @@ ip addr
 
 ## **3. Configure Network Sharing for the Router**
 
-In my network layout, **`enx5a5f0a205236`** provides the internet connection, which is shared with the router through **`enp1s0`**:
+In my network topology, **`enx5a5f0a205236`** provides the internet connection, which is shared with the router through **`enp1s0`**:
 
 ### **3.1 Enable IP Forwarding**
 
@@ -170,7 +170,7 @@ In my network layout, **`enx5a5f0a205236`** provides the internet connection, wh
 
 ## **4. Configure the DHCP Service**
 
-The router's WAN interface needs to obtain an IP address through **`enp1s0`**, which requires configuring a DHCP service.
+The router's WAN interface needs to obtain an IP address through **`enp1s0`**, which requires a DHCP service.
 
 ### **4.1 Install the DHCP Service**
 
@@ -199,7 +199,7 @@ subnet 192.168.1.0 netmask 255.255.255.0 {
 }
 ```
 
-Specify the interface used by the DHCP service:
+Specify the interface for the DHCP service:
 
 ```shell
 sudo nano /etc/default/isc-dhcp-server
@@ -229,8 +229,8 @@ sudo systemctl status isc-dhcp-server
 	cat /proc/sys/net/ipv4/ip_forward
 	```
 
-	- Ensure that the NAT rules are present.
+	- Ensure that the NAT rules exist.
 	- **`cat /proc/sys/net/ipv4/ip_forward`** should return **`1`**.
-2. **Test the network connection on a device connected to ****`enp1s0`******:
+2. **Test network connectivity on a device connected to ****`enp1s0`****:**
 	- Ensure that the device obtains an IP address via DHCP.
 	- Test whether the device can access the internet.

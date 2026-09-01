@@ -1,37 +1,37 @@
 ---
-title: 'Angularベースのアニメーション展示サイト＋ログイン・新規登録（Cognito）'
+title: 'Angularベースのアニメーション展示サイト＋ログイン・ユーザー登録（Cognito）'
 published: 2024-11-12
 updated: 2024-11-12
 description: 'Angular 16とAWS CognitoでBangumiのアニメ展示サイトを構築。ログイン・登録、検索、カレンダー表示、GitHub ActionsによるPages配備を扱います。'
 image: 'https://r2.dreaife.tokyo/notion/covers/13c5465cca178004ad54d1f3b101d56a/IMG_1506.jpg'
-tags: ['ts', 'angular', 'github-action', 'doc']
-category: 'PROJECT'
+tags: ['ts', 'angular', 'github-action', 'doc', 'PROJECT']
+category: 'EXPLORE'
 draft: false
 lang: 'ja'
 ---
 
 # プロジェクト紹介
 
-本プロジェクトは、私がAngularを練習するために作成したAngularベースのWebアプリケーションです。[Bangumi API](https://bangumi.github.io/api/)を使用して、Bangumi上のアニメを表示・検索します。
+本プロジェクトは、Angular の練習用に作成した Angular ベースの Web アプリケーションです。[Bangumi API](https://bangumi.github.io/api/) を使用して、Bangumi 上のアニメを表示・検索します。
 
-本プロジェクトは、[GitHub Actions](https://github.com/features/actions)を使用して[GitHub Pages](https://dreaife.github.io/my-angular-project-test/)へ自動的にデプロイされます。
+本プロジェクトは、[GitHub Actions](https://github.com/features/actions) を使用して [GitHub Pages](https://dreaife.github.io/my-angular-project-test/) に自動デプロイされます。
 
 ## プロジェクト名
 
 my-angular-project-test
 
-アドレス：[https://dreaife.github.io/my-angular-project-test/](https://dreaife.github.io/my-angular-project-test/)
+URL：[https://dreaife.github.io/my-angular-project-test/](https://dreaife.github.io/my-angular-project-test/)
 
 ## プロジェクトの目的
 
-- Angularベースの静的Webサイトをデプロイする
-- GitHub Actionsによる自動デプロイを練習する
-- APIを呼び出して機能を実装する
-- Cognitoを使用してユーザー認証を行う
+- Angular ベースの静的 Web サイトをデプロイする
+- GitHub Actions による自動デプロイを練習する
+- API を呼び出して機能を実装する
+- Cognito を使用してユーザー認証を行う
 - インターセプターを使用してリクエストを処理する
 - ガードを使用してページを保護する
 
-## 技術スタック
+## プロジェクトの技術スタック
 
 - Angular 16
 - TypeScript
@@ -40,22 +40,22 @@ my-angular-project-test
 - GitHub Actions
 - Cognito
 
-# 環境の準備
+# 環境準備
 
 ## 環境要件
 
-- Node.js バージョン20以降
+- Node.js バージョン 20 以上
 - Angular CLI
 
 ## インストール手順
 
-1. Node.jsをインストールする
+1. Node.js をインストールする
 
 	```shell
 	<https://nodejs.org/en/download/>
 	```
 
-2. Angular CLIをインストールする
+2. Angular CLI をインストールする
 
 	```shell
 	npm install -g @angular/cli
@@ -73,7 +73,7 @@ my-angular-project-test
 
 ## ディレクトリ構成
 
-本プロジェクトはAngular CLIを使用して作成されており、構成は次のとおりです：
+本プロジェクトは Angular CLI を使用して作成されており、構成は次のとおりです：
 
 ```plain text
 my-angular-project-test/
@@ -98,36 +98,36 @@ my-angular-project-test/
 ├── ...
 ```
 
-各ディレクトリの説明：
+各ディレクトリの役割は次のとおりです：
 
 - `src/app`<br>プロジェクトのメインディレクトリで、すべてのコンポーネント、サービス、インターセプター、ガードなどが含まれます。
-- `src/environments`<br>環境設定ファイルのディレクトリで、開発環境および本番環境の設定が含まれます。
-- `src/components`<br>プロジェクトの主要コンポーネントのディレクトリで、すべてのページコンポーネントが含まれます。
-	- `login` コンポーネントはログインページで、Cognito SDKを呼び出してログインします。
-	- `home` コンポーネントはアニメカレンダーページで、`bgm.service.getCalendar`を呼び出してデータを取得し、表示します。
-	- `search` コンポーネントは検索ページで、`bgm.service.search`を呼び出してデータを取得し、表示します。
-- `src/guards`<br>プロジェクトの主要なガードのディレクトリです。ログインが必要なページを保護するための `auth.guard.ts` ガードが含まれており、未ログインの場合はログインページへリダイレクトします。
-- `src/interceptors`<br>プロジェクトの主要なインターセプターのディレクトリです。リクエストに認証情報を追加するための `auth.interceptor.ts` インターセプターが含まれます。
-- `src/services`<br>プロジェクトの主要なサービスのディレクトリです。ログインやログアウトなどの処理を行う `auth.service.ts` サービスと、Bangumi APIを呼び出す `bgm.service.ts` サービスが含まれます。
-- `src/main.ts`<br>Angularアプリケーションを起動するための、プロジェクトのメインエントリーファイルです。
+- `src/environments`<br>環境設定ファイル用のディレクトリで、開発環境と本番環境の設定が含まれます。
+- `src/components`<br>プロジェクトの主要コンポーネント用のディレクトリで、すべてのページコンポーネントが含まれます。
+	- `login` コンポーネントはログインページで、Cognito の SDK を呼び出してログインを行います。
+	- `home` コンポーネントはアニメカレンダーページで、`bgm.service.getCalendar` を呼び出してデータを取得・表示します。
+	- `search` コンポーネントは検索ページで、`bgm.service.search` を呼び出してデータを取得・表示します。
+- `src/guards`<br>プロジェクトの主要なガード用ディレクトリです。ログインが必要なページを保護する `auth.guard.ts` ガードが含まれており、未ログインの場合はログインページへリダイレクトします。
+- `src/interceptors`<br>プロジェクトの主要なインターセプター用ディレクトリです。リクエストに認証情報を追加する `auth.interceptor.ts` インターセプターが含まれます。
+- `src/services`<br>プロジェクトの主要なサービス用ディレクトリです。ログインやログアウトなどを処理する `auth.service.ts` サービスと、Bangumi API を呼び出す `bgm.service.ts` サービスが含まれます。
+- `src/main.ts`<br>Angular アプリケーションを起動する、プロジェクトのメインエントリーファイルです。
 
 # 主要機能の実装
 
-## Cognitoを使用したユーザー認証
+## Cognito を使用したユーザー認証
 
-`src/app/services/auth.service.ts` では、Cognito SDKを使用してユーザー認証を行います。
+`src/app/services/auth.service.ts` では、Cognito の SDK を使用してユーザー認証を行います。
 
-Cognitoを使用する前に、AWS Cognitoでユーザープールを作成し、カスタムCognito認証ドメインを設定してから、アプリクライアントを作成してクライアントIDを取得する必要があります。
+Cognito を使用する前に、AWS Cognito でユーザープールを作成し、カスタム Cognito 認証ドメインを設定して、アプリクライアントを作成し、クライアント ID を取得する必要があります。
 
-取得したIDを使用して、`src/app/environment/environment.ts` にCognitoの設定情報を記述します。
+取得した ID を使用して、`src/app/environment/environment.ts` に Cognito の設定情報を記述します。
 
 ### ログイン
 
-cognitoUser.authenticateUserメソッドを使用してログインし、成功後にidTokenまたはaccessTokenをsessionStorageへ保存します。
+cognitoUser.authenticateUser メソッドでログインし、成功したら idToken または accessToken を sessionStorage に保存します。
 
 ヒント：
 
-未検証のユーザーは、最初に新しいパスワードを設定する必要があります。この場合はnewPasswordRequiredメソッドをオーバーライドし、resolve(\{ newPasswordRequired: true, cognitoUser \})を設定します。これによりログインページの表示内容を切り替え、ユーザーに新しいパスワードの設定を促します。
+未検証のユーザーの場合、最初に新しいパスワードを設定する必要があります。この場合は newPasswordRequired メソッドをオーバーライドし、resolve(\{ newPasswordRequired: true, cognitoUser \}) を設定して、ログインページの表示内容を切り替え、ユーザーに新しいパスワードの設定を促します。
 
 実装コード：
 
@@ -177,7 +177,7 @@ signIn(username: string, password: string): Promise<any> {
   }
 ```
 
-ユーザーが新しいパスワードを設定する際はcompleteNewPasswordメソッドを呼び出し、cognitoUser.completeNewPasswordChallengeメソッドで新しいパスワードを設定します。
+ユーザーが新しいパスワードを設定する際は、completeNewPassword メソッドを呼び出し、cognitoUser.completeNewPasswordChallenge メソッドで新しいパスワードを設定します。
 
 ```typescript
   // 设置新密码方法
@@ -191,9 +191,9 @@ signIn(username: string, password: string): Promise<any> {
   }
 ```
 
-### 登録
+### ユーザー登録
 
-cognitoUser.signUpメソッドを使用して登録し、成功後にユーザー名とパスワードをCognitoへ保存します。その後、ログインページへリダイレクトします。
+cognitoUser.signUp メソッドでユーザー登録を行います。成功すると、ユーザー名とパスワードが Cognito に保存され、ログインページへリダイレクトされます。
 
 ```typescript
   // 注册方法
@@ -215,7 +215,7 @@ cognitoUser.signUpメソッドを使用して登録し、成功後にユーザ�
 
 ### ログアウト
 
-cognitoUser.signOutメソッドを使用してログアウトし、ログアウト後にsessionStorage内のuserTokenを削除します。
+cognitoUser.signOut メソッドでログアウトし、ログアウト後に sessionStorage 内の userToken を削除します。
 
 ```typescript
   logout() {
@@ -228,17 +228,17 @@ cognitoUser.signOutメソッドを使用してログアウトし、ログアウ�
 
 ## ログインページ
 
-ログインページは `src/app/components/login/login.component.ts` です。Cognito SDKを使用してログインし、成功後にidTokenまたはaccessTokenをsessionStorageへ保存します。
+ログインページは `src/app/components/login/login.component.ts` です。Cognito の SDK を使用してログインし、成功したら idToken または accessToken を sessionStorage に保存します。
 
-ページの表示内容はauthModeによって制御されます。authModeには次の種類があります：
+ページの表示内容は authMode で制御します。authMode には次の種類があります：
 
 - login：ログインページ
-- register：登録ページ
+- register：ユーザー登録ページ
 - forgotPassword：パスワードを忘れた場合のページ
-- confirmSignUp：確認ページ
+- confirmSignUp：認証ページ
 - resetPassword：パスワードリセットページ
 
-各ボタンをクリックすると、authServiceのswitchModeメソッドが呼び出され、authModeを切り替えることでページの表示内容も切り替わります。
+対応するボタンをクリックすると、authService の switchMode メソッドが呼び出されて authMode が切り替わり、ページの表示内容も切り替わります。
 
 ページの実装：
 
@@ -298,9 +298,9 @@ switchMode(mode: 'login' | 'register' | 'forgotPassword' | 'confirmSignUp' | 're
 
 ## アニメカレンダーページ
 
-アニメカレンダーページは `src/app/components/home/home.component.ts` です。`bgm.service.getCalendar`を呼び出してデータを取得し、表示します。
+アニメカレンダーページは `src/app/components/home/home.component.ts` です。`bgm.service.getCalendar` を呼び出してデータを取得・表示します。
 
-ページの初期化時に`ngOnInit`メソッドを呼び出し、データを取得して表示します。
+ページの初期化時に `ngOnInit` メソッドを呼び出して、データを取得・表示します。
 
 ```typescript
   ngOnInit() : void {
@@ -343,21 +343,21 @@ switchMode(mode: 'login' | 'register' | 'forgotPassword' | 'confirmSignUp' | 're
 
 ## 検索ページ
 
-検索ページは `src/app/components/search/search.component.ts` です。`bgm.service.search`を呼び出してデータを取得し、表示します。
+検索ページは `src/app/components/search/search.component.ts` です。`bgm.service.search` を呼び出してデータを取得・表示します。
 
-ページはtitleで検索キーワードを受け取り、optionsで表示内容を制御します。optionsには次の項目があります：
+ページは title で検索キーワードを受け取り、options で表示内容を制御します。options には次の種類があります：
 
-- limit：1ページあたりの表示件数
-- type：種類
+- limit：1 ページあたりの表示件数
+- type：タイプ
 - meta_tags：メタタグ
 - tag：タグ
 - air_date：放送日
 - rating：評価
 - rank：ランキング
-- nsfw：成人向けコンテンツを含むかどうか
+- nsfw：成人向けコンテンツを含めるかどうか
 - page：ページ番号
 
-APIへリクエストを送信する際は、titleとoptionsを再構成してから送信します。リクエストの再構成は次のとおりです：
+API にリクエストを送信する際は、title と options を再構成してから送信します。リクエストの再構成は次のとおりです：
 
 ```typescript
 // 搜索方法
@@ -396,7 +396,7 @@ APIへリクエストを送信する際は、titleとoptionsを再構成して�
 
 ## インターセプターによる認証情報の追加
 
-`src/app/interceptors/auth.interceptor.ts` では、インターセプターを使用してリクエストに認証情報を追加します。
+`src/app/interceptors/auth.interceptor.ts` では、インターセプターを介してリクエストに認証情報を追加します。
 
 インターセプターの実装：
 
@@ -416,7 +416,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 };
 ```
 
-インターセプターを使用するには、app.config.tsでインターセプターを設定する必要があります。
+インターセプターを使用するには、app.config.ts でインターセプターを設定する必要があります。
 
 ```typescript
 export const appConfig: ApplicationConfig = {
@@ -463,7 +463,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 	ng serve
 	```
 
-2. アドレスへアクセスする
+2. URL にアクセスする
 
 	アクセス先：[http://localhost:4200/](http://localhost:4200/)
 
@@ -477,9 +477,9 @@ export const authGuard: CanActivateFn = (route, state) => {
 
 - 自動デプロイ
 
-	本プロジェクトは、GitHub Actionsを使用してGitHub Pagesへ自動的にデプロイされます。コードをGitHubへpushするたびに、GitHub Actionsがpushイベントを検出し、プロジェクトを自動的にビルドしてGitHub Pagesへデプロイします。
+	本プロジェクトでは、GitHub Actions を使用して GitHub Pages へ自動デプロイします。コードを GitHub に push するたびに、GitHub Actions が push イベントを検出し、プロジェクトを自動的にビルドして GitHub Pages にデプロイします。
 
-	GitHub Actionsによるプロジェクトの自動デプロイを設定するため、設定ファイル`.github/workflows/main.yml`を作成します。
+	GitHub Actions によるプロジェクトの自動デプロイを設定するため、設定ファイル `.github/workflows/main.yml` を作成します。
 
 	内容は次のとおりです：
 

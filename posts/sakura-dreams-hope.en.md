@@ -1,46 +1,25 @@
 ---
-title: 'Dreams and Hope Overflowing, Self-Forgiveness and Reverie — Sakura, Moyu.'
+title: 'Brimming with Dreams and Hope, Self-Forgiveness and Reverie—Sakura Slacking Off'
 published: 2022-09-18
 updated: 2022-09-18
 description: 'A review of Sakura, Moyu.: returning after the Chinese patch, finishing the visual novel, and reflecting on its music, sacrifice, dreams, and hope.'
 image: 'https://r2.dreaife.tokyo/notion/covers/2e1f116038864fb8b2f212e3e2493bcc/MASHIRO_e102b.png'
-tags: ['recomand', 'thinking']
-category: 'gal'
+tags: ['recomand', 'thinking', 'gal']
+category: 'RESONANCE'
 draft: false
 lang: 'en'
 ---
 
-Today I finally finished *Sakura, Moyu.*~
+Today, I finally finished Sakura, Moyu\~<br>From struggling through the untranslated Japanese version in June 2020, to starting over after giving up in September 2021, and finally completing it now that the Chinese translation patch has been released in 2022, Sakura, Moyu has accompanied me for a very long time. Like the DC series, it witnessed my journey from eager enthusiasm to a half-hearted conclusion, and then to having my interest rekindled by the translation and finally playing the entire game.<br>If I had to describe my experience with Sakura, Moyu, I would say it felt quite good, but I gradually lost my motivation amid the realities of everyday life and eventually chose to put it aside. This translation served as a catalyst, however, coupled with my desire to paint the unfinished darkness of the past pure white once more—and today, I finally completed it. In that sense, I am grateful to Sakura, Moyu. Clearing away even a little of the residue left behind by the past is always refreshing. I was also fortunate to encounter it during this turbulent yet stagnant period of my life and have it rekindle a small part of my dreams.<br>Compared with the earlier Irotoridori series, Yukito has clearly improved in many ways, though one can still see fantasies derived from ideas in Irotoridori, such as the Night Country being a library filled with books that record people’s lives. There are also plenty of fresh ideas, like the Night Country glittering on the other side of reality. And, of course, we also got to witness Yukito’s mother-complex tastes (lol).
 
-From chewing through the raw Japanese in June 2020, to giving up in September 2021, to starting over again, and finally finishing it now after the 2022 Chinese patch came out, *Sakura, Moyu.* has been with me for a long time. Like the D.C. series, it watched me go from full of enthusiasm, to wrapping things up hastily, to having my interest reignited once the patch was released, and then finally playing the whole thing through.
-
-If I had to describe what playing *Moyu* felt like for me, I would say it was a genuinely good experience, but real life kept draining my motivation until I eventually chose to put it down.
-
-This time, though, the Chinese patch was like an accelerant, mixed with my own wish to repaint an unfinished piece of darkness from the past back into pure white. So today, I finally completed it. In that sense, I am grateful to *Moyu*. Clearing away even a little residue from the past always feels refreshing. And meeting *Moyu* again during a period when my emotions were turbulent and quiet, and having it rekindle a little bit of my dreaming self, feels incredibly lucky.
-
-Compared with the studio's earlier "bird" works, this title feels noticeably improved. At the same time, you can still see fantasies that grew out of ideas from those earlier works, such as the Night Country as a library of books that record lives. There are also plenty of fresh settings, like the glittering Night Country hidden behind reality. And yes, you can also clearly see the studio's taste for motherly archetypes (lol).
-
-
-![MASHIRO_e102b.png](https://r2.dreaife.tokyo/notion/covers/2e1f116038864fb8b2f212e3e2493bcc/inline/4a4d0f9144c3ea33-MASHIRO_e102b.png)
-
+![](https://r2.dreaife.tokyo/notion/covers/2e1f116038864fb8b2f212e3e2493bcc/inline/4a4d0f9144c3ea33-MASHIRO_e102b.png)
 
 ---
 
+Looking at Sakura, Moyu as a whole, the song 《Sakura, Moyu》 runs through the story from beginning to end and carries the emotions it seeks to express. It is filled with dreams and hope, yearning to transcend time and convey an otherwise inexpressible love—the love of one person for a lifetime—to someone in the future whom one can no longer meet. Gentle like cherry blossoms, yet passionate like cherry blossoms, the song eventually reached the distant future and became the key connecting the future with the past. Perhaps it also became a hero in the hearts of many lonely people—perhaps Haru, or perhaps Taiga Kanade.<br>In the end, the King of the Night was saved, and everyone found their happy ending. Although the rescue and aid came in response to Taiga Kanade’s call, I think what mattered even more was the hope that filled their hearts when they were returned to the most hopeful moments of their lives. The happy ending they ultimately reached was surely not something bestowed by others, but the result of their own seeking. Of course, Yukito still had to put Kuro through some pain (just another day for Yukito, lol).<br>The wondrous creatures of the Night Country may have moved me even more: Nacht, who loved Chiwa as his own child; Nana (Hiori’s mother), who sacrificed herself to bring Hiori into the world and gave her one final push; Asahi and Touya, who pulled the protagonist out from under the shadow of the cruel death he had chosen and ultimately gave their lives for the pair’s happiness; Kuro, who remained by the protagonist’s side; and Mashiro, who projected her own wishes onto him and, after hurting him, chose to become the 《Queen of the Night》 in atonement. They made their infinite lives bloom in a single fleeting instant. Their actions deeply moved me and gave a little hope and motivation to a heart I had not realized was still dormant. They made me feel that perhaps it would not be so bad to dream a little, and that perhaps a life like this could happen to me as well, instead of endlessly pursuing money, profit—or, rather, mere “survival.” People are always a little impulsive, I suppose. I only hope that one day, the reveries written by this new self now taking shape can awaken in the future you a little motivation to keep living.<br>By the end, this feels less like a discussion of Sakura, Moyu’s story and more like a collection of my own fantasies while playing it. Perhaps it can also serve as proof of the first time I have tried to put my impressions of a game into words? In any case, Sakura, Moyu truly is an excellent game, both to the FAVORITE devotee in me and to the ordinary galgame player in me. It would surely be wonderful if more people could come to love this work (so when is the fan disc coming, lol?).<br>That is all I have to say. I will close by posting 《Reincarnation》, a song I would gladly call divine, lol.
 
-Looking at *Moyu* as a whole, the song "さくら、もゆ" runs through the entire work and carries the emotions it wants to express: dreams and hope, and a love that wants to break through time to reach someone in the future whom you can no longer meet, a love that can only ever love one person in a lifetime and still cannot be fully delivered. It is gentle like cherry blossoms, and passionate like cherry blossoms. In the end, that song reaches a distant future and becomes the key that connects the future and the past. Maybe it also becomes a hero in the hearts of many lonely people, whether Haru or Kanade Taiga.
+<audio src="file://%7B%22source%22%3A%22https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2Fa4ab9f0c-abe9-4690-9976-e1fc8298c749%2F51d3fc1b-e3a2-4b5f-8290-7a73819b65a9%2F%25E5%25B1%25B1%25E6%259C%25AC%25E7%25BE%258E%25E7%25A6%25B0%25E5%25AD%2590_-_%25E8%25BC%25AA%25E5%25BB%25BB.mp3%22%2C%22permissionRecord%22%3A%7B%22table%22%3A%22block%22%2C%22id%22%3A%2215b5465c-ca17-8077-ad17-de61ab7e3e71%22%2C%22spaceId%22%3A%22a4ab9f0c-abe9-4690-9976-e1fc8298c749%22%7D%7D"></audio>
 
-In the end, the Night King is saved, and everyone reaches a happy ending. There is of course rescue and support gathered under Kanade Taiga's call, but what matters even more is the hope inside them when they are brought back to the point in life where they were most full of hope. The happy ending they arrive at is not something granted by others, but something they seek out for themselves. Of course, the studio still makes Kuro suffer a bit (business as usual, lol).
+<embed src="https://music.163.com/outchain/player?type=2&id=1367158056&auto=1&height=66"></embed>
 
-What shocked me even more were the mysterious beings of the Night Country: Nacht, who treated Chiwa like his own; Nana (Himeori's mother), who sacrificed herself to bring Himeori into the world and gave her one final push; Asahi-nee and Toya, who pulled the protagonist out of the shadow of a cruel death and ultimately gave their lives for the protagonists' happiness; Kuro, who stays by his side; and Mashiro, who projected her own wish onto him and, after hurting him, chose to become the "Queen of Night" to atone.
-
-Their actions, blooming for a single moment out of seemingly endless lives, shook me deeply. They also left a little hope and momentum in a part of my heart that had quietly gone still without me noticing, and made me feel again that maybe having dreams is not such a bad thing. Maybe a life like that could happen to me too, instead of only chasing money, returns, or mere "survival." Maybe people are always a little impulsive. I only hope that this new self's little daydreams, written down now, might someday in the future give you a small reason to keep living.
-
-By the time I got here, it feels less like I was discussing the story of *Moyu* and more like I was recording my own fantasies while playing it. Maybe that is also proof that this is the first time I have really tried to describe what a game felt like to me. In any case, *Moyu* is truly an excellent game. Whether as an F-fan or just as an ordinary galgame player, I think it would be wonderful if more people could come to love this work (so... when is the FD coming out, lol).
-
-That's all for now. I'll end this post with "Rinne," a song I would gladly call a masterpiece.
-
-
-[embed](https://music.163.com/outchain/player?type=2&id=1367158056&auto=1&height=66)
-
-
-"May the magic of happiness stay by your side in the future that lies ahead of you."
+“May the magic of happiness accompany you throughout the future that lies ahead.”

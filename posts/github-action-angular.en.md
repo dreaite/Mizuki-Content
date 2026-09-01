@@ -1,11 +1,11 @@
 ---
-title: 'Automatically Deploy Angular Pages with GitHub Actions'
+title: 'Automatically Deploy an Angular Page with GitHub Actions'
 published: 2024-11-04
 updated: 2024-11-04
 description: 'Deploy Angular to GitHub Pages with GitHub Actions, covering outputPath, angular-cli-ghpages, workflow setup, tokens, and the gh-pages branch.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca1780709669dd1e198f2678/Gal1mvpbQAA_8s_.jpg'
-tags: ['github-action']
-category: 'infra'
+tags: ['github-action', 'INFRA']
+category: 'TROUBLESHOOT'
 draft: false
 lang: 'en'
 ---
@@ -14,22 +14,19 @@ lang: 'en'
 
  **`projects > {your-project-name} > architect > build > options > outputPath`**
 
-If the default static webpage is generated under the browser, remember to modify/add the property
+If static pages are generated in the `browser` directory by default, remember to modify or add this property:
 
 ```javascript
 "baseHref": "/browser/",
 ```
 
-
-Install angular-cli-ghpages
-
+Install angular-cli-ghpages:
 
 ```shell
 ng add angular-cli-ghpages
 ```
 
-
-## **Create a workflow in .github/workflows**
+## **Create a workflow under .github/workflows**
 
 ```yaml
 name: Deploy to GitHub Pages
@@ -67,12 +64,10 @@ env:
   GITHUB_TOKEN: ${{ secrets.TOKEN }}
 ```
 
-
-Remember to generate a token on GitHub to access the repo, and add it to the action's environment variables.
+Remember to [generate a token](https://github.com/settings/tokens) on GitHub for repository access and add it to the Actions environment variables.
 
 `https://github.com/${your_name}/${your_repo}/settings/secrets/actions`
 
-
 ## Push to the monitored branch
 
-Modify the GitHub Pages configuration, and set the Pages branch to gh-pages
+Update the GitHub Pages configuration and set the Pages branch to `gh-pages`.

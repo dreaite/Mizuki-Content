@@ -4,28 +4,30 @@ published: 2024-11-04
 updated: 2024-11-04
 description: 'A concise SVN guide to centralized version control, repository setup, TortoiseSVN, checkout, update, commit, diff, revert, ignore rules, and branches.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca178060a708e1b3428bd22e/IMG_1451.jpg'
-tags: ['SVN']
-category: 'infra'
+tags: ['SVN', 'INFRA']
+category: 'STUDY'
 draft: false
 lang: 'en'
 ---
 
-# What is SVN
+# What Is SVN?
 
-SVN is a version control system similar to Git. However, unlike Git, SVN is not distributed; instead, it uses a central server to manage the code repository. At the same time, SVN provides finer-grained file security management than Git, allowing you to checkout not only an entire repository but also a specific folder or file within the repository.
+SVN is a file management tool similar to Git. Unlike Git, however, SVN is centralized rather than distributed.
+
+A server manages the code repository. SVN also provides more granular file access control than Git: you can check out not only an entire repository, but also an individual folder or file within it.
 
 # SVN Repositories
 
-Before using SVN, you need to have a repository.
+Before using SVN, you need a repository.
 
-- Self-hosted repositories
-- Free online repositories
+- Self-hosted repository
+- Free online repository
 
-# SVN Client
+# SVN Clients
 
-SVN tends to favor graphical clients, such as TortoiseSVN.
+SVN is commonly used with graphical clients such as TortoiseSVN.
 
-## SVN Command-Line Usage
+## Using SVN from the Command Line
 
 ### checkout
 
@@ -97,7 +99,7 @@ svn diff /path/to/file-or-dir
 # 本地文件跟指定版本号比较差异
 svn diff /path/to/file-or-dir -r xxx
 # 指定版本号比较差异
-svn diff /path/to/file-or-dir -r 1:2
+svn diff /path/to/file-or-dir -r 1:2 
 ```
 
 ### **revert**
@@ -126,9 +128,7 @@ svn proplist . -v
 svn propdel svn:ignore .
 ```
 
-
-### command list
-
+### Command List
 
 ```shell
 # status
@@ -156,9 +156,7 @@ svn blame filename.php
 svn switch --relocate old_url new_url
 ```
 
-
-### branches
-
+### Branches
 
 ```shell
 # 创建分支，从主干 trunk 创建一个分支保存到 branches/online1.0
@@ -174,9 +172,7 @@ svn switch svn://svnbucket.com/test/branches/online1.0
 svn rm http://svnbucket.com/repos/branches/online1.0
 ```
 
-
-### help
-
+### Help
 
 ```shell
 # 查看SVN帮助

@@ -4,8 +4,8 @@ published: 2024-12-03
 updated: 2024-12-03
 description: 'Install and configure Oh My Zsh on Ubuntu with Zsh, Git, Powerlevel10k, useful plugins, and .zshrc settings for a productive terminal.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1515465cca178073b194f4ade9c3a703/IMG_1723.jpg'
-tags: ['bash', 'linux']
-category: 'cs-base'
+tags: ['bash', 'linux', 'cs-base']
+category: 'TROUBLESHOOT'
 draft: false
 lang: 'en'
 ---

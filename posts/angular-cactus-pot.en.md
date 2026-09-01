@@ -4,17 +4,17 @@ published: 2024-11-12
 updated: 2024-11-12
 description: 'Build a Bangumi anime browser with Angular 16 and AWS Cognito, including sign-in, registration, search, calendar views, and GitHub Pages deployment.'
 image: 'https://r2.dreaife.tokyo/notion/covers/13c5465cca178004ad54d1f3b101d56a/IMG_1506.jpg'
-tags: ['ts', 'angular', 'github-action', 'doc']
-category: 'PROJECT'
+tags: ['ts', 'angular', 'github-action', 'doc', 'PROJECT']
+category: 'EXPLORE'
 draft: false
 lang: 'en'
 ---
 
-# Project Overview
+# Project Introduction
 
-This is my Angular practice project, an Angular-based Web application for browsing and searching anime on Bangumi. It uses the [Bangumi API](https://bangumi.github.io/api/).
+This is my Angular practice project. It is an Angular-based web application for displaying and searching for anime on Bangumi, using the [Bangumi API](https://bangumi.github.io/api/).
 
-This project is automatically deployed to [GitHub Pages](https://dreaife.github.io/my-angular-project-test/) using [GitHub Actions](https://github.com/features/actions).
+This project uses [GitHub Actions](https://github.com/features/actions) for automatic deployment to [GitHub Pages](https://dreaife.github.io/my-angular-project-test/).
 
 ## Project Name
 
@@ -22,10 +22,10 @@ my-angular-project-test
 
 URL: [https://dreaife.github.io/my-angular-project-test/](https://dreaife.github.io/my-angular-project-test/)
 
-## Project Objectives
+## Project Goals
 
 - Deploy an Angular-based static website
-- Practice automated deployment with GitHub Actions
+- Practice automatic deployment with GitHub Actions
 - Implement features by calling APIs
 - Use Cognito for user authentication
 - Use an interceptor to process requests
@@ -40,14 +40,14 @@ URL: [https://dreaife.github.io/my-angular-project-test/](https://dreaife.github
 - GitHub Actions
 - Cognito
 
-# Prerequisites
+# Environment Setup
 
 ## Requirements
 
 - Node.js version 20 or later
 - Angular CLI
 
-## Installation
+## Installation Steps
 
 1. Install Node.js
 
@@ -100,18 +100,18 @@ my-angular-project-test/
 
 Where:
 
-- `src/app`<br>The main project directory, containing all components, services, interceptors, guards, and more.
-- `src/environments`<br>The environment configuration directory, containing configurations for the development and production environments.
-- `src/components`<br>The main components directory, containing all page components.
+- `src/app`<br>This is the main project directory and contains all components, services, interceptors, guards, and other files.
+- `src/environments`<br>This directory contains environment configuration files for the development and production environments.
+- `src/components`<br>This directory contains the project's main components, including all page components.
 	- The `login` component is the login page and uses the Cognito SDK to sign users in;
-	- The `home` component is the anime calendar page, which retrieves and displays data by calling `bgm.service.getCalendar`;
-	- The `search` component is the search page, which retrieves and displays data by calling `bgm.service.search`.
-- `src/guards`<br>The main guards directory, containing the `auth.guard.ts` guard. It protects pages that require authentication and redirects unauthenticated users to the login page.
-- `src/interceptors`<br>The main interceptors directory, containing the `auth.interceptor.ts` interceptor, which adds authentication information to requests.
-- `src/services`<br>The main services directory, containing the `auth.service.ts` service for handling login, logout, and other operations, and the `bgm.service.ts` service for calling the Bangumi API.
-- `src/main.ts`<br>The main entry point used to launch the Angular application.
+	- The `home` component is the anime calendar page. It retrieves and displays data by calling `bgm.service.getCalendar`;
+	- The `search` component is the search page. It retrieves and displays data by calling `bgm.service.search`.
+- `src/guards`<br>This directory contains the project's main guards, including the `auth.guard.ts` guard, which protects pages that require authentication and redirects unauthenticated users to the login page.
+- `src/interceptors`<br>This directory contains the project's main interceptors, including the `auth.interceptor.ts` interceptor, which adds authentication information to requests.
+- `src/services`<br>This directory contains the project's main services, including the `auth.service.ts` service for handling sign-in, sign-out, and other operations, and the `bgm.service.ts` service for calling the Bangumi API.
+- `src/main.ts`<br>This is the project's main entry point and is used to start the Angular application.
 
-# Key Features
+# Key Feature Implementations
 
 ## User Authentication with Cognito
 
@@ -121,13 +121,13 @@ Before using Cognito, you must first create a user pool in AWS Cognito, configur
 
 Use the obtained ID to configure Cognito in `src/app/environment/environment.ts`.
 
-### Login
+### Sign In
 
-Users sign in through the cognitoUser.authenticateUser method. After a successful login, the idToken or accessToken is stored in sessionStorage.
+Use the cognitoUser.authenticateUser method to sign in. After a successful sign-in, store the idToken or accessToken in sessionStorage.
 
-Tip:
+Tips:
 
-Unverified users must first set a new password. In this case, override the newPasswordRequired method and set resolve(\{ newPasswordRequired: true, cognitoUser \}). The login page can then switch its displayed content and prompt the user to set a new password.
+For users who have not yet been verified, a new password must first be set. In this case, override the newPasswordRequired method and set resolve(\{ newPasswordRequired: true, cognitoUser \}) so that the login page switches its displayed content and prompts the user to set a new password.
 
 Implementation:
 
@@ -177,7 +177,7 @@ signIn(username: string, password: string): Promise<any> {
   }
 ```
 
-When a user sets a new password, call the completeNewPassword method, which sets the new password through the cognitoUser.completeNewPasswordChallenge method.
+When a user sets a new password, call the completeNewPassword method, which uses the cognitoUser.completeNewPasswordChallenge method to set the new password.
 
 ```typescript
   // 设置新密码方法
@@ -193,7 +193,7 @@ When a user sets a new password, call the completeNewPassword method, which sets
 
 ### Registration
 
-Register users through the cognitoUser.signUp method. After successful registration, the username and password are stored in Cognito, and the page is redirected to the login page.
+Use the cognitoUser.signUp method to register. After successful registration, the username and password are stored in Cognito, and the user is redirected to the login page.
 
 ```typescript
   // 注册方法
@@ -213,9 +213,9 @@ Register users through the cognitoUser.signUp method. After successful registrat
   }
 ```
 
-### Logout
+### Sign Out
 
-Log users out through the cognitoUser.signOut method. After logout, userToken is removed from sessionStorage.
+Use the cognitoUser.signOut method to sign out. After signing out, remove userToken from sessionStorage.
 
 ```typescript
   logout() {
@@ -228,7 +228,7 @@ Log users out through the cognitoUser.signOut method. After logout, userToken is
 
 ## Login Page
 
-The login page is located at `src/app/components/login/login.component.ts`. It uses the Cognito SDK to sign users in and stores the idToken or accessToken in sessionStorage after a successful login.
+The login page is located at `src/app/components/login/login.component.ts`. It uses the Cognito SDK to sign users in and stores the idToken or accessToken in sessionStorage after a successful sign-in.
 
 The page uses authMode to control the displayed content. authMode supports the following values:
 
@@ -236,9 +236,9 @@ The page uses authMode to control the displayed content. authMode supports the f
 - register: Registration page
 - forgotPassword: Forgot password page
 - confirmSignUp: Verification page
-- resetPassword: Reset password page
+- resetPassword: Password reset page
 
-When the corresponding button is clicked, the switchMode method of authService is called to change authMode and update the content displayed on the page.
+When the corresponding button is clicked, the authService's switchMode method is called to change authMode, thereby switching the content displayed on the page.
 
 Page implementation:
 
@@ -345,7 +345,7 @@ When the page is initialized, the `ngOnInit` method is called to retrieve and di
 
 The search page is located at `src/app/components/search/search.component.ts`. It retrieves and displays data by calling `bgm.service.search`.
 
-The page receives search keywords through title and uses options to control the displayed content. options includes the following:
+The page receives search keywords through title and controls the displayed content through options. options includes the following values:
 
 - limit: Number of items displayed per page
 - type: Type
@@ -353,7 +353,7 @@ The page receives search keywords through title and uses options to control the 
 - tag: Tag
 - air_date: Air date
 - rating: Rating
-- rank: Rank
+- rank: Ranking
 - nsfw: Whether to include adult content
 - page: Page number
 
@@ -396,7 +396,7 @@ When sending a request to the API, title and options are restructured before bei
 
 ## Adding Authentication Information with an Interceptor
 
-In `src/app/interceptors/auth.interceptor.ts`, the interceptor adds authentication information to requests.
+In `src/app/interceptors/auth.interceptor.ts`, an interceptor is used to add authentication information to requests.
 
 Interceptor implementation:
 
@@ -416,7 +416,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 };
 ```
 
-To use the interceptor, configure it in app.config.ts.
+When using the interceptor, it must be configured in app.config.ts.
 
 ```typescript
 export const appConfig: ApplicationConfig = {
@@ -430,7 +430,7 @@ export const appConfig: ApplicationConfig = {
 
 ## Protecting Pages with a Guard
 
-In `src/app/guards/auth.guard.ts`, the guard protects pages that require authentication and redirects unauthenticated users to the login page.
+In `src/app/guards/auth.guard.ts`, a guard is used to protect pages that require authentication. Unauthenticated users are redirected to the login page.
 
 Guard implementation:
 
@@ -449,7 +449,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 };
 ```
 
-To use the guard, add it to the route configuration.
+When using the guard, it must be added to the route configuration.
 
 ```typescript
 { path: '', component: HomeComponent, canActivate: [authGuard] }, # 主页需要登录
@@ -463,7 +463,7 @@ To use the guard, add it to the route configuration.
 	ng serve
 	```
 
-2. Visit the URL
+2. Open the URL
 
 	URL: [http://localhost:4200/](http://localhost:4200/)
 
@@ -477,11 +477,11 @@ To use the guard, add it to the route configuration.
 
 - Automated deployment
 
-	This project uses GitHub Actions to deploy automatically to GitHub Pages. Whenever code is pushed to GitHub, GitHub Actions detects the push event, builds the project, and deploys it to GitHub Pages.
+	This project uses GitHub Actions for automatic deployment to GitHub Pages. Whenever code is pushed to GitHub, GitHub Actions detects the push event, automatically builds the project, and deploys it to GitHub Pages.
 
-	Create the `.github/workflows/main.yml` configuration file to configure the project's automated deployment with GitHub Actions.
+	Create the `.github/workflows/main.yml` configuration file to configure automatic project deployment with GitHub Actions.
 
-	Its contents are as follows:
+	The contents are as follows:
 
 	```yaml
 	# GitHub Actions 工作流，用于将项目部署到 GitHub Pages

@@ -1,39 +1,32 @@
 ---
-title: 'GitHub ActionsでAngularページを自動デプロイ'
+title: 'GitHub ActionsでAngularページを自動デプロイする'
 published: 2024-11-04
 updated: 2024-11-04
 description: 'GitHub ActionsでAngularをGitHub Pagesへ自動デプロイ。outputPath、angular-cli-ghpages、ワークフロー、トークン、gh-pagesブランチの設定を扱います。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca1780709669dd1e198f2678/Gal1mvpbQAA_8s_.jpg'
-tags: ['github-action']
-category: 'infra'
+tags: ['github-action', 'INFRA']
+category: 'TROUBLESHOOT'
 draft: false
 lang: 'ja'
 ---
 
 ## angular.json
 
-
  **`projects > {your-project-name} > architect > build > options > outputPath`**
 
-
-デフォルトで静的ウェブページがブラウザで生成される場合は、属性を変更/追加してください
-
+デフォルトで生成される静的Webページがbrowser配下にある場合は、忘れずに次のプロパティを変更または追加してください。
 
 ```javascript
 "baseHref": "/browser/",
 ```
 
-
-angular-cli-ghpages のインストール
-
+angular-cli-ghpagesをインストールします。
 
 ```shell
 ng add angular-cli-ghpages
 ```
 
-
-## **.github/workflowsでワークフローを作成**
-
+## **.github/workflows配下にワークフローを作成**
 
 ```yaml
 name: Deploy to GitHub Pages
@@ -71,14 +64,10 @@ env:
   GITHUB_TOKEN: ${{ secrets.TOKEN }}
 ```
 
-
-GitHubでトークンを生成してください（https://github.com/settings/tokens）リポジトリへアクセスするために使用します。また、Actions の環境変数に追加してください。
-
+GitHubでリポジトリへのアクセスに使用する[トークンを生成](https://github.com/settings/tokens)し、Actionsの環境変数に追加してください。
 
 `https://github.com/${your_name}/${your_repo}/settings/secrets/actions`
 
+## 監視対象のブランチにプッシュ
 
-## 監視対象のブランチへプッシュ
-
-
-GitHub Pages の設定を変更し、ページ用のブランチを gh-pages に設定します。
+GitHub Pagesの設定を変更し、Pagesのブランチをgh-pagesに設定します。

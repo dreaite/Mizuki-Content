@@ -4,30 +4,30 @@ published: 2024-11-04
 updated: 2024-11-04
 description: '集中型バージョン管理SVNの入門。リポジトリ作成、TortoiseSVN、checkout、update、commit、diff、revert、ignore、ブランチ操作を整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca178060a708e1b3428bd22e/IMG_1451.jpg'
-tags: ['SVN']
-category: 'infra'
+tags: ['SVN', 'INFRA']
+category: 'STUDY'
 draft: false
 lang: 'ja'
 ---
 
-# svnとは何か
+# svnとは
 
-svnはgitと同じファイル管理ツールですが、gitと違い、svnは分散管理ではなく、1つの
+svnはgitと同様のファイル管理ツールですが、gitとは異なり、svnは分散型ではなく、1台の
 
-サーバーを介してコードリポジトリを管理します。同時にsvnはファイルのセキュリティ管理の粒度がGitより高く、1つのリポジトリをcheckoutするだけでなく、リポジトリ内部のフォルダ/ファイルをcheckoutすることもできます。
+サーバーでコードリポジトリを管理します。また、svnはgitよりもファイルのセキュリティ管理の粒度が細かく、リポジトリ全体をcheckoutできるだけでなく、リポジトリ内のフォルダー/ファイル単位でもcheckoutできます。
 
 # SVNリポジトリ
 
-svnを使用する前には、リポジトリが必要です。
+svnを使用するには、事前にリポジトリが必要です。
 
-- 自前のリポジトリ
+- 自前で構築したリポジトリ
 - オンラインの無料リポジトリ
 
 # SVNクライアント
 
-SVNはグラフィカルなクライアントの使用を好む傾向があります。例えば、TortoiseSVN など。
+SVNでは、tortoiseSVNのようなGUIクライアントがよく使用されます。
 
-## SVNコマンドラインの使用
+## SVNのコマンドラインでの使用
 
 ### checkout
 
@@ -99,7 +99,7 @@ svn diff /path/to/file-or-dir
 # 本地文件跟指定版本号比较差异
 svn diff /path/to/file-or-dir -r xxx
 # 指定版本号比较差异
-svn diff /path/to/file-or-dir -r 1:2
+svn diff /path/to/file-or-dir -r 1:2 
 ```
 
 ### **revert**
@@ -128,8 +128,7 @@ svn proplist . -v
 svn propdel svn:ignore .
 ```
 
-
-### command list
+### コマンド一覧
 
 ```shell
 # status
@@ -157,8 +156,7 @@ svn blame filename.php
 svn switch --relocate old_url new_url
 ```
 
-
-### branches
+### ブランチ
 
 ```shell
 # 创建分支，从主干 trunk 创建一个分支保存到 branches/online1.0
@@ -174,8 +172,7 @@ svn switch svn://svnbucket.com/test/branches/online1.0
 svn rm http://svnbucket.com/repos/branches/online1.0
 ```
 
-
-### help
+### ヘルプ
 
 ```shell
 # 查看SVN帮助
