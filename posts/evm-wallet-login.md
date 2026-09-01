@@ -6,7 +6,7 @@ description: '以 React/wagmi 实现的 EVM 钱包登录界面为例，拆解连
 permalink: 'evm-wallet-login'
 image: 'https://r2.dreaife.tokyo/notion/covers/3795465cca1780d29cb9f993bf218d10/2026%E5%B9%B46%E6%9C%889%E6%97%A5_01_09_11.png'
 tags: ['web3', 'wallet']
-category: 'WEB3'
+category: 'EXPLORE'
 draft: false
 ---
 

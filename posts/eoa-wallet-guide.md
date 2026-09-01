@@ -6,7 +6,7 @@ description: '从钱包视角梳理 EOA 与 HD 钱包的密钥派生、EIP-1559 
 permalink: 'eoa-wallet-guide'
 image: 'https://r2.dreaife.tokyo/notion/covers/38c5465cca1780e5bf80d0662451b860/ai-generated-1782646843083.png'
 tags: ['wallet', 'web3', 'transaction']
-category: 'WEB3'
+category: 'EXPLORE'
 draft: false
 ---
 

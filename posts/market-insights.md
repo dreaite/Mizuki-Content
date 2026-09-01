@@ -6,7 +6,7 @@ description: '从复杂系统与博弈视角讨论市场的反身性：盈利模
 permalink: 'market-insights'
 image: 'https://r2.dreaife.tokyo/notion/covers/3b85465cca178058ab16d23d1491db0b/shinku_birthday.png'
 tags: ['thinking', 'market', 'trade']
-category: 'market'
+category: 'RETROSPECT'
 draft: false
 ---
 

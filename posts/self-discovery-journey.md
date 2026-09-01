@@ -5,8 +5,8 @@ updated: 2026-03-06
 description: '一次关于情绪抑制与自我形成的心理记录：长期维持内在稳态让人与外界隔绝，而真实的自我只能在互动、尝试与选择中逐渐生成；对方向的犹豫，本质上也是对承担选择后果的恐惧。'
 permalink: 'self-discovery-journey'
 image: 'https://r2.dreaife.tokyo/notion/covers/31a5465cca1780a3aa46f35da870624c/IMG_4498.jpg'
-tags: ['self', 'mental', 'discover']
-category: 'psycho'
+tags: ['self', 'mental', 'discover', 'psycho']
+category: 'INQUIRY'
 draft: false
 ---
 

@@ -6,7 +6,7 @@ description: '在 Windows 11 从 Git 仓库部署 GPT-SoVITS 的实操指南，�
 permalink: 'pre-read-tips'
 image: 'https://source.unsplash.com/random'
 tags: []
-category: ''
+category: 'TROUBLESHOOT'
 draft: true
 ---
 

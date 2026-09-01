@@ -5,8 +5,8 @@ updated: 2026-04-09
 description: '一篇关于 AI 使用成本与机会分化的个人思考：当 SOTA 模型从补贴期走向常态定价，模型访问能力可能成为新的认知差距；而 AI 从编程扩展到安全、视频与音乐，也让这种筛选更早显现。'
 permalink: 'first-round-ai-filter'
 image: 'https://r2.dreaife.tokyo/notion/covers/33d5465cca1780ba8e6fc66550e148be/IMG_4685.jpg'
-tags: ['thinking', 'ai']
-category: 'life'
+tags: ['thinking', 'ai', 'life']
+category: 'INQUIRY'
 draft: false
 ---
 

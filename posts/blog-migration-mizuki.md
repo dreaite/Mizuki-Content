@@ -5,8 +5,8 @@ updated: 2026-02-23
 description: '从 NotionNext 迁移到 Astro 博客 Mizuki 的配置记录，涵盖内容结构、Bangumi 接入、自托管 CI 的 Notion 同步、R2 图片持久化与 LLM 多语言生成。'
 permalink: 'blog-migration-mizuki'
 image: 'https://r2.dreaife.tokyo/notion/covers/30f5465cca1780cc8df8e7c367a16f3d/IMG_4450.jpg'
-tags: ['blog', 'llm', 'deploy', 'notion']
-category: 'infra'
+tags: ['blog', 'llm', 'deploy', 'notion', 'INFRA']
+category: 'EXPLORE'
 draft: false
 ---
 
