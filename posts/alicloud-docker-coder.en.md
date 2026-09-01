@@ -1,24 +1,24 @@
 ---
-title: 'Configure Docker + code-server on Alibaba Cloud to Build an Online Compiler'
+title: 'Set Up Docker + code-server on Alibaba Cloud for an Online IDE'
 published: 2022-07-06
 updated: 2022-07-06
 description: 'Build a C/C++ development environment on Alibaba Cloud with Docker, Nginx, and code-server, from mirror setup to compiling and running test code.'
 image: 'https://r2.dreaife.tokyo/notion/covers/ae4b0038e910408cadb36f3651ee3fc2/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE_2022-09-18_025217.png'
-tags: ['network', 'school']
-category: 'cs-base'
+tags: ['network', 'school', 'cs-base']
+category: 'TROUBLESHOOT'
 draft: false
 lang: 'en'
 ---
 
-# **Alibaba Cloud: Configure Docker + code-server to enable an online compiler**
+# **Configure Docker + code-server on Alibaba Cloud to Create an Online Compiler**
 
 ## **1. Install Docker**
 
 1. Install Docker
 
-Docker has two branch versions: Docker CE and Docker EE, i.e., Community Edition and Enterprise Edition. This experiment uses Docker CE.
+Docker has two editions: Docker CE and Docker EE, the Community Edition and Enterprise Edition respectively. This tutorial uses Docker CE.
 
-- Install Docker dependencies and add Docker's software repository information
+- Install Docker dependencies and add the Docker software repository
 
 ```plain text
 yum install -y yum-utils device-mapper-persistent-data lvm2
@@ -41,10 +41,9 @@ systemctl status docker         //查看docker状态
 systemctl enable docker         //设置docker开机启动
 ```
 
-1. Configure Alibaba Cloud image registry (image acceleration)
-
-- Go to the Alibaba Cloud Image Accelerator interface
-- Follow the operation guide to configure
+1. Configure the Alibaba Cloud image registry (image acceleration)
+- Go to the [Alibaba Cloud Image Accelerator page](https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors)
+- Follow the documentation to complete the configuration
 
 ```plain text
 sudo mkdir -p /etc/docker
@@ -64,8 +63,7 @@ systemctl daemon-reload         //重新加载服务配置文件
 systemctl restart docker        //重启Docker服务
 ```
 
-1. Run Nginx via Docker
-
+1. Install Nginx using Docker
 - Get the latest Nginx image
 
 ```plain text
@@ -80,7 +78,7 @@ docker images                   //查看本地镜像
 docker run --name nginx-test -p 8080:80 -d nginx
 ```
 
-Access port 8080 to see the Nginx home page, running normally.
+Access port 8080. If the Nginx home page appears, the service is running correctly.
 
 ## **2. Install code-server**
 
@@ -100,7 +98,7 @@ sudo vi ~/.config/code-server/config.yaml                   //修改配置文件
 sudo systemctl restart code-sercer@dreaife                  //重启code-server
 ```
 
-1. Deploy code-server to listen on 0.0.0.0
+1. Deploy code-server on 0.0.0.0
 
 ```plain text
 sudo vi ~/.config/code-server/config.yaml                   //修改配置文件
@@ -108,26 +106,26 @@ sudo systemctl restart code-sercer@dreaife                  //重启code-server
 firewall-cmd --zone=public --add-port=7777/tcp --permanent  //开放端口
 ```
 
-After installation, enter the code-server interface
+After installation, open the code-server interface.
 
-## **3. Configure the code-server build environment**
+## **3. Configure the code-server Compilation Environment**
 
-1. Install the C/C++ components of code-server via VSIX
-2. Enable .vscode configuration files
-- c_cpp_properties.json
+1. Install the C/C++ extension for code-server using VSIX
+2. Set up the required .vscode configuration files
+- c_cpp_properties.json file
 
-![iWM4JDYnke5twCm.png](https://s2.loli.net/2022/06/13/iWM4JDYnke5twCm.png)
+![](https://s2.loli.net/2022/06/13/iWM4JDYnke5twCm.png)
 
-- launch.json
+- launch.json file
 
-![DeKW5BM21nfzgsx.png](https://s2.loli.net/2022/06/13/DeKW5BM21nfzgsx.png)
+![](https://s2.loli.net/2022/06/13/DeKW5BM21nfzgsx.png)
 
 - tasks.json
 
-![Uh2TIQKx6VwzBnp.png](https://s2.loli.net/2022/06/13/Uh2TIQKx6VwzBnp.png)
+![](https://s2.loli.net/2022/06/13/Uh2TIQKx6VwzBnp.png)
 
-1. Test installation results
-- Create a test file test.cpp
+1. Test the installation
+- Create a test.cpp file for testing
 
 ```plain text
 #include<iostream>
@@ -150,6 +148,6 @@ int main(){
 
 - Run the test
 
-![MaGmNUobEurdwOc.png](https://s2.loli.net/2022/06/13/MaGmNUobEurdwOc.png)
+![](https://s2.loli.net/2022/06/13/MaGmNUobEurdwOc.png)
 
-The run is successful, the result is correct, and the online compiler configuration is complete.
+The program ran successfully and produced the correct result. The online compiler is now fully configured.

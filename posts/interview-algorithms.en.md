@@ -5,38 +5,38 @@ updated: 2023-08-11
 description: 'Interview solutions for snake matrices, linked-list quicksort, peaks, egg dropping, minimum stacks, and cycle-entry detection, with code.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1670090a8eaf4eab9ccd3f1332d4e916/2421860-20230811144113268-1519746820.png'
 tags: ['meeting', 'algorithm']
-category: 'algorithm'
+category: 'STUDY'
 draft: false
 lang: 'en'
 ---
 
-# Spiral Matrix
+# Snake Matrix
 
 Microsoft interview question
 
 ### Problem Description
 
-Input two integers $n$ and $m$, output an $n$ by $m$ matrix, filling numbers from $1$ to $n \times m$ in a spiral snake pattern.
+Given two integers \$n\$ and \$m\$, output an \$n\$-row, \$m\$-column matrix filled with the numbers \$1\$ through \$n \\times m\$ in a spiral pattern.
 
-The exact matrix form can be referenced from the sample.
+See the examples for the exact matrix format.
 
-### Input format
+### Input Format
 
-The input consists of a single line containing two integers $n$ and $m$.
+The input consists of one line containing two integers, \$n\$ and \$m\$.
 
-### Output format
+### Output Format
 
 Output the required matrix.
 
-The matrix has $n$ rows, each row containing $m$ integers separated by spaces.
+The matrix occupies \$n\$ lines, with each line containing \$m\$ space-separated integers.
 
-### Constraints
+### Data Range
 
-$1 \le n,m \le 100$
+\$1 \\le n,m \\le 100\$
 
 ## Solution
 
-### Simulation Method:
+### Simulation:
 
 ```c
 #include <iostream>
@@ -60,9 +60,10 @@ int main(){
 
     return 0;
 }
+
 ```
 
-### Boundary-following Simulation:
+### Boundary Simulation:
 
 ```c
 #include <iostream>
@@ -85,10 +86,10 @@ int main(){
         cout<<a[i][j]<<" \\n"[j==m-1];
     return 0;
 }
+
 ```
 
-
-# Quick Sort on a Singly Linked List
+# Quicksort on a Singly Linked List
 
 Megvii interview question
 
@@ -96,19 +97,19 @@ Megvii interview question
 
 Given a singly linked list, sort it using the quicksort algorithm.
 
-Requirements: expected average time complexity is $O(n \log n)$ and expected additional space complexity is $O(\log n)$.
+Requirements: The expected average time complexity is \$O(nlogn)\$, and the expected additional space complexity is \$O(logn)\$.
 
-**Thought question:** If you can only change the structure of the list and cannot modify each node's val, how would you do it?
+**Question:** What should you do if you can only modify the linked-list structure and cannot modify the val of each node?
 
-### Constraints
+### Data Range
 
-All numbers in the list are within the int range, and the list length is in $[0, 10000]$.
+All numbers in the linked list are within the \$int\$ range, and the list length is within \$\[0, 10000\]\$.
 
-The data for this problem is completely randomly generated.
+The test data is generated completely at random.
 
 ## Solution
 
-The approach is basically the same as ordinary quicksort: partition the list into three parts based on a value: less than the value, equal to the value, and greater than the value; recursively quicksort the front and back sections, and then concatenate the three parts in order.
+The idea is essentially the same as ordinary quicksort. Partition the linked list into three segments containing values less than val, equal to val, and greater than val. Recursively quicksort the first and last segments, then concatenate the three sorted segments in order.
 
 ```c
 /**
@@ -151,28 +152,28 @@ public:
         return head;
     }
 };
+
 ```
 
+# Find a Peak Element
 
-# Find Peak Element
+A peak element is an element whose value is strictly greater than the values of its adjacent elements.
 
-A peak element is an element that is strictly greater than its left and right neighbors.
+Given an integer array `nums`, find a peak element and return its index. The array may contain multiple peaks; in that case, you may return the position of **any peak element**.
 
-Given an integer array nums, find a peak element and return its index. The array may contain multiple peaks; in that case, you may return the index of any one of the peaks.
+You may assume that `nums[-1] = nums[n] = -∞`.
 
-You may assume nums[-1] = nums[n] = -∞.
+You must implement an algorithm with a time complexity of `O(log n)` to solve this problem.
 
-You must implement an algorithm with time complexity O(log n) to solve this problem.
+**Constraints:**
 
-**Hint:**
-
-- 1 <= nums.length <= 1000
-- -2^31 <= nums[i] <= 2^31 - 1
-- For all valid i, nums[i] != nums[i + 1]
+- `1 <= nums.length <= 1000`
+- `231 <= nums[i] <= 231 - 1`
+- `nums[i] != nums[i + 1]` for every valid `i`
 
 ## Solution
 
-One can observe that when there is a slope, following the direction of the higher point leads to the answer.
+When there is a slope, following it toward the higher point will lead to an answer.
 
 ```c++
 class Solution {
@@ -196,8 +197,8 @@ public:
         }return l;
     }
 };
-```
 
+```
 
 # Find a Local Minimum in a Matrix
 
@@ -205,26 +206,33 @@ Microsoft interview question
 
 ### Problem Description
 
-Given an $n \times n$ matrix containing $n \times n$ pairwise distinct integers.
+Given an \$n \\times n\$ matrix containing \$n \\times n\$ **distinct** integers.
 
-Define a local minimum as a value that is smaller than all of its adjacent numbers. An adjacent number is one of the four directions (up, down, left, right). Numbers on the border or corner may have fewer than four neighbors.
+Definition of a local minimum: If a number is smaller than all of its adjacent numbers, it is called a local minimum.
 
-You must find any local minimum in $O(n \log n)$ time and output its position as its row index and column index.
+The adjacent numbers of an element are the elements immediately above, below, to the left, and to the right of it. Note that an element on an edge or in a corner may have fewer than four adjacent elements.
 
-The matrix is hidden, and you can obtain values via the predefined function query. For example, query(a,b) returns the value at row a, column b.
+Find the position of any local minimum within a time complexity of \$O(nlogn)\$, and output its row and column.
 
-Notes:
-1. Rows and columns are 0-based.
-2. The number of query() calls must not exceed $(n + 2) \times \lceil \log_2 n \rceil + n$.
-3. The answer is not unique; output any one local minimum's position.
+The matrix is hidden in this problem. You can obtain the value at a particular position in the matrix through the predefined \$int\$ function \$query\$.
+
+For example, \$query(a,b)\$ returns the value at row \$a\$ and column \$b\$ of the matrix.
+
+**Notes:**
+
+1. Matrix rows and columns are both indexed starting from \$0\$.
+2. The number of calls to `query()` cannot exceed \$(n + 2) \\times \\lceil log_2n \\rceil + n\$.
+3. The answer may not be unique; output the position of any local minimum.
 
 ### Data Range
 
-$1 \le n \le 300$, matrix values fit in int.
+\$1 \\le n \\le 300\$, and the integers in the matrix are within the `int` range.
 
 ## Solution
 
-Similar to the previous problem, and the call limit gives a hint: we can scan n numbers across log2(n) columns. The approach is to binary search for the column containing a local minimum, then scan that column to obtain the answer, where the binary search condition compares the minimum value in a column with its left and right neighbors.
+As in the previous problem, the call limit provides a hint: We can traverse the n elements in each of \$log_2n\$ columns. Specifically:
+
+Use binary search to determine which column contains a local minimum, then traverse that column to obtain the answer. The binary-search condition is based on comparing the minimum value in a column with the values to its left and right in the same row.
 
 ```c++
 // Forward declaration of queryAPI.
@@ -267,41 +275,42 @@ public:
 
     }
 };
+
 ```
 
-
-# Egg Dropping Problem
+# Egg Hardness
 
 Google interview question
 
 ### Input Format
 
-The input consists of multiple test cases, each on one line containing two positive integers $n$ and $m$, where $n$ is the height of the building and $m$ is the number of eggs you have. All eggs have the same hardness (i.e., they either all break or all do not break when dropped from the same height), and $m \le n$.
+The input contains multiple test cases. Each test case occupies one line and contains two positive integers, \$n\$ and \$m\$. Here, \$n\$ represents the building height, and \$m\$ represents the number of eggs you currently have. These eggs have the same hardness—that is, when dropped from the same height, they will either all break or all remain intact—and their hardness is at most \$n\$.
 
-You may assume the hardness is between $0$ and $n$, i.e., dropping from the $(n+1)$-th floor will certainly break.
+You may assume that an egg with hardness \$x\$ will never break when dropped from a height less than or equal to \$x\$; an unbroken egg can be reused. It will always break when dropped from any height greater than \$x\$.
+
+For each input test case, you may assume that the hardness of the eggs is between \$0\$ and \$n\$. In other words, an egg dropped from floor \$n+1\$ will certainly break.
 
 ### Output Format
 
-For each test case, output a single integer representing the minimum number of egg drops required in the worst case with the optimal strategy.
+For each test case, output an integer representing the number of egg drops required in the worst case when using the optimal strategy.
 
 ### Data Range
 
-$1 \le n \le 100$,
-$1 \le m \le 10$
+\$1 \\le n \\le 100\$,<br>\$1 \\le m \\le 10\$
 
-### Sample Explanation
+### Example Explanation
 
-An optimal strategy minimizes the number of drops in the worst case.
+The optimal strategy is the strategy that minimizes the number of egg drops required in the worst case.
 
-If you have only one egg, you can only start from the first floor; in the worst case, the hardness is 100, so you need 100 drops. If you use another strategy, you might not be able to determine the egg hardness (for example, if you drop on the second floor first and it breaks, you cannot determine whether the hardness is 0 or 1), i.e., in the worst case you would need infinitely many drops, so the answer for the first test case is 100.
+If there is only one egg, you can only start dropping it from the first floor. In the worst case, the egg's hardness is 100, so 100 drops are required. If you use another strategy, you may be unable to determine the egg's hardness. For example, if you first drop it from the second floor and it breaks, you cannot determine whether its hardness is 0 or 1. Therefore, in the worst case, infinitely many drops would be required, so the answer for the first test case is 100.
 
 ## Solution
 
 ### dp1
 
-Let f[i][j] denote the optimal number of drops for an interval of length i with j eggs.
+Use `f[i][j]` to represent the optimal strategy for an interval of length i using j eggs.
 
-For each egg j, there are two possibilities: not using egg j, i.e., f[i][j] = f[i][j-1]; using egg j, for the i positions 1..i there are i cases, choose one k; if the egg breaks we have f[k-1][j-1], if not we have f[i-k][j]. The worst-case is max(f[k-1][j-1], f[i-k][j]); the minimal strategy is min(f[i][j], max(f[k-1][j-1], f[i-k][j]) + 1).
+For each egg j, there are two possible cases: Egg j is not used, so `f[i][j]=f[i][j-1]`; or egg j is used. There are i possible drop positions from 1\~i. Let one such position be k. Two outcomes are possible: The egg breaks (`f[k-1][j-1]`), or the egg does not break (`f[i-k][j]`). The worst case is the maximum of these two values, so the minimum number of drops is `min(f[i][j],max(f[k-1][j-1],f[i-k][j])+1)`.
 
 ```c++
 #include<iostream>
@@ -325,13 +334,14 @@ int main(){
         cout<<f[n][m]<<endl;
     }return 0;
 }
+
 ```
 
 ### dp2
 
-Different from the previous method, let f[i][j] denote the maximum number of floors that can be tested with i moves and j eggs.
+Unlike the previous method, `f[i][j]` represents the maximum interval length that can be tested using j eggs in i trials.
 
-Assume the tested floor is k; there are two cases: the egg breaks (f[i-1][j-1], recurse to the lower part) or does not break (f[i-1][j], recurse upper part).
+Suppose the test position is k. There are two possible outcomes: The egg breaks (`f[i-1][j-1]`, recursively testing the lower part), or it does not break (`f[i-1][j]`, recursively testing the upper part).
 
 `f[i][j] = f[i-1][j]+f[i-1][j-1]+1;`
 
@@ -356,25 +366,25 @@ int main(){
         }
     }return 0;
 }
+
 ```
 
-
-# Stack with min function
+# Stack with a min Function
 
 Hulu interview question
 
 ### Problem Description
 
-Design a stack that supports push, pop, top, and can retrieve the minimum element in O(1) time.
+Design a stack that supports operations such as push, pop, and top, and can retrieve its minimum element in O(1) time.
 
-- push(x) – push element x onto the stack
-- pop() – remove the top element
-- top() – get the top element
-- getMin() – get the minimum element in the stack
+- push(x)–inserts element x into the stack
+- pop()–removes the top element from the stack
+- top()–gets the top element
+- getMin()–gets the minimum element in the stack
 
-### Constraints
+### Data Range
 
-Total number of operations in [0,100].
+The total number of operation commands is \$\[0,100\]\$.
 
 ### Example
 
@@ -387,13 +397,14 @@ minStack.getM();   --> Returns -4.
 minStack.pop();
 minStack.top();      --> Returns 3.
 minStack.getM();   --> Returns -1.
+
 ```
 
 ## Solution
 
 ### Method 1
 
-Directly store, for each position, the minimum value up to that position in an array.
+Use an array to directly store the current minimum value at each position when a number is inserted.
 
 ```c++
 class MinStack {
@@ -424,13 +435,14 @@ public:
         return ck[len-1];
     }
 };
+
 ```
 
 ### Method 2
 
-Maintain the minimum values with a monotonic stack.
+Maintain the minimum value using a monotonic stack.
 
-Keep ck as a monotone decreasing stack of minima by using ck.top() >= x. When popping, if the popped value equals the current minimum, pop from ck; otherwise, ck remains. The minimum is ck.top().
+Use `ck.top() >= x` to ensure that the minimum values stored in ck are monotonically decreasing. During a pop operation, ck only needs to be updated if the popped value equals the current minimum in ck. To obtain the minimum value, simply return `ck.top()`.
 
 ```c++
 class MinStack {
@@ -463,38 +475,39 @@ public:
         return ck.top();
     }
 };
+
 ```
 
-
-# Entry Node of Loop in Linked List
+# Entry Node of a Cycle in a Linked List
 
 Alibaba interview question
 
 ### Problem Description
 
-Given a linked list, if it contains a loop, output the entry node of the loop.
+Given a linked list, output the entry node of its cycle if it contains one.
 
-If there is no loop, output null.
+If it does not contain a cycle, output `null`.
 
-### Constraints
+### Data Range
 
-Node val range is [1,1000]. Node values are all distinct. List length is in [0,500].
+Node val values are within \$\[1,1000\]\$.<br>All node val values are distinct.<br>The linked-list length is within \$\[0,500\]\$.
 
-### Sample
+### Example
 
-![19_69ba6d14f5-QQ%E6%88%AA%E5%9B%BE20181202023846.png](https://www.acwing.com/media/article/image/2018/12/02/19_69ba6d14f5-QQ%E6%88%AA%E5%9B%BE20181202023846.png)
+![](https://www.acwing.com/media/article/image/2018/12/02/19_69ba6d14f5-QQ%E6%88%AA%E5%9B%BE20181202023846.png)
 
 ```plain text
-Given the linked list as shown above:
+给定如上所示的链表：
 [1, 2, 3, 4, 5, 6]
 2
-Note that 2 denotes the node with index 2, and node indices start at 0. So the node with index 2 has val equal to 3.
-Then the entry node of the loop is the one with value 3.
+注意，这里的2表示编号是2的节点，节点编号从0开始。所以编号是2的节点就是val等于3的节点。
+则输出环的入口节点3.
+
 ```
 
 ## Solution
 
-It turns out that with distinct values and a range up to 1000, you can use an array to record the first node seen for each value. When you visit a value that has already been recorded, you have found the loop.
+Since all val values are distinct and their range is only 1000, use an array to record the node corresponding to each previously encountered val. When a recorded val is encountered again, a cycle has been found.
 
 ```c++
 class Solution {
@@ -510,4 +523,5 @@ public:
         }return NULL;
     }
 };
+
 ```

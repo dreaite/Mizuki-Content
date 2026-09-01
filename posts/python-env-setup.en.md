@@ -1,141 +1,141 @@
 ---
-title: 'Python Web Crawler Environment Setup'
+title: 'Python Web Scraping Environment Setup'
 published: 2024-01-01
 updated: 2024-01-01
 description: 'Set up a Python web-scraping environment with requests, Selenium, lxml, Beautiful Soup, databases, mitmproxy, Appium, pyspider, and Scrapy.'
 image: 'https://r2.dreaife.tokyo/notion/covers/45f564fe06e843e1a166f39b3e93ed2d/2421860-20240101202740011-1464779186.png'
 tags: ['spider', '环境', 'python']
-category: 'spider'
+category: 'TROUBLESHOOT'
 draft: false
 lang: 'en'
 ---
 
 # Environment Setup
 
-python3/Request libraries/Parsing libraries/Databases/Repositories/Web libraries/App scraping libraries/Web crawler framework libraries
+python3/request libraries/parsing libraries/databases/storage libraries/web libraries/app scraping libraries/web scraping framework libraries
 
-- Python 3
-    - Windows 11 can be downloaded directly from the Store
-    - On Linux, `apt-get install python3`
+- python3
+	- On Windows 11, it can now be downloaded directly from the Store (
+	- On Linux: `apt-get install python3`
 - Request libraries
-    - requests
+	- requests
 
-        `pip3 install requests`
+		`pip3 install requests`
 
-    - selenium
+	- selenium
 
-        `pip install selenium`
+		`pip install selenium`
 
-    - ChromeDriver
-        1. View the Chrome version in About Chrome
-        2. Download the corresponding version from [ChromeDriver](https://chromedriver.chromium.org/downloads)
-        3. Add ChromeDriver to your environment variables
-    - ~~phantomJS~~
+	- chromeDriver
+		1. Check the Chrome version under About
+		2. Download the corresponding version from [chromeDriver](https://chromedriver.chromium.org/downloads)
+		3. Add chromeDriver to the environment variables
+	- ~~phantomJS~~
 
-        The new Selenium versions no longer support phantomJS; you can use it directly with ChromeDriver
+		Newer versions of selenium no longer support phantomJS. You can use headless mode directly with chromedriver.
 
+		Verification:
 
-        Verification:
+		```python
+		from selenium import webdriver
+		from selenium.webdriver.chrome.options import Options
 
+		chrome_options = Options()
+		chrome_options.add_argument('--headless')
+		chrome_options.add_argument('--disable-gpu')
+		driver = webdriver.Chrome(options=chrome_options)
+		driver.get("<https://dreaife.icu/>")
+		print(driver.current_url)
 
-        ```python
-        from selenium import webdriver
-        from selenium.webdriver.chrome.options import Options
-        
-        chrome_options = Options()
-        chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--disable-gpu')
-        driver = webdriver.Chrome(options=chrome_options)
-        driver.get("<https://dreaife.icu/>")
-        print(driver.current_url)
-        ```
+		```
 
-    - aiohttp
+	- aiohttp
 
-        `pip install aiodns`
+		`pip install aiodns`
 
 - Parsing libraries
-    - lxml
+	- lxml
 
-        `pip install lxml`
+		`pip install lxml`
 
-    - beautifulsoup4
+	- beautifulsoup4
 
-        `pip install beautifulsoup4`
+		`pip install beautifulsoup4`
 
-    - pyquery
+	- pyquery
 
-        `pip install pyquery`
+		`pip install pyquery`
 
-    - tesserocr
-        - Install Tesseract
+	- tesserocr
+		- Install tesseract
 
-            [Windows](https://digi.bib.uni-mannheim.de/tesseract/)
+			[Windows](https://digi.bib.uni-mannheim.de/tesseract/)
 
-        - Install tesserocr
+		- Install tesserocr
 
-            [Windows](https://github.com/simonflueckiger/tesserocr-windows_build/releases) using `pip install <name>.whl`
+			For [Windows](https://github.com/simonflueckiger/tesserocr-windows_build/releases), install it using `pip install <name>.whl`
 
-        - Verification
+		- Verification
 
-            ![202401011649852.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/202401011649852.png)
+			![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/202401011649852.png)
 
+			```python
+			import tesserocr
+			from PIL import Image
 
-            ```python
-            import tesserocr
-            from PIL import Image
-            
-            image = Image.open('G:/codeS/backOnGithub/Jupyter/spider/image.png')
-            print(tesserocr.image_to_text(image))
-            ```
+			image = Image.open('G:/codeS/backOnGithub/Jupyter/spider/image.png')
+			print(tesserocr.image_to_text(image))
 
-            > Note: If you encounter File "tesserocr.pyx", line 2580, in tesserocr._tesserocr.image_to_textRuntimeError: Failed to init API, possibly an invalid tessdata path error, you need to first put tessdata into the error folder
+			```
+
+			> Note: If the File "tesserocr.pyx", line 2580, in tesserocr._tesserocr.image_to_textRuntimeError: Failed to init API, possibly an invalid tessdata path error occurs, first place tesseract's test_data in the folder indicated by the error.
+
 - Databases
-    - MySQL
-    - MongoDB
-    - Redis
-- Repositories
-    - PyMySQL
+	- MySQL
+	- MongoDB
+	- Redis
+- Storage libraries
+	- PyMySQL
 
-        `pip install pymysql`
+		`pip install pymysql`
 
-    - PyMongo
+	- PyMongo
 
-        `pip install pymongo`
+		`pip install pymongo`
 
-    - redis-py
+	- redis-py
 
-        `pip install redis`
+		`pip install redis`
 
-    - RedisDump
+	- RedisDump
 
-        Install Ruby
+		Install ruby
 
-
-        `gem install redis-dump`
+		`gem install redis-dump`
 
 - Web libraries
-    - Flask
+	- Flask
 
-        `pip install flask`
+		`pip install flask`
 
-    - Tornado
+	- Tornado
 
-        `pip install tornado`
+		`pip install tornado`
 
 - App scraping libraries
-    - Charles
-    - mitmproxy
+	- charles
+	- mitmproxy
 
-        `pip install mitmproxy`
+		`pip install mitmproxy`
 
-    - Appium
-- Web crawling frameworks
-    - pyspider
+	- appium
+- Web scraping frameworks
+	- pyspider
 
-        `pip install pyspider`
+		`pip install pyspider`
 
-        > If Windows 11 cannot run it, you can refer to this article
-    - scrapy
-    - scrapy-splash
-    - scrapy-redis
+		> If it does not run on Windows 11, see this article of mine.
+
+	- scrapy
+	- scrapy-splash
+	- scrapy-redis

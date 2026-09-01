@@ -4,13 +4,13 @@ published: 2023-01-15
 updated: 2023-01-15
 description: 'CSAPP Chapter 1 notes tracing a program from bits and compilation through CPU execution, caches, OS abstractions, processes, and virtual memory.'
 image: 'https://r2.dreaife.tokyo/notion/covers/fbaef38b501a4cd8a8a2d1c58798cf70/2421860-20230116004313116-1139297538.png'
-tags: ['caapp', 'os', 'c']
-category: 'cs-base'
+tags: ['caapp', 'os', 'c', 'cs-base']
+category: 'STUDY'
 draft: false
 lang: 'en'
 ---
 
-A computer system consists of hardware and system software, which work together to run applications.
+A computer system consists of hardware and system software that work together to run applications.
 
 ```c
 #include<stdio.h>
@@ -18,350 +18,312 @@ int main(){
     printf("hello world! C");
     return 0;
 }
+
 ```
 
+Tracing the lifecycle of the hello.c program—\>creation, execution, output, and termination.
 
-Trace the life cycle of the program hello.c → creation, execution, output, termination.
+# 1 Information = Bits + Context
 
-# 1 Information = Bit + Context
+hello.c is the **source program**, the starting point of the hello program. It is a text file written by a programmer and consists of bytes, each composed of eight bits.
 
-hello.c is the **source program**, the beginning of the hello program, a text file written by the programmer—composed of bytes (8 bits per group).
+Most systems use the **ASCII standard**. Programs are stored in files as sequences of bytes, with the integer value of each byte corresponding to a character. Files consisting exclusively of ASCII characters are called **text files**; all other files are called **binary files**.
 
-Most use the **ASCII standard**. Programs are stored in files as a sequence of bytes, with the integer value of each byte corresponding to a character. Files consisting only of ASCII characters are called **text files**, while other files are called **binary files**.
+The basic idea is that all information in a system is represented as a sequence of bits. Different data objects are distinguished by the context in which the data appears. Machine representations of numbers differ from their actual values and are finite approximations of the true values.
 
-The basic idea: all information in a system is represented by a string of bits. Data objects are distinguished by the context of the data. The machine representation of numbers is different from their actual values, and is a finite-precision approximation of truth values.
+# 2 Programs Are Translated into Different Formats by Other Programs
 
-# 2 Programs translated by other programs into different formats
-
-High-level C language — translation —> low-level machine language instructions — packaging —> executable target program
+High-level C language—translation—\>low-level machine-language instructions—packaging—\>executable object program
 
 ```shell
 gcc -o hello hello.c
 ./hello
+
 ```
 
+![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20165458.png)
 
-![%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20165458.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20165458.png)
+Compilation system
 
-
-Compiler system
-
-Compiler system: preprocessor, compiler, assembler, linker
+Compilation system: preprocessor, compiler, assembler, and linker
 
 - Preprocessing
 
-    The preprocessor (cpp) modifies the original program according to # directives, inserting the contents of header files directly into the program text.
+	The preprocessor (cpp) modifies the original program according to commands beginning with #, directly inserting the contents of header files into the program text.
 
-
-    hello.c—cpp—>hello.i
+	hello.c—cpp—\>hello.i
 
 - Compilation
 
-    The compiler (ccl) translates the previous step’s .i file into a .s file, containing an assembly language program.
+	The compiler (ccl) translates the .i file from the previous step into a .s file containing an assembly-language program.
 
+	hello.i—ccl—\>hello.s
 
-    hello.i—ccl—>hello.s
+- Assembly
 
-- Assembling
+	The assembler (as) translates the .s file into machine-language instructions and packages them as a relocatable object program stored in a binary .o file.
 
-    The assembler (as) translates the .s file into machine language instructions, and packages them into a relocatable object file, stored in the .o binary file.
-
-
-    hello.s—as—>hello.o
+	hello.s—as—\>hello.o
 
 - Linking
 
-    The linker (ld) merges the current .o file with precompiled target files for library functions, producing an executable target file that can be run by the system.
+	The linker (ld) combines the current .o file with precompiled object files for the library functions it invokes, producing an executable object file that the system can execute.
 
+	hello.o+printf.o—ld—\>hello
 
-    hello.o+printf.o—ld—>hello
+# 3 Benefits of Understanding Compilation Systems
 
+1. Optimizing program performance
+2. Understanding linking errors
+3. Avoiding security vulnerabilities
 
-# 3 How understanding the compilation system helps
+# 4 Processors Read and Interpret Instructions
 
-1. Improve runtime performance
-2. Understand linker errors
-3. Avoid security vulnerabilities
+## 4.1 Hardware Organization of a System
 
-# 4 How the processor fetches and interprets instructions
+![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20171549.png)
 
-## 4.1 System hardware components
-
-![%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20171549.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20171549.png)
-
-System hardware components
+Hardware organization of a system
 
 1. Buses
 
-    A set of electronic channels that run through the system and carry information bytes. They transfer fixed-length groups of bytes called words. The number of bytes per word varies by system, as a basic system parameter, e.g., 4 bytes (32-bit), 8 bytes (64-bit).
+	A bus is a collection of electronic conduits running throughout the system that carry bytes of information between components. Buses transfer fixed-size blocks of bytes called words. The number of bytes in a word varies between systems and is a fundamental system parameter, such as four bytes (32 bits) or eight bytes (64 bits).
 
-
-    System buses, memory buses, I/O buses
+	System bus, memory bus, and I/O bus
 
 2. I/O devices
 
-    Responsible for the system’s contact with the outside world. Input devices such as keyboards and mice, output displays, long-term storage disks, and so on.
+	I/O devices connect the system to the outside world. Examples include keyboards and mice for input, displays for output, and disks for long-term storage.
 
+	I/O devices connect to the I/O bus through controllers or adapters.
 
-    I/O devices connect to the I/O bus through controllers or adapters.
+	- Difference between controllers and adapters
 
-    - Difference between controllers and adapters
+		They differ in how they are packaged.
 
-        Packaging methods differ.
+		Controller: a chipset in the I/O device itself or on the system's motherboard.
 
-
-        Controller: the I/O device itself or the chipset on the system motherboard.
-
-
-        Adapter: a card plugged into a motherboard slot.
+		Adapter: a card plugged into a slot on the motherboard.
 
 3. Main memory
 
-    A temporary storage device that stores programs and the data they operate on.
+	Main memory is a temporary storage device that holds both programs and the data they process.
 
-
-    Physically, it is composed of Dynamic Random-Access Memory (DRAM) chips; logically, it is a linear array of bytes with unique addresses starting at zero.
+	Physically, it consists of dynamic random-access memory (DRAM) chips. Logically, it is a linear array of bytes, where every byte has a unique address starting from zero.
 
 4. Processor
 
-    Central Processing Unit (CPU), the engine that interprets instructions stored in main memory.
+	The central processing unit (CPU) is the engine that interprets instructions stored in main memory.
 
+	At its core is a word-sized storage device called the program counter (PC), which points to the address of a machine-language instruction in main memory. From the moment the system is powered on, the processor repeatedly executes the instruction indicated by the PC, updates the PC, and then executes the next instruction.
 
-    The core is a storage unit the size of one word, called the program counter (PC), which points to the address of a machine-language instruction in memory. From power-on, the processor continually executes the instruction pointed to by the PC, then updates the PC to the next instruction.
+	The processor operates according to an instruction execution model determined by its instruction set architecture. In this model, instructions are executed in strict sequence. Executing an instruction involves the CPU reading the instruction from the memory address indicated by the PC, interpreting the bits in the instruction, performing the **simple operation** specified by the instruction, and updating the PC to point to the next instruction.
 
+	There are only a few such simple operations. They revolve around **main memory**, the **register file** \[a small storage device consisting of individually named, word-sized registers\], and the **arithmetic/logic unit** (ALU) \[which computes new data and address values\].
 
-    The processor operates according to an instruction execution model (defined by the instruction set architecture). In the model, instructions are executed in strict sequence. To execute one instruction, the CPU reads the instruction from memory via the PC, decodes the bits in the instruction, performs the **simple operations** the instruction specifies, and updates the PC to point to the next instruction.
+	- Simple operations
+		- Load
 
+			Copy a byte or word from main memory into a register, overwriting the register's previous contents.
 
-    The simple operations are not many; they revolve around the **main memory**, the **register file** [a small storage device consisting of registers of fixed word length, each with a unique name], and the **Arithmetic/Logic Unit** (ALU) [computes new data and address values].
+		- Store
 
-    - Simple operations
-        - Load
+			Copy a byte or word from a register to a location in main memory, overwriting the previous contents of that location.
 
-            Copy a byte or a word from main memory into a register, overwriting the register’s previous contents
+		- Operate
 
-        - Store
+			Copy the contents of two registers into the ALU, which performs an arithmetic operation on the two words and stores the result in a register, overwriting its previous contents.
 
-            Copy a byte or a word from a register into a location in main memory, overwriting whatever was there.
+		- Jump
 
-        - Operate
+			Extract a word from the instruction itself and copy it into the program counter (PC), overwriting the PC's previous value.
 
-            Copy the contents of two registers to the ALU, the ALU performs arithmetic on these two words, and stores the result in a register, overwriting the original contents of that register.
+	Conceptually, a processor is a simple implementation of its instruction set architecture, but in practice it uses highly complex mechanisms to accelerate program execution. It is therefore important to distinguish between a processor's instruction set architecture and its microarchitecture: the **instruction set architecture** describes the effect of each machine-code instruction, whereas the **microarchitecture** describes how the processor is actually implemented.
 
-        - Jump
-
-            Extract a word from the instruction itself and copy this word into the program counter (PC), overwriting the previous value in PC
-
-
-    Formally, the processor is a simple implementation of the instruction set architecture, but in practice it uses very complex mechanisms to speed up execution. Therefore the instruction set architecture and the processor’s microarchitecture are distinguished: the **instruction set architecture** describes the effect of each machine code instruction; the **microarchitecture** describes how the processor is actually implemented.
-
-## 4.2 Running a program
+## 4.2 Running the Program
 
 Process:
 
-The shell runs commands and waits for input; when you type `./hello`, the shell reads characters into registers one by one, then stores them in memory; press Enter to execute the command; load the hello file, copying its code and data from disk into main memory.
+The shell program executes instructions while waiting for a command to be entered. After `./hello` is entered, the shell reads each character into a register and then stores it in memory. When Enter is pressed, the command is executed: the hello file is loaded, and its code and data are copied from disk into main memory.
 
-
-![%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20205941.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20205941.png)
-
+![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20205941.png)
 
 Reading the hello command
 
+With direct memory access (**DMA**), data can be transferred directly from disk to main memory without passing through the processor.
 
-Using Direct Memory Access (DMA), data can move directly from disk to main memory without going through the processor.
+![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20210054.png)
 
+Loading the executable file from disk into main memory
 
-![%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20210054.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20210054.png)
+The machine-language instructions in the hello program's main function then begin executing. The bytes in the “hello world! C” string are copied from main memory into a register and then from the register to the display device, where the string is ultimately displayed on the screen.
 
+![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20210406.png)
 
-Disk loads the executable file into main memory
+Outputting the string to the screen
 
+# 5 Caches Matter
 
-Then begin executing the machine-language instructions in hello’s main, copying the bytes of the string "hello world! C" from main memory to the registers, and then from the registers to the display device, finally shown on the screen.
+As shown above, the system spends a great deal of time moving information, and this copying slows down program execution to some extent.
 
-
-![%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20210406.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20210406.png)
-
-
-The string is output to the screen
-
-
-# 5 The Importance of Caches
-
-As shown above, the system spends a lot of time moving information; these copies slow the program down to some extent.
-
-To address speed differences between the processor and main memory, use a cache memory (cache) to store recently used information. L1 cache, L2 cache, etc., implemented with Static RAM (SRAM) hardware. By exploiting the locality principle: programs tend to access data and code within a working set.
+To address the difference in speed between the processor and main memory, **cache memory** is used to store information that is likely to be needed soon. L1 caches, L2 caches, and others are implemented using **static random-access memory** (SRAM) technology. Caches exploit the principle of **locality**: programs tend to access data and code in localized regions.
 
 Using caches can improve program performance by an order of magnitude.
 
-![%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20211426.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20211426.png)
-
+![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20211426.png)
 
 Cache memory
 
-# 6 Hierarchy of storage devices
+# 6 The Storage Hierarchy
 
-A memory hierarchy inserts smaller, faster storage between the processor and a larger, slower device.
+A memory hierarchy inserts smaller, faster storage devices between the processor and larger, slower devices.
 
-![%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20211607.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20211607.png)
+The main idea is to use the storage at one level as a cache for the storage at the level below it.
 
+![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20211607.png)
 
 Memory hierarchy
 
-# 7 Operating System Manages Hardware
+# 7 The Operating System Manages the Hardware
 
-Programs access hardware through services provided by the operating system. All hardware operations by applications must go through the OS.
+Programs access hardware through services provided by the operating system. All operations that applications perform on hardware must go through the operating system.
 
-![%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20212054.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20212054.png)
+![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20212054.png)
 
+Layered view of a computer system
 
-Layered view of the computer system
+The operating system prevents hardware from being misused by uncontrolled applications and provides applications with simple, consistent mechanisms for controlling complex and diverse hardware devices. It accomplishes this through several abstractions: **processes**, **virtual memory**, and **files**.
 
+Files are abstractions of I/O devices, virtual memory is an abstraction of main memory and I/O devices, and processes are abstractions of the processor, main memory, and I/O devices.
 
-The operating system can prevent hardware from being misused by untrusted applications and provides a simple, consistent mechanism to control a variety of different hardware devices. This is implemented using a few abstractions (**processes**, **virtual memory**, **files**).
+![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20212428.png)
 
-Files are an abstraction of I/O devices, virtual memory is an abstraction of main memory and I/O devices, and processes are abstractions of the processor, main memory, and I/O devices.
-
-![%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20212428.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20212428.png)
-
-
-Abstract representations provided by the operating system
-
+Abstractions provided by the operating system
 
 ## 7.1 Processes
 
-During execution, the OS provides the illusion that the current program alone owns the processor, memory, and I/O devices. This illusion is implemented via processes.
+When a program runs, the operating system creates the illusion that the program has exclusive use of the processor, main memory, and I/O devices. This illusion is implemented through processes.
 
-A process is the OS’s abstraction of a running program. A system can have multiple processes running simultaneously, and each process appears to have exclusive use of the hardware.
+A **process** is the operating system's abstraction of a running program. Multiple processes can run concurrently on a system, with each process appearing to have exclusive use of the hardware.
 
-Concurrency means that instructions from one process and another process are interleaved in execution. This is achieved by the processor switching between processes, a mechanism called context switching.
+**Concurrent** execution means that the instructions of one process are interleaved with those of another. It is achieved by switching the processor between processes through a mechanism called **context switching**.
 
-![%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20213547.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20213547.png)
+A **context** consists of all the state information tracked by the operating system that a process needs to run, including the PC, the current values of registers, and the contents of main memory. Because a uniprocessor system can execute the code of only one process at a time, running another process requires a **context switch**, which saves the context of the current process and restores the context of the new process.
 
+![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20213547.png)
 
-Context switching of a process
+Process context switching
 
-
-As shown, process switching is managed by the OS **kernel** (kernel), the portion of OS code resident in main memory, a **collection** of code and data structures used to manage all processes. When an application needs OS functionality, the kernel executes a special **system call** instruction, transferring control to the kernel. Then the kernel performs the requested operation and returns to the application.
+As shown in the figure, process switching is managed by the operating system **kernel**. The kernel is the portion of operating system code that always resides in main memory and is the **collection** of code and data structures used by the operating system to manage all processes. When an application requires an operating system function, it executes a special **system call** instruction that transfers control to the kernel. The kernel then performs the requested operation and returns control to the application.
 
 ## 7.2 Threads
 
-A process can consist of multiple execution units (**threads**), each running in the process’s context and sharing the same code and global data. Threads are generally more efficient than processes because they share data more easily.
+A process can consist of multiple execution units called **threads**. Each thread runs within the context of the process and shares the same code and global data. Because threads can share data more easily than separate processes, they are generally more efficient than processes.
 
 ## 7.3 Virtual Memory
 
-**Virtual memory** provides a process with the illusion of exclusive use of main memory. Each process sees a consistent memory space, called the **virtual address space**. In Linux, the top region of the address space is for the OS code and data, and the bottom stores the user process-defined code and data.
+**Virtual memory** gives each process the illusion that it has exclusive use of main memory. Every process sees the same memory layout, called the **virtual address space**. In Linux, the uppermost region of the address space is reserved for operating system code and data, while the lower region stores the code and data defined by user processes.
+
+![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20214623.png)
+
+Virtual address space
 
 - Program code and data
 
-    For all processes, the code starts at the same fixed address, followed by the data locations corresponding to C global variables.
+	For every process, the code begins at the same fixed address, followed by data locations corresponding to global C variables.
 
 - Heap
 
-    The run-time heap, which can dynamically grow and shrink when malloc and free are called.
+	The runtime **heap** can dynamically expand and contract while the program runs when functions such as `malloc` and `free` are called.
 
 - Shared libraries
 
-    The middle portion stores shared library code and data, such as the C standard library and math library.
+	The middle region of the address space stores the code and data for shared libraries such as the C standard library and mathematics library.
 
 - Stack
 
-    The **user stack** sits at the top of the user virtual memory space, used by the compiler to implement function calls, and can also dynamically grow and shrink at runtime. When a function is called, the stack grows; when a function returns, the stack shrinks.
+	The **user stack** is located at the top of the user virtual address space and is used by the compiler to implement function calls. It can also dynamically expand and contract at runtime. The stack grows when a function is called and contracts when a function returns.
 
 - Kernel virtual memory
 
-    Located at the top of the address space. Applications are not allowed to read or write the contents of its region or directly call kernel code-defined functions; calls must go through the kernel.
+	Kernel virtual memory is located at the top of the address space. Applications are not permitted to read or write the contents of this region or directly call functions defined in kernel code; they must access them through the kernel.
 
-The basic idea is to store a process’s virtual memory contents on disk and use main memory as a cache for the disk.
+The basic idea is to store the contents of a process's virtual memory on disk and use main memory as a cache for the disk.
 
 ## 7.4 Files
 
-**Files** are sequences of bytes, and every I/O device can be viewed as a file. Linux I/O is implemented by reading and writing files using a small set of system calls known as Unix I/O.
+A **file** is a sequence of bytes, and every I/O device can be viewed as a file. On a Linux system, input and output are implemented by reading and writing files through a small set of system calls known as Unix I/O.
 
 Files provide applications with a uniform view of various I/O devices.
 
-# 8 Inter-system Network Communication
+# 8 Network Communication Between Systems
 
-From the perspective of a single system, the network can be viewed as an I/O device. A system can read data sent from other machines and copy it into its own main memory.
+From the perspective of an individual system, a network can be viewed as an I/O device. A system can read data sent from another machine and copy it into its own main memory.
 
-![%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20220432.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20220432.png)
-
+![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20220432.png)
 
 Network device I/O
 
+The hello program can also be run on a remote server. We can communicate with that server over a network and receive the result it returns.
 
-For the hello program, we can also run it via a remote server, communicate with it over the network, and obtain the results.
+![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20220649.png)
 
-![%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20220649.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20220649.png)
+Running hello remotely over a network using telnet
 
-
-Run hello remotely over the network using Telnet
-
-# 9 Key Topics
+# 9 Important Themes
 
 ## 9.1 Amdahl's Law
 
-When speeding up part of a system, the overall system speedup depends on the importance and the speedup of that part.
+When part of a system is accelerated, the effect on the overall system depends on both the importance of that part and the degree to which it is accelerated.
 
-α is the fraction of the total time spent in that part, k is the speedup factor.
+\$\\alpha\$ is the proportion of the total execution time spent on that part, and \$k\$ is its performance improvement factor.
 
-$$
-T_{new}=(1-\alpha)T_{old}+(\alpha  T_{old})/k = T_{old}[(1-\alpha)+\alpha/k]
-$$
+\$\$<br>T_\{new\}=(1-\\alpha)T_\{old\}+(\\alpha  T_\{old\})/k = T_\{old\}\[(1-\\alpha)+\\alpha/k\]<br>\$\$
 
-Compute the speedup S = T_old / T_new
+The speedup is \$S=T_\{old\}/T_\{new\}\$.
 
-$$
-S=\frac{1}{(1-\alpha)+\alpha/k}
-$$
+\$\$<br>S=\\frac\{1\}\{(1-\\alpha)+\\alpha/k\}<br>\$\$
 
-As k tends to infinity,
+As k approaches infinity,
 
-$$
-S_{\infty}=\frac{1}{(1-\alpha)}
-$$
-
+\$\$<br>S_\{\\infty\}=\\frac\{1\}\{(1-\\alpha)\}<br>\$\$
 
 ## 9.2 Concurrency and Parallelism
 
-Concurrency: a system with multiple active activities at once; parallelism: using concurrency to make the system run faster.
+Concurrency refers to a system with multiple simultaneous activities, while parallelism uses concurrency to make a system run faster.
 
 1. Thread-level concurrency
 
-    Using processes, multiple programs can run concurrently. This concurrency is simulated by fast switching between processes on a single computer, enabling multiple users to interact with the system simultaneously and users to run multiple tasks at the same time.
+	Processes allow multiple programs to execute at the same time, resulting in concurrency. This form of concurrency is simulated by rapidly switching a computer between the processes it is executing. It allows multiple users to interact with the system simultaneously and lets each user run multiple tasks at once.
 
-    A **multi-core processor** integrates multiple CPUs on a single integrated circuit die.
+	A **multicore processor** integrates multiple CPUs onto a single integrated circuit chip.
 
-    ![%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20223232.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20223232.png)
+	![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20223232.png)
 
+	Multicore processor
 
-    Multi-core processors
+	**Hyperthreading**, also known as simultaneous multithreading, is a technique that allows one CPU to execute multiple flows of control. A hyperthreaded processor can decide which thread to execute on a cycle-by-cycle basis, allowing the CPU to make better use of its processing resources.
 
-
-    **Hyper-threading**, or simultaneous multithreading, is a technique that allows a CPU to execute multiple control flows. Hyper-threading processors can decide which thread to execute on a per-cycle basis, enabling better use of the processor’s resources.
-
-
-    Performance gains from multiple processors: 1. reduces the need to simulate concurrency for multiple tasks; 2. makes applications run faster (requires multi-threaded programming)
+	Multiprocessors improve system performance in two ways: 1. they reduce the need to simulate concurrency among multiple tasks; 2. they allow applications to run faster, provided that the programs are written to use multiple threads.
 
 2. Instruction-level parallelism
 
-    Refers to the ability of a processor to execute multiple instructions simultaneously. Processors increase instruction throughput through **pipelining**. Splitting instruction execution into different steps, organizing processor hardware into a series of stages, with each stage performing one step. Stages operate in parallel, processing different steps of different instructions.
+	This means that the processor can execute multiple instructions simultaneously. A processor increases its instruction execution rate through **pipelining**. Instruction execution is divided into separate steps, and the processor hardware is organized as a sequence of stages, with each stage performing one step. The stages operate in parallel, processing different steps of different instructions.
 
-    A superscalar processor is one that can execute more than one instruction per cycle.
+	A superscalar processor is a processor with an execution rate faster than one instruction per cycle.
 
-3. Single Instruction, Multiple Data (SIMD) parallelism
+3. Single-instruction, multiple-data parallelism
 
-    Through special hardware in the processor, a single instruction can produce multiple parallel operations, called SIMD parallelism. It is largely used to speed up processing of images, sound, and video data. You can write programs using special vector data types supported by the compiler.
+	Special processor hardware allows a single instruction to produce multiple operations that can be executed in parallel. This is called single-instruction, multiple-data, or **SIMD parallelism**. It is primarily used to improve the execution speed of applications that process images, audio, and video data. Programs can be written using special vector data types supported by the compiler.
 
 ## 9.3 The Importance of Abstraction
 
-The use of abstraction is one of the most important concepts in computer science.
+Abstraction is one of the most important concepts in computer science.
 
-In the processor, the instruction set architecture provides an abstraction of the actual processor hardware.
+In a processor, the instruction set architecture provides an abstraction of the actual processor hardware.
 
-![%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20224949.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20224949.png)
+![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-15%20224949.png)
 
+Abstractions in a computer system
 
-Abstractions of computer systems
-
-Virtual machines are abstractions of an entire computer, including the operating system, processor, and programs.
+A virtual machine is an abstraction of an entire computer, including its operating system, processor, and programs.

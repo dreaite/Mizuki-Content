@@ -1,20 +1,20 @@
 ---
-title: 'DockerでWin11上のpyspiderを動かす'
+title: 'Dockerを使ってWindows 11でpyspiderを実行する'
 published: 2024-01-02
 updated: 2024-01-02
 description: 'Windows 11でpyspiderをDockerまたはDocker Composeから起動し、ローカル依存関係の問題を回避して、localhost:5000のWebUIで動作確認します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/d0b67049d0274e6c9a4212cfb1241db0/2421860-20240102223652859-707973973.png'
 tags: ['spider', 'docker', 'pyspider']
-category: 'spider'
+category: 'TROUBLESHOOT'
 draft: false
 lang: 'ja'
 ---
 
-Win11で PySpider のインストール中に問題が発生し、複数のエラーが出ました。
+Windows 11でpyspiderをインストールする際に問題が発生し、複数のエラーが表示されました。
 
-公式サイトには Docker を使ったインストール方法があることが分かりました。
+公式サイトにDockerを使用したインストール方法があることが分かりました。
 
-# Docker で直接
+# Dockerを直接使用
 
 ```shell
 # mysql
@@ -35,9 +35,10 @@ docker run --name fetcher -m 256m -d --link phantomjs:phantomjs --link rabbitmq:
 docker run --name scheduler -d --link mysql:mysql --link rabbitmq:rabbitmq binux/pyspider:latest scheduler
 # webui
 docker run --name webui -m 256m -d -p 5000:5000 --link mysql:mysql --link rabbitmq:rabbitmq --link scheduler:scheduler --link phantomjs:phantomjs binux/pyspider:latest webui
+
 ```
 
-# Docker Compose の使用
+# docker-compseを使用
 
 ```yaml
 services:
@@ -80,11 +81,9 @@ services:
     command: webui
     ports:
       - "5000:5000"
+
 ```
 
-その後、実行するだけです。  
-`docker-compose up -d`
+その後、次のコマンドを実行します。<br>`docker-compose up -d`<br>正常に起動した後、[http://localhost:5000/](http://localhost:5000/)にアクセスして以下の内容が表示されれば、pyspiderは正常に動作しています。
 
-起動に成功した後、もしアクセス [http://localhost:5000/](http://localhost:5000/) にアクセスして、以下の内容が表示されれば PySpider の起動に成功したことを示します。
-
-![202401022235683.png](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/202401022235683.png)
+![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/202401022235683.png)

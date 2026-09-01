@@ -1,49 +1,49 @@
 ---
-title: 'Alibaba CloudでDocker+code-serverを設定してオンラインコンパイラを構築する'
+title: 'Alibaba CloudでDocker＋code-serverを設定してオンラインコンパイラを実現する'
 published: 2022-07-06
 updated: 2022-07-06
 description: 'Alibaba Cloud上でDocker、Nginx、code-serverを使い、オンラインC/C++開発環境を構築する手順。ミラー設定、コンテナ起動、コンパイラ導入、テスト実行までを扱います。'
 image: 'https://r2.dreaife.tokyo/notion/covers/ae4b0038e910408cadb36f3651ee3fc2/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE_2022-09-18_025217.png'
-tags: ['network', 'school']
-category: 'cs-base'
+tags: ['network', 'school', 'cs-base']
+category: 'TROUBLESHOOT'
 draft: false
 lang: 'ja'
 ---
 
-# **Alibaba CloudでDockerとcode-serverを設定してオンラインコンパイラを実現**
+# **Alibaba CloudでDocker＋code-serverを構成してオンラインコンパイラを実現する**
 
 ## **1. Dockerのインストール**
 
-1. Dockerのインストール
+1. Dockerをインストールする
 
-Dockerには2つの分岐バージョンがある：Docker CEとDocker EE、すなわちコミュニティ版とエンタープライズ版。本実験ではDocker CEを使用します。
+Dockerには、コミュニティ版のDocker CEとエンタープライズ版のDocker EEという2つのバージョンがあります。本手順ではDocker CEを使用します。
 
-- Dockerの依存ライブラリをインストールし、Dockerのリポジトリ情報を追加する
+- Dockerの依存ライブラリをインストールし、Dockerのソフトウェアリポジトリ情報を追加する
 
 ```plain text
 yum install -y yum-utils device-mapper-persistent-data lvm2
 yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 ```
 
-- Dockerのインストール
+- Dockerをインストールする
 
 ```plain text
-yum makecache fast          //更新yumキャッシュ
+yum makecache fast          //更新yum缓存
 yum -y install docker-ce
-docker info                 //インストール状態を確認
+docker info                 //查看安装状态
 ```
 
-- Dockerサービスを起動
+- Dockerサービスを起動する
 
 ```plain text
-systemctl start docker          //Dockerサービスを起動
-systemctl status docker         //Dockerの状態を確認
-systemctl enable docker         //起動時にDockerを自動起動
+systemctl start docker          //启动docker服务
+systemctl status docker         //查看docker状态
+systemctl enable docker         //设置docker开机启动
 ```
 
-1. 阿里云镜像仓库(镜像加速)の設定
-- [Alibaba Cloudのイメージミラー画面](https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors)
-- 操作手順に従って設定
+1. Alibaba Cloudのイメージリポジトリを設定する（イメージアクセラレーション）
+- [Alibaba Cloudイメージアクセラレーター画面](https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors)にアクセスする
+- 操作ドキュメントに従って設定する
 
 ```plain text
 sudo mkdir -p /etc/docker
@@ -56,34 +56,33 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker
 ```
 
-- 設定後の再読み込み
+- 設定後に再読み込みする
 
 ```plain text
-systemctl daemon-reload         //サービス設定ファイルを再読み込み
-systemctl restart docker        //Dockerサービスを再起動
+systemctl daemon-reload         //重新加载服务配置文件
+systemctl restart docker        //重启Docker服务
 ```
 
-1. Docker経由でNginx
-
-- 最新のNginxイメージを取得
+1. Dockerを使用してNginxをインストールする
+- 最新のNginxイメージを取得する
 
 ```plain text
-docker search nginx             //Nginxの利用可能なバージョンを表示
-docker pull nginx:latest        //イメージを取得
-docker images                   //ローカルのイメージを表示
+docker search nginx             //查看Nginx可用版本
+docker pull nginx:latest        //拉取镜像
+docker images                   //查看本地镜像
 ```
 
-- Nginxを実行
+- Nginxを実行する
 
 ```plain text
 docker run --name nginx-test -p 8080:80 -d nginx
 ```
 
-8080ポートにアクセスすると、Nginxサービスのトップページが表示され、正常に動作します。
+8080ポートにアクセスしてNginxサービスのホームページが表示されれば、正常に動作しています。
 
 ## **2. code-serverのインストール**
 
-1. code-serverのインストール
+1. code-serverをインストールする
 
 ```plain text
 curl -fOL https://github.com/cdr/code-server/releases/download/v4.4.0/code-server-4.4.0-amd64.rpm
@@ -91,41 +90,41 @@ sudo rpm -i code-server-4.4.0-amd64.rpm
 sudo systemctl enable --now code-server@dreaife
 ```
 
-1. code-serverの設定
+1. code-serverを設定する
 
 ```plain text
-sudo systemctl enable --now code-server@dreaife             //code-serverサービスを起動
-sudo vi ~/.config/code-server/config.yaml                   //設定ファイルを編集
-sudo systemctl restart code-sercer@dreaife                  //code-serverを再起動
+sudo systemctl enable --now code-server@dreaife             //启动coder-server服务
+sudo vi ~/.config/code-server/config.yaml                   //修改配置文件
+sudo systemctl restart code-sercer@dreaife                  //重启code-server
 ```
 
-1. code-serverを0.0.0.0でデプロイ
+1. code-serverを0.0.0.0にデプロイする
 
 ```plain text
-sudo vi ~/.config/code-server/config.yaml                   //設定ファイルを編集
-sudo systemctl restart code-sercer@dreaife                  //code-serverを再起動
-firewall-cmd --zone=public --add-port=7777/tcp --permanent  //ポートを開放
+sudo vi ~/.config/code-server/config.yaml                   //修改配置文件
+sudo systemctl restart code-sercer@dreaife                  //重启code-server
+firewall-cmd --zone=public --add-port=7777/tcp --permanent  //开放端口
 ```
 
-インストール完了後、code-serverの画面に入ります。
+インストール完了後、code-serverの画面にアクセスします。
 
-## **3. code-serverのビルド環境の設定**
+## **3. code-serverのコンパイル環境を設定する**
 
-1. VSIXを使ってcode-serverのC/C++コンポーネントをインストール
-2. .vscodeの設定ファイルの許可を設定する
+1. VSIXを使用してcode-serverのC/C++コンポーネントをインストールする
+2. .vscodeの実行構成ファイルを設定する
 - c_cpp_properties.jsonファイル
 
-![iWM4JDYnke5twCm.png](https://s2.loli.net/2022/06/13/iWM4JDYnke5twCm.png)
+![](https://s2.loli.net/2022/06/13/iWM4JDYnke5twCm.png)
 
 - launch.jsonファイル
 
-![DeKW5BM21nfzgsx.png](https://s2.loli.net/2022/06/13/DeKW5BM21nfzgsx.png)
+![](https://s2.loli.net/2022/06/13/DeKW5BM21nfzgsx.png)
 
 - tasks.json
 
-![Uh2TIQKx6VwzBnp.png](https://s2.loli.net/2022/06/13/Uh2TIQKx6VwzBnp.png)
+![](https://s2.loli.net/2022/06/13/Uh2TIQKx6VwzBnp.png)
 
-1. テストインストール結果
+1. インストール結果をテストする
 - テスト用のtest.cppファイルを作成する
 
 ```plain text
@@ -147,8 +146,8 @@ int main(){
 }
 ```
 
-- テストを実行
+- テストを実行する
 
-![MaGmNUobEurdwOc.png](https://s2.loli.net/2022/06/13/MaGmNUobEurdwOc.png)
+![](https://s2.loli.net/2022/06/13/MaGmNUobEurdwOc.png)
 
-実行に成功し、結果は正しいです。オンラインコンパイラの設定が完了しました。
+正常に実行され、結果も正しいことを確認できました。これでオンラインコンパイラの設定は完了です。
