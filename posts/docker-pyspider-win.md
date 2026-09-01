@@ -6,7 +6,7 @@ description: '在 Windows 11 上通过 Docker 或 Docker Compose 运行 pyspider
 permalink: 'docker-pyspider-win'
 image: 'https://r2.dreaife.tokyo/notion/covers/d0b67049d0274e6c9a4212cfb1241db0/2421860-20240102223652859-707973973.png'
 tags: ['spider', 'docker', 'pyspider']
-category: 'spider'
+category: 'TROUBLESHOOT'
 draft: false
 ---
 

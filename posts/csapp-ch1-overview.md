@@ -5,8 +5,8 @@ updated: 2023-01-15
 description: '《深入理解计算机系统》第一章笔记：从信息表示和编译系统出发，串联处理器、缓存、操作系统、进程、虚拟内存、并发与抽象等核心概念。'
 permalink: 'csapp-ch1-overview'
 image: 'https://r2.dreaife.tokyo/notion/covers/fbaef38b501a4cd8a8a2d1c58798cf70/2421860-20230116004313116-1139297538.png'
-tags: ['caapp', 'os', 'c']
-category: 'cs-base'
+tags: ['caapp', 'os', 'c', 'cs-base']
+category: 'STUDY'
 draft: false
 ---
 

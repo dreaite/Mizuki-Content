@@ -5,13 +5,12 @@ updated: 2022-07-06
 description: '在阿里云服务器上使用 Docker、Nginx 与 code-server 搭建在线 C/C++ 开发环境，涵盖镜像源配置、容器启动、编译工具链安装和测试代码运行。'
 permalink: 'alicloud-docker-coder'
 image: 'https://r2.dreaife.tokyo/notion/covers/ae4b0038e910408cadb36f3651ee3fc2/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE_2022-09-18_025217.png'
-tags: ['network', 'school']
-category: 'cs-base'
+tags: ['network', 'school', 'cs-base']
+category: 'TROUBLESHOOT'
 draft: false
 ---
 
 # **阿里云配置docker+code-server实现线上编译器**
-
 
 ## **1. 安装docker**
 
@@ -79,9 +78,7 @@ docker images                   //查看本地镜像
 docker run --name nginx-test -p 8080:80 -d nginx
 ```
 
-
 访问8080端口，出现Nginx服务主页，运行正常。
-
 
 ## **2. 安装code-server**
 
@@ -109,9 +106,7 @@ sudo systemctl restart code-sercer@dreaife                  //重启code-server
 firewall-cmd --zone=public --add-port=7777/tcp --permanent  //开放端口
 ```
 
-
 安装完成后进入code-server界面
-
 
 ## **3. 配置code-server编译环境**
 
@@ -119,15 +114,15 @@ firewall-cmd --zone=public --add-port=7777/tcp --permanent  //开放端口
 2. 设置.vscode的允许配置文件
 - c_cpp_properties.json文件
 
-![iWM4JDYnke5twCm.png](https://s2.loli.net/2022/06/13/iWM4JDYnke5twCm.png)
+![](https://s2.loli.net/2022/06/13/iWM4JDYnke5twCm.png)
 
 - launch.json文件
 
-![DeKW5BM21nfzgsx.png](https://s2.loli.net/2022/06/13/DeKW5BM21nfzgsx.png)
+![](https://s2.loli.net/2022/06/13/DeKW5BM21nfzgsx.png)
 
 - tasks.json
 
-![Uh2TIQKx6VwzBnp.png](https://s2.loli.net/2022/06/13/Uh2TIQKx6VwzBnp.png)
+![](https://s2.loli.net/2022/06/13/Uh2TIQKx6VwzBnp.png)
 
 1. 测试安装结果
 - 编写测试用test.cpp文件
@@ -153,7 +148,6 @@ int main(){
 
 - 运行测试
 
-![MaGmNUobEurdwOc.png](https://s2.loli.net/2022/06/13/MaGmNUobEurdwOc.png)
-
+![](https://s2.loli.net/2022/06/13/MaGmNUobEurdwOc.png)
 
 运行成功，结果正确，线上编译器配置完成。

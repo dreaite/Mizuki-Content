@@ -5,8 +5,8 @@ updated: 2024-01-02
 description: '解决 pandas.to_datetime 解析混合日期格式时报错的问题，演示使用 format="mixed" 兼容不同时间字符串并转换为 datetime。'
 permalink: 'pandas-datetime-fix'
 image: 'https://r2.dreaife.tokyo/notion/covers/3426b492685447d7b65f4c01dd9c4fce/2421860-20240103003119896-530983932.png'
-tags: ['pandas', '数据处理']
-category: 'cs-base'
+tags: ['pandas', '数据处理', 'cs-base']
+category: 'TROUBLESHOOT'
 draft: false
 ---
 

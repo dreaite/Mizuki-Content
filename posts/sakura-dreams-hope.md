@@ -5,8 +5,8 @@ updated: 2022-09-18
 description: '《さくら、もゆ。》通关感想：记录从搁置到因汉化补丁重拾作品的过程，并回望歌曲、角色牺牲与成长所承载的梦想、希望和自我宽恕。'
 permalink: 'sakura-dreams-hope'
 image: 'https://r2.dreaife.tokyo/notion/covers/2e1f116038864fb8b2f212e3e2493bcc/MASHIRO_e102b.png'
-tags: ['recomand', 'thinking']
-category: 'gal'
+tags: ['recomand', 'thinking', 'gal']
+category: 'RESONANCE'
 draft: false
 ---
 

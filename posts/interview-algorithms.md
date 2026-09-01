@@ -6,7 +6,7 @@ description: '整理蛇形矩阵、单链表快排、峰值与极小值、鸡蛋
 permalink: 'interview-algorithms'
 image: 'https://r2.dreaife.tokyo/notion/covers/1670090a8eaf4eab9ccd3f1332d4e916/2421860-20230811144113268-1519746820.png'
 tags: ['meeting', 'algorithm']
-category: 'algorithm'
+category: 'STUDY'
 draft: false
 ---
 
