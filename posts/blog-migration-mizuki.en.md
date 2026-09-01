@@ -1,69 +1,68 @@
 ---
-title: 'Blog Migration - Mizuki Configuration Records'
+title: 'Blog Migration – Mizuki Configuration Notes'
 published: 2026-02-22
 updated: 2026-02-23
 description: 'Migrating from NotionNext to Mizuki with Bangumi integration, self-hosted Notion sync, R2 image persistence, and LLM-generated translations.'
 image: 'https://r2.dreaife.tokyo/notion/covers/30f5465cca1780cc8df8e7c367a16f3d/IMG_4450.jpg'
-tags: ['blog', 'llm', 'deploy', 'notion']
-category: 'infra'
+tags: ['blog', 'llm', 'deploy', 'notion', 'INFRA']
+category: 'EXPLORE'
 draft: false
 lang: 'en'
 ---
 
-2026/02/22 — Notes
+2026/02/22, notes
 
-Today I migrated from NotionNext to Mizuki.
+Today I migrated from notionNext to Mizuki.
 
 ====
 
-To explain why I switched to Mizuki, it's mainly because NotionNext's limitations are too rigid; after all, vibe coding has become so developed nowadays, and I want a bit more freedom to adjust.
+As for why I switched to Mizuki, it was probably because notionNext felt too restrictive. With vibe coding being so advanced now, I wanted a little more freedom to customize things.
 
-Originally I planned to check out Hexo or Innei, but I happened to come across a Mizuki video, so I decided to give it a try first. The functionality isn't too heavy, and it feels like a good balance for personal and project use.
+At first, I was actually planning to try Hexo or Innei. Then I happened to come across a video about Mizuki and decided to give it a try. Its feature set isn't too heavy, and it seems to strike a good balance between personal content and project showcases.
 
-So below is roughly my Mizuki migration log, using Notion as the blog storage.
+So, the following is roughly a record of my migration to Mizuki while continuing to use Notion as my blog's content store.
 
-# Mizuki deployment
+# Mizuki Deployment
 
-Mizuki is a blog framework built on Astro. Truth be told, although I had previously tinkered with several self-hosted blogs like WordPress/Hexo/NotionNext, I mainly looked at the appearance and decided to switch if the theme looked good; and this time it's no exception (
+Mizuki is a blog framework built with Astro. Honestly, although I've previously set up quite a few self-hosted blogs using things like WordPress, Hexo, and notionNext, I usually just take a quick look at the appearance and switch if I like the theme. This time was no exception (
 
-The main reason for switching this time is probably that Mizuki has a diary to satisfy lightweight venting, and a place to showcase projects. Plus Astro is a popular theme, so if you want vibe the assets should still be relatively plentiful, so I switched over (and then hit some pitfalls (lol))
+The main reason I switched this time was probably that Mizuki has a diary feature for lightweight rants, as well as a project section for showcasing projects. Astro is also fairly mainstream, so there should be plenty of material available for vibe coding. And so I migrated over—and promptly ran into a few pitfalls (lol).
 
-## Mizuki configuration
+## Mizuki Configuration
 
-The general configuration isn't complicated; just follow the [official documentation](https://docs.mizuki.mysqil.com/) to configure it.
+There isn't much to the basic configuration. Just follow the [official documentation](https://docs.mizuki.mysqil.com/).
 
-The main thing to note is that the content of posts and about is controlled by editing md files, while other elements like diary/project/timeline are controlled by modifying the data inside the TS files.
+The main thing to note is that post and about content is managed by editing Markdown files, while other content such as dairy/project/timeline is managed by modifying the data in TypeScript files.
 
-However, there's another interesting thing: you can connect to Bangumi's API (`/v0/users/{userId}/collections`) to fetch a user's anime records. Then if you slightly adjust the fetch type and configure a Bangumi token, you can see the eroge collection list. Then tweak the animation page a bit, and the eroge records page will be freshly released (digging a pit).
+Another interesting feature is that it can connect to Bangumi's API (`/v0/users/{userId}/collections`) to retrieve a user's anime collection records. By slightly changing the collection type being fetched and configuring a Bangumi token, you can actually display an eroge collection list instead. Then, with a few tweaks to the anime page, you've got yourself a brand-new eroge records page (another hole to dig later).
 
-## Personal configuration
+## Personal Configuration
 
-Then let's talk about personal configuration. Because I plan to use CI to synchronize Notion content into Mizuki in real time, and Mizuki conveniently supports [separating blog content and architecture](https://docs.mizuki.mysqil.com/Other/separation/), I decided to tinker in the content repository; the structure is simpler to modify and much more convenient.
+Next, a little about my personal setup. I plan to use CI to synchronize content from Notion to Mizuki in real time. Mizuki also happens to support [keeping blog content separate from the site architecture](https://docs.mizuki.mysqil.com/Other/separation/), so it made sense to tinker with the content repository. Its simple structure also makes it much easier to modify.
 
-Basically, the two areas I plan to modify are: using CI to sync Notion-written content and using an LLm to preprocess Notion-synced articles to enable multilingual support.
+There are roughly two areas I plan to work on: synchronizing content written in Notion through CI, and using an LLM to preprocess articles synchronized from Notion to support multiple languages.
 
-### Synchronizing Notion content via CI
+### Synchronizing Notion Content Through CI
 
-Actually, it's basically a cron job to periodically check Notion content updates. But given the Notion API's throughput, I'm worried that it would exhaust GitHub Actions quotas in a couple of days, so I put this sync action on a self-hosted runner.
+This is essentially just a cron job that periodically checks whether the content in Notion has been updated. However, given the communication speed of the Notion API, running it this way might burn through GitHub Actions minutes within a couple of days. So I simply moved the synchronization action onto a self-hosted runner.
 
-The basic idea is to fetch the Notion database content, then route different content types such as posts/about/diary into separate type streams, and then map them to the Notion database columns and the actual configurations of the content above, making it a natural progression (for vibe).
+The actual implementation isn't particularly complicated. The idea is to retrieve content from the Notion database, route different types of content—such as post/about/dairy—based on a type field, and then map the columns in the Notion database to the corresponding configuration fields for each content type. From there, everything follows naturally (meaning: vibe-code it).
 
-One small pitfall is that some images pulled directly from Notion header images are expiring URLs after about an hour (honestly I didn’t expect Notion’s image storage to be AWS S3; R2 might be more scalable). So you still need external storage for persistence (R2 would work). But if when adding Notion images you directly use the URL, what you fetch back will still be the image link you filled above. So as long as you update the images in advance, this isn't a big problem.
+One small pitfall is that some images use Notion cover-image links directly, and those URLs expire after just one hour. Incidentally, I didn't expect Notion to use AWS S3 for image storage; wouldn't R2 be more generous? So the images still need to be persisted in some external storage—R2 would work just fine. However, if an image is added to Notion using a URL directly, the extracted value will still be the original image URL that was entered. So as long as the image is uploaded elsewhere beforehand, this isn't really a major problem.
 
-The rough implementation can be referenced here:
-[NotionSyncAction](https://github.com/dreaite/Mizuki-Content/blob/notionUpdateSync/.github/notion-sync/README.md) (just to test how the Mizuki-GitHub repo can be used
+For the specific implementation, you can refer to this:<br>[NotionSyncAction](https://github.com/dreaite/Mizuki-Content/blob/notionUpdateSync/.github/notion-sync/README.md) (also a convenient opportunity to try out Mizuki's GitHub repo card feature (
 
 ::github{repo="dreaite/Mizuki-Content/blob/notionUpdateSync/.github/notion-sync/README.md"}
 
-### Multilingual adaptation with LLM
+### Multilingual Support Through an LLM
 
-Actually, even before the Notion sync CI, I had to make some modifications to Mizuki's framework. After all, it still doesn't switch display language according to browser language, so I did a small tweak (i.e., include files with suffixes like .en.md/.ja.md into multilingual adaptation; since the framework is static, enabling more UI language displays would require a major rewrite). After all, implementations of multilingual switching exist in many projects; I'll just give a rough vibe.
+Before setting up the Notion synchronization CI, I also needed to modify the Mizuki framework itself. It currently doesn't switch the display language based on the browser's language, so I made a few small changes—specifically, adding files with suffixes such as `.en.md` and `.ja.md` to the multilingual content system. Since the framework generates a static site, supporting a fully multilingual UI would require much more extensive changes. Multilingual switching has probably already been implemented in plenty of other projects, so a rough explanation should be enough to vibe-code it.
 
 ::github{repo="dreaifekks/Mizuki"}
 
-Then also add an LLM translation module to CI.
+The next step was to add an LLM translation module to the CI pipeline.
 
-It's basically the same: a generic translation prompt plus a simple API call; with a bit of vibe it's doable. Just be careful that LLM responses for long articles may take a long time, so you may need to adjust the actual request timeout a bit.
+This part was also fairly straightforward: a generic translation prompt, a simple API call, and a little vibe coding were enough. The main thing to watch out for is that the LLM may take a long time to respond when translating lengthy articles, so the request timeout needs to be adjusted accordingly.
 
 [LLM implementation](https://github.com/dreaite/Mizuki-Content/blob/feat(i18n)/llm-translate/.github/notion-sync/README.md)
 
@@ -71,8 +70,8 @@ It's basically the same: a generic translation prompt plus a simple API call; wi
 
 # Conclusion
 
-That’s about it; there aren’t deep changes, just roughly outlining my personal configuration approach.
+That's probably about it. I didn't make any particularly deep modifications, so this is mainly just an overview of how I approached the configuration.
 
-Now that CI is configured, it should make the output flow a bit smoother (
+Now that the CI setup is complete, the publishing flow should be a little smoother (
 
-But I feel that future multilingual UI adaptation will also be a big challenge (
+Still, supporting a multilingual UI in the future feels like another enormous rabbit hole (

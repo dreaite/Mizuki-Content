@@ -1,11 +1,11 @@
 ---
-title: 'Getting Started with VSCode Plugin Development'
+title: 'Getting Started with VS Code Extension Development'
 published: 2025-03-13
 updated: 2025-03-13
 description: 'Create a VS Code extension with Yeoman, then learn package.json, activationEvents, extension.ts, debugging, vsce packaging, and publishing.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1b55465cca17808d8be3e99dd76eae9f/IMG_2747.jpg'
 tags: ['vscode', 'plugin']
-category: 'plugin'
+category: 'STUDY'
 draft: false
 lang: 'en'
 ---
@@ -14,188 +14,174 @@ lang: 'en'
 
 1. Node.js
 2. VS Code
-3. Yeoman&generator-code
+3. Yeoman & generator-code
 
-    To conveniently generate the basic structure of a plugin project, you can use Yeoman and the official VS Code extension generator. Open a terminal and run the following commands to install globally:
+	To conveniently generate the basic structure of an extension project, you can use Yeoman and the official extension generator provided by VS Code. Open a terminal and enter the following command to install them globally:
 
+	```bash
+	npm install -g yo generator-code
+	```
 
-    ```bash
-    npm install -g yo generator-code
-    ```
+# Initial Extension Framework
 
-
-# Initial Plugin Framework
-
-
-## Create Plugin
-
+## Creating an Extension
 
 ```bash
 yo code
 ```
 
+The generator will ask the following questions:
 
-The generator will ask the following questions：
+	- **Select the extension type**: For example, “New Extension (TypeScript)” or “New Extension (JavaScript).”
+	- **Extension name and description**: Enter the desired extension name and description as prompted.
+	- **Git initialization**: Whether to initialize a Git repository.
+	- **Package manager**: Choose npm or yarn.
 
-    - **Choose Extension Type**：For example “New Extension (TypeScript)” or “New Extension (JavaScript)”.
-    - **Extension name and description**：Fill in the extension name and description as prompted.
-    - **Git initialization**：Whether to initialize a Git repository.
-    - **Package manager**：Choose using npm or yarn.
-
-After generation completes, you will have a basic project structure scaffolded.
-
+Once generation is complete, you will have an initial scaffolded project structure.
 
 ## Understanding the Structure
 
-
-Open the generated project, you will see some important files and directories:
+Open the generated project, and you will see several important files and directories:
 
 - **`package.json`**
 
-    This file defines the extension's basic information, dependencies, as well as VS Code activation events and command registrations.
+	This file defines the extension’s basic information, dependencies, VS Code activation events, and command registrations.
 
+	For example:
 
-    For example:
+	```json
+	{
+	  "name": "my-sample-extension",
+	  "displayName": "My Sample Extension",
+	  "description": "A simple VSCode extension.",
+	  "version": "0.0.1",
+	  "engines": {
+	    "vscode": "^1.60.0"
+	  },
+	  "activationEvents": [
+	    "onCommand:extension.helloWorld"
+	  ],
+	  "main": "./out/extension.js",
+	  "contributes": {
+	    "commands": [
+	      {
+	        "command": "extension.helloWorld",
+	        "title": "Hello World"
+	      }
+	    ]
+	  },
+	  "scripts": {
+	    "vscode:prepublish": "npm run compile",
+	    "compile": "tsc -p ./"
+	  },
+	  "devDependencies": {
+	    "typescript": "^4.0.0",
+	    "vscode": "^1.1.37",
+	    "@types/node": "^12.0.0"
+	  }
+	}
 
+	```
 
-    ```json
-    {
-      "name": "my-sample-extension",
-      "displayName": "My Sample Extension",
-      "description": "A simple VS Code extension.",
-      "version": "0.0.1",
-      "engines": {
-        "vscode": "^1.60.0"
-      },
-      "activationEvents": [
-        "onCommand:extension.helloWorld"
-      ],
-      "main": "./out/extension.js",
-      "contributes": {
-        "commands": [
-          {
-            "command": "extension.helloWorld",
-            "title": "Hello World"
-          }
-        ]
-      },
-      "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./"
-      },
-      "devDependencies": {
-        "typescript": "^4.0.0",
-        "vscode": "^1.1.37",
-        "@types/node": "^12.0.0"
-      }
-    }
-    ```
+- **`src/extension.ts`**** (or ****`extension.js`****)**
 
-- **`src/extension.ts`** (or **`extension.js`**)
+	This is the extension’s entry file. The code here runs when the extension is activated.
 
-    This is the entry point of the extension; this code runs when the extension is activated.
+	For example, here is a simple example:
 
+	```typescript
+	import * as vscode from 'vscode';
 
-    For example, a simple sample:
+	export function activate(context: vscode.ExtensionContext) {
+	    console.log('Congratulations, your extension "my-sample-extension" is now active!');
 
-    ```typescript
-    import * as vscode from 'vscode';
-    
-    export function activate(context: vscode.ExtensionContext) {
-        console.log('Congratulations, your extension "my-sample-extension" is now active!');
-    
-        let disposable = vscode.commands.registerCommand('extension.helloWorld', () => {
-            vscode.window.showInformationMessage('Hello World from your VS Code extension!');
-        });
-    
-        context.subscriptions.push(disposable);
-    }
-    
-    export function deactivate() {}
-    ```
+	    let disposable = vscode.commands.registerCommand('extension.helloWorld', () => {
+	        vscode.window.showInformationMessage('Hello World from your VSCode extension!');
+	    });
 
+	    context.subscriptions.push(disposable);
+	}
 
-## Run and Debug
+	export function deactivate() {}
+	```
 
-- After opening the project, in VS Code's Debug panel, you will see a configuration named `Launch Extension`.
-- Press `F5`; VS Code will start a new Extension Development Host.
-- In the new window, via the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`), run the registered command, for example typing “Hello World” to test whether the extension works properly.
+## Running and Debugging
 
-## Publish Extension
+- After opening the project, you will see a `Launch Extension` configuration in VS Code’s Run and Debug panel.
+- Press `F5`, and VS Code will launch a new Extension Development Host.
+- In the new window, open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`) and enter the registered command, such as “Hello World,” to test whether the extension works correctly.
 
+## Publishing the Extension
 
-When development and testing are complete, you may consider publishing the extension to the [VS Code Marketplace](https://marketplace.visualstudio.com/vscode) for others to use:
+Once development and testing are complete, you can publish the extension to the [VSCode Marketplace](https://marketplace.visualstudio.com/vscode) for others to use:
 
-- Install the `vsce` tool to help package and publish extensions:
+- Install the `vsce` tool to package and publish the extension:
 
-    ```bash
-    npm install -g vsce
-    ```
+	```bash
+	npm install -g vsce
+	```
 
-- In the project root, run the packaging command:
+- Run the packaging command in the project root directory:
 
-    ```bash
-    vsce package
-    ```
+	```bash
+	vsce package
+	```
 
-- Follow the guidance in the official documentation to complete the publishing process. (Official docs: https://code.visualstudio.com/api/working-with-extensions/publishing-extension)
+- Follow the [official documentation](https://code.visualstudio.com/api/working-with-extensions/publishing-extension) to complete the publishing process.
 
-
-# Specific Development
-
+# Extension Development
 
 ## Extension Activation
 
-
-VS Code extensions are activated according to the activationEvents array in package.json. Here are the main activation event types：
-
+VS Code extensions use the activationEvents array in package.json to define when an extension is activated. The main activation event types are listed below:
 
 ### **Common Activation Events**
 
-1. 
-    - Activate the extension immediately when VS Code starts
-    - Pros: the extension is always available
-    - Cons: may affect VS Code startup performance; not recommended for production environments
+1.
+
+	- Activates the extension immediately when VS Code starts
+	- Advantage: The extension is always available
+	- Disadvantage: It affects VS Code startup performance and is not recommended for production environments
 2. **onStartupFinished**
-    - Activate the extension after VS Code finishes starting up
-    - Slightly later than the previous, but with less impact on startup performance
+	- Activates the extension after VS Code finishes starting
+	- Activates slightly later than \*, but has less impact on startup performance
 3. **onCommand:commandId**
-    - Activate the extension when the user executes a specific command
-    - For example: onCommand:vs-ex-test.helloWorld
+	- Activates the extension when the user executes a specific command
+	- Example: onCommand:vs-ex-test.helloWorld
 4. **onLanguage:languageId**
-    - Activate the extension when opening files of a specific language
-    - For example: onLanguage:javascript, onLanguage:python
+	- Activates the extension when a file in a specific language is opened
+	- Example: onLanguage:javascript, onLanguage:python
 5. **onView:viewId**
-    - Activate the extension when a specific view becomes visible
-    - For example: onView:nodeDependencies
+	- Activates the extension when a specific view becomes visible
+	- Example: onView:nodeDependencies
 
 ### **Other Activation Events**
 
 1. **onUri**
-    - Activate the extension when a specific URI is opened
-    - For example: onUri:https://my-extension.com
+	- Activates the extension when a specific URI is opened
+	- Example: onUri\:https\://my-extension.com
 2. **onWebviewPanel:viewType**
-    - Activate the extension when creating a specific type of Webview panel
+	- Activates the extension when a specific type of webview panel is created
 3. **onCustomEditor:viewType**
-    - Activate the extension when opening a custom editor
+	- Activates the extension when a custom editor is opened
 4. **onDebug**
-    - Activate the extension when starting a debugging session
+	- Activates the extension when a debugging session starts
 5. **onDebugInitialConfigurations**
-    - Activate the extension when initializing debug configurations
+	- Activates the extension when debug configurations are initialized
 6. **onDebugResolve:type**
-    - Activate the extension when resolving a specific type of debug configuration
+	- Activates the extension when a specific type of debug configuration is resolved
 7. **onFileSystem:scheme**
-    - Activate the extension when accessing a specific filesystem scheme
-    - For example: onFileSystem:ftp
+	- Activates the extension when a specific file system scheme is accessed
+	- Example: onFileSystem:ftp
 8. **onTerminalProfile:terminalId**
-    - Activate the extension when creating a terminal profile
+	- Activates the extension when a specific terminal profile is created
 9. **onAuthenticationRequest:authenticationProviderId**
-    - Activate the extension when requesting authentication from a specific provider
+	- Activates the extension when a specific authentication provider is requested
 10. **onSearch**
-    - Activate the extension when performing a search
+	- Activates the extension when a search operation is performed
 11. **onTaskType:taskType**
-    - Activate the extension when executing a task of a specific type
+	- Activates the extension when a specific type of task is executed
 12. **onNotebook:notebookType**
-    - Activate the extension when opening a notebook of a specific type
+	- Activates the extension when a specific type of notebook is opened
 13. **onTerminal**
-    - Activate the extension when a terminal is created
+	- Activates the extension when a terminal is created

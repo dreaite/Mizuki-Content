@@ -1,97 +1,69 @@
 ---
-title: 'A Summary of My Thoughts on the Market on X'
+title: 'A Summary of My Thoughts on the Market Posted on X'
 published: 2026-08-10
 updated: 2026-08-11
 description: 'Why profitable patterns erode under market feedback, and how currency-devaluation expectations spread through commodities, costs, and hoarding.'
 image: 'https://r2.dreaife.tokyo/notion/covers/3b85465cca178058ab16d23d1491db0b/shinku_birthday.png'
 tags: ['thinking', 'market', 'trade']
-category: 'market'
+category: 'RETROSPECT'
 draft: false
 lang: 'en'
 ---
 
-A note before reading: This article represents only the author’s personal views.
-
+A note before reading: this article reflects only the author’s personal views.
 
 ========
 
-
 # On Markets
-
 
 ::x{url="https://x.com/inkks1996/status/2086782972922130566"}
 
+I have begun to think that every complex system has a core that determines its existence. A market, for example, is the result of people’s desire to make money playing out against itself.
 
-I have begun to think that every complex system has a core that determines its existence. The market, for example, is the result of people’s desire to make money interacting through competition.
+What began as a simple trading system gradually developed into today’s market through people’s pursuit of wealth. How will the market evolve? No one knows, but everyone has their own judgment. The actions arising from those judgments form subjective understandings of the market as a complex system. Those actions then provoke counteractions from other market participants, creating negative feedback. Once everyone in the world has contributed their own understanding to the system, the complex system takes shape. Yet at its core, it remains a system in which everyone pursues their own profit—and one person’s profit will most likely come from another person’s loss. This is also what gives rise to the market’s spontaneous countermeasures, or negative feedback.
 
+That, in other words, is how I understand its origin and evolution. But even if I know the current state, can I calculate what comes next? I do not think so. For one thing, there is not enough computing power. For another, the market is not perfectly rational. It is precisely because the market is emotional that phenomena such as FOMO exist.
 
-What began as a simple trading system gradually developed into today’s market through people’s pursuit of wealth. How will the market evolve? No one knows, but everyone has their own judgment. The actions arising from those judgments form their subjective understanding of the market as a complex system. Those actions then provoke counteractions from other market participants, creating negative feedback. Once everyone in the world has contributed their own understanding to the system, this complex system takes shape. Yet at its core, it remains a system in which everyone pursues their own profit—and one person’s profit will most likely come from someone else’s loss. This also gives rise to the market’s spontaneous countermeasures, or negative feedback.
+This offers some insight into market reflexivity: when the market is gripped by FOMO, the move is often about to end. This is the negative feedback mentioned above, or a reversion to value. Of course, this does not mean that anything completely rejected by the market is bound to turn around. But for assets that you judge to be undervalued, you can begin waiting for the possibility of value discovery once sentiment has been fully exhausted.
 
+This also shows that there can be no trader who never loses. As described above, whenever someone profits, it is essentially a transfer of wealth through the market: wealth moves from losing traders to profitable traders and exchanges or market makers. In other words, if a trader were to remain perpetually undefeated, their counterparty would effectively become the entire market. Once such a consensus forms, no calculation, understanding, or adjustment can overcome it, because the trader’s opponent is the market itself.
 
-In other words, this is how I understand its origins and operation. Even if I know the market’s current state, can I calculate what comes next? I do not think so. For one thing, there is not enough computing power. For another, the market is not perfectly rational. It is precisely because the market is emotional that phenomena such as FOMO occur.
+This is not to say that traditional indicators are completely meaningless. When the time horizon is extended and most emotional effects are filtered out, their underlying patterns remain unchanged. My point is that there is no universal solution that can achieve complete victory in the market. Even if one works in the present market, the market will identify it shortly after it becomes effective and begin setting traps for that trading pattern.
 
-
-This offers some insight into market reflexivity: when the market is gripped by FOMO, the trend is often close to ending. This is the negative feedback described above, or a reversion toward value. That does not mean everything completely rejected by the market is certain to turn around. But for an asset that you believe is undervalued, once sentiment has been fully exhausted, you can begin waiting for the possibility that its value will be discovered.
-
-
-This also shows that no trader can avoid losses entirely. As described above, when someone begins to profit, what is happening in essence is a transfer of wealth through the market: wealth moves from losing traders to profitable traders and exchanges/market makers. Put differently, if an invariably successful trader were to exist, the entire market would effectively become their counterparty. Once that consensus formed, no amount of calculation, understanding, or adjustment could overcome it, because their opponent would be the market itself.
-
-
-This is not to say that traditional indicators are entirely meaningless. When the time horizon is extended and most emotional effects are filtered out, the patterns behind those indicators remain unchanged. My point is that no universal solution can guarantee complete victory in the market. Even if one worked under current market conditions, the market would identify it shortly after it became effective and begin setting traps specifically for that trading pattern.
-
-
-The same applies to using AI to generate strategies. Ultimately, what AI does when assessing market direction is pattern recognition: determining what was most likely to happen under similar conditions in the past. This is certainly effective over longer horizons, since humans cannot process all the information in the market, while AI can collect and analyze information at that scale. Over short horizons, however, the market does not fully follow historical patterns; it is driven almost entirely by emotion. Human emotions are irrational, and individual traders also face opponents whose trading bots can be hosted directly at exchanges with latencies of only a few milliseconds. I see no reason to believe that an individual can devise any short-term strategy with a statistically positive edge. Even if such a strategy existed, as described above, its pattern would quickly be identified and the market would begin trading against it.
-
+The same applies to using AI to generate strategies. AI ultimately approaches market direction through pattern recognition: given what happened here in the past, what outcome was most probable? This is certainly effective over longer time horizons. After all, no person can master all of the market’s information, whereas AI can collect information on that scale. But over the short term, as mentioned above, the market does not fully follow historical patterns; it is completely driven by sentiment. Human emotions are irrational, and traders also face opponents who can run trading bots at exchanges with latency of only a few milliseconds. I see no reason why an individual could maintain any strategy with a statistically positive win rate. Even if such a strategy existed, as noted above, it would quickly be identified as a pattern and then exploited by the market.
 
 =========
 
-
-# On Money
-
+# On Currency
 
 ::x{url="https://x.com/inkks1996/status/2086805197343650221"}
 
+As an aside, let me say a little more about currency—or perhaps about expectations. Although currency is issued by a state and backed by its credit, the principal force determining its value is not actually the amount circulating in the market, but the public consensus about what it should currently be worth.
 
-As an aside, let us also discuss money—or perhaps expectations. Although money is issued by the state and backed by its credit, the primary determinant of its value is not actually the amount in circulation, but the public consensus about what it should currently be worth.
+In other words, if the value of a product remains unchanged but the amount of money people are willing to pay for it increases or decreases, that change itself represents the public’s valuation of the currency.
 
+Or perhaps this should be described as expectations. Transacting in a currency itself carries expectations about its depreciation, and those expectations will be reflected in prices once they exceed what merchants can absorb. (From this point onward, I will use expectations of depreciation as the example.)
 
-In other words, if a good’s underlying value remains unchanged but the amount of money people are willing to pay for it rises or falls, that change itself represents the public’s valuation of the currency.
+The transmission of these expectations from merchants to the public begins with necessities. An event leads the market to form a view of the currency’s future direction—or the view that it has already entered a particular trend becomes market consensus. These expectations influence the pricing outlook of commodity and necessity businesses, which use futures markets to hedge their returns. As commodity prices rise, products that use those commodities as raw materials also begin raising their prices. This is the bull market in goods that emerges when a currency begins to depreciate.
 
+At the same time, rising expenditure on various goods also increases costs for companies throughout society. To maintain revenue, companies begin raising their quoted prices and service fees. As prices gradually rise across society, the public develops expectations that the currency will depreciate. The resulting stockpiling of goods—which consumes future purchasing power—further drives the bull market in goods and creates an inflationary spiral.
 
-Or perhaps this should be described as an expectation. Using a currency in a transaction effectively means accepting the depreciation expectations embedded in it. Once those expectations exceed what merchants can absorb, they will be reflected in prices. (From this point onward, depreciation expectations will be used as the example.)
+By this point, the currency’s value has been transmitted step by step from the initial market expectations into the actual foreign-exchange market.
 
+Of course, a central bank can also influence the foreign-exchange market by printing money. In reality, however, the funds a central bank can deploy are only a drop in the bucket compared with the market. Its actions are more about managing expectations, guiding the market’s direction, and hoping that developments proceed as intended.
 
-The transmission of those expectations from merchants to the public begins with necessities. An event causes the market to form a view of the currency’s future direction—or the belief that the currency has already entered a particular trend becomes the market consensus. These expectations affect the pricing assumptions of commodity and essential-goods merchants that use futures markets to stabilize or hedge their returns. As commodity prices rise, products that use those commodities as raw materials also begin raising their prices one after another. This is the commodity bull market that emerges when a currency begins to depreciate.
+Returning to currency itself, the discussion above concerned changes in what a currency can buy in the macroeconomy and the market. The following returns to currency itself—namely, how individuals use it directly.
 
+When currency is used, it is really nothing more than numbers or pieces of paper. Yet it can facilitate an exchange of value in a transaction because it is a general equivalent issued by the government and backed by government credit.
 
-At the same time, as spending on various goods increases, operating costs for companies across society also rise. To maintain their revenue, companies begin raising their prices and service fees. As prices gradually rise throughout society, the public develops an expectation that the currency will continue to depreciate. The resulting stockpiling of goods—which consumes future purchasing power—further fuels the commodity bull market and contributes to the formation of an inflationary spiral.
+But does this “because” really hold? Currency is indeed issued by the government, but can its value truly be quantified in terms of anything? U.S. Treasuries? Gold? Under such a definition, most governments in modern society should already be bankrupt. Why, then, is society still so calm?
 
+Under the gold standard, credibility was guaranteed by anchoring one unit of currency to a standard quantity of gold. What about modern society? There is nothing. Today’s currencies are not anchored to physical objects, but to assessments of the current society and government, together with expectations about their future development.
 
-At this point, the currency’s value has been transmitted step by step from the market’s initial expectations into the actual foreign-exchange market.
+Those expectations can begin with individuals or with groups and institutions. The expectations themselves create the currency’s actual present value. In individual transactions, a pessimistic outlook for the future creates expectations of currency depreciation. Consequently, goods offered at the same prices as before now feel cheaper.
 
+Of course, this is only an individual’s expectation and judgment. But once that judgment becomes a social consensus, individuals begin drawing on future purchasing power to stockpile goods, while merchants raise their prices.
 
-Of course, central banks can also influence foreign-exchange markets by printing money. In reality, however, the funds a central bank can directly deploy are often only a drop in the ocean compared with the market. Such actions are more about managing market expectations, guiding the market’s direction, and hoping that it develops as intended.
+However, this kind of emotional climax can easily produce abc, leaving ample opportunity for government intervention. But if the government’s measures reinforce the public’s expectations—or if the government itself is operating under those same expectations—then the effects initiated by the public can readily form a self-reinforcing death spiral.
 
-
-Returning to money itself, the discussion above concerned changes in how a currency values the same goods at the macroeconomic or market level. What follows concerns money itself—namely, how individuals use it directly.
-
-
-When money is used, it is itself merely a number or a piece of paper. Yet it can facilitate the exchange of value in a transaction because it is a universal equivalent issued by the government and backed by government credit.
-
-
-But does this explanation really hold? A currency is indeed issued by a government, but can its value truly be quantified by anything? By U.S. Treasury securities? By gold? If we followed that kind of definition, then most governments in modern society should already be bankrupt. Why, then, does society remain so calm?
-
-
-Under the gold standard, a currency’s credibility was guaranteed by the ability to anchor one unit of currency to a standard quantity of gold. What about modern society? There is no such anchor. Today’s currencies are not anchored to physical objects, but to assessments of the current society and government, along with expectations about their future development.
-
-
-These expectations can originate with individuals, groups, or institutions. The expectations themselves determine the currency’s actual present value. In an individual transaction, pessimism about the future creates an expectation that the currency will depreciate. As a result, a good offered at the same nominal price as before will now seem cheaper.
-
-
-Of course, this begins only as an individual judgment. But once that judgment becomes a social consensus, individuals begin drawing on future purchasing power to stockpile goods, while merchants raise their prices.
-
-
-However, peaks in this kind of sentiment can easily produce an abc pattern, leaving ample opportunity for government intervention. But if government measures reinforce the public’s existing expectations—or if the government itself is caught up in those same expectations—then this public-driven effect can readily develop into a self-reinforcing death spiral.
-
-
-Incidentally, the commodity bull market described above can also produce additional nominal growth in the financial statements of companies denominated in the local currency. This, in turn, can drive up a stock market priced in that currency. (The result is different when measured in U.S. dollars. Moreover, higher nominal profits can lead to higher taxes, reducing actual returns in dollar terms.)
+Incidentally, the commodity bull market described above can also cause companies reporting in the domestic currency to show additional growth in their financial statements, which in turn drives up the domestically denominated stock market. (Of course, this is not the case when measured in U.S. dollars. At the same time, higher nominal profits result in higher taxes, reducing actual returns when measured in dollars.)

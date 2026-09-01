@@ -1,50 +1,40 @@
 ---
-title: 'An EVM wallet login interface for EOAs'
+title: 'An EVM Wallet Login Interface for EOAs'
 published: 2026-06-08
 updated: 2026-06-09
 description: 'React/wagmi EVM login walkthrough: wallet connection, server nonces, SIWE messages, signing, backend address recovery, and proof of control.'
 image: 'https://r2.dreaife.tokyo/notion/covers/3795465cca1780d29cb9f993bf218d10/2026%E5%B9%B46%E6%9C%889%E6%97%A5_01_09_11.png'
 tags: ['web3', 'wallet']
-category: 'WEB3'
+category: 'EXPLORE'
 draft: false
 lang: 'en'
 ---
 
-The following only represents the author’s current understanding
-
+The following reflects only my current understanding.
 
 =====================
 
-
-Recently, I built a mainly front-end [interface](https://web3wallet-login.block.dreaifehebi.com/) for EOA wallet login. It can be considered the start of getting into blockChain development, and it also happened to let me get a feel for how the EVM is actually operated.
-
+I recently built a mostly frontend [interface](https://web3wallet-login.block.dreaifehebi.com/) for EOA wallet login. It marks the beginning of my exploration into blockchain development and gave me an opportunity to see how the EVM actually works in practice.
 
 ::github{repo="dreaifeHebi/web3WalletLogin"}
 
+![](https://r2.dreaife.tokyo/notion/covers/3795465cca1780d29cb9f993bf218d10/inline/0d7ea32d51521748-image.png)
 
-![image.png](https://r2.dreaife.tokyo/notion/covers/3795465cca1780d29cb9f993bf218d10/inline/0d7ea32d51521748-image.png)
+# A Wallet Login
 
+Although this is described as a single login, there are actually two interactions that require confirmation from the wallet. The first is initiated by the page to obtain the wallet address. For the second, the server sends the wallet an authentication message containing fields such as the authentication message, calling domain, and nonce, structured according to a protocol, and asks the wallet to verify it.
 
-# A wallet login
+The structure currently used imitates [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361), though I personally feel that this structure is more about UI and traceability. In practice, the nonce alone should be enough to distinguish requests.
 
+Why must the wallet address be obtained before verification can begin? Presumably because the browser and wallet do not inherently trust each other. If the data exchanged directly between them is considered untrustworthy, then only an address confirmed by the wallet can be trusted. Only then can the next stage of wallet verification begin.
 
-Although it is called one login, the interactions that actually require wallet confirmation happen twice—once for confirming the request initiated by the page to obtain the wallet address, and once for the server side to send a message to the wallet for verification, including things like the authentication message / calling domain / nonce, etc., following a protocol structure. The structure currently used imitates [EIP-4361](https://eips.ethereum.org/EIPS/eip-4361), though personally I feel this is more of a UI / traceability design; in practice, the nonce alone should be enough to ensure request disambiguation.
+# I Control This Wallet!
 
+## What Is Your Wallet Address?
 
-Why do we need to obtain the wallet address first before initiating verification? Probably because both the browser and the wallet themselves are untrusted. So if the data directly given during the intermediate interaction is considered untrusted, then only the address confirmed through the wallet is trusted, and only then can the process proceed to the next step of wallet verification.
+This is actually an interaction between the browser and the wallet, used to confirm which wallet address should be selected and authorized for disclosure to the website.
 
-
-# I control this wallet!
-
-
-## What is your wallet address?
-
-
-This is actually an interaction between the browser and the wallet, used to confirm which wallet address should be selected and authorized to be provided to the website.
-
-
-In this project, wagmi’s connect is actually used to request wallet interaction.
-
+This project uses wagmi's connect functionality to request the wallet interaction.
 
 ```typescript
 // wagmi config
@@ -66,18 +56,13 @@ connect({ connector: injectedConnector });
 const { address, chainId, isConnected } = useAccount();
 ```
 
+It also uses wagmi's useAccount to automatically retrieve the updated information after the wallet confirms the request.
 
-Here, wagmi’s useAccount is also used to automatically obtain the updated information after wallet confirmation.
+## So, Does This Wallet Belong to You?
 
+### I Need You to Authenticate This Claim
 
-## So, is this wallet you mentioned yours?
-
-
-### I need you to authenticate this information
-
-
-Now that the address requiring authentication is known, we can prepare a standard SIWE (Sign-In with Ethereum) login signing message. A message in roughly this format:
-
+Now that the address requiring authentication is known, a standard SIWE (Sign-In with Ethereum) login signature message can be prepared. The message looks roughly like this:
 
 ```plain text
 localhost:3000 wants you to sign in with your Ethereum account:
@@ -92,15 +77,11 @@ Nonce: <server-issued nonce>
 Issued At: <generated timestamp>
 ```
 
-
-Then this message is standardized according to EIP-191, to distinguish it from other signatures and ordinary transactions:
-
+The message is then standardized according to EIP-191 so that it can be distinguished from other signatures and ordinary transactions:
 
 `"\x19Ethereum Signed Message:\n" + len(message) + message`
 
-
-The implementation here comes from wagmi’s signMessageAsync, which performs the actual authentication request to the wallet.
-
+The implementation uses wagmi's signMessageAsync to send the actual authentication request to the wallet.
 
 ```typescript
 const { signMessageAsync, isPending: isSigning } = useSignMessage();
@@ -120,12 +101,11 @@ const preparedMessage = siweMessage.prepareMessage();
 const signature = await signMessageAsync({ message: preparedMessage });
 ```
 
+### This Proof Can Only Be Created with My Private Key
 
-### This is authentication that only my private key can produce
+When the wallet receives this message as an authentication request, it must ensure that its signature can prove control over the address it previously provided. To do this, the wallet uses its private key to encrypt the hash of the information it just received, while also ensuring that the resulting signature can be verified by a website that knows only the wallet address and the requested message.
 
-
-When this message reaches the wallet requesting authentication, the wallet needs to ensure that its signature can prove its control over the address previously provided. At this point, the wallet needs to use its private key to encrypt the hash of the information just sent, while also ensuring that this signature can be verified by the website, which only knows the wallet address and the requested message. What is needed here is naturally a series of mathematical transformations to guarantee the validity of this verification method. Of course, here I am just using wagmi’s algorithm to verify the returned signature first (
-
+Naturally, a series of mathematical transformations is required to make this verification method valid. For now, however, I simply use wagmi's algorithm to verify the signature returned by the wallet (
 
 ```typescript
 // use the message (the client send) and sign(the wallet back)
@@ -151,25 +131,21 @@ if (!result.success) {
   }
 ```
 
+As for the actual verification math?
 
-As for the actual verification calculation?
+That requires looking at the secp256k1 curve used for EOA wallet signatures. For an EOA wallet, it works roughly like this:
 
-
-That brings us to the secp256k1 curve used by EOA wallet signatures. For an EOA wallet, it is roughly like this:
-
-- EOA private key: a roughly 256-bit random number d
-- Public key: elliptic curve point Q = d * G
-- Address: the last 20 bytes of keccak256(publicKey)
+- EOA private key: a random number d of approximately 256 bits
+- Public key: an elliptic-curve point Q = d \* G
+- Address: the final 20 bytes of keccak256(publicKey)
 - Signature: ECDSA over secp256k1
-> However, I actually don’t really understand the actual computation in this part either (, but I roughly know that the reason the private key d cannot be reversed from the public key Q obtained via the signature and message hash is that it would be equivalent to solving the elliptic curve discrete logarithm problem $Q = d * G$, with a workload on the order of about $2^{128}$ (secp256k1 is a 256-bit-level curve).
 
-In this way, using the returned signature ($r + s  + v$) and the message hash that we sent, we can ultimately recover a public key and calculate an address from it. When this address matches the address provided earlier, it proves that this wallet has control over that address.
+> I do not fully understand the actual calculations involved here either (, but the general idea is that the public key Q recovered from the signature and message hash cannot be reversed to obtain the private key d. Doing so would require solving the elliptic-curve discrete logarithm problem $Q = d * G$, with a workload on the order of $2^{128}$ for secp256k1, which is a 256-bit curve.
 
+Ultimately, the returned signature ($r + s  + v$) and the message hash sent by the website can be used to recover a public key and calculate its address. If that address matches the one provided earlier, it proves that the wallet controls that address.
 
 # Conclusion
 
+That is about it for my first practical blockchain development project. Honestly, looking at the actual implementation of private-key signing and signature recovery reminded me a little of when I was learning ACM programming competitions (
 
-As a start to actually developing with blockChain, that’s about it. To be honest, when looking at the actual implementation of private-key signing and signature recovery, it felt a bit like when I first learned ACM (
-
-
-But as a gateway project, it feels just right—it has sparked my interest in learning blockChain.
+Still, this feels like a fitting gateway project. It has definitely sparked my interest in learning more about blockchain.
