@@ -5,16 +5,16 @@ updated: 2024-11-04
 description: 'A concise SVN guide to centralized version control, repository setup, TortoiseSVN, checkout, update, commit, diff, revert, ignore rules, and branches.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca178060a708e1b3428bd22e/IMG_1451.jpg'
 tags: ['SVN', 'INFRA']
-category: 'STUDY'
+category: '研习'
 draft: false
 lang: 'en'
 ---
 
 # What Is SVN?
 
-SVN is a file management tool similar to Git. Unlike Git, however, SVN is centralized rather than distributed.
+SVN is a file management tool similar to Git. Unlike Git, however, SVN is not distributed; it uses centralized management.
 
-A server manages the code repository. SVN also provides more granular file access control than Git: you can check out not only an entire repository, but also an individual folder or file within it.
+A server manages the code repository. SVN also provides finer-grained file access control than Git. In addition to checking out an entire repository, you can check out individual folders or files within it.
 
 # SVN Repositories
 

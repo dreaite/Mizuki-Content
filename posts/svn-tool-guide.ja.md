@@ -5,29 +5,29 @@ updated: 2024-11-04
 description: '集中型バージョン管理SVNの入門。リポジトリ作成、TortoiseSVN、checkout、update、commit、diff、revert、ignore、ブランチ操作を整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca178060a708e1b3428bd22e/IMG_1451.jpg'
 tags: ['SVN', 'INFRA']
-category: 'STUDY'
+category: '研习'
 draft: false
 lang: 'ja'
 ---
 
-# svnとは
+# SVNとは
 
-svnはgitと同様のファイル管理ツールですが、gitとは異なり、svnは分散型ではなく、1台の
+SVNはGitと同様のファイル管理ツールですが、Gitとは異なり、分散型管理ではなく、
 
-サーバーでコードリポジトリを管理します。また、svnはgitよりもファイルのセキュリティ管理の粒度が細かく、リポジトリ全体をcheckoutできるだけでなく、リポジトリ内のフォルダー/ファイル単位でもcheckoutできます。
+サーバーを通じてコードリポジトリを管理します。また、SVNはGitよりも細かな単位でファイルのアクセス管理ができ、リポジトリ全体だけでなく、リポジトリ内のフォルダーやファイル単位でもチェックアウトできます。
 
 # SVNリポジトリ
 
-svnを使用するには、事前にリポジトリが必要です。
+SVNを使用するには、事前にリポジトリが必要です。
 
 - 自前で構築したリポジトリ
 - オンラインの無料リポジトリ
 
 # SVNクライアント
 
-SVNでは、tortoiseSVNのようなGUIクライアントがよく使用されます。
+SVNでは、TortoiseSVNなどのGUIクライアントがよく使用されます。
 
-## SVNのコマンドラインでの使用
+## SVNのコマンドラインでの使用方法
 
 ### checkout
 

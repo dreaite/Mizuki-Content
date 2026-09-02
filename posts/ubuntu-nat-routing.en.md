@@ -5,16 +5,16 @@ updated: 2024-12-15
 description: 'Share an Ubuntu host network with a router by configuring Netplan, static IP, IP forwarding, DHCP, and NAT rules, then verify client connectivity.'
 image: 'https://r2.dreaife.tokyo/notion/covers/15d5465cca1780bf85eac8dea673675e/IMG_1935.jpg'
 tags: ['network', 'linux', 'cs-base']
-category: 'TROUBLESHOOT'
+category: '踩坑'
 draft: false
 lang: 'en'
 ---
 
-For my particular setup, the host first needs to obtain internet access and then forward and share the connection with a router via an Ethernet cable.
+For my setup, the host first connects to the internet, then forwards and shares that connection with a router over an Ethernet cable.
 
-The solution is described below.
+Below is the solution.
 
-P.S.: This configuration was performed on a fresh Ubuntu installation. If your environment contains configurations that need to be preserved, back them up first to avoid losing them.
+PS: This configuration was performed on a fresh Ubuntu installation. If your environment contains configurations that need to be preserved, back them up first to avoid losing them.
 
 # Check the Current Network Status
 
@@ -46,7 +46,7 @@ ip addr
 #       valid_lft forever preferred_lft forever
 ```
 
-Identify the network interfaces used to connect to the internet and to the router.
+Identify the network interfaces connected to the internet and the router.
 
 # **Network Configuration**
 
@@ -64,7 +64,7 @@ Identify the network interfaces used to connect to the internet and to the route
 	sudo nano /etc/netplan/01-netcfg.yaml
 	```
 
-3. Add the following content to enable DHCP on the internet-facing interface and configure a static IP address for the network interface connected to the router:
+3. Add the following content to enable DHCP for the internet-facing interface and assign a static IP address to the interface connected to the router:
 
 	```yaml
 	network:
@@ -100,8 +100,8 @@ Run the following command to check whether each interface has successfully obtai
 ip addr
 ```
 
-- **Expected state**:
-	- The internet-facing interface should obtain an IP address via DHCP.
+- **Expected status**:
+	- The configured interface should obtain an IP address through DHCP.
 	- The router-facing interface should be assigned a static address.
 
 		Run the following command to check whether **`enp1s0`** has been assigned a static IP address:
@@ -120,7 +120,7 @@ ip addr
 
 ## **3. Configure Network Sharing for the Router**
 
-In my network topology, **`enx5a5f0a205236`** provides the internet connection, which is shared with the router through **`enp1s0`**:
+In this network topology, **`enx5a5f0a205236`** provides the internet connection, which is shared with the router through **`enp1s0`**:
 
 ### **3.1 Enable IP Forwarding**
 
@@ -136,7 +136,7 @@ In my network topology, **`enx5a5f0a205236`** provides the internet connection, 
 	sudo nano /etc/sysctl.conf
 	```
 
-	Ensure that the following line is uncommented:
+	Ensure that the following line is not commented out:
 
 	```plain text
 	net.ipv4.ip_forward=1
@@ -229,8 +229,8 @@ sudo systemctl status isc-dhcp-server
 	cat /proc/sys/net/ipv4/ip_forward
 	```
 
-	- Ensure that the NAT rules exist.
+	- Ensure that the NAT rules are present.
 	- **`cat /proc/sys/net/ipv4/ip_forward`** should return **`1`**.
-2. **Test network connectivity on a device connected to ****`enp1s0`****:**
-	- Ensure that the device obtains an IP address via DHCP.
+2. **Test the network connection on a device connected to ****`enp1s0`****:**
+	- Ensure that the device obtains an IP address through DHCP.
 	- Test whether the device can access the internet.

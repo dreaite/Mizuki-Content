@@ -5,7 +5,7 @@ updated: 2024-11-04
 description: 'Deploy Angular to GitHub Pages with GitHub Actions, covering outputPath, angular-cli-ghpages, workflow setup, tokens, and the gh-pages branch.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca1780709669dd1e198f2678/Gal1mvpbQAA_8s_.jpg'
 tags: ['github-action', 'INFRA']
-category: 'TROUBLESHOOT'
+category: '踩坑'
 draft: false
 lang: 'en'
 ---
@@ -14,7 +14,7 @@ lang: 'en'
 
  **`projects > {your-project-name} > architect > build > options > outputPath`**
 
-If static pages are generated in the `browser` directory by default, remember to modify or add this property:
+If the generated static website is under `browser` by default, remember to modify or add this property:
 
 ```javascript
 "baseHref": "/browser/",
@@ -64,10 +64,10 @@ env:
   GITHUB_TOKEN: ${{ secrets.TOKEN }}
 ```
 
-Remember to [generate a token](https://github.com/settings/tokens) on GitHub for repository access and add it to the Actions environment variables.
+Remember to [generate a token](https://github.com/settings/tokens) on GitHub for repository access and add it to the Action's environment variables.
 
 `https://github.com/${your_name}/${your_repo}/settings/secrets/actions`
 
 ## Push to the monitored branch
 
-Update the GitHub Pages configuration and set the Pages branch to `gh-pages`.
+Update the GitHub Pages configuration and set the Pages branch to gh-pages.

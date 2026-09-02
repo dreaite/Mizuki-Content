@@ -5,12 +5,12 @@ updated: 2024-12-03
 description: 'UbuntuにOh My Zshを導入し、Zsh、Git、Powerlevel10k、各種プラグイン、.zshrcを設定して使いやすい端末環境を整えます。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1515465cca178073b194f4ade9c3a703/IMG_1723.jpg'
 tags: ['bash', 'linux', 'cs-base']
-category: 'TROUBLESHOOT'
+category: '踩坑'
 draft: false
 lang: 'ja'
 ---
 
-# zshをインストール
+# zsh のインストール
 
 ```shell
 sudo apt install -y zsh git || sudo pacman -S --needed zsh git || sudo yum install zsh git || sudo zypper in zsh git || sudo apk add zsh git;
@@ -18,7 +18,7 @@ sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/ins
 zsh
 ```
 
-# テーマをインストール
+# テーマのインストール
 
 ```shell
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k &&
@@ -40,7 +40,7 @@ plugins=(\
 exit
 ```
 
-# プラグインをインストール
+# プラグインのインストール
 
 プラグイン：
 

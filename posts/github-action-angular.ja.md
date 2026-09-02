@@ -5,7 +5,7 @@ updated: 2024-11-04
 description: 'GitHub ActionsでAngularをGitHub Pagesへ自動デプロイ。outputPath、angular-cli-ghpages、ワークフロー、トークン、gh-pagesブランチの設定を扱います。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca1780709669dd1e198f2678/Gal1mvpbQAA_8s_.jpg'
 tags: ['github-action', 'INFRA']
-category: 'TROUBLESHOOT'
+category: '踩坑'
 draft: false
 lang: 'ja'
 ---
@@ -14,19 +14,19 @@ lang: 'ja'
 
  **`projects > {your-project-name} > architect > build > options > outputPath`**
 
-デフォルトで生成される静的Webページがbrowser配下にある場合は、忘れずに次のプロパティを変更または追加してください。
+デフォルトで静的ページが `browser` 配下に生成される場合は、次のプロパティを変更または追加してください。
 
 ```javascript
 "baseHref": "/browser/",
 ```
 
-angular-cli-ghpagesをインストールします。
+angular-cli-ghpages をインストールします。
 
 ```shell
 ng add angular-cli-ghpages
 ```
 
-## **.github/workflows配下にワークフローを作成**
+## **`.github/workflows` 配下にワークフローを作成**
 
 ```yaml
 name: Deploy to GitHub Pages
@@ -34,7 +34,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - master  # 或者你要监控的分支名称
+      - master  # または監視するブランチ名
 
 jobs:
   build-and-deploy:
@@ -46,7 +46,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'  # 请根据项目需求修改 Node.js 版本
+          node-version: '20'  # プロジェクトの要件に応じて Node.js のバージョンを変更してください
 
       - name: Install dependencies
         run: npm install
@@ -57,17 +57,17 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist/my-angular-project/browser  # 请根据实际输出路径填写
+          folder: dist/my-angular-project/browser  # 実際の出力パスに合わせて指定してください
           token: ${{ secrets.TOKEN }}
 
 env:
   GITHUB_TOKEN: ${{ secrets.TOKEN }}
 ```
 
-GitHubでリポジトリへのアクセスに使用する[トークンを生成](https://github.com/settings/tokens)し、Actionsの環境変数に追加してください。
+GitHub でリポジトリへのアクセスに使用する [token を生成](https://github.com/settings/tokens)し、Actions の環境変数に追加してください。
 
 `https://github.com/${your_name}/${your_repo}/settings/secrets/actions`
 
-## 監視対象のブランチにプッシュ
+## 監視対象のブランチへプッシュ
 
-GitHub Pagesの設定を変更し、Pagesのブランチをgh-pagesに設定します。
+GitHub Pages の設定を変更し、Pages のブランチを `gh-pages` に設定します。
