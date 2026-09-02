@@ -6,7 +6,7 @@ description: '一篇关于 AI 使用成本与机会分化的个人思考：当 S
 permalink: 'first-round-ai-filter'
 image: 'https://r2.dreaife.tokyo/notion/covers/33d5465cca1780ba8e6fc66550e148be/IMG_4685.jpg'
 tags: ['thinking', 'ai', 'life']
-category: 'INQUIRY'
+category: '深思'
 draft: false
 ---
 

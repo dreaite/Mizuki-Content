@@ -6,7 +6,7 @@ description: '从 secp256k1 的有限域与点运算出发，推导 ECDSA 的 r/
 permalink: 'eoa-sign-verify'
 image: 'https://r2.dreaife.tokyo/notion/covers/37b5465cca17804f8624caf756234df3/ai-generated-1781099535759.png'
 tags: ['wallet', 'theory', 'web3']
-category: 'EXPLORE'
+category: '开荒'
 draft: false
 ---
 

@@ -6,7 +6,7 @@ description: '从 NotionNext 迁移到 Astro 博客 Mizuki 的配置记录，涵
 permalink: 'blog-migration-mizuki'
 image: 'https://r2.dreaife.tokyo/notion/covers/30f5465cca1780cc8df8e7c367a16f3d/IMG_4450.jpg'
 tags: ['blog', 'llm', 'deploy', 'notion', 'INFRA']
-category: 'EXPLORE'
+category: '开荒'
 draft: false
 ---
 

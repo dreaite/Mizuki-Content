@@ -6,7 +6,7 @@ description: '一次关于情绪抑制与自我形成的心理记录：长期维
 permalink: 'self-discovery-journey'
 image: 'https://r2.dreaife.tokyo/notion/covers/31a5465cca1780a3aa46f35da870624c/IMG_4498.jpg'
 tags: ['self', 'mental', 'discover', 'psycho']
-category: 'INQUIRY'
+category: '深思'
 draft: false
 ---
 

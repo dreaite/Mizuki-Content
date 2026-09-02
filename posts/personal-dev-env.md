@@ -6,7 +6,7 @@ description: '个人 Linux 开发子机的环境规划，涵盖 Java/Node.js/Pyt
 permalink: 'personal-dev-env'
 image: 'https://source.unsplash.com/random'
 tags: []
-category: 'TROUBLESHOOT'
+category: '踩坑'
 draft: true
 ---
 

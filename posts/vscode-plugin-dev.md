@@ -6,7 +6,7 @@ description: 'VS Code 扩展开发入门：使用 Yeoman 与 generator-code 创�
 permalink: 'vscode-plugin-dev'
 image: 'https://r2.dreaife.tokyo/notion/covers/1b55465cca17808d8be3e99dd76eae9f/IMG_2747.jpg'
 tags: ['vscode', 'plugin']
-category: 'STUDY'
+category: '研习'
 draft: false
 ---
 
