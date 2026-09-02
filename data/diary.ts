@@ -26,6 +26,20 @@ export interface DiaryItem {
 const diaryData: DiaryItem[] = [
 	{
 		id: 1,
+		content: "刚刚发现一个有意思的动画，所以看了，评价是观点不合，有病先治病。《记忆管理局》<br>有一说一，作画感觉挺好的，音乐也不错（虽然和画面匹配不咋样），主要是思想没有什么新意，描述的想法感觉太单薄了。一如既往的童年老大哥，一如既往的校园暴力，一如既往的原生家庭。大陆的创伤都是千篇一律吗。。<br>有一说一，因为我在这里，所以我可以说，如果有问题是自己没有办法解决的，为什么不去别的没有这个问题的地方来发展呢。世界没有想象中那么宽大，但是也不至于把一个人钉死在原地那么狭小。有问题，那么就解决它，解决不了那么就远离它，等自己成长到可以面对它的时候再来解决就好。<br>人的意义因为自己存在在这里，所以已经存在。而自己所拥有的不是过去，不是未来，而是实实在在在被自己创造的现在。与其蹲在角落幻想着未来如何美好，拥有无数多种可能性，不如下定决心，面向自己，为了某种未来，承担起放弃掉其他未来可能性的责任，迈出自己现在的一步。这样，幻想才会来到现实。<br>总之，评价是，观点不合，建议有病先治。",
+		lang: "zh_CN",
+		translations: {
+			"en": {
+				content: "I just came across an interesting animated film, so I watched it. My verdict: I disagree with its views—if you're ill, get treatment first. Memory Management Bureau<br>To be fair, the animation looks quite good, and the music is nice too (although it doesn't match the visuals very well). The main problem is that its ideas are nothing new, and the concepts it presents feel too shallow. The same old overbearing older brother from childhood, the same old school bullying, the same old dysfunctional family of origin. Is trauma in mainland China always so formulaic?<br>To be fair, because I'm here, I can say this: if you have a problem you can't solve on your own, why not go somewhere else where that problem doesn't exist and build a life there? The world isn't as vast as we imagine, but it isn't so small that a person must remain nailed to the same spot forever. If there's a problem, solve it. If you can't solve it, distance yourself from it, and come back to deal with it once you've grown enough to face it.<br>The meaning of a person's life already exists simply because they exist here. What you possess is neither the past nor the future, but the present that you are actively creating. Instead of crouching in a corner fantasizing about how wonderful the future will be and imagining its countless possibilities, make a decision, face yourself, accept the responsibility of giving up other possible futures for the sake of one particular future, and take a step forward now. Only then can fantasy become reality.<br>In short, my verdict is that I disagree with its views, and I suggest getting treatment first if you're ill.",
+			},
+			"ja": {
+				content: "さっき面白そうなアニメを見つけたので観てみた。感想は、考え方が合わない。病んでいるなら、まず治療したほうがいい。『記憶管理局』<br>正直なところ、作画はかなり良いし、音楽も悪くない（映像との噛み合いはいまひとつだったけど）。ただ、根底にある思想には特に目新しさがなく、描かれている考え方もあまりに薄っぺらく感じた。相も変わらず幼少期のガキ大将、相も変わらずの校内暴力、相も変わらずの生まれ育った家庭。中国大陸におけるトラウマは、どれも判で押したように同じなのだろうか。。<br>正直なところ、自分が今ここにいるからこそ言えるのだが、自分では解決できない問題があるのなら、なぜその問題のない別の場所へ行って成長しようとしないのだろう。世界は想像するほど広大ではないが、かといって一人の人間をその場に釘付けにするほど狭くもない。問題があるなら解決すればいい。解決できないなら距離を置き、自分が成長して向き合えるようになったときに、改めて解決すればいい。<br>人の存在意義は、自分がここに存在しているというだけで、すでにそこにある。そして自分が持っているのは過去でも未来でもなく、自分自身の手で実際に創り出している現在だ。隅にうずくまって、未来がどれほど素晴らしく、無数の可能性に満ちているかを空想するよりも、覚悟を決めて自分自身と向き合い、ある一つの未来のために、ほかの未来の可能性を手放す責任を引き受け、今この瞬間に一歩を踏み出したほうがいい。そうして初めて、空想は現実になる。<br>要するに、感想は、考え方が合わない。病んでいるなら、まず治療することを勧める。",
+			},
+		},
+		date: "2026-09-02T15:19:00.000Z",
+	},
+	{
+		id: 2,
 		content: "真紅、お誕生日おめでとう🎂\n\nこれからの1年も幸せでありますように🥰\n\nホットケーキだよー🥞",
 		lang: "zh_CN",
 		translations: {
@@ -44,7 +58,7 @@ const diaryData: DiaryItem[] = [
 		],
 	},
 	{
-		id: 2,
+		id: 3,
 		content: "和真红的海边散步～\n\n个人第一幅画了XD",
 		lang: "zh_CN",
 		translations: {
@@ -61,7 +75,7 @@ const diaryData: DiaryItem[] = [
 		],
 	},
 	{
-		id: 3,
+		id: 4,
 		content: "仔细想想，现在的我应该才算是真正开始探索自我的下一步吧。我是谁，到我可以是谁，到我应该是谁；从脑内到思考，到行动的渴望，到溢出的开始改变的现实，我开始深刻感受到我这个存在。",
 		lang: "zh_CN",
 		translations: {
@@ -75,7 +89,7 @@ const diaryData: DiaryItem[] = [
 		date: "2026-06-14T17:39:00.000Z",
 	},
 	{
-		id: 4,
+		id: 5,
 		content: "有一说一，最近开始学习区块链，没想到反而感觉更类似于当时打acm的时候学习的状态了。secp256k1要补各种数学知识和推论，再实际看ethers的实现的时候，结果又发现了熟悉的竞赛风味的代码（也是非常愉悦的了😊\n\n话说我本来以为会是学习java框架的那种感觉，现在想来从钱包这个主体来学，可能是个不错的选择。",
 		lang: "zh_CN",
 		translations: {
@@ -92,7 +106,7 @@ const diaryData: DiaryItem[] = [
 		],
 	},
 	{
-		id: 5,
+		id: 6,
 		content: "最近我稍微意识到了一点增量意识和存量意识的差别，虽然稳定的工资可以提供一份稳定的收入，但是这也会诱导人的思考局限在了这份开销水平之类。稳定的收入更应该作为一份心态的稳定剂，而不应该为此而把自己的行动边境就此限制。当今这个泡沫时代，依然还是有很多热钱可以赚到的，没有道理因为手上的一份收入就丢掉另一份。",
 		lang: "zh_CN",
 		translations: {
@@ -106,7 +120,7 @@ const diaryData: DiaryItem[] = [
 		date: "2026-04-03T16:29:00.000Z",
 	},
 	{
-		id: 6,
+		id: 7,
 		content: "到达！\nねり真可爱",
 		lang: "zh_CN",
 		translations: {
@@ -124,7 +138,7 @@ const diaryData: DiaryItem[] = [
 		],
 	},
 	{
-		id: 7,
+		id: 8,
 		content: "正式搬到mizuki来了😊",
 		lang: "zh_CN",
 		translations: {
