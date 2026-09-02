@@ -5,60 +5,60 @@ updated: 2026-06-27
 description: 'Guide to EOA/HD key derivation, EIP-1559 transactions, SIWE/EIP-191/EIP-712 signing, and ethers.js verification and broadcasting examples.'
 image: 'https://r2.dreaife.tokyo/notion/covers/38c5465cca1780e5bf80d0662451b860/ai-generated-1782646843083.png'
 tags: ['wallet', 'web3', 'transaction']
-category: 'EXPLORE'
+category: '开荒'
 draft: false
 lang: 'en'
 ---
 
-Before reading, please note that this article represents only the author's personal views.
+A note before reading: this article represents only the author's personal views.
 
 ========
 
-As the account through which users interact with the real world and the web3 world, a wallet can arguably be considered a gateway to exploring web3—at least in my personal understanding. Based on this idea, this exploration focuses on wallets themselves and examines the basic actions a wallet can perform on-chain. Here is the project demo page: [https://evm-wallet.block.dreaifehebi.com/](https://evm-wallet.block.dreaifehebi.com/)
+As the account through which users interact with the real world and Web3, a wallet can be considered the gateway to exploring Web3—at least in my understanding. Based on this idea, this exploration focuses on the wallet itself and examines the basic actions a wallet can perform on-chain. Here is the project demo page: [https://evm-wallet.block.dreaifehebi.com/](https://evm-wallet.block.dreaifehebi.com/)
 
 ::github{repo="dreaifeHebi/evm-eoa-wallet-demo"}
 
 # Wallet Creation and Its Scope of Actions
 
-## Wallet Creation and Import
+## Creating and Importing a Wallet
 
 - Creating a wallet
 
-	Generally speaking, any random number within \[1,n) can serve as a valid wallet private key. The wallet address calculated by applying keccak256 to the public key obtained from d\*G represents the wallet associated with that private key on the blockchain. In other words, the wallet theoretically already exists on the blockchain. Once you create a private key corresponding to that address, you can activate and use it as its owner, provided nobody else has already used it.
+	In general, any random number within \[1,n) can serve as a valid wallet private key. The public key obtained from d\*G is processed with keccak256 to derive a wallet address, which represents the existence of that private key on the blockchain. In other words, wallets theoretically already exist on the blockchain. Once you create a private key corresponding to one of these addresses, you can activate and use it as its owner—provided that nobody else is already using it.
 
-	However, having to generate a random number every time you want to create a wallet is rather inconvenient, and memorizing a random 16-digit large number is hardly practical. Is there a simpler way to create multiple wallets following a consistent pattern while allowing all of them to be restored at once using a single, easy-to-remember piece of information? This is where the HD wallet, or Hierarchical Deterministic Wallet, comes in. It is also what is commonly known today as a mnemonic wallet.
+	However, generating a wallet by creating a new random number each time is rather inconvenient, and remembering a random 16-digit large number is not exactly easy. Is there a simpler way to create multiple wallets following a consistent pattern while allowing all of them to be recovered at once using a single, memorable piece of information? This is where HD wallets—Hierarchical Deterministic Wallets—come in. They are also what we commonly refer to today as mnemonic wallets.
 
-	It uses BIP-39 to generate a mnemonic phrase and its seed, derives m from the seed through BIP-32, and finally uses BIP-44 to generate wallets in bulk according to the m/44‘/60’/acc‘/0/i format.
+	They use BIP-39 to generate a mnemonic phrase and its seed, BIP-32 to derive the master key m from that seed, and finally BIP-44 to derive wallets in batches using a path in the format m/44‘/60’/acc‘/0/i.
 
-- Restoring/importing a wallet
+- Recovering/importing a wallet
 
-	For an ordinary wallet, you only need to remember the string of private-key characters beginning with 0x to restore it—assuming you have an extraordinary memory.
+	For an ordinary wallet, you only need to remember the private key beginning with 0x to recover it—assuming you have an extraordinary memory.
 
-	For the more commonly used HD wallet, frequently used addresses are restored by following the derivation process described above. The process can continue seamlessly after generating the mnemonic phrase through BIP-39.
+	For the more commonly used HD wallet, frequently used addresses are recovered by following the derivation process described above. The process continues seamlessly from the mnemonic phrase generated through BIP-39.
 
 ## Verification and Transactions
 
-If wallet-initiated actions are categorized according to whether they can directly change on-chain state, they can roughly be divided into verification and transactions.
+If wallet actions are categorized according to whether they can directly change on-chain state, they can roughly be divided into verification and transactions.
 
 - Verification
 
-	Verification, as the name suggests and as described in a previous blog post, involves signing an EIP-191 message—usually in SIWE format—so that the service receiving the signature can verify ownership of the wallet.
+	As the name suggests, verification works as described in my previous blog post: the wallet signs an EIP-191 message, usually in SIWE format, allowing the service receiving the signature to verify ownership of the wallet.
 
 	::site{url="https://dreaife.tokyo/evm-wallet-login/"}
 
-	Of course, if a wallet could only perform simple operations such as signing messages, its capabilities would be far too limited. This is why EIP-712 was introduced.
+	Of course, if a wallet could only perform simple operations such as signing messages, the range of things it could do would be rather limited. This led to the introduction of EIP-712.
 
-	By defining a commonly agreed-upon set of signed fields, users can authorize a DApp or another service through a signature alone to initiate a transaction and invoke an on-chain smart contract that executes the signed instructions. This allows users to control their on-chain assets more conveniently.
+	By defining a mutually understood set of signed fields, users can authorize a DApp or another service through a signature alone. That service can then initiate a transaction that calls an on-chain smart contract to execute the signed intent, making it more convenient for users to control their on-chain assets.
 
-	There are also protocols such as EIP-7702 that give EOA wallets capabilities similar to contract wallets. However, since the main focus here is on EOA wallets, I did not explore that topic in depth.
+	There are also protocols such as EIP-7702 that give EOA wallets capabilities close to those of contract wallets. However, because the main focus here is ordinary EOA wallet functionality, I did not explore that topic in depth.
 
 - Transactions
 
-	A transaction is the basic way for a wallet to actively change on-chain state. It usually contains fields such as to｜value｜data｜nonce｜gas｜chainId. By controlling these fields, a wallet can initiate transactions that perform basic operations such as transferring assets, calling contracts, and deploying contracts.
+	A transaction is the basic mechanism through which a wallet actively changes on-chain state. It generally contains fields such as to｜value｜data｜nonce｜gas｜chainId. By controlling these fields, a wallet can initiate transactions that perform basic operations such as transferring funds, calling contracts, and deploying contracts.
 
 # Creating an HD Wallet
 
-This section explains how the most commonly used type of wallet today—the HD wallet—generates a mnemonic phrase for an Ethereum wallet and derives from it $2^{31}*2^{31}$ possible wallet private keys—the $2^{31}$ possibilities from hardened account derivation multiplied by the $2^{31}$ possibilities from non-hardened address_index derivation.
+This section explains how the most commonly used HD wallets generate mnemonic phrases for Ethereum wallets and derive up to $2^{31}*2^{31}$ possible wallet private keys—the $2^{31}$ possibilities from hardened account derivation multiplied by the $2^{31}$ possibilities from non-hardened address_index derivation.
 
 ## HD Wallet Private-Key Creation Process
 
@@ -66,57 +66,57 @@ The process from generating a mnemonic phrase to deriving a private key that can
 
 - BIP-39 generates the mnemonic phrase and seed
 - BIP-32 derives the master key m from the seed
-- BIP-44 specifies a derivation rule for Ethereum in the form m/44’/60’/account’/0/i, deterministically deriving a private key from account and i
+- BIP-44 defines the m/44’/60’/account’/0/i derivation rule used by Ethereum, deterministically deriving a private key from account and i
 
-Each step is described in detail below.
+Each step is explained in detail below.
 
 ## Generating the Mnemonic Phrase and Seed
 
-Generating the mnemonic phrase
+Generating the mnemonic phrase:
 
 - Generate random entropy
 
-	When BIP-39 generates a mnemonic phrase, it first generates a random number of 128, 160, 192, 224, or 256 bits.
+	When generating a mnemonic phrase, BIP-39 first generates a random number containing 128/160/192/224/256 bits.
 
-	These correspond to mnemonic phrases containing 12, 15, 18, 21, or 24 words, respectively. Here, we use 256-bit entropy, which produces a 24-word mnemonic phrase, as an example.
+	These sizes correspond to mnemonic phrases containing 12/15/18/21/24 words, respectively. Here, we use 256-bit entropy, which produces a 24-word mnemonic phrase, as an example.
 
-- Apply SHA-256 to the entropy to obtain a new 256-bit number
+- Calculate SHA-256 over the entropy to obtain a new 256-bit number
 - Take a checksum of length ENT/32
 
-	In other words, first calculate the checksum of the SHA-256 result, and then take the first ENT/32 bits of that checksum. For a 256-bit random number, this means taking the first 8 bits of the checksum.
+	In other words, first calculate the checksum from the SHA-256 result, and then take the first ENT/32 bits of that checksum. For a 256-bit random number, this means taking the first 8 bits of the checksum.
 
 - Concatenate the entropy and checksum to obtain a 256-bit + 8-bit, or 264-bit, number
-- Divide this data into 11-bit groups, producing 264/11 = 24 groups, which is why 256-bit entropy corresponds to a 24-word mnemonic phrase
+- Divide this data into 11-bit groups, producing 264/11 = 24 groups; this is why 256-bit entropy corresponds to a 24-word mnemonic phrase
 - For each group, select the corresponding word from the BIP-39 wordlist containing 2048 ($2^{11}$) words
-- The resulting 24 words form the mnemonic phrase commonly used in an HD wallet
+- The resulting 24 words form the mnemonic phrase normally used by an HD wallet
 
-Next comes the generation of the seed from the mnemonic phrase.
+Next comes the conversion from the mnemonic phrase to the seed.
 
-A 512-bit seed is calculated using PBKDF2-HMAC-SHA512. The specific calculation is as follows:
+PBKDF2-HMAC-SHA512 is used to calculate a 512-bit seed. The calculation is as follows:
 
 $PBKDF2-HMAC-SHA512(password=mnemonic ,salt="mnemonic"+password,iteration=2048,dkLen=64bytes)$
 
-The mnemonic phrase, converted into a UTF-8 byte stream, is used as the password. The salt is “mnemonic” + password, and HMAC-SHA512 is performed for 2048 iterations. The first value, U1, is calculated from the mnemonic phrase, password, and block_index (U1=HMAC(password,salt \|\| INT(block_index))). Starting with U2, each HMAC-SHA512 calculation uses the previously calculated $U_{i-1}$ as its key (U2=HMAC(password, U1)).
+The UTF-8 byte stream of the mnemonic phrase is used as the password, while the salt is “mnemonic” + password, and HMAC-SHA512 is performed for 2048 iterations. The first value, U1, is calculated from the mnemonic phrase, password, and block_index (U1=HMAC(password,salt \|\| INT(block_index))). Starting from U2, each HMAC-SHA512 operation uses the previously calculated $U_{i-1}$ as its input (U2=HMAC(password, U1)).
 
-The final result for the first block is therefore result = U1 xor U2 xor … xor U2048. Because the 512-bit output already matches the required length of 64 bytes, only one block is needed. The resulting output is the seed generated according to BIP-39.
+The final result for the first block is result = U1 xor U2 xor … xor U2048. Because the 512-bit output already matches the required length of 64 bytes, only one block is needed. This result is the seed generated according to BIP-39.
 
 ## Deriving the Master Key m
 
-According to BIP-32, another round of HMAC-SHA512 is applied to the seed calculated above to obtain I, as follows:
+According to BIP-32, another HMAC-SHA512 operation is performed on the seed calculated above to obtain I:
 
 $I = HMAC-SHA512(key = \text{``Bitcoin seed''}, data = seed)$
 
-This produces a 512-bit value I, which can be divided into two 256-bit halves.
+This produces a 512-bit value I. It can be divided into two 256-bit halves.
 
-The left half, $I_L$, serves as the master private key, while the right half, $I_R$, serves as the master chain code.
+The left half, $I_L$, becomes the master private key, while the right half, $I_R$, becomes the master chain code.
 
-They are used in the next step of the BIP-44 derivation calculation.
+Both are used in the subsequent BIP-44 derivation calculations.
 
-## Deriving a Specific Key
+## Deriving a Specific Private Key
 
-Next, we examine how BIP-44 specifies the derivation of a particular key from the master key along the m/44’/60’/account’/0/i path using BIP-32.
+Next, we look at how BIP-44 specifies the derivation of a particular private key from the master key along the m/44’/60’/account’/0/i path using BIP-32.
 
-Since this begins to involve group operations on the secp256k1 elliptic curve, readers unfamiliar with the fundamentals are welcome to refer to my previous explanation and proof of the underlying principles (
+Because this starts to involve group operations on the secp256k1 elliptic curve, anyone unfamiliar with the fundamentals is welcome to read my previous explanation and proof (
 
 ::site{url="https://dreaife.tokyo/eoa-sign-verify/"}
 
@@ -124,64 +124,64 @@ Since this begins to involve group operations on the secp256k1 elliptic curve, r
 
 	First, let us explain what a derivation path actually is.
 
-	A derivation path can be understood as a tree rooted at the master key m with a depth of six levels, where each level contains $2^{32}$ possible values. However, only half of those values—$2^{31}$—are generally used. Whether the number i at a given level is used directly as i (\[0,$2^{31}$)) or as i‘=i+$2^{31}$ is determined by whether the apostrophe in the upper-right corner marks that level as hardened.
+	A derivation path can be understood as a six-level tree rooted at the master key m, with $2^{32}$ possible indices at each level. In practice, only half of them—$2^{31}$ indices—are generally used. Whether an index is interpreted directly as i (\[0,$2^{31}$)) or as i‘=i+$2^{31}$ depends on the hardened marker ‘ displayed after the number at that level.
 
-	The hardened marker also affects the method used to derive child nodes.
+	The hardened marker also affects how child nodes are calculated.
 
-	For the five levels following m—44’/60’/account’/0/i—the meaning of each level is:
+	The five levels following m in 44’/60’/account’/0/i have the following meanings:
 
-	- 44‘: The purpose specified by BIP-44
-	- 60’: The coin type used for Ethereum
-	- account‘: The account number selected during derivation
-	- 0: The external chain, generally used for ordinary receiving addresses
-	- i: The ith address for each account
+	- 44‘: the purpose defined by BIP-44
+	- 60’: the coin type used for Ethereum
+	- account‘: the account number selected during derivation
+	- 0: the external chain, generally used for ordinary receiving addresses
+	- i: the ith address under each account
 - Non-hardened child-node calculation
 
-	For the number i of a child node at a given level, the child node's I can be calculated from the parent node's private key IL, referred to below as pPk, and chain code IR, referred to below as pCc, using the following equation:
+	For the index i of a child node at a given level, the child value I can be calculated from the parent node's private key IL, referred to below as pPk, and its chain code IR, referred to below as pCc, using the following formula:
 
 	$$
 	
 	$$
 
-	Here, $serP(pPk*G)$ means 0x02/0x03 \|\| (pPk\*G)_x. pPk\*G is the parent node's public key, and whether 0x02 or 0x03 is used depends on whether the calculated parent public key's y or p-y value modulo p is odd or even.
+	Here, $serP(pPk*G)$ means 0x02/0x03 \|\| (pPk\*G)_x. pPk\*G is the parent node's public key, and whether 0x02 or 0x03 is used depends on whether the y or p-y value of the calculated parent public key (mod p) is odd or even.
 
-	The resulting I is likewise divided into left and right halves, IL and IR, each 256 bits long.
+	The resulting I is again divided into left and right 256-bit halves, IL and IR.
 
-	The child private key of this child node is (IL+parent private key) mod n.
+	The child private key is then (IL+parent private key) mod n.
 
 	The child chain code is IR.
 
 - Hardened child-node calculation
 
-	For the number i’ of a child node at a given level, the child node's I can be calculated from the parent node's private key IL, referred to below as pPk, and chain code IR, referred to below as pCc, using the following equation:
+	For the index i’ of a child node at a given level, the child value I can be calculated from the parent node's private key IL, referred to below as pPk, and its chain code IR, referred to below as pCc, using the following formula:
 
 	$$
 	
 	$$
 
-	Here, 0x00 means that the private key pPk is used directly, so there is no longer any need to determine the parity of the public key's y-coordinate.
+	Here, 0x00 means that the private key pPk is used directly, so there is no longer any need to determine whether the public key's y coordinate is odd or even.
 
-	The resulting I is likewise divided into left and right halves, IL and IR, each 256 bits long.
+	The resulting I is again divided into left and right 256-bit halves, IL and IR.
 
-	The child private key of this child node is `(IL+parent private key) mod n`.
+	The child private key is then `(IL+parent private key) mod n`.
 
 	The child chain code is `IR`.
 
-- The final private key
+- The resulting private key
 
-	By deriving one level at a time along m/44’/60’/account’/0/i, the process eventually reaches the leaf node at address_index i. The child private key calculated for this selected node is the private key d for that account address. Its actual account address can be obtained by applying the usual keccak256 calculation to the private key's public key d\*G and taking the last 20 bytes.
+	By deriving each level along m/44’/60’/account’/0/i, we eventually reach the leaf node at address_index i. The child private key calculated for this selected node is the private key d of that account address. Its actual account address can be obtained through the ordinary process of calculating d\*G, applying keccak256, and taking the final 20 bytes.
 
-	The address can also be converted from a regular address into a mixed-case address using the EIP-55 checksum. This makes it possible to verify that the address format is valid and detect string-format or input errors.
+	The address can also be converted into a mixed-case address using the EIP-55 checksum. This validates the address format and helps detect formatting or input errors.
 
-	> EIP-55 does not change the letters in an address; it only changes their capitalization according to the keccak256 result of that address. If the character at position i in the address is a-f and the corresponding character at position i in the keccak256 result is ≥8, it is capitalized. Otherwise, it remains unchanged.
+	> EIP-55 does not change the letters in an address. It only changes their capitalization according to the address's keccak256 result. If the character at position i is between a and f and the corresponding character in the keccak256 result is ≥8, it is converted to uppercase; otherwise, it remains unchanged.
 
 # Wallet Transactions
 
-A transaction can generally be divided into the transaction envelope and fee model that allow it to be included on-chain; the key parameters to, value, and data that make the transaction's intended behavior take effect; and validation parameters such as nonce and chainId.
+A transaction can generally be divided into the transaction envelope and fee model required to put it on-chain, the key parameters to / value / data that make the transaction's behavior take effect, and verification parameters such as nonce/chainId.
 
 ## Transaction Structure
 
-The internal structure of an ordinary EIP-1559/type 2 transaction is roughly as follows:
+An ordinary EIP-1559/type 2 transaction has roughly the following internal structure:
 
 ```javascript
 type: 0x02
@@ -204,7 +204,7 @@ signatureR
 signatureS
 ```
 
-This is only a list of properties. An unsigned transaction generally looks more like JSON:
+This is only a list of properties. An unsigned transaction generally resembles JSON more closely:
 
 ```javascript
 {
@@ -219,9 +219,9 @@ This is only a list of properties. An unsigned transaction generally looks more 
 }
 ```
 
-After signing, r/s/v values are produced just as they are when signing for verification, and they are appended to the end of the JSON above.
+After signing, it produces r/s/v values just like a verification signature, which are then appended to the end of the JSON shown above.
 
-The transaction contents and signature are then encoded into a byte string according to the following structure, producing a raw signed transaction. The encoded transaction can then be sent to an RPC endpoint for broadcasting and eventual inclusion on-chain.
+The transaction content and signature are then encoded into a byte sequence according to the following structure, producing a raw signed transaction. The encoded transaction can be sent to an RPC endpoint for broadcasting and eventual inclusion on-chain.
 
 ```javascript
 0x02 || rlp([
@@ -240,21 +240,21 @@ The transaction contents and signature are then encoded into a byte string accor
 ])
 ```
 
-Each field serves the following purpose:
+Each field has the following purpose:
 
-- chainId: Prevents the same transaction from being replayed on another chain
-- nonce: The account's transaction sequence number. It prevents the same transaction from being executed repeatedly and also determines transaction order. Note that this nonce belongs to the operating wallet on the current chain, and each new transaction's nonce must increase by 1 from the previous transaction's nonce
-- to: The destination address; if empty, the transaction deploys a contract
-- value: The amount of native currency sent with the transaction
-- data/input: The calldata for a contract call, or the init code when deploying a contract
-- gasLimit: The maximum amount of gas that the transaction is allowed to consume
-- maxFeePerGas: The maximum price per unit of gas the user is willing to pay
-- maxPriorityFeePerGas: The maximum tip paid to the validator/proposer
-- signature: The EOA wallet's signature over the transaction contents
+- chainId: prevents the same transaction from being replayed on another chain
+- nonce: the account's transaction sequence number, which prevents the same transaction from being executed repeatedly and determines transaction order. Note that this nonce belongs to the operating wallet on the current chain and must increment by 1 from the previous transaction's nonce
+- to: the destination address; an empty value indicates contract deployment
+- value: the amount of native currency sent with the transaction
+- data/input: the calldata for a contract call, or the init code when deploying a contract
+- gasLimit: the maximum amount of gas the transaction is allowed to consume
+- maxFeePerGas: the highest per-gas price the user is willing to pay
+- maxPriorityFeePerGas: the maximum tip paid to the validator/proposer
+- signature: the EOA wallet's signature over the transaction content
 
 ## Fee Models
 
-The fee models can generally be divided into the following types:
+The fee models are generally divided into the following types:
 
 <table>
 <colgroup>
@@ -265,7 +265,7 @@ The fee models can generally be divided into the following types:
 <tr>
 <td>Type</td>
 <td>Name</td>
-<td>Key Point</td>
+<td>Key points</td>
 </tr>
 <tr>
 <td>legacy / commonly called type 0</td>
@@ -275,7 +275,7 @@ The fee models can generally be divided into the following types:
 <tr>
 <td>type 1</td>
 <td>EIP-2930 access list</td>
-<td>Legacy gasPrice fee model, with an additional accessList</td>
+<td>Legacy gasPrice fee model with an additional accessList</td>
 </tr>
 <tr>
 <td>type 2</td>
@@ -285,20 +285,20 @@ The fee models can generally be divided into the following types:
 <tr>
 <td>type 3</td>
 <td>EIP-4844 blob tx</td>
-<td>Sends blob data to a rollup, with additional maxFeePerBlobGas and blobVersionedHashes fields</td>
+<td>Sends blob data for rollups, with additional maxFeePerBlobGas and blobVersionedHashes fields</td>
 </tr>
 <tr>
 <td>type 4</td>
 <td>EIP-7702 set-code tx</td>
-<td>Allows an EOA to set delegation code through authorizationList, giving it capabilities similar to a contract account</td>
+<td>Allows an EOA to set delegation code through authorizationList, giving it capabilities close to those of a contract account</td>
 </tr>
 </table>
 
-Since the main focus here is on basic transactions that are commonly used today, the structure above is based on type 2.
+Because this article primarily considers the basic transactions commonly used today, the structure above is based on type 2 transactions.
 
-## The Lifecycle of a Transaction
+## Transaction Lifecycle
 
-A transaction is generally constructed and signed while invoking an application or within a wallet. The completed transaction is then sent to an RPC endpoint, which broadcasts it for inclusion on-chain. The overall process is roughly as follows:
+A transaction is generally constructed and signed while interacting with an application or directly inside a wallet. The completed transaction is then sent to an RPC endpoint for broadcasting and inclusion on-chain. The approximate process is as follows:
 
 ```mermaid
 flowchart TD
@@ -339,19 +339,19 @@ flowchart TD
 
 # Wallet Verification
 
-As mentioned in the introduction, besides transactions that can be submitted directly on-chain, wallets can also perform verification actions that do not directly go on-chain.
+As mentioned in the introduction, in addition to transactions that are submitted directly on-chain, a wallet can also perform verification actions that do not go directly on-chain.
 
-## Standard Wallet Ownership Verification with SIWE
+## Ordinary Wallet-Ownership Verification Using the SIWE Standard
 
-This is how a wallet proves to a service that the user controls it. For details, refer to the blog post linked above (
+This allows a wallet to prove to a service that the user controls it. For details, refer to the blog post linked above (
 
 ::site{url="https://dreaife.tokyo/evm-wallet-login/"}
 
-## EIP-712: Verification That Can Authorize Contracts
+## EIP-712: Verification That Can Authorize a Contract
 
-EIP-712 is a form of authorization verification through which the signer expresses consent to the signed EIP-712 contents. It is more similar to the signature in a transaction: the user signs parameters intended for a contract call, allowing the contract—if it supports this type of authorization—to operate on assets belonging to the user. Of course, it is still only a signature. To make the signed content change on-chain state, the service must combine the signature with the call data into a transaction and submit it to the contract targeted by the signature.
+EIP-712 is a form of authorization verification in which the signer agrees to the contents of an EIP-712 message. It resembles a transaction signature: the user signs parameters intended for a contract call, authorizing the contract—if it supports this kind of authorization—to operate assets belonging to the user. Of course, this is still only a signature. To make the signed content change on-chain state, the service must combine the signature and call data into a transaction and send it to the contract targeted by the signature.
 
-- Signature contents
+- Signature content
 
 	The signed content generally follows this format:
 
@@ -389,32 +389,32 @@ EIP-712 is a form of authorization verification through which the signer express
 	}
 	```
 
-	Here, types defines the data structures; primaryType specifies the primary structure being signed, such as Permit, Order, Forward, or Request; domain defines the scope in which the signature applies; and message contains the content that the user actually authorizes.
+	Here, types defines the data structures; primaryType specifies the primary structure being signed, such as Permit, Order, Forward, or Request; domain defines the scope in which the signature is valid; and message contains the actual authorization granted by the user.
 
-- The process from creating to using an EIP-712 signature
+- The process from an EIP-712 signature to its use
 
-	For example, with a Permit-type EIP-712 signature, the owner signs an authorization allowing the spender address to spend value tokens until the deadline, using nonce n. This authorization is returned to the DApp as a signature. The DApp then initiates a transaction using the authorization and its contents: permit( owner, spender, value, deadline, v, r, s). After the contract verifies that the signature matches the signed content, it applies the changes specified by the authorization.
+	For example, with a Permit-style EIP-712 signature, the owner signs an authorization allowing the spender address to spend a specified value of tokens until the deadline, using nonce n. This authorization is returned to the DApp as a signature. The DApp then initiates a transaction containing the authorization and its data through permit( owner, spender, value, deadline, v, r, s). After the contract verifies that the signature matches the signed content, it applies the change specified by the authorization.
 
-	The specific process is as follows:
+	The complete process is as follows:
 
-	1. The protocol/contract first defines the signable structure<br>Permit(owner, spender, value, nonce, deadline)
-	2. The DApp constructs the EIP-712 typed data<br>Including types, domain, primaryType, and message
-	3. The wallet displays the signature contents<br>The user can see which DApp, chain, and contract are involved, as well as what is being authorized
-	4. After the user confirms, the EOA private key signs the data<br>The wallet calculates the digest:<br>keccak256("\\x19\\x01" \|\| domainSeparator \|\| hashStruct(message))<br>It then produces r/s/v
-	5. The wallet returns the signature to the DApp/service<br>At this point, nothing has gone on-chain, no gas has been consumed, and no state has changed
-	6. The DApp/relayer/another party constructs a transaction<br>It passes the fields in message together with the signature to the contract
-	7. The contract reconstructs the same digest on-chain<br>It then recovers the signer using ecrecover / ECDSA.recover
-	8. The contract checks whether the signature is valid<br>Whether signer equals owner<br>Whether nonce has not been used<br>Whether deadline has not expired<br>Whether chainId / verifyingContract / domain match
-	9. After the checks pass, the contract executes the state change<br>For example, setting an allowance, filling an order, or executing a meta transaction
-	10. The nonce is consumed<br>This prevents the same signature from being reused
+	1. The protocol/contract first defines a signable structure<br>Permit(owner, spender, value, nonce, deadline)
+	2. The DApp constructs the EIP-712 typed data<br>including types, domain, primaryType, and message
+	3. The wallet displays the signature content<br>the user can see which DApp, chain, and contract are involved, as well as what is being authorized
+	4. After the user confirms, the EOA private key signs it<br>the wallet calculates the digest:<br>keccak256("\\x19\\x01" \|\| domainSeparator \|\| hashStruct(message))<br>and then produces r/s/v
+	5. The wallet returns the signature to the DApp/service<br>nothing has been submitted on-chain yet, no gas has been consumed, and no state has changed
+	6. The DApp/relayer/another party constructs a transaction<br>passing the fields from message together with the signature to the contract
+	7. The contract reconstructs the same digest on-chain<br>and uses ecrecover / ECDSA.recover to recover the signer
+	8. The contract checks whether the signature is valid<br>whether signer equals owner<br>whether the nonce has not already been used<br>whether the deadline has not passed<br>whether chainId / verifyingContract / domain match
+	9. Once the checks pass, the contract changes state<br>for example, setting an allowance, filling an order, or executing a meta-transaction
+	10. The nonce is consumed<br>preventing the same signature from being reused
 
 # Implementation in Code
 
-This implementation primarily uses ethers.js for imports and calls. To be honest, this library is genuinely pleasant to work with—all the bitwise operations make me feel like I am back in my competitive programming days, lol.
+The implementation primarily uses ethers.js for imports and calls. Honestly, this library feels really pleasant to use; all the bitwise operations made me feel like I was back in my programming-contest days lol.
 
-## EOA/HD Wallet
+## EOA/HD Wallets
 
-For wallet creation, the current implementation follows the default behavior of mainstream wallets and the ethers library by using the first address under the first account. The implementation is shown below. It uses the path m/44‘/60’/0‘/0/0 and primarily relies on ethers Wallet methods: createRandom for creation and direct new/HDNodeWallet.fromPhrase calls for importing.
+For wallet creation, the current implementation follows the defaults used by mainstream wallets and the ethers library: it selects the first address under the first account. Specifically, it uses the path m/44‘/60’/0‘/0/0 and primarily relies on ethers' Wallet class—using createRandom to create a wallet, direct construction to import one, and HDNodeWallet.fromPhrase to import a mnemonic phrase.
 
 ```javascript
 const DEFAULT_DERIVATION_PATH = "m/44'/60'/0'/0/0";
@@ -463,7 +463,7 @@ function verifyMessage() {
 
 ## EIP-712 Signatures
 
-- Constructing and verifying the signed content
+- Constructing and verifying the signature content
 
 	```javascript
 	const typedDomain = {
@@ -544,7 +544,7 @@ function verifyMessage() {
 	}
 	```
 
-- Broadcasting the transaction
+- Broadcasting a transaction
 
 	```javascript
 	async function broadcastTransaction() {
@@ -565,6 +565,6 @@ function verifyMessage() {
 
 # Summary
 
-This blog post has roughly reviewed today's commonly used HD wallets from a wallet-centric perspective, along with the signature verification and transaction mechanisms they commonly use both on-chain and off-chain.
+This blog post has provided a general overview, from the wallet's perspective, of today's commonly used HD wallets and the signature-verification and transaction operations they commonly perform both on-chain and off-chain.
 
-To be honest, I originally planned to have the overall structure figured out and start writing around the 15th or 16th. However, I was suddenly struck by a strong urge to draw, so I spent more than four days creating my first painting and took a bit of a break along the way XD. Fortunately, the experience gave me another round of mental training, and I suppose gaining a clearer view of reality counts as progress too (
+Honestly, I had originally planned to understand the overall structure and write this around the 15th or 16th. However, I was suddenly overwhelmed by a strong urge to draw, so I spent more than four days creating my first painting and took a short break along the way XD. Fortunately, it also gave me another round of mental training and helped me see reality more clearly, so I suppose I still made some progress (

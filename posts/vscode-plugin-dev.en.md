@@ -5,24 +5,24 @@ updated: 2025-03-13
 description: 'Create a VS Code extension with Yeoman, then learn package.json, activationEvents, extension.ts, debugging, vsce packaging, and publishing.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1b55465cca17808d8be3e99dd76eae9f/IMG_2747.jpg'
 tags: ['vscode', 'plugin']
-category: 'STUDY'
+category: '研习'
 draft: false
 lang: 'en'
 ---
 
 # Development Environment
 
-1. Node.js
-2. VS Code
-3. Yeoman & generator-code
+1. Nodejs
+2. vscode
+3. Yeoman&generator-code
 
-	To conveniently generate the basic structure of an extension project, you can use Yeoman and the official extension generator provided by VS Code. Open a terminal and enter the following command to install them globally:
+	To conveniently generate the basic structure of an extension project, you can use Yeoman and the official extension generator provided by VSCode. Open a terminal and enter the following command to install them globally:
 
 	```bash
 	npm install -g yo generator-code
 	```
 
-# Initial Extension Framework
+# Initial Extension Scaffold
 
 ## Creating an Extension
 
@@ -32,12 +32,12 @@ yo code
 
 The generator will ask the following questions:
 
-	- **Select the extension type**: For example, “New Extension (TypeScript)” or “New Extension (JavaScript).”
+	- **Select an extension type**: For example, “New Extension (TypeScript)” or “New Extension (JavaScript)”.
 	- **Extension name and description**: Enter the desired extension name and description as prompted.
 	- **Git initialization**: Whether to initialize a Git repository.
 	- **Package manager**: Choose npm or yarn.
 
-Once generation is complete, you will have an initial scaffolded project structure.
+Once generation is complete, you will have an initially scaffolded project structure.
 
 ## Understanding the Structure
 
@@ -45,7 +45,7 @@ Open the generated project, and you will see several important files and directo
 
 - **`package.json`**
 
-	This file defines the extension’s basic information, dependencies, VS Code activation events, and command registrations.
+	This file defines the extension's basic information, dependencies, VSCode activation events, and command registrations.
 
 	For example:
 
@@ -85,7 +85,7 @@ Open the generated project, and you will see several important files and directo
 
 - **`src/extension.ts`**** (or ****`extension.js`****)**
 
-	This is the extension’s entry file. The code here runs when the extension is activated.
+	This is the extension's entry file. The code here runs when the extension is activated.
 
 	For example, here is a simple example:
 
@@ -107,43 +107,43 @@ Open the generated project, and you will see several important files and directo
 
 ## Running and Debugging
 
-- After opening the project, you will see a `Launch Extension` configuration in VS Code’s Run and Debug panel.
-- Press `F5`, and VS Code will launch a new Extension Development Host.
-- In the new window, open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`) and enter the registered command, such as “Hello World,” to test whether the extension works correctly.
+- After opening the project, you can find a `Launch Extension` configuration in VSCode's Run and Debug panel.
+- Press `F5`, and VSCode will launch a new Extension Development Host.
+- In the new window, open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`) and enter the registered command, such as “Hello World”, to test whether the extension works correctly.
 
 ## Publishing the Extension
 
 Once development and testing are complete, you can publish the extension to the [VSCode Marketplace](https://marketplace.visualstudio.com/vscode) for others to use:
 
-- Install the `vsce` tool to package and publish the extension:
+- Install the `vsce` tool to help package and publish the extension:
 
 	```bash
 	npm install -g vsce
 	```
 
-- Run the packaging command in the project root directory:
+- Run the packaging command in the project's root directory:
 
 	```bash
 	vsce package
 	```
 
-- Follow the [official documentation](https://code.visualstudio.com/api/working-with-extensions/publishing-extension) to complete the publishing process.
+- Follow the instructions in the [official documentation](https://code.visualstudio.com/api/working-with-extensions/publishing-extension) to complete the publishing process.
 
 # Extension Development
 
 ## Extension Activation
 
-VS Code extensions use the activationEvents array in package.json to define when an extension is activated. The main activation event types are listed below:
+VSCode extensions use the activationEvents array in package.json to define when they should be activated. The following are the main activation event types:
 
 ### **Common Activation Events**
 
 1.
 
-	- Activates the extension immediately when VS Code starts
+	- Activates the extension immediately when VSCode starts
 	- Advantage: The extension is always available
-	- Disadvantage: It affects VS Code startup performance and is not recommended for production environments
+	- Disadvantage: It affects VSCode's startup performance and is not recommended for production environments
 2. **onStartupFinished**
-	- Activates the extension after VS Code finishes starting
+	- Activates the extension after VSCode finishes starting
 	- Activates slightly later than \*, but has less impact on startup performance
 3. **onCommand:commandId**
 	- Activates the extension when the user executes a specific command

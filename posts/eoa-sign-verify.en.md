@@ -5,7 +5,7 @@ updated: 2026-06-10
 description: 'How secp256k1 math produces ECDSA r/s/v signatures and public-key recovery, enabling SIWE servers to verify EOA control without private keys.'
 image: 'https://r2.dreaife.tokyo/notion/covers/37b5465cca17804f8624caf756234df3/ai-generated-1781099535759.png'
 tags: ['wallet', 'theory', 'web3']
-category: 'EXPLORE'
+category: '开荒'
 draft: false
 lang: 'en'
 ---
@@ -14,13 +14,13 @@ The following represents only the author's current understanding.
 
 ========
 
-This is more or less a theoretical supplement to the [previous article](https://dreaife.tokyo/evm-wallet-login/). It essentially works through the process and theoretical proof of a signature verification, while also filling in some knowledge about groups (
+This is more or less a theoretical supplement to the [previous article](https://dreaife.tokyo/evm-wallet-login/). It essentially works through the process and theoretical proof of signature verification, while also filling in some gaps in my knowledge of group theory (
 
 ::site{url="https://dreaife.tokyo/evm-wallet-login"}
 
 # Prerequisites: secp256k1, Finite Fields, and Elliptic-Curve Point Operations
 
-Since this involves a great deal of modular arithmetic and elliptic-curve point operations, I have prepared some prerequisite material (and included what I learned along the way, lol). Of course, you can skip this section if you are already familiar with it.
+Because this involves a great deal of modular arithmetic and elliptic-curve point operations, I have prepared some prerequisite material (and included what I learned along the way, lol). Of course, you can skip it if you are already familiar with these concepts.
 
 <details>
 <summary>Prerequisites</summary>
@@ -47,13 +47,13 @@ $$
 
 In other words, the point coordinates are not ordinary real numbers, but integers modulo `p`: $x, y \in \mathbb{F}_p$
 
-The set of points on the curve is therefore: $E(\mathbb{F}_p) = \{(x,y) \mid y^2 \equiv x^3 + 7 \pmod p\} \cup \{O\}$
+Thus, the set of points on the curve is: $E(\mathbb{F}_p) = \{(x,y) \mid y^2 \equiv x^3 + 7 \pmod p\} \cup \{O\}$
 
 Here, `O` is the point at infinity, which can be understood as the identity element for point addition.
 
 ### 2. Point Addition on an Elliptic Curve
 
-A form of “addition” can be defined between elliptic-curve points:
+A form of “addition” can be defined between points on an elliptic curve:
 
 $$
 P + Q = R
@@ -79,7 +79,7 @@ $$
 \lambda \equiv \frac{y_2 - y_1}{x_2 - x_1} \pmod p
 $$
 
-Division here means division modulo `p`, which is multiplication by the modular inverse.
+Division here means division modulo `p`, which is equivalent to multiplication by a modular inverse.
 
 Then:
 
@@ -98,13 +98,13 @@ $$
 P + Q = (x_3, y_3)
 $$
 
-When `P = Q`, this is called point doubling:
+When `P = Q`, the operation is called point doubling:
 
 $$
 2P = P + P
 $$
 
-Tip: Note that the addition here is still elliptic-curve addition, not scalar-field addition.
+Tip: Note that the addition here is also elliptic-curve addition, not scalar-field addition.
 
 The slope is then:
 
@@ -150,13 +150,13 @@ Calculating the public key `Q` from the private key `d` is fast, but deriving th
 
 ### 4. The Base Point G and Order n
 
-`G` is the generator selected by the secp256k1 standard, also called the base point. Its order is `n`, meaning:
+`G` is the generator point selected by the secp256k1 standard, also known as the base point. Its order is `n`, meaning:
 
 $$
 [n]G = O
 $$
 
-and:
+Furthermore:
 
 $$
 \langle G \rangle = \{O, G, [2]G, [3]G, \ldots, [n-1]G\}
@@ -186,7 +186,7 @@ $$
 x, y \pmod p
 $$
 
-Coordinate calculations in point addition and point doubling are performed under `mod p`.
+All coordinate calculations in point addition and point doubling are performed under `mod p`.
 
 `n` is the order of the base point `G`:
 
@@ -194,14 +194,14 @@ $$
 [n]G = O
 $$
 
-Scalar calculations involving private keys, nonces, and signature values such as `r/s` are performed under `mod n`.
+Scalar calculations involving private keys, nonces, and signature values such as `r/s` are all performed under `mod n`.
 
-You can therefore remember it like this:
+You can therefore remember it this way:
 
 - Point-coordinate calculations: mod p
 - Scalar calculations: mod n
 
-Private keys in Ethereum wallets satisfy:
+A private key in an Ethereum wallet satisfies:
 
 $$
 1 \le d \le n-1
@@ -219,11 +219,11 @@ $$
 1 \le k \le n-1
 $$
 
-This structure provides the mathematical foundation for the ECDSA signature formulas, public-key recovery, and Ethereum address generation discussed below.
+This structure is the mathematical foundation for the ECDSA signing formula, public-key recovery, and Ethereum address generation discussed below.
 
 </details>
 
-Alternatively, you can also read my conversation with Gemini for additional context (to be fair, AI has accelerated learning quite a bit.
+Alternatively, you can also look at my conversation with Gemini for additional context (honestly, AI has made learning much faster
 
 ::site{url="https://gemini.google.com/share/f72d7ecbcf76"}
 
@@ -231,35 +231,35 @@ Alternatively, you can also read my conversation with Gemini for additional cont
 
 As described in the previous article, when an EOA wallet needs to prove ownership of an address, the following process takes place:
 
-1. A message conforming to SWIE is sent by the frontend to the wallet with a signature request.
-2. When the wallet receives such a signature request, it displays a prompt asking for the user’s approval.
-3. Once the user confirms, the wallet begins its signing process:
-	- First, it calculates a 32-byte hash $e$ of the SIWE message using keccak-256 for use in the subsequent calculations.
-	- Then, given the wallet’s private key $d$, the finite field $p$ of [secp256k1](https://www.secg.org/sec2-v2.pdf), its standard base point $G$, and the order $n$ of $G$, the wallet generates a random number $k$ within the range \[1,n-1\] for the subsequent verification calculations. (It is important to note that because only the values \[1,n-1\] within n are usable, non-repeating results, operations such as selecting points use mod n, while calculations over the overall secp256k1 range use its specified field p, i.e. mod p.)
-	- The resulting signature is actually the concatenation of the three calculated values $r/s/v$, containing 32 bytes, 32 bytes, and 1 byte respectively. Their calculations are:
+1. A SWIE-compliant message is sent by the frontend to the wallet with a signature request.
+2. When the wallet receives such a signature request, it displays a prompt asking for the user's approval.
+3. Once the user confirms, the wallet begins the signing process:
+	- First, the SIWE message is processed using keccak-256 to produce a 32-byte hash $e$ for the subsequent calculations.
+	- Next, given the wallet's private key $d$, the finite field $p$ of [secp256k1](https://www.secg.org/sec2-v2.pdf), its standard base point $G$, and the order $n$ of $G$, the wallet generates a random number $k$ within \[1,n-1\] for the subsequent verification calculations. Note that because only the values in \[1,n-1\] within n are usable, non-repeating results, calculations involving scalar selection and similar operations use mod n, while calculations over secp256k1 itself are performed within its defined field p, i.e. mod p.
+	- The final signature is actually the concatenation of the three calculated values $r/s/v$, containing 32 bytes, 32 bytes, and 1 byte respectively. They are calculated as follows:
 		- $R = kG = (R_{x}, R_{y})$
 		- $r = R_{x} \bmod n$
 		- $s = k^{-1} * (z + r * d) \bmod n$
-		- For a secp256k1 elliptic curve
+		- $v$ exists because, for a secp256k1 elliptic curve
 
 			$$
 			y^2 = x^3 + 7 \bmod p
 			$$
 
-			at $x=R_x$, besides the point at infinity $0$, there are two solutions symmetric across the x-axis. By providing 0 or 1, $v$ specifies the yParity that determines which solution should be selected. (For secp256k1, there is also a possibility that $r+n<p$, but because the probability is extremely small, the EVM does not account for recovering this case in practice.)
+			at $x=R_x$, apart from the point at infinity $0$, there are two solutions reflected across the x-axis. By providing 0 or 1, $v$ specifies the yParity that determines which solution should be selected. Of course, secp256k1 also permits the case where $r+n<p$, but because its probability is extremely low, the EVM does not account for this case during recovery in practice.
 
-	- This produces the final signature $r/s/v$ returned by the wallet to the server.
-4. The server then verifies the received $r/s/v$. At this point, the server knows the secp256k1 base point $G$, the SIWE message sent to the wallet and its keccak-256 hash $e$, and the signature $r/s/v$ returned by the wallet.
+	- This produces the final signature $r/s/v$, which the wallet returns to the server.
+4. The server then verifies the received $r/s/v`. At this point, the server knows the secp256k1 base point $G$, the SIWE message sent to the wallet and its keccak-256 hash $e$, and the signature $r/s/v$ returned by the wallet.
 5. The server then begins verification:
-	- The server now has $G$ / $e$ / $r$ / $s$ / $v$ and needs to determine whether the wallet address calculated from this data matches the wallet address originally received. From
+	- The server now has $G$ / $e$ / $r$ / $s$ / $v$. It needs to determine whether the wallet address calculated from these values matches the wallet address received at the beginning. According to
 
 		$$
 		address = keccak256(Q_x || Q_y)[12:32]
 		$$
 
-		(that is, the address consists of the final 20 bytes of the keccak-256 hash of the public key $Q$), we know that the current objective is to calculate the public key $Q$ from the available information.
+		(that is, the address consists of the final 20 bytes of the keccak-256 hash of the public key $Q$), the current goal is to calculate the public key $Q$ from the available information.
 
-	- In addition to the data above, we also know how $s$ was derived—an integer calculation in the scalar field:
+	- In addition to the data above, we also know how $s$ was derived through integer calculations in the scalar field:
 
 		$$
 		s = k^{-1} * (z + r * d) \bmod n
@@ -271,7 +271,7 @@ As described in the previous article, when an EOA wallet needs to prove ownershi
 		d = r^{-1} * (s*k - z) \bmod n
 		$$
 
-		We then enter the domain of elliptic-curve point operations and multiply both sides of the equation by the base point $G$:
+		We then move into the domain of elliptic-curve point operations and multiply both sides of the equation by the base point $G$:
 
 		$$
 		\begin{aligned}
@@ -280,22 +280,22 @@ As described in the previous article, when an EOA wallet needs to prove ownershi
 		\end{aligned}
 		$$
 
-		We also know that the public key $Q = dG$ and $R=kG$. Since we know $r=R_x$, we can recover $R$ using $v$. We can therefore transform the expression above into an equation for the public key $Q$ consisting entirely of known values:
+		We also know that the public key $Q = dG$ and $R=kG`. Since we know $r=R_x$, we can recover $R$ using $v$. We can therefore transform the expression above into an equation for the public key $Q$ that consists entirely of known values:
 
 		$$
 		Q = r^{-1}(sR - eG)
 		$$
 
-		This gives us the calculated public key $Q$ of the wallet that created the signature.
+		This gives us the calculated public key $Q$ of the wallet that produced the signature.
 
-	- We can then apply keccak-256 to the derived public key $Q$ and take the final 20 bytes to obtain the wallet address used for verification. This address is compared with the address provided earlier. If they match, control of the wallet can be verified using only the existing information, without knowing the private key $d$. Meanwhile, since $Q=dG \bmod n$ on the elliptic curve (under mod n), the result of $dG$—where d belongs to $n$, a large prime close to $2^{256}$—can be reached quickly through repeated addition. Deriving d from Q, however, is the elliptic-curve discrete logarithm problem on secp256k1. There is currently no practical algorithm capable of solving it with real-world resources: generic attacks have a complexity on the order of $2^{128}$, while thermodynamics suggests that even all the energy in the universe would be insufficient to perform $2^{256}$ computations, making the problem effectively unsolvable in engineering practice.
+	- We can then apply keccak-256 to the recovered public key $Q$ and take the final 20 bytes to obtain the wallet address used for verification. This address is compared with the address provided earlier. If they match, control of the wallet can be verified using only the available information, without knowing the private key $d$. At the same time, because $Q=dG \bmod n$ is an elliptic-curve operation (under mod n), the result of $dG$—where d is within $n$, a large prime close to $2^{256}$—can be reached quickly through repeated addition. Deriving d from Q, however, is the elliptic-curve discrete logarithm problem on secp256k1. There is currently no practical algorithm capable of solving it with realistic resources: generic attacks have a complexity of approximately $2^{128}$, while according to thermodynamics, even all the energy in the universe would be insufficient to perform $2^{256}$ computations. This makes the problem effectively unsolvable in engineering practice.
 
-		Tip: Actual EVM verification also validates fields within the SIWE message, such as domain/address/chainId. This section focuses primarily on the mathematical implementation, so those checks are omitted.
+		Tip: Actual EVM verification also validates fields such as domain/address/chainId within the SIWE message. This article mainly discusses the mathematical implementation, so those checks are omitted here.
 
-6. Thus, the server and wallet can confirm wallet ownership using only the signature, the SIWE message, and some defined mathematical information, without exposing the private key.
+6. In this way, the server and wallet can confirm wallet ownership using only the signature, the SIWE message, and some defined mathematical information, without exposing the private key.
 
 # Conclusion
 
-The above is roughly the mathematical proof behind wallet signing and verification. Although it may soon change in light of [Google’s progress in quantum computing](https://arxiv.org/pdf/2603.28846), there should still be plenty of time, and there is no harm in learning the classical approach (
+The above is roughly the mathematical proof behind wallet signing and verification. Although it may apparently need to change soon given [Google's advances in quantum computing](https://arxiv.org/pdf/2603.28846), there should still be plenty of time, and there is no harm in learning the classics (
 
-That is all. This can probably be considered a supplement to the theoretical foundations underlying the engineering practice of wallet signature verification.
+That is all. This is essentially a supplement covering the theoretical foundation behind the engineering practice of wallet signature verification.
