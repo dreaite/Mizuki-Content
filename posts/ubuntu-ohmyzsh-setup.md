@@ -6,7 +6,7 @@ description: '在 Ubuntu 安装并配置 Oh My Zsh，涵盖 Zsh、Git、Powerlev
 permalink: 'ubuntu-ohmyzsh-setup'
 image: 'https://r2.dreaife.tokyo/notion/covers/1515465cca178073b194f4ade9c3a703/IMG_1723.jpg'
 tags: ['bash', 'linux', 'cs-base']
-category: 'TROUBLESHOOT'
+category: '踩坑'
 draft: false
 ---
 

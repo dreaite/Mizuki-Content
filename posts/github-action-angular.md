@@ -6,7 +6,7 @@ description: '配置 GitHub Actions 将 Angular 项目自动部署到 GitHub Pag
 permalink: 'github-action-angular'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca1780709669dd1e198f2678/Gal1mvpbQAA_8s_.jpg'
 tags: ['github-action', 'INFRA']
-category: 'TROUBLESHOOT'
+category: '踩坑'
 draft: false
 ---
 

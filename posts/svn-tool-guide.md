@@ -6,7 +6,7 @@ description: 'SVN 入门指南：理解集中式版本控制与仓库结构，�
 permalink: 'svn-tool-guide'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca178060a708e1b3428bd22e/IMG_1451.jpg'
 tags: ['SVN', 'INFRA']
-category: 'STUDY'
+category: '研习'
 draft: false
 ---
 

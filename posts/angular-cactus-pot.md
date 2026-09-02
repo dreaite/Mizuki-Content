@@ -6,7 +6,7 @@ description: '使用 Angular 16 与 AWS Cognito 构建 Bangumi 动画展示网�
 permalink: 'angular-cactus-pot'
 image: 'https://r2.dreaife.tokyo/notion/covers/13c5465cca178004ad54d1f3b101d56a/IMG_1506.jpg'
 tags: ['ts', 'angular', 'github-action', 'doc', 'PROJECT']
-category: 'EXPLORE'
+category: '开荒'
 draft: false
 ---
 

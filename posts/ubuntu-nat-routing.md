@@ -6,7 +6,7 @@ description: '在 Ubuntu 上配置 Netplan 静态 IP、IP 转发、DHCP 与 NAT 
 permalink: 'ubuntu-nat-routing'
 image: 'https://r2.dreaife.tokyo/notion/covers/15d5465cca1780bf85eac8dea673675e/IMG_1935.jpg'
 tags: ['network', 'linux', 'cs-base']
-category: 'TROUBLESHOOT'
+category: '踩坑'
 draft: false
 ---
 

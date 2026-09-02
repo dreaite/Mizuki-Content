@@ -6,7 +6,7 @@ description: '使用 Nest.js、Angular、PostgreSQL 与 AWS Cognito 构建竞价
 permalink: 'bidding-platform-nest-angular'
 image: 'https://r2.dreaife.tokyo/notion/covers/1555465cca1780f382f5f1421004b0a8/IMG_1767.jpg'
 tags: ['nodejs', 'ts', 'aws', 'PROJECT']
-category: 'EXPLORE'
+category: '开荒'
 draft: false
 ---
 

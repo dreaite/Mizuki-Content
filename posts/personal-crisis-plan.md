@@ -6,7 +6,7 @@ description: '一份面向经济危机与自然灾害的个人风险规划，讨
 permalink: 'personal-crisis-plan'
 image: 'https://r2.dreaife.tokyo/notion/covers/1845465cca1780b28400ef19d8886705/IMG_2349.jpg'
 tags: ['thinking', 'life']
-category: 'RETROSPECT'
+category: '整理'
 draft: false
 ---
 

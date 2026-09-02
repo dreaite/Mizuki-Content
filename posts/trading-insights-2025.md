@@ -6,7 +6,7 @@ description: '复盘 2025 年初的加密市场交易：记录 K 线与成交量
 permalink: 'trading-insights-2025'
 image: 'https://r2.dreaife.tokyo/notion/covers/19a5465cca178011a14beaac4312e5b0/IMG_2580.jpg'
 tags: ['life', 'web3', 'thinking', 'market']
-category: 'RETROSPECT'
+category: '整理'
 draft: false
 ---
 

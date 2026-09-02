@@ -6,7 +6,7 @@ description: '复盘一次网络诈骗经历，拆解社交平台引流、诱导
 permalink: 'scam-analysis-2024'
 image: 'https://r2.dreaife.tokyo/notion/covers/1774c94989624c98953feedabade9c8e/20240802_040855728_iOS.jpg'
 tags: ['thinking', 'life']
-category: 'RETROSPECT'
+category: '整理'
 draft: false
 ---
 

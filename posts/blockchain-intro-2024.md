@@ -6,7 +6,7 @@ description: '从区块结构、分布式账本与共识机制理解区块链，
 permalink: 'blockchain-intro-2024'
 image: 'https://r2.dreaife.tokyo/notion/covers/1575465cca1780ecb51bc75146cb9231/IMG_1823(1).jpg'
 tags: ['web3', 'theory']
-category: 'STUDY'
+category: '研习'
 draft: false
 ---
 
