@@ -6,7 +6,7 @@ description: '《さくら、もゆ。》通关感想：记录从搁置到因汉
 permalink: 'sakura-dreams-hope'
 image: 'https://r2.dreaife.tokyo/notion/covers/2e1f116038864fb8b2f212e3e2493bcc/MASHIRO_e102b.png'
 tags: ['recomand', 'thinking', 'gal']
-category: 'RESONANCE'
+category: '碰撞'
 draft: false
 ---
 

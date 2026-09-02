@@ -6,7 +6,7 @@ description: 'Missing Semester Shell 入门笔记，涵盖程序执行、路径�
 permalink: 'smart-shell-guide'
 image: 'https://r2.dreaife.tokyo/notion/covers/30d1fea56f3940319785fca81bdfd185/20220818_231226.jpg'
 tags: ['bash', 'cs-base']
-category: 'STUDY'
+category: '研习'
 draft: false
 ---
 

@@ -6,7 +6,7 @@ description: 'Docker 入门指南：理解容器与虚拟机的差异，掌握�
 permalink: 'docker-intro-guide'
 image: 'https://r2.dreaife.tokyo/notion/covers/093263234b9d454390c0f01ed1b0909d/2421860-20230810182019038-697482712.png'
 tags: ['docker', 'deploy', 'INFRA']
-category: 'STUDY'
+category: '研习'
 draft: false
 ---
 

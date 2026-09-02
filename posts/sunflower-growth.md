@@ -6,7 +6,7 @@ description: 'Galgame《向日葵》剧透向感想：从孩童走向成人的�
 permalink: 'sunflower-growth'
 image: 'https://r2.dreaife.tokyo/notion/covers/48ae26ddba2f483c87e74706f78aa658/s_17_2.jpg'
 tags: ['recomand', 'thinking', 'gal']
-category: 'RESONANCE'
+category: '碰撞'
 draft: false
 ---
 

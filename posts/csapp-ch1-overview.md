@@ -6,7 +6,7 @@ description: '《深入理解计算机系统》第一章笔记：从信息表示
 permalink: 'csapp-ch1-overview'
 image: 'https://r2.dreaife.tokyo/notion/covers/fbaef38b501a4cd8a8a2d1c58798cf70/2421860-20230116004313116-1139297538.png'
 tags: ['caapp', 'os', 'c', 'cs-base']
-category: 'STUDY'
+category: '研习'
 draft: false
 ---
 
