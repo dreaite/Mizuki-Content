@@ -1,22 +1,22 @@
 ---
-title: '異なる日時形式でpandas.to_datetimeを使用した際にエラーが発生する場合について'
+title: '異なる日時形式でpandas.to_datetimeを使用した際にエラーが発生するケースについて'
 published: 2024-01-02
 updated: 2024-01-02
 description: 'pandas.to_datetimeで日付形式が混在するときのエラーを、format="mixed"で解決する方法をコード例とともに解説します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/3426b492685447d7b65f4c01dd9c4fce/2421860-20240103003119896-530983932.png'
 tags: ['pandas', '数据处理', 'cs-base']
-category: 'TROUBLESHOOT'
+category: '踩坑'
 draft: false
 lang: 'ja'
 ---
 
 [https://dreaife-team.atlassian.net/browse/DREAITE-39](https://dreaife-team.atlassian.net/browse/DREAITE-39)
 
-[菜鳥教程](https://www.runoob.com/pandas/pandas-cleaning.html)で、pandasを使って形式が正しくないデータをクリーニングする方法を読んでいたところ、掲載されているコードが現在使用しているバージョンでは動作しないことに気づきました。
+[菜鳥教程](https://www.runoob.com/pandas/pandas-cleaning.html)で、pandasを使って形式エラーのあるデータをクリーニングする方法を見ていたところ、掲載されているコードが現在使用しているバージョンでは動作しないことに気付きました。
 
-エラーについてしばらくネットで調べましたが、見つかるのはどれも`errors`パラメーターを変更する方法ばかりでした。
+エラーについてネットでかなり調べましたが、見つかるのはどれも`errors`引数を変更する方法ばかりでした。
 
-最後にエラーメッセージを読み直したところ、`format`を`mixed`に変更し、データ形式が混在していることをpandasに伝えればよいと分かりました（汗）。おそらくPython 3のバージョンが新しすぎるためだと思います。
+最後にもう一度エラーメッセージを確認したところ、`format`を`mixed`に変更し、データ形式が混在していることをpandasに伝えればよいと分かりました（汗）。おそらくPython 3のバージョンが新しすぎることが原因です。
 
 エラーが発生するコード：
 

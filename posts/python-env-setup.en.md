@@ -5,17 +5,17 @@ updated: 2024-01-01
 description: 'Set up a Python web-scraping environment with requests, Selenium, lxml, Beautiful Soup, databases, mitmproxy, Appium, pyspider, and Scrapy.'
 image: 'https://r2.dreaife.tokyo/notion/covers/45f564fe06e843e1a166f39b3e93ed2d/2421860-20240101202740011-1464779186.png'
 tags: ['spider', '环境', 'python']
-category: 'TROUBLESHOOT'
+category: '踩坑'
 draft: false
 lang: 'en'
 ---
 
 # Environment Setup
 
-python3/request libraries/parsing libraries/databases/storage libraries/web libraries/app scraping libraries/web scraping framework libraries
+python3/request libraries/parsing libraries/databases/storage libraries/web libraries/app scraping libraries/web scraping frameworks
 
 - python3
-	- On Windows 11, it can now be downloaded directly from the Store (
+	- On Windows 11, you can download it directly from the Store (
 	- On Linux: `apt-get install python3`
 - Request libraries
 	- requests
@@ -32,7 +32,7 @@ python3/request libraries/parsing libraries/databases/storage libraries/web libr
 		3. Add chromeDriver to the environment variables
 	- ~~phantomJS~~
 
-		Newer versions of selenium no longer support phantomJS. You can use headless mode directly with chromedriver.
+		Newer versions of selenium no longer support phantomJS. You can use chromedriver directly instead.
 
 		Verification:
 
@@ -73,7 +73,7 @@ python3/request libraries/parsing libraries/databases/storage libraries/web libr
 
 		- Install tesserocr
 
-			For [Windows](https://github.com/simonflueckiger/tesserocr-windows_build/releases), install it using `pip install <name>.whl`
+			For [Windows](https://github.com/simonflueckiger/tesserocr-windows_build/releases), use `pip install <name>.whl` to install it
 
 		- Verification
 
@@ -88,7 +88,7 @@ python3/request libraries/parsing libraries/databases/storage libraries/web libr
 
 			```
 
-			> Note: If the File "tesserocr.pyx", line 2580, in tesserocr._tesserocr.image_to_textRuntimeError: Failed to init API, possibly an invalid tessdata path error occurs, first place tesseract's test_data in the folder indicated by the error.
+			> Note: If the File "tesserocr.pyx", line 2580, in tesserocr._tesserocr.image_to_textRuntimeError: Failed to init API, possibly an invalid tessdata path error occurs, first place tesseract's test_data in the folder indicated by the error
 
 - Databases
 	- MySQL
@@ -134,7 +134,7 @@ python3/request libraries/parsing libraries/databases/storage libraries/web libr
 
 		`pip install pyspider`
 
-		> If it does not run on Windows 11, see this article of mine.
+		> If it does not run on Windows 11, see this post of mine
 
 	- scrapy
 	- scrapy-splash

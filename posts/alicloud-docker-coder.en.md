@@ -1,11 +1,11 @@
 ---
-title: 'Set Up Docker + code-server on Alibaba Cloud for an Online IDE'
+title: 'Configure Docker + code-server on Alibaba Cloud to Build an Online IDE'
 published: 2022-07-06
 updated: 2022-07-06
 description: 'Build a C/C++ development environment on Alibaba Cloud with Docker, Nginx, and code-server, from mirror setup to compiling and running test code.'
 image: 'https://r2.dreaife.tokyo/notion/covers/ae4b0038e910408cadb36f3651ee3fc2/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE_2022-09-18_025217.png'
 tags: ['network', 'school', 'cs-base']
-category: 'TROUBLESHOOT'
+category: '踩坑'
 draft: false
 lang: 'en'
 ---
@@ -16,7 +16,7 @@ lang: 'en'
 
 1. Install Docker
 
-Docker has two editions: Docker CE and Docker EE, the Community Edition and Enterprise Edition respectively. This tutorial uses Docker CE.
+Docker has two editions: Docker CE and Docker EE, namely the Community Edition and Enterprise Edition. This tutorial uses Docker CE.
 
 - Install Docker dependencies and add the Docker software repository
 
@@ -41,8 +41,8 @@ systemctl status docker         //查看docker状态
 systemctl enable docker         //设置docker开机启动
 ```
 
-1. Configure the Alibaba Cloud image registry (image acceleration)
-- Go to the [Alibaba Cloud Image Accelerator page](https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors)
+1. Configure the Alibaba Cloud image registry (registry mirror)
+- Go to the [Alibaba Cloud image accelerator page](https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors)
 - Follow the documentation to complete the configuration
 
 ```plain text
@@ -63,8 +63,8 @@ systemctl daemon-reload         //重新加载服务配置文件
 systemctl restart docker        //重启Docker服务
 ```
 
-1. Install Nginx using Docker
-- Get the latest Nginx image
+1. Install Nginx via Docker
+- Obtain the latest Nginx image
 
 ```plain text
 docker search nginx             //查看Nginx可用版本
@@ -78,7 +78,7 @@ docker images                   //查看本地镜像
 docker run --name nginx-test -p 8080:80 -d nginx
 ```
 
-Access port 8080. If the Nginx home page appears, the service is running correctly.
+Visit port 8080. If the Nginx service homepage appears, it is running correctly.
 
 ## **2. Install code-server**
 
@@ -106,12 +106,12 @@ sudo systemctl restart code-sercer@dreaife                  //重启code-server
 firewall-cmd --zone=public --add-port=7777/tcp --permanent  //开放端口
 ```
 
-After installation, open the code-server interface.
+After installation is complete, open the code-server interface.
 
 ## **3. Configure the code-server Compilation Environment**
 
-1. Install the C/C++ extension for code-server using VSIX
-2. Set up the required .vscode configuration files
+1. Install the C/C++ extension for code-server via VSIX
+2. Configure the required files in .vscode
 - c_cpp_properties.json file
 
 ![](https://s2.loli.net/2022/06/13/iWM4JDYnke5twCm.png)
@@ -150,4 +150,4 @@ int main(){
 
 ![](https://s2.loli.net/2022/06/13/MaGmNUobEurdwOc.png)
 
-The program ran successfully and produced the correct result. The online compiler is now fully configured.
+The program ran successfully and produced the correct result. The online compiler configuration is complete.

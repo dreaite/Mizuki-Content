@@ -5,16 +5,16 @@ updated: 2024-01-02
 description: 'Run pyspider on Windows 11 with Docker or Docker Compose, avoiding local dependency issues and verifying the WebUI at localhost:5000.'
 image: 'https://r2.dreaife.tokyo/notion/covers/d0b67049d0274e6c9a4212cfb1241db0/2421860-20240102223652859-707973973.png'
 tags: ['spider', 'docker', 'pyspider']
-category: 'TROUBLESHOOT'
+category: '踩坑'
 draft: false
 lang: 'en'
 ---
 
-I encountered multiple errors when installing pyspider on Windows 11.
+When installing pyspider on Windows 11, I encountered several errors.
 
 I found that the official website provides a Docker-based installation method.
 
-# Using Docker Directly
+# Run directly with Docker
 
 ```shell
 # mysql
@@ -38,7 +38,7 @@ docker run --name webui -m 256m -d -p 5000:5000 --link mysql:mysql --link rabbit
 
 ```
 
-# Using Docker Compose
+# Use docker-compose
 
 ```yaml
 services:
@@ -84,6 +84,6 @@ services:
 
 ```
 
-Then run it with:<br>`docker-compose up -d`<br>After it starts successfully, if visiting [http://localhost:5000/](http://localhost:5000/) displays the following content, pyspider is running successfully.
+Then run it with:<br>`docker-compose up -d`<br>Once it starts successfully, visit [http://localhost:5000/](http://localhost:5000/). If the following page appears, pyspider is running successfully.
 
 ![](https://dreaife-1306766477.cos.ap-nanjing.myqcloud.com/202401022235683.png)

@@ -1,29 +1,29 @@
 ---
-title: 'Errors When Using pandas.to_datetime with Different Time Formats'
+title: 'Errors When Using pandas.to_datetime with Different Date and Time Formats'
 published: 2024-01-02
 updated: 2024-01-02
 description: 'Fix pandas.to_datetime errors from mixed date strings with format="mixed", plus a concise example converting inconsistent values to datetime.'
 image: 'https://r2.dreaife.tokyo/notion/covers/3426b492685447d7b65f4c01dd9c4fce/2421860-20240103003119896-530983932.png'
 tags: ['pandas', '数据处理', 'cs-base']
-category: 'TROUBLESHOOT'
+category: '踩坑'
 draft: false
 lang: 'en'
 ---
 
 [https://dreaife-team.atlassian.net/browse/DREAITE-39](https://dreaife-team.atlassian.net/browse/DREAITE-39)
 
-While reading [Runoob's tutorial](https://www.runoob.com/pandas/pandas-cleaning.html) on using pandas to clean incorrectly formatted data, I found that the provided code would not run with my current version.
+While reading [RUNOOB](https://www.runoob.com/pandas/pandas-cleaning.html)'s guide on using pandas to clean incorrectly formatted data, I found that the code it provided would not run with my current version.
 
-After searching online for quite a while, all the solutions I found involved changing the `errors` parameter.
+After searching online for ages, all the solutions I found involved changing the `errors` parameter.
 
-I finally reread the error message and realized that changing `format` to `mixed` tells pandas that the data contains mixed formats, which fixes the issue (sweat). This is probably because my Python 3 version is too new.
+Finally, I reread the error message and discovered that changing `format` to `mixed` tells pandas that the data contains mixed formats, which solves the problem (sweat). This is probably because my Python 3 version is too new.
 
 Code that causes the error:
 
 ```python
 import pandas as pd
 
-# The third date is incorrectly formatted
+# 第三个日期格式错误
 data = {
   "Date": ['2020/12/01', '2020/12/02' , '20201226'],
   "duration": [50, 40, 45]
@@ -52,7 +52,7 @@ Fixed code:
 ```python
 import pandas as pd
 
-# The third date is incorrectly formatted
+# 第三个日期格式错误
 data = {
   "Date": ['2020/12/01', '2020/12/02' , '20201226'],
   "duration": [50, 40, 45]

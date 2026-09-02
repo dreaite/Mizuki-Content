@@ -5,7 +5,7 @@ updated: 2024-01-01
 description: 'Pythonクローラー環境の構築手順。requests、Selenium、lxml、Beautiful Soup、各種DB、mitmproxy、Appium、pyspider、Scrapyの導入を整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/45f564fe06e843e1a166f39b3e93ed2d/2421860-20240101202740011-1464779186.png'
 tags: ['spider', '环境', 'python']
-category: 'TROUBLESHOOT'
+category: '踩坑'
 draft: false
 lang: 'ja'
 ---
@@ -27,12 +27,12 @@ python3/リクエストライブラリ/解析ライブラリ/データベース/
 		`pip install selenium`
 
 	- chromeDriver
-		1. 「Chromeについて」でChromeのバージョンを確認する
+		1. Chromeの「概要」でバージョンを確認する
 		2. [chromeDriver](https://chromedriver.chromium.org/downloads)から対応するバージョンをダウンロードする
 		3. chromeDriverを環境変数に設定する
 	- ~~phantomJS~~
 
-		新しいバージョンのseleniumではphantomJSがサポートされていないため、chromedriverで直接使用できます
+		新しいバージョンのseleniumではphantomJSがサポートされなくなったため、chromedriverを直接使用できます
 
 		動作確認：
 
@@ -69,11 +69,11 @@ python3/リクエストライブラリ/解析ライブラリ/データベース/
 	- tesserocr
 		- tesseractをインストールする
 
-			[windows](https://digi.bib.uni-mannheim.de/tesseract/)
+			[Windows](https://digi.bib.uni-mannheim.de/tesseract/)
 
 		- tesserocrをインストールする
 
-			[windows](https://github.com/simonflueckiger/tesserocr-windows_build/releases)では、`pip install <name>.whl`を使用してインストールします
+			[Windows](https://github.com/simonflueckiger/tesserocr-windows_build/releases)では`pip install <name>.whl`を使用してインストールします
 
 		- 動作確認
 
@@ -88,7 +88,7 @@ python3/リクエストライブラリ/解析ライブラリ/データベース/
 
 			```
 
-			> 注意：File "tesserocr.pyx", line 2580, in tesserocr._tesserocr.image_to_textRuntimeError: Failed to init API, possibly an invalid tessdata pathというエラーが発生した場合は、まずtesseractのtest_dataをエラーで示されたフォルダーに配置する必要があります
+			> 注意：File "tesserocr.pyx", line 2580, in tesserocr._tesserocr.image_to_textRuntimeError: Failed to init API, possibly an invalid tessdata pathエラーが発生した場合は、まずtesseractのtest_dataをエラー対象のフォルダーに配置する必要があります
 
 - データベース
 	- MySQL
@@ -109,7 +109,7 @@ python3/リクエストライブラリ/解析ライブラリ/データベース/
 
 	- RedisDump
 
-		rubyをインストールする
+		Rubyをインストールする
 
 		`gem install redis-dump`
 
@@ -134,7 +134,7 @@ python3/リクエストライブラリ/解析ライブラリ/データベース/
 
 		`pip install pyspider`
 
-		> Windows 11で実行できない場合は、こちらの記事を参照してください
+		> Windows 11で実行できない場合は、私のこちらの記事をご覧ください
 
 	- scrapy
 	- scrapy-splash
