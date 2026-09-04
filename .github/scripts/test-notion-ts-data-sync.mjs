@@ -2,11 +2,31 @@ import assert from 'node:assert/strict';
 
 import {
   buildProjectItems,
+  extractMarkdownImagesAndText,
+  hasDiaryHtmlLineBreak,
+  normalizeDiaryPlainText,
   parseDiaryDataTs,
   renderDiaryDataTs,
   renderFriendsDataTs,
   renderProjectsDataTs,
 } from './notion-ts-data-sync.mjs';
+
+assert.equal(hasDiaryHtmlLineBreak('first<br>second'), true);
+assert.equal(hasDiaryHtmlLineBreak('first<BR />second'), true);
+assert.equal(hasDiaryHtmlLineBreak('first\nsecond'), false);
+assert.equal(
+  normalizeDiaryPlainText('first<br>second<BR />third\r\nfourth'),
+  'first\nsecond\nthird\nfourth'
+);
+assert.deepEqual(
+  extractMarkdownImagesAndText(
+    'first<br>second\n\n![cover](https://cdn.example/cover.webp)\n\nthird'
+  ),
+  {
+    images: ['https://cdn.example/cover.webp'],
+    text: 'first\nsecond\n\nthird',
+  }
+);
 
 const [project] = buildProjectItems([
   {
@@ -62,6 +82,22 @@ assert.deepEqual(parseDiaryDataTs(diaryFile), [
     date: '2026-01-01T00:00:00.000Z',
   },
 ]);
+
+const normalizedDiaryFile = renderDiaryDataTs(diaryFile, [
+  {
+    id: 1,
+    content: '中文<br>第二行',
+    lang: 'zh_CN',
+    translations: { ja: { content: '日本語<br />二行目' } },
+    date: '2026-01-01T00:00:00.000Z',
+  },
+]);
+assert.doesNotMatch(normalizedDiaryFile, /<br\s*\/?>/i);
+assert.equal(parseDiaryDataTs(normalizedDiaryFile)[0].content, '中文\n第二行');
+assert.equal(
+  parseDiaryDataTs(normalizedDiaryFile)[0].translations.ja.content,
+  '日本語\n二行目'
+);
 
 const specialDiaryFile = renderDiaryDataTs(diaryFile, [
   {

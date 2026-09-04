@@ -27,6 +27,7 @@ import {
   buildFriendItems,
   buildProjectItems,
   extractMarkdownImagesAndText,
+  hasDiaryHtmlLineBreak,
   parseDiaryDataTs,
   renderDiaryDataTs,
   renderFriendsDataTs,
@@ -3135,6 +3136,7 @@ async function main() {
     concurrency: CONFIG.notionMarkdownConcurrency,
     canReuseCachedDiarySource: (source) =>
       !isTemporaryNotionAssetUrl(source.content) &&
+      !hasDiaryHtmlLineBreak(source.content) &&
       source.images.every((imageUrl) => !isTemporaryNotionAssetUrl(imageUrl)),
     loadDiarySource: (meta) =>
       loadDiarySource(markdownReader, meta, {

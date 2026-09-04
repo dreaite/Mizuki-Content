@@ -199,16 +199,25 @@ export function extractMarkdownImagesAndText(markdown) {
     return '';
   });
 
-  withoutImages = withoutImages
-    .replace(/\r\n/g, '\n')
-    .replace(/[ \t]+\n/g, '\n')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
+  withoutImages = normalizeDiaryPlainText(withoutImages);
 
   return {
     images: [...new Set(images)],
     text: withoutImages,
   };
+}
+
+export function hasDiaryHtmlLineBreak(value) {
+  return /<br\s*\/?>/i.test(String(value ?? ''));
+}
+
+export function normalizeDiaryPlainText(value) {
+  return String(value ?? '')
+    .replace(/\r\n?/g, '\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
 
 export function buildFriendItems(friendMetas) {
@@ -288,9 +297,18 @@ function serializeDiaryDataArray(items) {
   for (const item of items) {
     lines.push('\t{');
     lines.push(`\t\tid: ${item.id},`);
-    lines.push(`\t\tcontent: ${escapeTsString(item.content)},`);
+    lines.push(`\t\tcontent: ${escapeTsString(normalizeDiaryPlainText(item.content))},`);
     if (item.lang) lines.push(`\t\tlang: ${escapeTsString(item.lang)},`);
-    lines.push(...serializeTranslations(item.translations, ['content']));
+    const normalizedTranslations = Object.fromEntries(
+      Object.entries(item.translations || {}).map(([language, translation]) => [
+        language,
+        {
+          ...translation,
+          content: normalizeDiaryPlainText(translation?.content),
+        },
+      ])
+    );
+    lines.push(...serializeTranslations(normalizedTranslations, ['content']));
     lines.push(`\t\tdate: ${escapeTsString(item.date)},`);
     if (Array.isArray(item.images) && item.images.length > 0) {
       lines.push(`\t\timages: ${serializeTsStringArray(item.images)},`);
