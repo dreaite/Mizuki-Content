@@ -4,8 +4,8 @@ published: 2025-02-14
 updated: 2025-02-15
 description: 'A review of early-2025 crypto trades, covering candle and volume signals, leverage, position sizing, risk allocation, and emotional discipline.'
 image: 'https://r2.dreaife.tokyo/notion/covers/19a5465cca178011a14beaac4312e5b0/IMG_2580.jpg'
-tags: ['life', 'web3', 'thinking', 'market']
-category: '整理'
+tags: ['life', 'web3', 'thinking', 'markets']
+category: 'notes'
 draft: false
 lang: 'en'
 ---

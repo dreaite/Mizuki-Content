@@ -4,8 +4,8 @@ published: 2026-02-22
 updated: 2026-02-23
 description: 'Migrating from NotionNext to Mizuki with Bangumi integration, self-hosted Notion sync, R2 image persistence, and LLM-generated translations.'
 image: 'https://r2.dreaife.tokyo/notion/covers/30f5465cca1780cc8df8e7c367a16f3d/IMG_4450.jpg'
-tags: ['blog', 'llm', 'deploy', 'notion', 'INFRA']
-category: '开荒'
+tags: ['blog', 'llm', 'deployment', 'notion', 'infrastructure']
+category: 'exploration'
 draft: false
 lang: 'en'
 ---

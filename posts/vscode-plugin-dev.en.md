@@ -4,8 +4,8 @@ published: 2025-03-13
 updated: 2025-03-13
 description: 'Create a VS Code extension with Yeoman, then learn package.json, activationEvents, extension.ts, debugging, vsce packaging, and publishing.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1b55465cca17808d8be3e99dd76eae9f/IMG_2747.jpg'
-tags: ['vscode', 'plugin']
-category: '研习'
+tags: ['vscode', 'plugins']
+category: 'study'
 draft: false
 lang: 'en'
 ---

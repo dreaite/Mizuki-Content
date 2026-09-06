@@ -4,8 +4,8 @@ published: 2026-08-10
 updated: 2026-08-11
 description: '複雑系とゲーム理論の視点から市場の再帰性を考察し、収益パターンが市場参加者と感情のフィードバックで崩れる理由、通貨下落期待が商品価格・企業コスト・買いだめを通じてインフレスパイラルへ波及する過程を整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/3b85465cca178058ab16d23d1491db0b/shinku_birthday.png'
-tags: ['thinking', 'market', 'trade']
-category: '整理'
+tags: ['thinking', 'markets', 'trading']
+category: 'notes'
 draft: false
 lang: 'ja'
 ---

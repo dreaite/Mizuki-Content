@@ -4,8 +4,8 @@ published: 2026-03-05
 updated: 2026-03-06
 description: 'A reflection on emotional suppression and self-formation: the self emerges through interaction and choice, while hesitation masks fear.'
 image: 'https://r2.dreaife.tokyo/notion/covers/31a5465cca1780a3aa46f35da870624c/IMG_4498.jpg'
-tags: ['self', 'mental', 'discover', 'psycho']
-category: '深思'
+tags: ['self', 'mental-health', 'self-discovery', 'psychology']
+category: 'reflection'
 draft: false
 lang: 'en'
 ---

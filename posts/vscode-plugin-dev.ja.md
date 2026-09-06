@@ -4,8 +4,8 @@ published: 2025-03-13
 updated: 2025-03-13
 description: 'Yeomanとgenerator-codeでVS Code拡張を作成し、package.json、activationEvents、extension.tsを理解。デバッグからvsceでの配布まで扱います。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1b55465cca17808d8be3e99dd76eae9f/IMG_2747.jpg'
-tags: ['vscode', 'plugin']
-category: '研习'
+tags: ['vscode', 'plugins']
+category: 'study'
 draft: false
 lang: 'ja'
 ---

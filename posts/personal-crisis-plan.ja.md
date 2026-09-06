@@ -5,7 +5,7 @@ updated: 2025-01-23
 description: '経済危機や自然災害に備える個人計画。安全な居住地、就労ビザ、安定収入、プロダクト収益、資産運用の優先順位を整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1845465cca1780b28400ef19d8886705/IMG_2349.jpg'
 tags: ['thinking', 'life']
-category: '整理'
+category: 'notes'
 draft: false
 lang: 'ja'
 ---

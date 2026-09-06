@@ -4,8 +4,8 @@ published: 2024-07-04
 updated: 2024-07-04
 description: 'ビジュアルノベル『ひまわり』のネタバレ感想。子どもから大人への成長、継承される記憶、交錯する運命、犠牲の先にある希望と救済を考察します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/48ae26ddba2f483c87e74706f78aa658/s_17_2.jpg'
-tags: ['recomand', 'thinking', 'gal']
-category: '碰撞'
+tags: ['recommendations', 'thinking', 'visual-novels']
+category: 'perspectives'
 draft: false
 lang: 'ja'
 ---

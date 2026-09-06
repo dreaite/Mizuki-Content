@@ -4,8 +4,8 @@ published: 2022-07-06
 updated: 2022-07-06
 description: 'Build a C/C++ development environment on Alibaba Cloud with Docker, Nginx, and code-server, from mirror setup to compiling and running test code.'
 image: 'https://r2.dreaife.tokyo/notion/covers/ae4b0038e910408cadb36f3651ee3fc2/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE_2022-09-18_025217.png'
-tags: ['network', 'school', 'cs-base']
-category: '踩坑'
+tags: ['networking', 'school', 'computer-science']
+category: 'troubleshooting'
 draft: false
 lang: 'en'
 ---

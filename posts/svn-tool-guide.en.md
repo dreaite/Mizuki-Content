@@ -4,8 +4,8 @@ published: 2024-11-04
 updated: 2024-11-04
 description: 'A concise SVN guide to centralized version control, repository setup, TortoiseSVN, checkout, update, commit, diff, revert, ignore rules, and branches.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca178060a708e1b3428bd22e/IMG_1451.jpg'
-tags: ['SVN', 'INFRA']
-category: '研习'
+tags: ['svn', 'infrastructure']
+category: 'study'
 draft: false
 lang: 'en'
 ---

@@ -4,8 +4,8 @@ published: 2023-01-11
 updated: 2023-01-11
 description: 'Missing Semester shell notes on commands, paths, permissions, pipes, I/O redirection, root privileges, Bash examples, and exercises.'
 image: 'https://r2.dreaife.tokyo/notion/covers/30d1fea56f3940319785fca81bdfd185/20220818_231226.jpg'
-tags: ['bash', 'cs-base']
-category: '研习'
+tags: ['shell', 'computer-science']
+category: 'study'
 draft: false
 lang: 'en'
 ---

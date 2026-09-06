@@ -4,8 +4,8 @@ published: 2024-11-04
 updated: 2024-11-04
 description: 'GitHub ActionsでAngularをGitHub Pagesへ自動デプロイ。outputPath、angular-cli-ghpages、ワークフロー、トークン、gh-pagesブランチの設定を扱います。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca1780709669dd1e198f2678/Gal1mvpbQAA_8s_.jpg'
-tags: ['github-action', 'INFRA']
-category: '踩坑'
+tags: ['github-actions', 'infrastructure']
+category: 'troubleshooting'
 draft: false
 lang: 'ja'
 ---

@@ -4,8 +4,8 @@ published: 2026-08-10
 updated: 2026-08-11
 description: 'Why profitable patterns erode under market feedback, and how currency-devaluation expectations spread through commodities, costs, and hoarding.'
 image: 'https://r2.dreaife.tokyo/notion/covers/3b85465cca178058ab16d23d1491db0b/shinku_birthday.png'
-tags: ['thinking', 'market', 'trade']
-category: '整理'
+tags: ['thinking', 'markets', 'trading']
+category: 'notes'
 draft: false
 lang: 'en'
 ---

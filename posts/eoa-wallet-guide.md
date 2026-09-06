@@ -5,8 +5,8 @@ updated: 2026-06-27
 description: '从钱包视角梳理 EOA 与 HD 钱包的密钥派生、EIP-1559 交易结构与生命周期，以及 SIWE、EIP-191、EIP-712 的签名验证，并给出 ethers.js 创建钱包、验签和广播交易的实现示例。'
 permalink: 'eoa-wallet-guide'
 image: 'https://r2.dreaife.tokyo/notion/covers/38c5465cca1780e5bf80d0662451b860/ai-generated-1782646843083.png'
-tags: ['wallet', 'web3', 'transaction']
-category: '开荒'
+tags: ['wallet', 'web3', 'transactions']
+category: 'exploration'
 draft: false
 ---
 

@@ -4,8 +4,8 @@ published: 2024-01-01
 updated: 2024-01-01
 description: 'Pythonクローラー環境の構築手順。requests、Selenium、lxml、Beautiful Soup、各種DB、mitmproxy、Appium、pyspider、Scrapyの導入を整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/45f564fe06e843e1a166f39b3e93ed2d/2421860-20240101202740011-1464779186.png'
-tags: ['spider', '环境', 'python']
-category: '踩坑'
+tags: ['web-scraping', 'environment', 'python']
+category: 'troubleshooting'
 draft: false
 lang: 'ja'
 ---

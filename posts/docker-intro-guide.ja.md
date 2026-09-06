@@ -4,8 +4,8 @@ published: 2023-08-10
 updated: 2023-08-10
 description: 'Docker入門として、仮想マシンとの違い、イメージとコンテナ、Docker Hub、基本コマンド、永続化ボリューム、Docker Composeを整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/093263234b9d454390c0f01ed1b0909d/2421860-20230810182019038-697482712.png'
-tags: ['docker', 'deploy', 'INFRA']
-category: '研习'
+tags: ['docker', 'deployment', 'infrastructure']
+category: 'study'
 draft: false
 lang: 'ja'
 ---

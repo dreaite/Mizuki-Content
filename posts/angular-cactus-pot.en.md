@@ -4,8 +4,8 @@ published: 2024-11-12
 updated: 2024-11-12
 description: 'Build a Bangumi anime browser with Angular 16 and AWS Cognito, including sign-in, registration, search, calendar views, and GitHub Pages deployment.'
 image: 'https://r2.dreaife.tokyo/notion/covers/13c5465cca178004ad54d1f3b101d56a/IMG_1506.jpg'
-tags: ['ts', 'angular', 'github-action', 'doc', 'PROJECT']
-category: '开荒'
+tags: ['typescript', 'angular', 'github-actions', 'documentation', 'projects']
+category: 'exploration'
 draft: false
 lang: 'en'
 ---

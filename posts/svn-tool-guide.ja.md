@@ -4,8 +4,8 @@ published: 2024-11-04
 updated: 2024-11-04
 description: '集中型バージョン管理SVNの入門。リポジトリ作成、TortoiseSVN、checkout、update、commit、diff、revert、ignore、ブランチ操作を整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1345465cca178060a708e1b3428bd22e/IMG_1451.jpg'
-tags: ['SVN', 'INFRA']
-category: '研习'
+tags: ['svn', 'infrastructure']
+category: 'study'
 draft: false
 lang: 'ja'
 ---

@@ -5,7 +5,7 @@ updated: 2025-01-23
 description: 'A resilience plan for crises and disasters, prioritizing safe housing, work-visa stability, reliable cash flow, product income, and investing.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1845465cca1780b28400ef19d8886705/IMG_2349.jpg'
 tags: ['thinking', 'life']
-category: '整理'
+category: 'notes'
 draft: false
 lang: 'en'
 ---

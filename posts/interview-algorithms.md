@@ -5,8 +5,8 @@ updated: 2023-08-11
 description: '整理蛇形矩阵、单链表快排、峰值与极小值、鸡蛋硬度、最小栈和链表环入口等面试算法题，附思路、输入输出说明与示例代码。'
 permalink: 'interview-algorithms'
 image: 'https://r2.dreaife.tokyo/notion/covers/1670090a8eaf4eab9ccd3f1332d4e916/2421860-20230811144113268-1519746820.png'
-tags: ['meeting', 'algorithm']
-category: '研习'
+tags: ['interviews', 'algorithms']
+category: 'study'
 draft: false
 ---
 

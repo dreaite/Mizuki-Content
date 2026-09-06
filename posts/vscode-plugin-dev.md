@@ -5,8 +5,8 @@ updated: 2025-03-13
 description: 'VS Code 扩展开发入门：使用 Yeoman 与 generator-code 创建项目，理解 package.json、activationEvents 和 extension.ts，并用 vsce 打包发布。'
 permalink: 'vscode-plugin-dev'
 image: 'https://r2.dreaife.tokyo/notion/covers/1b55465cca17808d8be3e99dd76eae9f/IMG_2747.jpg'
-tags: ['vscode', 'plugin']
-category: '研习'
+tags: ['vscode', 'plugins']
+category: 'study'
 draft: false
 ---
 

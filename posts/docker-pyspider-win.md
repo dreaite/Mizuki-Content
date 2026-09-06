@@ -5,8 +5,8 @@ updated: 2024-01-02
 description: '在 Windows 11 上通过 Docker 或 Docker Compose 运行 pyspider，绕过本地安装依赖问题，并使用 localhost:5000 验证 WebUI 服务。'
 permalink: 'docker-pyspider-win'
 image: 'https://r2.dreaife.tokyo/notion/covers/d0b67049d0274e6c9a4212cfb1241db0/2421860-20240102223652859-707973973.png'
-tags: ['spider', 'docker', 'pyspider']
-category: '踩坑'
+tags: ['web-scraping', 'docker', 'pyspider']
+category: 'troubleshooting'
 draft: false
 ---
 

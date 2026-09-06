@@ -5,8 +5,8 @@ updated: 2024-01-01
 description: '搭建 Python 爬虫开发环境，整理 requests、Selenium、lxml、Beautiful Soup、MySQL、MongoDB、mitmproxy、Appium、Scrapy 等工具的安装与用途。'
 permalink: 'python-env-setup'
 image: 'https://r2.dreaife.tokyo/notion/covers/45f564fe06e843e1a166f39b3e93ed2d/2421860-20240101202740011-1464779186.png'
-tags: ['spider', '环境', 'python']
-category: '踩坑'
+tags: ['web-scraping', 'environment', 'python']
+category: 'troubleshooting'
 draft: false
 ---
 

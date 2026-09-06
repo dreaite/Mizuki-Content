@@ -4,8 +4,8 @@ published: 2023-08-11
 updated: 2023-08-11
 description: '蛇行行列、連結リストのクイックソート、ピーク探索、卵落とし、最小スタック、循環入口検出などの面接問題を、解法とコード付きで整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1670090a8eaf4eab9ccd3f1332d4e916/2421860-20230811144113268-1519746820.png'
-tags: ['meeting', 'algorithm']
-category: '研习'
+tags: ['interviews', 'algorithms']
+category: 'study'
 draft: false
 lang: 'ja'
 ---

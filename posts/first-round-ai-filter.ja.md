@@ -5,7 +5,7 @@ updated: 2026-04-09
 description: 'AI利用コストと機会格差についての個人的考察。SOTAモデルが補助価格から通常価格へ移れば、利用可否そのものが新たな認知格差になり得ます。AIがコーディングからセキュリティ・映像・音楽へ広がるほど、その選別は早く表面化します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/33d5465cca1780ba8e6fc66550e148be/IMG_4685.jpg'
 tags: ['thinking', 'ai', 'life']
-category: '深思'
+category: 'reflection'
 draft: false
 lang: 'ja'
 ---

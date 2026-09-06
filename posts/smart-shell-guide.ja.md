@@ -4,8 +4,8 @@ published: 2023-01-11
 updated: 2023-01-11
 description: 'Missing Semesterのシェル入門ノート。コマンド実行、パス移動、権限、パイプ、入出力リダイレクト、root権限を例題付きで整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/30d1fea56f3940319785fca81bdfd185/20220818_231226.jpg'
-tags: ['bash', 'cs-base']
-category: '研习'
+tags: ['shell', 'computer-science']
+category: 'study'
 draft: false
 lang: 'ja'
 ---

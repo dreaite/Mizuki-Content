@@ -4,8 +4,8 @@ published: 2023-08-10
 updated: 2023-08-10
 description: 'A practical Docker introduction covering containers vs. VMs, images, Docker Hub, core commands, persistent volumes, and Docker Compose.'
 image: 'https://r2.dreaife.tokyo/notion/covers/093263234b9d454390c0f01ed1b0909d/2421860-20230810182019038-697482712.png'
-tags: ['docker', 'deploy', 'INFRA']
-category: '研习'
+tags: ['docker', 'deployment', 'infrastructure']
+category: 'study'
 draft: false
 lang: 'en'
 ---

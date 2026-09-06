@@ -5,7 +5,7 @@ updated: 2026-06-10
 description: 'How secp256k1 math produces ECDSA r/s/v signatures and public-key recovery, enabling SIWE servers to verify EOA control without private keys.'
 image: 'https://r2.dreaife.tokyo/notion/covers/37b5465cca17804f8624caf756234df3/ai-generated-1781099535759.png'
 tags: ['wallet', 'theory', 'web3']
-category: '开荒'
+category: 'exploration'
 draft: false
 lang: 'en'
 ---

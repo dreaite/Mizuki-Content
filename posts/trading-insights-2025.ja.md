@@ -4,8 +4,8 @@ published: 2025-02-14
 updated: 2025-02-15
 description: '2025年初の暗号資産取引を振り返り、ローソク足と出来高による判断、レバレッジと資金配分、感情的な取引を避けるためのリスク管理を整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/19a5465cca178011a14beaac4312e5b0/IMG_2580.jpg'
-tags: ['life', 'web3', 'thinking', 'market']
-category: '整理'
+tags: ['life', 'web3', 'thinking', 'markets']
+category: 'notes'
 draft: false
 lang: 'ja'
 ---

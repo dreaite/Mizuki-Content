@@ -5,8 +5,8 @@ updated: 2026-08-11
 description: '从复杂系统与博弈视角讨论市场的反身性：盈利模式为何会被对手盘与情绪反馈消解，以及货币贬值预期如何经由大宗商品、企业成本和囤货行为传导成通胀螺旋。'
 permalink: 'market-insights'
 image: 'https://r2.dreaife.tokyo/notion/covers/3b85465cca178058ab16d23d1491db0b/shinku_birthday.png'
-tags: ['thinking', 'market', 'trade']
-category: '整理'
+tags: ['thinking', 'markets', 'trading']
+category: 'notes'
 draft: false
 ---
 

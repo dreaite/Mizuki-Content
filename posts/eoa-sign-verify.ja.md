@@ -5,7 +5,7 @@ updated: 2026-06-10
 description: 'secp256k1の有限体と点演算からECDSAのr/s/v署名と公開鍵復元を導出し、SIWEを例に、サーバーが秘密鍵に触れずメッセージハッシュとkeccak-256でEOAアドレスの管理権を検証する仕組みを解説します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/37b5465cca17804f8624caf756234df3/ai-generated-1781099535759.png'
 tags: ['wallet', 'theory', 'web3']
-category: '开荒'
+category: 'exploration'
 draft: false
 lang: 'ja'
 ---

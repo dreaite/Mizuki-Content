@@ -5,7 +5,7 @@ updated: 2026-04-09
 description: 'How rising SOTA model prices could turn AI access into a new cognitive divide as AI expands beyond coding into security, video, and music.'
 image: 'https://r2.dreaife.tokyo/notion/covers/33d5465cca1780ba8e6fc66550e148be/IMG_4685.jpg'
 tags: ['thinking', 'ai', 'life']
-category: '深思'
+category: 'reflection'
 draft: false
 lang: 'en'
 ---

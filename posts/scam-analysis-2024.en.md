@@ -5,7 +5,7 @@ updated: 2024-08-20
 description: 'A firsthand online-scam analysis of social-media lures, payment pressure, greed-driven manipulation, warning signs, and safer investment decisions.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1774c94989624c98953feedabade9c8e/20240802_040855728_iOS.jpg'
 tags: ['thinking', 'life']
-category: '整理'
+category: 'notes'
 draft: false
 lang: 'en'
 ---

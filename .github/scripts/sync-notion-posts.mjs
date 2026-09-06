@@ -45,6 +45,10 @@ import { writeDataFilesWithRollback } from './notion-data-write.mjs';
 import { normalizeDirectiveAttributeQuotes } from './markdown-directive-normalizer.mjs';
 import { normalizeNotionMarkdownForCommonMark } from './notion-markdown-normalizer.mjs';
 import {
+  buildPostTaxonomyFrontmatter,
+  syncPostTaxonomyFiles,
+} from './notion-post-taxonomy.mjs';
+import {
   extractFrontMatterField,
   resolvePostDescription,
 } from './notion-post-metadata.mjs';
@@ -1648,12 +1652,8 @@ function yamlDateOrEmpty(value) {
   return yamlQuote(text);
 }
 
-function yamlArray(values) {
-  if (!Array.isArray(values) || values.length === 0) return '[]';
-  return `[${values.map((value) => yamlQuote(normalizeSingleLine(value))).join(', ')}]`;
-}
-
 function buildFrontMatter(meta) {
+  const taxonomy = buildPostTaxonomyFrontmatter(meta);
   const lines = [
     '---',
     `title: ${yamlQuote(meta.title)}`,
@@ -1662,8 +1662,8 @@ function buildFrontMatter(meta) {
     `description: ${yamlQuote(meta.description)}`,
     ...(meta.omitPermalink ? [] : [`permalink: ${yamlQuote(meta.permalink)}`]),
     `image: ${yamlQuote(meta.image)}`,
-    `tags: ${yamlArray(meta.tags)}`,
-    `category: ${yamlQuote(meta.category)}`,
+    taxonomy.tags,
+    taxonomy.category,
     `draft: ${meta.draft ? 'true' : 'false'}`,
     ...(meta.lang ? [`lang: ${yamlQuote(meta.lang)}`] : []),
     '---',
@@ -2341,6 +2341,9 @@ function buildPostOutputPlan(pages, previousSyncIndex) {
 
     const meta = extractPostMetadata(page);
     if (meta.type.toLowerCase() !== 'post') continue;
+    // Validate the complete visible taxonomy before reconciliation deletes or
+    // remote body reads. Keep raw metadata/signatures to preserve body caches.
+    if (!meta.invisible) buildPostTaxonomyFrontmatter(meta);
     const relativePath = ensureMdRelativePathFromSlug(meta.permalink, meta.title);
     const signature = buildNotionSyncSignature(meta, 'post', {
       sourceRelativePath: relativePath,
@@ -2918,6 +2921,19 @@ async function main() {
             meta: { ...meta },
           });
         }
+      }
+
+      // Metadata-only normalization also runs on body cache hits. Schedule any
+      // real translation work first so key migration cannot trigger retranslation.
+      const taxonomyResults = await syncPostTaxonomyFiles(
+        outputPaths.map((outputPath) => path.resolve(outputRoot, outputPath)),
+        meta
+      );
+      for (const result of taxonomyResults) {
+        if (result.result === 'unchanged') continue;
+        changedFiles += 1;
+        postChanged = true;
+        console.log(`Normalized taxonomy in ${path.relative(process.cwd(), result.filePath)}`);
       }
 
       processedPosts += 1;

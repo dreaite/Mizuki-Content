@@ -4,8 +4,8 @@ published: 2022-09-18
 updated: 2022-09-18
 description: '『さくら、もゆ。』を中国語化パッチで再開し完走した記録。楽曲、登場人物の犠牲と成長、作品が描く夢・希望・自己赦しを振り返ります。'
 image: 'https://r2.dreaife.tokyo/notion/covers/2e1f116038864fb8b2f212e3e2493bcc/MASHIRO_e102b.png'
-tags: ['recomand', 'thinking', 'gal']
-category: '碰撞'
+tags: ['recommendations', 'thinking', 'visual-novels']
+category: 'perspectives'
 draft: false
 lang: 'ja'
 ---

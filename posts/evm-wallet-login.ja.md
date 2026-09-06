@@ -5,7 +5,7 @@ updated: 2026-06-09
 description: 'React/wagmi製のEVMウォレットログインを例に、接続、サーバー発行nonce、SIWEメッセージ、署名、バックエンドでのアドレス復元を追い、アドレス接続と管理権の証明を分ける理由を解説します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/3795465cca1780d29cb9f993bf218d10/2026%E5%B9%B46%E6%9C%889%E6%97%A5_01_09_11.png'
 tags: ['web3', 'wallet']
-category: '开荒'
+category: 'exploration'
 draft: false
 lang: 'ja'
 ---

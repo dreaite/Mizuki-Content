@@ -5,7 +5,7 @@ updated: 2024-12-09
 description: 'Learn blockchain through blocks, distributed ledgers, and consensus: transaction flow, immutability, real-world uses, and scalability tradeoffs.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1575465cca1780ecb51bc75146cb9231/IMG_1823(1).jpg'
 tags: ['web3', 'theory']
-category: '研习'
+category: 'study'
 draft: false
 lang: 'en'
 ---

@@ -4,8 +4,8 @@ published: 2024-12-07
 updated: 2024-12-08
 description: 'Nest.js、Angular、PostgreSQL、AWS Cognitoで入札プラットフォームを構築。ユーザー・案件・入札管理、Swagger API、Jest、GitHub Actions CI/CDを扱います。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1555465cca1780f382f5f1421004b0a8/IMG_1767.jpg'
-tags: ['nodejs', 'ts', 'aws', 'PROJECT']
-category: '开荒'
+tags: ['nodejs', 'typescript', 'aws', 'projects']
+category: 'exploration'
 draft: false
 lang: 'ja'
 ---

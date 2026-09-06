@@ -9,6 +9,7 @@ on:
       - '.github/workflows/sync-notion-posts.yml'
       - '.github/notion-data-translation-cache.json'
       - '.github/notion-sync-index.json'
+      - 'data/post-taxonomy.mjs'
   workflow_dispatch:
     inputs:
       bootstrap_index_only:

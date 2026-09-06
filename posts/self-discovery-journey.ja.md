@@ -4,8 +4,8 @@ published: 2026-03-05
 updated: 2026-03-06
 description: '感情の抑圧と自己形成についての心理記録。作られた内面の安定は世界との接触を遠ざけますが、本当の自己は交流・試行・選択の中で形づくられます。方向を選べない迷いの奥には、選択の結果を引き受ける恐れがあります。'
 image: 'https://r2.dreaife.tokyo/notion/covers/31a5465cca1780a3aa46f35da870624c/IMG_4498.jpg'
-tags: ['self', 'mental', 'discover', 'psycho']
-category: '深思'
+tags: ['self', 'mental-health', 'self-discovery', 'psychology']
+category: 'reflection'
 draft: false
 lang: 'ja'
 ---

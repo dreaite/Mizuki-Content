@@ -4,8 +4,8 @@ published: 2023-08-11
 updated: 2023-08-11
 description: 'Interview solutions for snake matrices, linked-list quicksort, peaks, egg dropping, minimum stacks, and cycle-entry detection, with code.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1670090a8eaf4eab9ccd3f1332d4e916/2421860-20230811144113268-1519746820.png'
-tags: ['meeting', 'algorithm']
-category: '研习'
+tags: ['interviews', 'algorithms']
+category: 'study'
 draft: false
 lang: 'en'
 ---

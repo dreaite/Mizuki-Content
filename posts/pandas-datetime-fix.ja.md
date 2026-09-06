@@ -4,8 +4,8 @@ published: 2024-01-02
 updated: 2024-01-02
 description: 'pandas.to_datetimeで日付形式が混在するときのエラーを、format="mixed"で解決する方法をコード例とともに解説します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/3426b492685447d7b65f4c01dd9c4fce/2421860-20240103003119896-530983932.png'
-tags: ['pandas', '数据处理', 'cs-base']
-category: '踩坑'
+tags: ['pandas', 'data-processing', 'computer-science']
+category: 'troubleshooting'
 draft: false
 lang: 'ja'
 ---

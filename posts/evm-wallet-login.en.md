@@ -5,7 +5,7 @@ updated: 2026-06-09
 description: 'React/wagmi EVM login walkthrough: wallet connection, server nonces, SIWE messages, signing, backend address recovery, and proof of control.'
 image: 'https://r2.dreaife.tokyo/notion/covers/3795465cca1780d29cb9f993bf218d10/2026%E5%B9%B46%E6%9C%889%E6%97%A5_01_09_11.png'
 tags: ['web3', 'wallet']
-category: '开荒'
+category: 'exploration'
 draft: false
 lang: 'en'
 ---

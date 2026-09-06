@@ -4,8 +4,8 @@ published: 2022-09-18
 updated: 2022-09-18
 description: 'A review of Sakura, Moyu.: returning after the Chinese patch, finishing the visual novel, and reflecting on its music, sacrifice, dreams, and hope.'
 image: 'https://r2.dreaife.tokyo/notion/covers/2e1f116038864fb8b2f212e3e2493bcc/MASHIRO_e102b.png'
-tags: ['recomand', 'thinking', 'gal']
-category: '碰撞'
+tags: ['recommendations', 'thinking', 'visual-novels']
+category: 'perspectives'
 draft: false
 lang: 'en'
 ---

@@ -4,8 +4,8 @@ published: 2026-06-27
 updated: 2026-06-27
 description: 'ウォレットの視点からEOA/HDウォレットの鍵派生、EIP-1559トランザクション、SIWE・EIP-191・EIP-712署名を整理し、ethers.jsによる作成・検証・ブロードキャストの実装例を示します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/38c5465cca1780e5bf80d0662451b860/ai-generated-1782646843083.png'
-tags: ['wallet', 'web3', 'transaction']
-category: '开荒'
+tags: ['wallet', 'web3', 'transactions']
+category: 'exploration'
 draft: false
 lang: 'ja'
 ---

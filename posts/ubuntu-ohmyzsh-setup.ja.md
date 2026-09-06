@@ -4,8 +4,8 @@ published: 2024-12-03
 updated: 2024-12-03
 description: 'UbuntuにOh My Zshを導入し、Zsh、Git、Powerlevel10k、各種プラグイン、.zshrcを設定して使いやすい端末環境を整えます。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1515465cca178073b194f4ade9c3a703/IMG_1723.jpg'
-tags: ['bash', 'linux', 'cs-base']
-category: '踩坑'
+tags: ['shell', 'linux', 'computer-science']
+category: 'troubleshooting'
 draft: false
 lang: 'ja'
 ---

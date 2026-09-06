@@ -4,8 +4,8 @@ published: 2024-12-07
 updated: 2024-12-08
 description: 'Build a Nest.js and Angular bidding platform with PostgreSQL and AWS Cognito, plus Swagger APIs, Jest tests, and GitHub Actions CI/CD.'
 image: 'https://r2.dreaife.tokyo/notion/covers/1555465cca1780f382f5f1421004b0a8/IMG_1767.jpg'
-tags: ['nodejs', 'ts', 'aws', 'PROJECT']
-category: '开荒'
+tags: ['nodejs', 'typescript', 'aws', 'projects']
+category: 'exploration'
 draft: false
 lang: 'en'
 ---

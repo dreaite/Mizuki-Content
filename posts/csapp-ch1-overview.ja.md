@@ -4,8 +4,8 @@ published: 2023-01-15
 updated: 2023-01-15
 description: '『CSAPP』第1章の読書ノート。ビットとコンパイルからCPU実行、キャッシュ、OSの抽象化、プロセス、仮想メモリまで、計算機システム全体をたどります。'
 image: 'https://r2.dreaife.tokyo/notion/covers/fbaef38b501a4cd8a8a2d1c58798cf70/2421860-20230116004313116-1139297538.png'
-tags: ['caapp', 'os', 'c', 'cs-base']
-category: '研习'
+tags: ['csapp', 'operating-systems', 'c', 'computer-science']
+category: 'study'
 draft: false
 lang: 'ja'
 ---

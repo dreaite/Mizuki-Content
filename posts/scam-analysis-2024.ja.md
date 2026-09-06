@@ -5,7 +5,7 @@ updated: 2024-08-20
 description: '実際のネット詐欺被害を振り返り、SNS誘導、支払い圧力、欲を突く手口を分析。危険信号の見分け方と、冷静な投資判断の教訓をまとめます。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1774c94989624c98953feedabade9c8e/20240802_040855728_iOS.jpg'
 tags: ['thinking', 'life']
-category: '整理'
+category: 'notes'
 draft: false
 lang: 'ja'
 ---

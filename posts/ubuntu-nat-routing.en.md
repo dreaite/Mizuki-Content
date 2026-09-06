@@ -4,8 +4,8 @@ published: 2024-12-15
 updated: 2024-12-15
 description: 'Share an Ubuntu host network with a router by configuring Netplan, static IP, IP forwarding, DHCP, and NAT rules, then verify client connectivity.'
 image: 'https://r2.dreaife.tokyo/notion/covers/15d5465cca1780bf85eac8dea673675e/IMG_1935.jpg'
-tags: ['network', 'linux', 'cs-base']
-category: '踩坑'
+tags: ['networking', 'linux', 'computer-science']
+category: 'troubleshooting'
 draft: false
 lang: 'en'
 ---

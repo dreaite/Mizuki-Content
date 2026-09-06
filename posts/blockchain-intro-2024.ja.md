@@ -5,7 +5,7 @@ updated: 2024-12-09
 description: 'ブロック、分散台帳、コンセンサスからブロックチェーンを解説。取引の流れ、分散性・改ざん耐性、暗号資産や供給網での用途、拡張性の課題を整理します。'
 image: 'https://r2.dreaife.tokyo/notion/covers/1575465cca1780ecb51bc75146cb9231/IMG_1823(1).jpg'
 tags: ['web3', 'theory']
-category: '研习'
+category: 'study'
 draft: false
 lang: 'ja'
 ---
