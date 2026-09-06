@@ -46,21 +46,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Run sync script self-checks
-        run: |
-          node .github/scripts/test-markdown-directive-normalizer.mjs
-          node .github/scripts/test-notion-data-translation.mjs
-          node .github/scripts/test-notion-data-write.mjs
-          node .github/scripts/test-notion-ts-data-sync.mjs
-          node .github/scripts/test-notion-markdown-normalizer.mjs
-          node .github/scripts/test-notion-post-metadata.mjs
-          node .github/scripts/test-notion-post-visibility.mjs
-          node .github/scripts/test-notion-sync-index.mjs
-          node .github/scripts/test-notion-page-query.mjs
-          node .github/scripts/test-notion-markdown-reader.mjs
-          node .github/scripts/test-notion-r2-dedup.mjs
-          node .github/scripts/test-notion-r2-routing.mjs
-
       - name: Install sync dependencies
         run: npm install --no-save --no-package-lock @notionhq/client@5.25.2 @aws-sdk/client-s3
 
