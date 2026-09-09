@@ -1577,21 +1577,41 @@ async function syncR2ImagePreviews(s3Client, uploadCache) {
   const base = `${CONFIG.notionCoverR2PublicBaseUrl}/`;
   let uploaded = 0;
   for (const source of [...sources].filter(Boolean).sort()) {
-    if (!/^https?:\/\//i.test(source) || /\.(svg|heic|heif)(?:[?#]|$)/i.test(source)) continue;
+    if (!/^https?:\/\//i.test(source) || /\.svg(?:[?#]|$)/i.test(source)) continue;
     try {
+      const heic = /\.(heic|heif)$/i.test(decodeURIComponent(new URL(source).pathname));
       const sourceKey = source.startsWith(base) ? decodeURIComponent(new URL(source).pathname.slice(new URL(base).pathname.length)) : '';
       const original = sourceKey ? await headR2ObjectIfExists(s3Client, uploadCache, sourceKey) : null;
       const version = original?.etag || '';
       const hash = crypto.createHash('sha1').update(`jpeg-800-70:${source}:${version}`).digest('hex');
       const key = `notion/previews/${hash}.jpg`;
+      const fullKey = heic ? `notion/previews/${hash}-full.jpg` : '';
       const existing = await headR2ObjectIfExists(s3Client, uploadCache, key);
+      const fullExists = heic ? (await headR2ObjectIfExists(s3Client, uploadCache, fullKey)).exists : true;
       let width = Number(existing.metadata?.width);
       let height = Number(existing.metadata?.height);
-      if (!existing.exists || !width || !height) {
+      if (!existing.exists || !width || !height || !fullExists) {
         const buffer = sourceKey
           ? Buffer.from(await (await s3Client.send(new GetObjectCommand({ Bucket: CONFIG.notionCoverR2Bucket, Key: sourceKey }))).Body.transformToByteArray())
           : Buffer.from(await (await fetchNotionImageWithRetry(source, { logLabel: 'preview' })).arrayBuffer());
-        const { data, info } = await sharp(buffer, { page: 0, pages: 1 })
+        let image;
+        if (heic) {
+          // Decode the primary HEIC image on the sync runner, not in visitors' browsers.
+          // https://github.com/catdad-experiments/heic-decode
+          const { default: decode } = await import('heic-decode');
+          const decoded = await decode({ buffer });
+          image = sharp(Buffer.from(decoded.data), { raw: { width: decoded.width, height: decoded.height, channels: 4 } });
+          await s3Client.send(new PutObjectCommand({
+            Bucket: CONFIG.notionCoverR2Bucket,
+            Key: fullKey,
+            Body: await image.clone().jpeg({ quality: 90, progressive: true }).toBuffer(),
+            ContentType: 'image/jpeg',
+            CacheControl: 'public, max-age=31536000, immutable',
+          }));
+        } else {
+          image = sharp(buffer, { page: 0, pages: 1 });
+        }
+        const { data, info } = await image
           .rotate()
           .resize({ width: 800, height: 800, fit: 'inside', withoutEnlargement: true })
           .flatten({ background: '#ffffff' })
@@ -1608,7 +1628,10 @@ async function syncR2ImagePreviews(s3Client, uploadCache) {
         }));
         uploaded++;
       }
-      previews[source] = { src: buildPublicUrlFromBase(CONFIG.notionCoverR2PublicBaseUrl, key), width, height };
+      previews[source] = {
+        src: buildPublicUrlFromBase(CONFIG.notionCoverR2PublicBaseUrl, key), width, height,
+        ...(heic ? { fullSrc: buildPublicUrlFromBase(CONFIG.notionCoverR2PublicBaseUrl, fullKey) } : {}),
+      };
     } catch (error) {
       if (error?.$metadata?.httpStatusCode && !isS3ObjectNotFoundError(error)) throw error;
       if (previous[source]) previews[source] = previous[source];
