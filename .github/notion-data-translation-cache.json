@@ -77,6 +77,18 @@
         }
       }
     },
+    "diary:3d65465c-ca17-8063-8af7-f020d7cc0507": {
+      "kind": "diary",
+      "sourceHash": "99116e7f4b16db1b3aec0edd02c26df5be97127d493b08aa0e5a3ae85f82b9e7",
+      "translations": {
+        "en": {
+          "content": "Because it's summer…😎\n\nLAMUNATION!"
+        },
+        "ja": {
+          "content": "夏ですから…😎\n\nLAMUNATION!"
+        }
+      }
+    },
     "diary:3cf5465c-ca17-8069-9c35-e3405d24e479": {
       "kind": "diary",
       "sourceHash": "611c3aa5d6585d12c5332774548720ced035e40348ebf126b0f5d4297311e81c",

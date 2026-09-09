@@ -26,6 +26,24 @@ export interface DiaryItem {
 const diaryData: DiaryItem[] = [
 	{
 		id: 1,
+		content: "夏ですから…😎\n\nLAMUNATION!",
+		lang: "zh_CN",
+		translations: {
+			"en": {
+				content: "Because it's summer…😎\n\nLAMUNATION!",
+			},
+			"ja": {
+				content: "夏ですから…😎\n\nLAMUNATION!",
+			},
+		},
+		date: "2026-09-09T03:55:00.000Z",
+		images: [
+			"https://r2.dreaife.tokyo/notion/covers/3d65465cca1780638af7f020d7cc0507/inline/07e4c2194c61ccb9-CORONA.png",
+			"https://r2.dreaife.tokyo/notion/covers/3d65465cca1780638af7f020d7cc0507/inline/a089978f80d08c60-EA87FBA6-79A0-4E41-BC96-C4ECF8DE2833.heic",
+		],
+	},
+	{
+		id: 2,
 		content: "刚刚发现一个有意思的动画，所以看了，评价是观点不合，有病先治病。《记忆管理局》\n有一说一，作画感觉挺好的，音乐也不错（虽然和画面匹配不咋样），主要是思想没有什么新意，描述的想法感觉太单薄了。一如既往的童年老大哥，一如既往的校园暴力，一如既往的原生家庭。大陆的创伤都是千篇一律吗。。\n有一说一，因为我在这里，所以我可以说，如果有问题是自己没有办法解决的，为什么不去别的没有这个问题的地方来发展呢。世界没有想象中那么宽大，但是也不至于把一个人钉死在原地那么狭小。有问题，那么就解决它，解决不了那么就远离它，等自己成长到可以面对它的时候再来解决就好。\n人的意义因为自己存在在这里，所以已经存在。而自己所拥有的不是过去，不是未来，而是实实在在在被自己创造的现在。与其蹲在角落幻想着未来如何美好，拥有无数多种可能性，不如下定决心，面向自己，为了某种未来，承担起放弃掉其他未来可能性的责任，迈出自己现在的一步。这样，幻想才会来到现实。\n总之，评价是，观点不合，建议有病先治。",
 		lang: "zh_CN",
 		translations: {
@@ -39,7 +57,7 @@ const diaryData: DiaryItem[] = [
 		date: "2026-09-02T15:19:00.000Z",
 	},
 	{
-		id: 2,
+		id: 3,
 		content: "真紅、お誕生日おめでとう🎂\n\nこれからの1年も幸せでありますように🥰\n\nホットケーキだよー🥞",
 		lang: "zh_CN",
 		translations: {
@@ -58,7 +76,7 @@ const diaryData: DiaryItem[] = [
 		],
 	},
 	{
-		id: 3,
+		id: 4,
 		content: "和真红的海边散步～\n\n个人第一幅画了XD",
 		lang: "zh_CN",
 		translations: {
@@ -75,7 +93,7 @@ const diaryData: DiaryItem[] = [
 		],
 	},
 	{
-		id: 4,
+		id: 5,
 		content: "仔细想想，现在的我应该才算是真正开始探索自我的下一步吧。我是谁，到我可以是谁，到我应该是谁；从脑内到思考，到行动的渴望，到溢出的开始改变的现实，我开始深刻感受到我这个存在。",
 		lang: "zh_CN",
 		translations: {
@@ -89,7 +107,7 @@ const diaryData: DiaryItem[] = [
 		date: "2026-06-14T17:39:00.000Z",
 	},
 	{
-		id: 5,
+		id: 6,
 		content: "有一说一，最近开始学习区块链，没想到反而感觉更类似于当时打acm的时候学习的状态了。secp256k1要补各种数学知识和推论，再实际看ethers的实现的时候，结果又发现了熟悉的竞赛风味的代码（也是非常愉悦的了😊\n\n话说我本来以为会是学习java框架的那种感觉，现在想来从钱包这个主体来学，可能是个不错的选择。",
 		lang: "zh_CN",
 		translations: {
@@ -106,7 +124,7 @@ const diaryData: DiaryItem[] = [
 		],
 	},
 	{
-		id: 6,
+		id: 7,
 		content: "最近我稍微意识到了一点增量意识和存量意识的差别，虽然稳定的工资可以提供一份稳定的收入，但是这也会诱导人的思考局限在了这份开销水平之类。稳定的收入更应该作为一份心态的稳定剂，而不应该为此而把自己的行动边境就此限制。当今这个泡沫时代，依然还是有很多热钱可以赚到的，没有道理因为手上的一份收入就丢掉另一份。",
 		lang: "zh_CN",
 		translations: {
@@ -120,7 +138,7 @@ const diaryData: DiaryItem[] = [
 		date: "2026-04-03T16:29:00.000Z",
 	},
 	{
-		id: 7,
+		id: 8,
 		content: "到达！\nねり真可爱",
 		lang: "zh_CN",
 		translations: {
@@ -138,7 +156,7 @@ const diaryData: DiaryItem[] = [
 		],
 	},
 	{
-		id: 8,
+		id: 9,
 		content: "正式搬到mizuki来了😊",
 		lang: "zh_CN",
 		translations: {

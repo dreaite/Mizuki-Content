@@ -14,6 +14,14 @@ export interface FriendItem {
 export const friendsData: FriendItem[] = [
 	{
 		id: 1,
+		title: "老船长PZ_Jack",
+		imgurl: "https://blog.panzer-jack.cn/avatar.png",
+		desc: "A Pragmatistic Dreamer.",
+		siteurl: "https://blog.panzer-jack.cn",
+		tags: [],
+	},
+	{
+		id: 2,
 		title: "XnneHang",
 		imgurl: "https://xnnehang.top/avatar.jpg",
 		desc: "写代码是因为爱。",
@@ -21,7 +29,7 @@ export const friendsData: FriendItem[] = [
 		tags: [],
 	},
 	{
-		id: 2,
+		id: 3,
 		title: "且听书吟",
 		imgurl: "https://r2.dreaife.tokyo/notion/covers/37b5465cca1780e5b733f2e08041648a/logo.svg",
 		desc: "诗与梦想的远方",

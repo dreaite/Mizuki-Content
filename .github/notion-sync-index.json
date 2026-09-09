@@ -548,6 +548,20 @@
       "renderRevision": "notion-sync-index-v1|kind=diary|body=official-markdown@2026-03-11|r2=enabled:dreaife-store:https://r2.dreaife.tokyo:notion/covers",
       "signature": "3dc9cce0326e286ed182bd5edf35c2c8dcb0e064e52b726635d57d3c30dd1a76"
     },
+    "3d65465c-ca17-8063-8af7-f020d7cc0507": {
+      "diarySource": {
+        "content": "夏ですから…😎\n\nLAMUNATION!",
+        "images": [
+          "https://r2.dreaife.tokyo/notion/covers/3d65465cca1780638af7f020d7cc0507/inline/07e4c2194c61ccb9-CORONA.png",
+          "https://r2.dreaife.tokyo/notion/covers/3d65465cca1780638af7f020d7cc0507/inline/a089978f80d08c60-EA87FBA6-79A0-4E41-BC96-C4ECF8DE2833.heic"
+        ]
+      },
+      "kind": "diary",
+      "lastEditedTime": "2026-09-09T03:55:00.000Z",
+      "pageId": "3d65465c-ca17-8063-8af7-f020d7cc0507",
+      "renderRevision": "notion-sync-index-v1|kind=diary|body=official-markdown@2026-03-11|r2=enabled:dreaife-store:https://r2.dreaife.tokyo:notion/covers",
+      "signature": "ac9acd853d4df26a7611d8716afbc813546f16afa538e7fc8f25ec78cc998b2d"
+    },
     "3f6c5930-9d7d-440c-a8a9-aa5ab567ebc0": {
       "kind": "post",
       "lastEditedTime": "2026-09-02T05:53:00.000Z",
