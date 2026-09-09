@@ -6,8 +6,9 @@ import path from 'node:path';
 import process from 'node:process';
 import { execFileSync } from 'node:child_process';
 
-import { HeadObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { GetObjectCommand, HeadObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Client } from '@notionhq/client';
+import sharp from 'sharp';
 import {
   buildStableRemoteImageSourceSha1,
   canReuseLegacyR2ObjectAfterExpiredSource,
@@ -96,10 +97,12 @@ const NOTION_SYNC_RENDER_REVISION = 'notion-sync-index-v1';
 const NOTION_POST_RENDER_REVISION = 'notion-sync-index-v2';
 const NOTION_MARKDOWN_API_VERSION = '2026-03-11';
 const BOOTSTRAP_SYNC_INDEX_ONLY = process.argv.includes('--bootstrap-index-only');
+const PREVIEWS_ONLY = process.argv.includes('--previews-only');
+const IMAGE_PREVIEWS_PATH = 'data/image-previews.json';
 
 const CONFIG = {
-  notionToken: requireEnv('NOTION_TOKEN'),
-  databaseId: requireEnv('NOTION_DATABASE_ID'),
+  notionToken: PREVIEWS_ONLY ? '' : requireEnv('NOTION_TOKEN'),
+  databaseId: PREVIEWS_ONLY ? '' : requireEnv('NOTION_DATABASE_ID'),
   dataSourceId: process.env.NOTION_DATA_SOURCE_ID || '',
   postsDir: process.env.NOTION_POSTS_DIR || 'posts',
   aboutPath: process.env.NOTION_ABOUT_PATH || 'spec/about.md',
@@ -204,6 +207,7 @@ const GIT_CONTENT_PATHS = [
   'data/friends.ts',
   'data/diary.ts',
   'data/projects.ts',
+  IMAGE_PREVIEWS_PATH,
   CONFIG.dataTranslationCachePath,
 ];
 
@@ -1472,7 +1476,7 @@ async function uploadRemoteImageUrlToR2(s3Client, uploadCache, { sourceUrl, obje
     const bodyBuffer = Buffer.from(arrayBuffer);
     const contentType = response.headers.get('content-type') || guessImageContentType(suggestedFileName);
 
-    await s3Client.send(
+    const uploaded = await s3Client.send(
       new PutObjectCommand({
         Bucket: CONFIG.notionCoverR2Bucket,
         Key: objectKey,
@@ -1488,6 +1492,7 @@ async function uploadRemoteImageUrlToR2(s3Client, uploadCache, { sourceUrl, obje
     sourceUrlCache?.set(cacheKey, publicUrl);
     setHeadR2ObjectCache(uploadCache, objectKey, {
       exists: true,
+      etag: uploaded.ETag,
       metadata: { 'notion-source-sha1': sourceUrlSha1 },
     });
     incrementNotionR2UploadStat(uploadCache, 'uploads');
@@ -1530,6 +1535,7 @@ async function headR2ObjectIfExists(s3Client, uploadCache, objectKey) {
     );
     const entry = {
       exists: true,
+      etag: response.ETag,
       metadata: response?.Metadata || null,
     };
     cache?.set(objectKey, entry);
@@ -1548,6 +1554,70 @@ function setHeadR2ObjectCache(uploadCache, objectKey, entry) {
   const cache = getNotionR2ObjectHeadCache(uploadCache);
   if (!cache || !objectKey) return;
   cache.set(objectKey, entry);
+}
+
+// Preview generation belongs to content sync; page rendering only reads this map.
+async function syncR2ImagePreviews(s3Client, uploadCache) {
+  if (!s3Client) return 'unchanged';
+  const sources = new Set();
+  for (const file of await listMarkdownFiles(CONFIG.postsDir)) {
+    const markdown = await fs.readFile(file, 'utf8');
+    if (extractFrontMatterField(markdown, 'draft') === 'true') continue;
+    sources.add(extractFrontMatterField(markdown, 'image'));
+  }
+  const diary = await readFileUtf8IfExists(CONFIG.diaryDataPath);
+  if (diary) for (const item of parseDiaryDataTs(diary)) {
+    for (const image of item.images || []) sources.add(image);
+  }
+  const projects = await readFileUtf8IfExists(CONFIG.projectsDataPath);
+  for (const match of (projects || '').matchAll(/\bimage:\s*["'](https?:\/\/[^"']+)["']/g)) sources.add(match[1]);
+
+  const previous = JSON.parse(await readFileUtf8IfExists(IMAGE_PREVIEWS_PATH) || '{}');
+  const previews = {};
+  const base = `${CONFIG.notionCoverR2PublicBaseUrl}/`;
+  let uploaded = 0;
+  for (const source of [...sources].filter(Boolean).sort()) {
+    if (!/^https?:\/\//i.test(source) || /\.(svg|heic|heif)(?:[?#]|$)/i.test(source)) continue;
+    try {
+      const sourceKey = source.startsWith(base) ? decodeURIComponent(new URL(source).pathname.slice(new URL(base).pathname.length)) : '';
+      const original = sourceKey ? await headR2ObjectIfExists(s3Client, uploadCache, sourceKey) : null;
+      const version = original?.etag || '';
+      const hash = crypto.createHash('sha1').update(`jpeg-800-70:${source}:${version}`).digest('hex');
+      const key = `notion/previews/${hash}.jpg`;
+      const existing = await headR2ObjectIfExists(s3Client, uploadCache, key);
+      let width = Number(existing.metadata?.width);
+      let height = Number(existing.metadata?.height);
+      if (!existing.exists || !width || !height) {
+        const buffer = sourceKey
+          ? Buffer.from(await (await s3Client.send(new GetObjectCommand({ Bucket: CONFIG.notionCoverR2Bucket, Key: sourceKey }))).Body.transformToByteArray())
+          : Buffer.from(await (await fetchNotionImageWithRetry(source, { logLabel: 'preview' })).arrayBuffer());
+        const { data, info } = await sharp(buffer, { page: 0, pages: 1 })
+          .rotate()
+          .resize({ width: 800, height: 800, fit: 'inside', withoutEnlargement: true })
+          .flatten({ background: '#ffffff' })
+          .jpeg({ quality: 70, progressive: true })
+          .toBuffer({ resolveWithObject: true });
+        ({ width, height } = info);
+        await s3Client.send(new PutObjectCommand({
+          Bucket: CONFIG.notionCoverR2Bucket,
+          Key: key,
+          Body: data,
+          ContentType: 'image/jpeg',
+          CacheControl: 'public, max-age=31536000, immutable',
+          Metadata: { width: String(width), height: String(height) },
+        }));
+        uploaded++;
+      }
+      previews[source] = { src: buildPublicUrlFromBase(CONFIG.notionCoverR2PublicBaseUrl, key), width, height };
+    } catch (error) {
+      if (error?.$metadata?.httpStatusCode && !isS3ObjectNotFoundError(error)) throw error;
+      if (previous[source]) previews[source] = previous[source];
+      console.warn(`Image preview unavailable for ${source}: ${error.message}`);
+    }
+  }
+  const result = await writeIfChanged(IMAGE_PREVIEWS_PATH, `${JSON.stringify(previews, null, 2)}\n`);
+  console.log(`R2 image previews: available=${Object.keys(previews).length}, uploaded=${uploaded}, manifest=${result}`);
+  return result;
 }
 
 async function uploadNotionCoverToR2(s3Client, uploadCache, { pageId, coverInfo }) {
@@ -2639,6 +2709,12 @@ async function preparePostBodyReads({
 }
 
 async function main() {
+  if (PREVIEWS_ONLY) {
+    validateNotionCoverR2Config();
+    if (!CONFIG.notionCoverR2Enabled) throw new Error('R2 must be enabled to upload previews.');
+    await syncR2ImagePreviews(createNotionCoverR2Client(), createNotionR2UploadCache());
+    return;
+  }
   validatePostTranslationConfig();
   validateDataTranslationConfig();
   validateNotionCoverR2Config();
@@ -3289,6 +3365,9 @@ async function main() {
   if (normalizedDirectiveFiles > 0) {
     changedFiles += normalizedDirectiveFiles;
   }
+
+  const previewResult = await syncR2ImagePreviews(notionCoverR2Client, notionR2UploadCache);
+  if (previewResult !== 'unchanged') changedFiles += 1;
 
   const syncIndexExists = await fileExists(syncIndexPath);
   const syncIndexWriteResult = await writeIfChanged(

@@ -12,6 +12,11 @@ on:
       - 'data/post-taxonomy.mjs'
   workflow_dispatch:
     inputs:
+      previews_only:
+        description: '只补齐现有图片的 R2 JPEG 预览，不读取 Notion 或翻译'
+        required: false
+        default: false
+        type: boolean
       bootstrap_index_only:
         description: '只从仓库现有正文/译文建立同步索引，不拉正文或翻译'
         required: false
@@ -47,7 +52,7 @@ jobs:
           node-version: '20'
 
       - name: Install sync dependencies
-        run: npm install --no-save --no-package-lock @notionhq/client@5.25.2 @aws-sdk/client-s3
+        run: npm install --no-save --no-package-lock @notionhq/client@5.25.2 @aws-sdk/client-s3 sharp@0.35.2
 
       - name: Configure git identity
         run: |
@@ -135,7 +140,9 @@ jobs:
           NOTION_STATUS_PROPERTY: status
         run: |
           sync_args=()
-          if [ "${{ inputs.bootstrap_index_only || false }}" = "true" ]; then
+          if [ "${{ inputs.previews_only || false }}" = "true" ]; then
+            sync_args+=(--previews-only)
+          elif [ "${{ inputs.bootstrap_index_only || false }}" = "true" ]; then
             sync_args+=(--bootstrap-index-only)
           fi
           node .github/scripts/sync-notion-posts.mjs "${sync_args[@]}"
@@ -170,7 +177,7 @@ jobs:
 
           if [ "$SYNC_OUTCOME" = "failure" ]; then
             echo "Sync failed; discarding uncommitted About/data/cache/index changes to avoid advancing state past output"
-            git restore --source=HEAD --staged --worktree -- spec data/friends.ts data/diary.ts data/projects.ts
+            git restore --source=HEAD --staged --worktree -- spec data/friends.ts data/diary.ts data/projects.ts data/image-previews.json
             git clean -f -- 'spec/about.*.md'
             if git ls-files --error-unmatch "$NOTION_DATA_TRANSLATION_CACHE_PATH" >/dev/null 2>&1; then
               git restore --source=HEAD --staged --worktree -- "$NOTION_DATA_TRANSLATION_CACHE_PATH"
@@ -184,7 +191,7 @@ jobs:
             fi
           fi
 
-          content_status="$(git status --porcelain -- posts spec data/friends.ts data/diary.ts data/projects.ts)"
+          content_status="$(git status --porcelain -- posts spec data/friends.ts data/diary.ts data/projects.ts data/image-previews.json)"
           state_status="$(git status --porcelain -- "$NOTION_DATA_TRANSLATION_CACHE_PATH" "$NOTION_SYNC_INDEX_PATH")"
           if [ -z "$content_status" ] && [ -z "$state_status" ]; then
             echo "No content or sync-state changes"
@@ -201,7 +208,7 @@ jobs:
             exit 0
           fi
 
-          git add -A posts spec data/friends.ts data/diary.ts data/projects.ts "$NOTION_DATA_TRANSLATION_CACHE_PATH" "$NOTION_SYNC_INDEX_PATH"
+          git add -A posts spec data/friends.ts data/diary.ts data/projects.ts data/image-previews.json "$NOTION_DATA_TRANSLATION_CACHE_PATH" "$NOTION_SYNC_INDEX_PATH"
           git commit -m "chore(content): sync notion content [skip ci]"
           git pull --rebase
           git push
