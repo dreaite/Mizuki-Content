@@ -562,6 +562,18 @@
       "renderRevision": "notion-sync-index-v1|kind=diary|body=official-markdown@2026-03-11|r2=enabled:dreaife-store:https://r2.dreaife.tokyo:notion/covers",
       "signature": "ac9acd853d4df26a7611d8716afbc813546f16afa538e7fc8f25ec78cc998b2d"
     },
+    "3da5465c-ca17-8058-82ba-d365b47648a8": {
+      "kind": "post",
+      "lastEditedTime": "2026-09-13T10:30:00.000Z",
+      "outputPaths": [
+        "manual-evm-tx.md",
+        "manual-evm-tx.en.md",
+        "manual-evm-tx.ja.md"
+      ],
+      "pageId": "3da5465c-ca17-8058-82ba-d365b47648a8",
+      "renderRevision": "notion-sync-index-v2|kind=post|body=official-markdown@2026-03-11|r2=enabled:dreaife-store:https://r2.dreaife.tokyo:notion/covers",
+      "signature": "ddc721c1476d08378fbbfbffeddbe8065f4b8e2ec583eaccda126b7a2c393884"
+    },
     "3f6c5930-9d7d-440c-a8a9-aa5ab567ebc0": {
       "kind": "post",
       "lastEditedTime": "2026-09-02T05:53:00.000Z",
