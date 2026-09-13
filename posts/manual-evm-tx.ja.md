@@ -1,28 +1,28 @@
 ---
-title: 'ブラウザ上でEVMトランザクションを手動で実行する'
+title: 'ブラウザ上でEVMトランザクションを手動で完了する'
 published: 2026-09-13
 updated: 2026-09-13
 description: 'ブラウザのコンソールで EVM トランザクションを手動で実行します。JSON-RPC でローカルの Anvil テストチェーンに接続し、ウォレットを呼び出してトランザクションを送信し、手動でブロックを生成します。さらに、トランザクションハッシュの検証、署名者アドレスの復元、Merkle 包含証明の検証を通じて、ブロードキャストからブロックへの取り込み、オンチェーンでの承認までの一連の流れを直感的に理解できます。'
 image: 'https://r2.dreaife.tokyo/notion/covers/3da5465cca17805882bad365b47648a8/ai-generated-1789295398718.png'
 tags: ['web3', 'wallet']
-category: 'study'
+category: 'exploration'
 draft: false
 lang: 'ja'
 ---
 
-読む前に：本記事は著者個人の見解のみを示すものです。
+お読みになる前に、本記事はあくまで筆者個人の見解です。
 
 ========
 
-最近、EVMの実際の取引プロセスについて具体的に調べたので、ブラウザーのconsoleからウォレットとLAN内のAnvilテストチェーンを操作し、トランザクションをオンチェーンに記録して実行結果を確認するまでの手順を簡単に記録しておきます。
+最近、EVMの実際のトランザクション処理の流れを少し詳しく調べたので、ブラウザのコンソールからウォレットとLAN内のAnvilテストチェーンを操作し、トランザクションのオンチェーンへの記録から実行完了、確認までを行う方法を簡単にまとめます。
 
-ブラウザー拡張ウォレットは、Webページ/DAppがウォレットとやり取りできるように、ブラウザーにProviderを公開します。一般的には `window.ethereum` で、その基本インターフェースは通常 [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) に従っています。そのため、`provider.request({ method, params })` を通じて、ウォレットが対応するEthereum RPC / Wallet RPCを呼び出せます。ウォレットによっては独自の拡張メソッドも実装されています。
+ブラウザ拡張ウォレットは、WebページやDAppがウォレットとやり取りできるよう、ブラウザにProviderを公開します。一般的には `window.ethereum` で、基本インターフェースは通常 [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) に準拠しています。そのため、`provider.request({ method, params })` を通じて、ウォレットが対応するEthereum RPC / Wallet RPCを呼び出せます。ウォレットによっては、独自の拡張メソッドを実装している場合もあります。
 
-各プロセスのinputとoutputがどのようなものかを視覚的に確認できる[liveDemo](https://chaintxdemo.dreaifehebi.com/)も作ってあります（
+各段階の入力と出力を直感的に確認できる[liveDemo](https://chaintxdemo.dreaifehebi.com/)も作ってあります（
 
-::github{url="dreaifeHebi/chainTXDemo"}
+::github{repo="dreaifeHebi/chainTXDemo"}
 
-それでは、ブラウザーでEVMトランザクションを手動で実行する具体的な手順を見ていきましょう。
+では、ブラウザ上でEVMトランザクションを自分で手動実行する具体的な手順を見ていきましょう。
 
 流れはこちらを参考にしてください：
 
@@ -40,9 +40,9 @@ lang: 'ja'
 
 # RPC接続の準備
 
-RPCは一般的にJSON-RPC形式のリクエストを受け付けるため、汎用的なfetch関数を作れば、そのままRPCと通信できます。RPCのメソッドについては、[共通のEthereum Execution JSON-RPC API](https://ethereum.org/developers/docs/apis/json-rpc/#eth_gettransactioncount)と[Anvil独自のメソッド](https://www.getfoundry.sh/anvil/rpc-methods)を確認できます。
+RPCは一般的にJSON-RPC形式のリクエストを受け付けるので、汎用的なfetch関数を作れば、そのままRPCに接続できます。RPCについては、[共通のEthereum Execution JSON-RPC API](https://ethereum.org/developers/docs/apis/json-rpc/#eth_gettransactioncount)と、いくつかの[Anvil独自のメソッド](https://www.getfoundry.sh/anvil/rpc-methods)を確認できます。
 
-接続用の関数を作成：
+接続処理の作成：
 
 ```javascript
 var rpcUrl = "http://127.0.0.1:8545";
@@ -85,7 +85,7 @@ if (BigInt(await rpc("eth_chainId")) !== 31337n) {
 }
 ```
 
-1回の通信でfetchに渡す4つのフィールドは、それぞれ次のとおりです：
+fetchで送信するリクエストの4つのフィールドは、それぞれ次のとおりです：
 
 <table header-row="true">
 <tr>
@@ -94,11 +94,11 @@ if (BigInt(await rpc("eth_chainId")) !== 31337n) {
 </tr>
 <tr>
 <td>`jsonrpc`</td>
-<td>JSON-RPC 2.0を使用することを宣言する</td>
+<td>JSON-RPC 2.0の使用を宣言する</td>
 </tr>
 <tr>
 <td>`id`</td>
-<td>このリクエストに番号を付け、レスポンスのidと対応させる</td>
+<td>リクエストに番号を付け、レスポンスの結果のidと対応させる</td>
 </tr>
 <tr>
 <td>`method`</td>
@@ -106,15 +106,15 @@ if (BigInt(await rpc("eth_chainId")) !== 31337n) {
 </tr>
 <tr>
 <td>`params`</td>
-<td>このメソッドに渡す引数。複数の引数はリスト形式で渡す\[par1,par2,..\]</td>
+<td>メソッドに渡す引数。複数の引数はリスト形式で渡す\[par1,par2,..\]</td>
 </tr>
 </table>
 
-> Anvilのドキュメントに登場するcastは、Foundryが提供するRPCクライアントと考えればよいです。cast rpcの後ろに指定するものが、fetchで使用するmethodとparamsに当たります。詳細は[cast rpc --helpを参照](https://www.getfoundry.sh/reference/cast/rpc)してください。
+> Anvilのドキュメントに出てくるcastは、Foundryが提供するRPCクライアントと考えるとわかりやすいです。cast rpcの後に続くものが、fetchで使用するmethodとparamsに当たります。詳細は[cast rpc --helpを参照](https://www.getfoundry.sh/reference/cast/rpc)してください。
 
 # Anvilを手動ブロック生成に切り替える
 
-まず、現在のAnvilの自動ブロック生成と一定間隔でのブロック生成の設定を確認します。
+まず、現在のAnvilの自動ブロック生成と定期ブロック生成の設定を確認します。
 
 ```javascript
 var showMiningMode = async () => {
@@ -127,7 +127,7 @@ var showMiningMode = async () => {
 await showMiningMode();
 ```
 
-設定を変更
+設定を変更します
 
 ```javascript
 await rpc("evm_setAutomine", [false]);
@@ -136,13 +136,13 @@ await rpc("evm_setIntervalMining", [0]);
 await showMiningMode();
 ```
 
-目標は `automine: false` で、一定間隔でのブロック生成も無効になっている状態です。バージョンによっては、間隔が未設定であることを `null` または `0` で表す場合があります。以降のトランザクションは手動のmineを待つ状態になり、ブロック生成までのカウントダウンはありません。
+目標は `automine: false` で、定期ブロック生成も無効になっている状態です。バージョンによっては、間隔が未設定であることを `null` または `0` で表します。以降のトランザクションは手動でmineするまで待機し、ブロック生成までのカウントダウンはありません。
 
-# ウォレットに接続する
+# ウォレットへの接続
 
-ここでは、ウォレットがwindow.ethereumに注入するインターフェースを通じてウォレットのメソッドを呼び出し、操作できます。
+ここでは、ウォレットが注入するwindow.etherumを通じてウォレットのメソッドを呼び出し、ウォレットを操作できます。
 
-## ウォレットへのアクセスを許可する
+## ウォレットの接続許可
 
 ```javascript
 var wallet = window.ethereum;
@@ -153,9 +153,9 @@ await wallet.request({
 });
 ```
 
-## カスタムのローカルテストネットに切り替える
+## カスタムのローカルテストネットへの切り替え
 
-chainIdが31337のローカルネットワークに[切り替えます](https://eips.ethereum.org/EIPS/eip-3326)。ウォレットにこのネットワークが登録されていない場合は、先にカスタムネットワークとして追加する必要があります。
+chainIdが31337のローカルネットワークに[切り替えます](https://eips.ethereum.org/EIPS/eip-3326)。ウォレットにこのネットワークが追加されていない場合は、先にウォレットへカスタムネットワークを追加する必要があります。
 
 ```javascript
 try {
@@ -187,7 +187,7 @@ try {
 }
 ```
 
-切り替え後にアカウントを再取得
+切り替え後、アカウントを再取得します
 
 ```javascript
 var [from] = await wallet.request({ method: "eth_accounts" });
@@ -200,11 +200,11 @@ console.table({
 });
 ```
 
-> ここには注意すべき確認上の抜けがあります。確認できたのは、ウォレットが接続するRPCとconsoleから接続するRPCのchainIdが同じであることだけで、実際に同じRPCである保証はありません。<br>もちろん、実際の信頼できるネットワークでは、異なるRPCを使っていてもchainIdが同じであれば、基本的には同じチェーンに書き込まれると考えられます。ただし、ローカルでは複数のマシンでchainIdが31337のテストチェーンをそれぞれ起動している可能性があります。そのため、接続時にはウォレットのRPC接続とconsoleからの接続が同じチェーンに書き込めることを、できるだけ確認してください。
+> ここには注意すべき点があります。確認できたのは、ウォレットが接続するRPCとコンソールから接続するRPCのchainIdが同じということだけで、実際に同じRPCであることは保証できません。<br>もちろん、実際の信頼できるネットワークでは、異なるRPCを使っていてもchainIdが同じなら、基本的に同じチェーンに書き込まれると考えられます。しかしローカルでは、複数のマシンでchainIdが31337のテストチェーンがそれぞれ起動している可能性があります。そのため、接続時にはウォレット側のRPC接続とコンソール側の接続が、同じチェーンに書き込めることをできるだけ確認してください。
 
-# トランザクションを送信する
+# トランザクションの送信
 
-送信前の状態を確認
+送信前の状態を確認します
 
 ```javascript
 var accountState = async () => ({
@@ -218,7 +218,7 @@ var before = await accountState();
 console.table(before);
 ```
 
-トランザクションを作成して送信
+トランザクションを作成して送信します
 
 ```javascript
 var txRequest = {
@@ -241,11 +241,11 @@ var txHash = await wallet.request({
 console.log("交易哈希：", txHash);
 ```
 
-ここで、ウォレットから送信したトランザクションがRPCに受け付けられ、txHashが返されて、ブロードキャストが始まる段階に入ったことを確認できます。この時点では、トランザクションはまだブロックに取り込まれておらず、オンチェーンには記録されていません。
+ここで、ウォレットから送信したトランザクションがRPCに受け付けられ、txHashが返されて、ブロードキャストが始まる段階に入ったことを確認できます。この時点では、トランザクションはまだブロックに取り込まれておらず、オンチェーンにも記録されていません。
 
-# RPCを手動で操作してブロックを生成する
+# RPCを手動操作してブロックを生成する
 
-## ブロックに取り込まれる前の確認
+## ブロックへの取り込み前の確認
 
 ブロックに取り込まれる前に、現在のブロックの状態を確認します。
 
@@ -260,7 +260,7 @@ console.table(await accountState());
 
 通常は次のようになります：
 
-- `pendingTx` を取得できれば、このRPCノードがすでにそのトランザクションを認識していることを示します。
+- `pendingTx` を取得できれば、このRPCノードがすでにそのトランザクションを認識しています。
 - `pendingTx.blockNumber` が `null` なら、まだブロックに取り込まれていません。
 - `pendingReceipt` が `null` なら、実行レシートはまだありません。
 - ブロック番号と `latestNonce` は変わりません。
@@ -273,11 +273,11 @@ await rpc("txpool_status");
 await rpc("txpool_content");
 ```
 
-返される`pending`は、現在処理可能でブロックへの取り込みを待っているトランザクションです。`queued`には、先行するnonceのトランザクションが欠けているため、一時的に処理できないトランザクションが含まれる場合があります。
+返される`pending` は、現在処理可能で、ブロックへの取り込みを待っているトランザクションです。`queued` には、それより前のnonceのトランザクションが欠けているため、まだ処理できないトランザクションが含まれる場合があります。
 
-## 手動でブロックを生成する
+## 手動でのブロック生成
 
-ブラウザーのconsoleから操作
+ブラウザのコンソールから操作します
 
 ```javascript
 await rpc("evm_mine");
@@ -291,9 +291,9 @@ curl -sS http://127.0.0.1:8545 \
   --data '{"jsonrpc":"2.0","id":1,"method":"evm_mine","params":[]}'
 ```
 
-## トランザクション/ブロックの状態を確認する
+## トランザクション／ブロックの状態確認
 
-トランザクションの状態を再確認
+トランザクションの状態を再確認します
 
 ```javascript
 var minedTx = await rpc("eth_getTransactionByHash", [txHash]);
@@ -307,7 +307,7 @@ if (!receipt) {
 }
 ```
 
-返されたレシートのブロック高に対応するブロックを確認
+返されたレシートのブロック高に対応するブロックを確認します
 
 ```javascript
 var block = await rpc("eth_getBlockByNumber", [
@@ -335,14 +335,14 @@ console.table({
 });
 ```
 
-トランザクションの前後でウォレットの状態を比較
+トランザクション前後のウォレットの状態を比較します
 
 ```javascript
 var after = await accountState();
 console.table({ before, after });
 ```
 
-# ブラウザーでトランザクションを検証する
+# ブラウザ上でトランザクションを検証する
 
 ethersを使ってローカルで検算します。
 
@@ -398,7 +398,7 @@ console.table({
 
 ## 公開鍵とアドレスの検証
 
-検証内容の詳細は、こちらのブログ記事を参考にしてください。基本的には、算出されたrsvから計算式を使って公開鍵Qを再導出するというものです。
+具体的な検証内容については、こちらのブログ記事を参考にしてください。基本的には、算出したrsvを使い、計算式から公開鍵Qを再び導き出します。
 
 ::site{url="https://dreaife.tokyo/eoa-sign-verify/#关于一次eoa钱包的签名和验证"}
 
@@ -420,9 +420,9 @@ var recoveredFrom = E.recoverAddress(
 
 ## トランザクションのMerkle証明
 
-先ほどは、返されたブロックのtransactionsにそのtxHashが含まれているかを確認しましたが、実際に生成されたブロックのblockHashに結び付くMerkle証明はまだ行っていません。（正直なところ、この部分の仕組みはまだ十分に理解できておらず、後で詳しく調べるつもりなので、以下は主にGPTの説明に基づいています（
+先ほど、返されたブロック内のトランザクションにそのtxHashが含まれているかは確認しましたが、実際に生成されたブロックのblockHashに対するMerkle証明はまだ行っていません。（正直なところ、この部分の仕組みはまだあまり理解できていません。後でもっと詳しく調べるつもりなので、以下はGPTの説明に基づく部分が多いです（
 
-Ethereumの実行ブロックは [Merkle Patricia Trie（MPT）](https://ethereum.org/developers/docs/data-structures-and-encoding/patricia-merkle-trie) を使用します。各ブロックには固有のトランザクションツリーがあります：
+Ethereumの実行ブロックは [Merkle Patricia Trie（MPT）](https://ethereum.org/developers/docs/data-structures-and-encoding/patricia-merkle-trie) を使用します。各ブロックには、それぞれ独自のトランザクションツリーがあります：
 
 ```plain text
 key   = RLP(交易在区块中的序号)
@@ -451,15 +451,15 @@ value = 原始已签名交易字节
   → 检查 keccak256(rawTx) 等于目标 txHash
 ```
 
-これによって初めて、そのトランザクションが、この `transactionsRoot` によってコミットされたトランザクション集合に確かに含まれていることを証明できます**。**
+これにより初めて、このトランザクションが、この `transactionsRoot` によってコミットされたトランザクション集合に確かに含まれていると証明できます。
 
-`eth_getProof` が提供するのはアカウントとコントラクトストレージの証明であり、トランザクションの包含証明を直接取得することはできません。トランザクションの証明には通常、専用の証明サービスを利用するか、ブロック内のすべての生トランザクションをダウンロードし、ローカルでトランザクションツリーを再構築してパスを生成する必要があります。
+`eth_getProof` が提供するのはアカウントとコントラクトストレージの証明であり、トランザクションの包含証明を直接取得するためには使えません。トランザクションの証明には通常、専用の証明サービスを利用するか、ブロック内のすべての生トランザクションをダウンロードして、ローカルでトランザクションツリーを再構築し、パスを生成する必要があります。
 
 ### 実験用ブロックの検証
 
-以下では、ローカルのブロック内のトランザクションからトランザクションツリーを再構築し、検証します。
+以下では、ローカルのブロックに含まれるトランザクションについて、トランザクションツリーを再構築して検証します。
 
-検証対象のtxHashとライブラリを準備
+検証するtxHashと標準ライブラリを準備します
 
 ```javascript
 // 验证的交易哈希
@@ -505,8 +505,8 @@ console.log({
 
 2つの `true` は、それぞれ次のことを示します：
 
-- `rootMatches`：ブロック内のすべての生トランザクションから再構築したツリーが、ブロックヘッダーのトランザクションルートと一致している。
-- `inclusionMatches`：**指定したトランザクション**が、そのルートに対する包含証明の検証に合格した。
+- `rootMatches`：ブロック内のすべての生トランザクションから再構築したツリーのルートが、ブロックヘッダーのトランザクションルートと一致しています。
+- `inclusionMatches`：**指定したトランザクション**が、そのルートに対する包含証明の検証に成功しています。
 
 # 自動ブロック生成モードに戻す
 

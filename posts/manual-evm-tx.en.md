@@ -5,24 +5,24 @@ updated: 2026-09-13
 description: 'Manually execute an EVM transaction in the browser console: connect to a local Anvil test chain via JSON-RPC, use a wallet to send a transaction, manually mine a block, verify the transaction hash, recover the signer’s address, and verify a Merkle inclusion proof to understand the full journey from broadcast and block inclusion to on-chain confirmation.'
 image: 'https://r2.dreaife.tokyo/notion/covers/3da5465cca17805882bad365b47648a8/ai-generated-1789295398718.png'
 tags: ['web3', 'wallet']
-category: 'study'
+category: 'exploration'
 draft: false
 lang: 'en'
 ---
 
-A note before reading: this article reflects only the author's personal views.
+A note before reading: this article represents only the author's personal views.
 
 ========
 
-I recently looked into the actual EVM transaction process. Here are some notes on how to use the browser console to control a wallet and an Anvil test chain on a local network, taking a transaction through submission, execution, and confirmation.
+I recently took a closer look at how EVM transactions actually work. Here is a brief record of how to use the browser console to control a wallet and an Anvil test chain on a local network, taking a transaction through on-chain inclusion, execution, and confirmation.
 
-Browser extension wallets expose a Provider to let web pages/DApps interact with the wallet. This is generally `window.ethereum`, and its base interface usually follows [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193). You can therefore use `provider.request({ method, params })` to call Ethereum RPC / Wallet RPC methods supported by the wallet. Different wallets may also implement their own extension methods.
+To let webpages/DApps interact with them, browser extension wallets expose a Provider to the browser. This is generally `window.ethereum`, and its basic interface usually follows [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193). You can therefore use `provider.request({ method, params })` to call Ethereum RPC / Wallet RPC methods supported by the wallet. Different wallets may also implement their own extension methods.
 
-I made a [liveDemo](https://chaintxdemo.dreaifehebi.com/) where you can see what the input and output of each step look like (
+I also made a [liveDemo](https://chaintxdemo.dreaifehebi.com/) where you can see what the inputs and outputs look like at each step (
 
-::github{url="dreaifeHebi/chainTXDemo"}
+::github{repo="dreaifeHebi/chainTXDemo"}
 
-Now let's walk through manually completing an EVM transaction in the browser.
+Now, let's walk through manually completing an EVM transaction in the browser.
 
 You can follow this workflow:
 
@@ -36,11 +36,11 @@ You can follow this workflow:
 → 本地重算交易哈希、恢复签名者地址
 ```
 
-\*Note: the steps below assume the default RPC URL is `http://127.0.0.1:8545` and the chainId is 31337.
+\*Note: the examples below assume the default RPC endpoint is `http://127.0.0.1:8545` and the chainId is 31337.
 
-# Prepare the RPC Connection
+# Set Up the RPC Connection
 
-RPC endpoints generally accept JSON-RPC requests, so we can create a reusable fetch function to connect to the RPC endpoint. You can refer to the [standard Ethereum Execution JSON-RPC API](https://ethereum.org/developers/docs/apis/json-rpc/#eth_gettransactioncount) and some [Anvil-specific methods](https://www.getfoundry.sh/anvil/rpc-methods).
+RPC endpoints generally accept JSON-RPC requests, so we can create a reusable fetch function to communicate with the endpoint. For available methods, refer to the [standard Ethereum Execution JSON-RPC API](https://ethereum.org/developers/docs/apis/json-rpc/#eth_gettransactioncount) and [Anvil-specific methods](https://www.getfoundry.sh/anvil/rpc-methods).
 
 Set up the connection:
 
@@ -98,7 +98,7 @@ The four fields in the fetch request body are:
 </tr>
 <tr>
 <td>`id`</td>
-<td>Assigns an ID to this request, matching the ID in the response</td>
+<td>Assigns an identifier to this request, matching the id in the response</td>
 </tr>
 <tr>
 <td>`method`</td>
@@ -110,11 +110,11 @@ The four fields in the fetch request body are:
 </tr>
 </table>
 
-> You can think of cast in the Anvil documentation as an RPC client provided by Foundry. The arguments after cast rpc correspond to the method and params used in fetch. For details, [refer to cast rpc --help](https://www.getfoundry.sh/reference/cast/rpc).
+> You can think of cast, as mentioned in the Anvil documentation, as an RPC client provided by Foundry. The arguments after cast rpc correspond to the method and params used in fetch. For details, [see cast rpc --help](https://www.getfoundry.sh/reference/cast/rpc).
 
 # Switch Anvil to Manual Mining
 
-First, check Anvil's current automatic mining and interval mining settings.
+First, check Anvil's current automatic and interval mining settings.
 
 ```javascript
 var showMiningMode = async () => {
@@ -127,7 +127,7 @@ var showMiningMode = async () => {
 await showMiningMode();
 ```
 
-Adjust the settings
+Adjust the settings:
 
 ```javascript
 await rpc("evm_setAutomine", [false]);
@@ -140,7 +140,7 @@ The goal is `automine: false`, with interval mining disabled. Different versions
 
 # Connect the Wallet
 
-Here we can call wallet methods through the window.etherum object injected by the wallet to perform wallet operations.
+We can now call wallet methods through the wallet's window.etherum injection to operate the wallet.
 
 ## Authorize Wallet Access
 
@@ -155,7 +155,7 @@ await wallet.request({
 
 ## Switch to the Custom Local Test Network
 
-[Switch](https://eips.ethereum.org/EIPS/eip-3326) to the local network with chainId 31337. If the wallet does not have this network configured, you need to add the custom network to the wallet first.
+[Switch](https://eips.ethereum.org/EIPS/eip-3326) to the local network with chainId 31337. If this network has not been added to the wallet, you need to add it as a custom network first.
 
 ```javascript
 try {
@@ -187,7 +187,7 @@ try {
 }
 ```
 
-Retrieve the account again after switching
+Retrieve the account again after switching:
 
 ```javascript
 var [from] = await wallet.request({ method: "eth_accounts" });
@@ -200,11 +200,11 @@ console.table({
 });
 ```
 
-> There is a gap to be aware of here: we have only confirmed that the RPC endpoint connected to the wallet and the one connected through the console have the same chainId. This does not guarantee that they are actually the same RPC endpoint.<br>Of course, on an actual trusted network, even if the RPC endpoints differ, matching chainIds generally mean you are writing to the same chain. Locally, however, multiple machines may be running separate test chains with chainId 31337. So when connecting, try to confirm that the wallet's RPC connection and the console connection can write to the same chain.
+> There is a gap to be aware of here: this only confirms that the RPC endpoint used by the wallet and the one we connect to in the console have the same chainId. It does not guarantee that they are actually the same RPC endpoint.<br>Of course, on a trusted network, even if the RPC endpoints differ, having the same chainId generally means they write to the same chain. Locally, however, multiple machines could be running separate test chains with chainId 31337. So, when connecting, try to confirm that the wallet's RPC connection and the console connection can write to the same chain.
 
 # Send the Transaction
 
-Check the state before sending
+Inspect the state before sending:
 
 ```javascript
 var accountState = async () => ({
@@ -218,7 +218,7 @@ var before = await accountState();
 console.table(before);
 ```
 
-Build and send the transaction
+Construct and send the transaction:
 
 ```javascript
 var txRequest = {
@@ -243,11 +243,11 @@ console.log("交易哈希：", txHash);
 
 At this point, we can confirm that the transaction sent through the wallet has been accepted by the RPC endpoint, which has returned a txHash, and broadcasting has begun. The transaction has not yet been included in a block on the chain.
 
-# Manually Mine a Block Through RPC
+# Manually Mine a Block via RPC
 
-## Observe Before Inclusion
+## Inspect Before Inclusion
 
-Before the transaction is included, check the current block state.
+Before the transaction is included in a block, inspect the current block state.
 
 ```javascript
 var pendingTx = await rpc("eth_getTransactionByHash", [txHash]);
@@ -258,32 +258,32 @@ console.log("交易回执：", pendingReceipt);
 console.table(await accountState());
 ```
 
-Normally:
+Under normal circumstances:
 
-- `pendingTx` can be retrieved, meaning this RPC node knows about the transaction.
-- `pendingTx.blockNumber` is `null`, meaning the transaction has not yet been included in a block.
-- `pendingReceipt` is `null`, meaning there is no execution receipt yet.
+- `pendingTx` is available, meaning this RPC node knows about the transaction.
+- `pendingTx.blockNumber` is `null`, meaning it has not yet been included in a block.
+- `pendingReceipt` is `null`, so there is no execution receipt yet.
 - The block number and `latestNonce` remain unchanged.
-- If there were no other pending transactions, `pendingNonce` usually increases by `1` compared with before sending.
+- If there were no other pending transactions beforehand, `pendingNonce` usually increases by `1` compared with its value before sending.
 
-You can also inspect the transaction pool at this point
+You can also inspect the transaction pool:
 
 ```javascript
 await rpc("txpool_status");
 await rpc("txpool_content");
 ```
 
-The returned `pending` entries are transactions that can currently be processed and are waiting for inclusion; `queued` may include transactions that cannot yet be processed because an earlier nonce is missing.
+In the response, `pending` contains transactions that can currently be processed and are waiting for inclusion; `queued` may contain transactions that cannot yet be processed because an earlier nonce is missing.
 
 ## Mine a Block Manually
 
-Run this in the browser console
+From the browser console:
 
 ```javascript
 await rpc("evm_mine");
 ```
 
-You can also use curl directly
+You can also use curl directly:
 
 ```bash
 curl -sS http://127.0.0.1:8545 \
@@ -291,9 +291,9 @@ curl -sS http://127.0.0.1:8545 \
   --data '{"jsonrpc":"2.0","id":1,"method":"evm_mine","params":[]}'
 ```
 
-## Confirm the Transaction/Block Status
+## Check the Transaction/Block Status
 
-Check the transaction status again
+Check the transaction's status again:
 
 ```javascript
 var minedTx = await rpc("eth_getTransactionByHash", [txHash]);
@@ -307,7 +307,7 @@ if (!receipt) {
 }
 ```
 
-Check the block at the height specified in the returned receipt
+Check the block at the height specified in the returned receipt:
 
 ```javascript
 var block = await rpc("eth_getBlockByNumber", [
@@ -335,7 +335,7 @@ console.table({
 });
 ```
 
-Compare the wallet state before and after the transaction
+Compare the wallet state before and after the transaction:
 
 ```javascript
 var after = await accountState();
@@ -344,7 +344,7 @@ console.table({ before, after });
 
 # Verify the Transaction in the Browser
 
-Use ethers to verify the calculations locally.
+Use ethers to perform local verification.
 
 ```javascript
 var E = await import(
@@ -398,11 +398,11 @@ console.table({
 
 ## Public Key and Address Verification
 
-For details on what is being verified, see this blog post of mine. Essentially, the public key Q is recovered from the calculated r, s, and v values using the relevant formulas.
+For details on this verification, see my blog post below. Essentially, it uses the calculated r, s, and v values to derive the public key Q again using the relevant formulas.
 
 ::site{url="https://dreaife.tokyo/eoa-sign-verify/#关于一次eoa钱包的签名和验证"}
 
-This is the relevant part of the implementation above
+Here is the relevant part of the implementation above:
 
 ```javascript
 // 完整已签名交易的哈希
@@ -420,7 +420,7 @@ var recoveredFrom = E.recoverAddress(
 
 ## Merkle Proof for the Transaction
 
-Although we checked whether the transactions in the returned block included this txHash, we have not yet performed a Merkle proof verification tied to the actual mined block's blockHash. (To be honest, I am still not entirely clear on how this part works and plan to look into it more carefully later, so the following is mostly based on GPT's explanation (
+Earlier, we checked whether the transactions in the returned block included this txHash, but we have not yet verified a Merkle proof tied to the actual mined block's blockHash. (To be honest, I still do not fully understand the principles behind this part and plan to look into it more carefully later, so the following is mostly based on GPT's explanation (
 
 Ethereum execution blocks use a [Merkle Patricia Trie (MPT)](https://ethereum.org/developers/docs/data-structures-and-encoding/patricia-merkle-trie). Each block has its own transaction trie:
 
@@ -431,9 +431,9 @@ value = 原始已签名交易字节
 整棵交易树的根 = 区块头中的 transactionsRoot
 ```
 
-\*The key in the transaction trie is the transaction's index within the block, not its txHash or the account nonce.
+\*The transaction trie's key is the transaction's index within the block, not its txHash or the account nonce.
 
-A typical transaction inclusion proof requires:
+A transaction inclusion proof generally requires:
 
 ```plain text
 可信区块头中的 transactionsRoot
@@ -451,15 +451,15 @@ The verification process is:
   → 检查 keccak256(rawTx) 等于目标 txHash
 ```
 
-Only then does it prove that this transaction is indeed included in the transaction set committed to by this `transactionsRoot`**.**
+Only then does this prove that the transaction is indeed included in the transaction set committed to by this `transactionsRoot`.
 
-`eth_getProof` provides account and contract storage proofs; it cannot directly retrieve transaction inclusion proofs. Transaction proofs usually require a dedicated proof service, or downloading all the raw transactions in a block to reconstruct the transaction trie locally and generate the proof path.
+`eth_getProof` provides account and contract storage proofs; it cannot be used to query transaction inclusion proofs directly. Transaction proofs generally require a dedicated proof service, or downloading all raw transactions in the block to reconstruct the transaction trie locally and generate the path.
 
 ### Verify the Experimental Block
 
-Below, we verify transactions in a local block by reconstructing its transaction trie.
+Below is a verification that reconstructs the transaction trie for a local block.
 
-Prepare the txHash to verify and the libraries
+Prepare the txHash to verify and the required libraries:
 
 ```javascript
 // 验证的交易哈希
@@ -474,7 +474,7 @@ var { Trie } = await import(
 );
 ```
 
-Verification logic
+Verification logic:
 
 ```javascript
 // 获取交易所在block
@@ -503,9 +503,9 @@ console.log({
 });
 ```
 
-The two `true` values mean:
+The two `true` values respectively mean:
 
-- `rootMatches`: the trie reconstructed from all the raw transactions in the block matches the transaction root in the block header.
+- `rootMatches`: the trie reconstructed from all raw transactions in the block matches the transaction root in the block header.
 - `inclusionMatches`: **the specified transaction** passed inclusion proof verification against that root.
 
 # Restore Automatic Mining

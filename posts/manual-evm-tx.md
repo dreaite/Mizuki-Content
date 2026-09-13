@@ -6,7 +6,7 @@ description: '在浏览器控制台手动完成一笔 EVM 交易：通过 JSON-R
 permalink: 'manual-evm-tx'
 image: 'https://r2.dreaife.tokyo/notion/covers/3da5465cca17805882bad365b47648a8/ai-generated-1789295398718.png'
 tags: ['web3', 'wallet']
-category: 'study'
+category: 'exploration'
 draft: false
 ---
 
@@ -20,7 +20,7 @@ draft: false
 
 这边有做一个[liveDemo](https://chaintxdemo.dreaifehebi.com/)可以直观看一下每个过程的input和output是什么样的（
 
-::github{url="dreaifeHebi/chainTXDemo"}
+::github{repo="dreaifeHebi/chainTXDemo"}
 
 那么下面开始具体的在浏览器如何自己手动完成一段EVM交易吧。
 
@@ -451,7 +451,7 @@ value = 原始已签名交易字节
   → 检查 keccak256(rawTx) 等于目标 txHash
 ```
 
-这样才证明：这笔交易确实包含在这个 `transactionsRoot` 所承诺的交易集合中**。**
+这样才证明：这笔交易确实包含在这个 `transactionsRoot` 所承诺的交易集合中。
 
 `eth_getProof` 提供的是账户和合约存储证明，不能拿它直接查询交易包含证明。交易证明通常需要专门的证明服务，或者下载区块全部原始交易，在本地重建交易树并生成路径。
 
