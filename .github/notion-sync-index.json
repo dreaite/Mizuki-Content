@@ -564,7 +564,7 @@
     },
     "3da5465c-ca17-8058-82ba-d365b47648a8": {
       "kind": "post",
-      "lastEditedTime": "2026-09-13T10:30:00.000Z",
+      "lastEditedTime": "2026-09-13T10:53:00.000Z",
       "outputPaths": [
         "manual-evm-tx.md",
         "manual-evm-tx.en.md",
@@ -572,7 +572,7 @@
       ],
       "pageId": "3da5465c-ca17-8058-82ba-d365b47648a8",
       "renderRevision": "notion-sync-index-v2|kind=post|body=official-markdown@2026-03-11|r2=enabled:dreaife-store:https://r2.dreaife.tokyo:notion/covers",
-      "signature": "ddc721c1476d08378fbbfbffeddbe8065f4b8e2ec583eaccda126b7a2c393884"
+      "signature": "c678be200ab58b263b7565d06a9cf6b08cb6d3b8408123529b228b18f6de3912"
     },
     "3f6c5930-9d7d-440c-a8a9-aa5ab567ebc0": {
       "kind": "post",
